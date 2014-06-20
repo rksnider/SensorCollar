@@ -32,7 +32,7 @@ use IEEE.NUMERIC_STD.ALL;
 
 
 
-entity sd_crc_7 is
+entity microsd_crc_7 is
 port(
     bitval				:in std_logic;
 	enable				:in std_logic;
@@ -41,9 +41,9 @@ port(
 	crc_out			    :out std_logic_vector(6 downto 0)
 	);
 	
-	end sd_crc_7;
+	end microsd_crc_7;
 	
-architecture Behaviorial of sd_crc_7 is
+architecture Behaviorial of microsd_crc_7 is
    
 
 signal  crc		                :std_logic_vector(6 downto 0);

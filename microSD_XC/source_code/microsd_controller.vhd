@@ -1,39 +1,70 @@
 ----------------------------------------------------------------------------------------------------
--- Filename:     	microsd_controller.vhd
--- Description:  	Source code for microsd serial data logger
--- Author:			Christopher Casebeer
--- Creation Date:	June 2014			
+--
+-- Filename:     	    microsd_controller.vhd
+-- Description:  	    Source code for microsd serial data logger
+-- Author:			    Christopher Casebeer
+-- Lab:                 Dr. Snider
+-- Department:          Electrical and Computer Engineering
+-- Institution:         Montana State University
+-- Support:             This work was supported under NSF award No. DBI-1254309
+-- Creation Date:	    June 2014	
+--		
 -----------------------------------------------------------------------------------------------------
 --
 -- Version 1.0
 --
 -----------------------------------------------------------------------------------------------------
-
+--
+-- Modification Hisory (give date, author, description)
+--
+-- None
+--
+-- Please send bug reports and enhancement requests to Dr. Snider at rksnider@ece.montana.edu
+--
 -----------------------------------------------------------------------------------------------------
+--
+--		This software is released under
 --            
---    Copyright (C) 2014  Ross K. Snider and Christopher N. Casebeer
+--    The MIT License (MIT)
 --
---    This program is free software: you can redistribute it and/or modify
---    it under the terms of the GNU General Public License as published by
---    the Free Software Foundation, either version 3 of the License, or
---    (at your option) any later version.
+--    Copyright (C) 2014  Christopher C. Casebeer and Ross K. Snider
 --
---    This program is distributed in the hope that it will be useful,
---    but WITHOUT ANY WARRANTY; without even the implied warranty of
---    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
---    GNU General Public License for more details.
+--    Permission is hereby granted, free of charge, to any person obtaining a copy
+--    of this software and associated documentation files (the "Software"), to deal
+--    in the Software without restriction, including without limitation the rights
+--    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+--    copies of the Software, and to permit persons to whom the Software is
+--    furnished to do so, subject to the following conditions:
 --
---    You should have received a copy of the GNU General Public License
---    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--    The above copyright notice and this permission notice shall be included in
+--    all copies or substantial portions of the Software.
+--
+--    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+--    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+--    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+--    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+--    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+--    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+--    THE SOFTWARE.
 --
 --    Christopher Casebeer
 --    Electrical and Computer Engineering
 --    Montana State University
---    610 Cobleigh Hall
+--    541 Cobleigh Hall
 --    Bozeman, MT 59717
 --    christopher.casebee1@msu.montana.edu
---    
 --
+--    Ross K. Snider
+--    Associate Professor
+--    Electrical and Computer Engineering
+--    Montana State University
+--    538 Cobleigh Hall
+--    Bozeman, MT 59717
+--    rksnider@ece.montana.edu
+--
+--    Information on the MIT license can be found at http://opensource.org/licenses/MIT
+--
+-----------------------------------------------------------------------------------------------------
 
 
 --In SD mode, data lines must be pulled up with a weak pull up resistor. 
@@ -267,7 +298,7 @@ component microsd_controller_inner
 
 
 
-component data_buffer is
+component microsd_buffer is
     generic(
 
         BUFSIZE                             :natural    
@@ -482,7 +513,7 @@ i_microsd_controller_inner_0 :  microsd_controller_inner
 	);
 	
 	
-i_data_buffer_0: data_buffer 
+i_data_buffer_0: microsd_buffer 
 	generic map (
 		BUFSIZE 						=> BUFSIZE
 	)

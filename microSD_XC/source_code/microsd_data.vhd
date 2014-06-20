@@ -1,40 +1,70 @@
 ----------------------------------------------------------------------------------------------------
 --
--- Filename:     	sd_data.vhd
--- Description:  	Source code for microsd serial data logger
--- Author:			Christopher Casebeer
--- Creation Date:	June 2014			
+-- Filename:     	    microsd_data.vhd
+-- Description:  	    Source code for microsd serial data logger
+-- Author:			    Christopher Casebeer
+-- Lab:                 Dr. Snider
+-- Department:          Electrical and Computer Engineering
+-- Institution:         Montana State University
+-- Support:             This work was supported under NSF award No. DBI-1254309
+-- Creation Date:	    June 2014	
+--		
 -----------------------------------------------------------------------------------------------------
 --
 -- Version 1.0
 --
 -----------------------------------------------------------------------------------------------------
-
+--
+-- Modification Hisory (give date, author, description)
+--
+-- None
+--
+-- Please send bug reports and enhancement requests to Dr. Snider at rksnider@ece.montana.edu
+--
 -----------------------------------------------------------------------------------------------------
+--
+--		This software is released under
 --            
---    Copyright (C) 2014  Ross Snider and Christopher N. Casebeer
+--    The MIT License (MIT)
 --
---    This program is free software: you can redistribute it and/or modify
---    it under the terms of the GNU General Public License as published by
---    the Free Software Foundation, either version 3 of the License, or
---    (at your option) any later version.
+--    Copyright (C) 2014  Christopher C. Casebeer and Ross K. Snider
 --
---    This program is distributed in the hope that it will be useful,
---    but WITHOUT ANY WARRANTY; without even the implied warranty of
---    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
---    GNU General Public License for more details.
+--    Permission is hereby granted, free of charge, to any person obtaining a copy
+--    of this software and associated documentation files (the "Software"), to deal
+--    in the Software without restriction, including without limitation the rights
+--    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+--    copies of the Software, and to permit persons to whom the Software is
+--    furnished to do so, subject to the following conditions:
 --
---    You should have received a copy of the GNU General Public License
---    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--    The above copyright notice and this permission notice shall be included in
+--    all copies or substantial portions of the Software.
+--
+--    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+--    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+--    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+--    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+--    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+--    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+--    THE SOFTWARE.
 --
 --    Christopher Casebeer
 --    Electrical and Computer Engineering
 --    Montana State University
---    610 Cobleigh Hall
+--    541 Cobleigh Hall
 --    Bozeman, MT 59717
 --    christopher.casebee1@msu.montana.edu
---    
 --
+--    Ross K. Snider
+--    Associate Professor
+--    Electrical and Computer Engineering
+--    Montana State University
+--    538 Cobleigh Hall
+--    Bozeman, MT 59717
+--    rksnider@ece.montana.edu
+--
+--    Information on the MIT license can be found at http://opensource.org/licenses/MIT
+--
+-----------------------------------------------------------------------------------------------------
 
 
 library IEEE;
@@ -104,7 +134,7 @@ use IEEE.MATH_REAL.ALL ;
 --
 ------------------------------------------------------------------------------     
  
-entity sd_data is
+entity microsd_data is
 	port(
 
         clk								    :in	    std_logic;                          
@@ -172,7 +202,7 @@ entity sd_data is
         ext_trigger				            :out     std_logic                          
 		  
 		);
-end sd_data;
+end microsd_data;
 
 
 --! sd_data is responsible for writing, reading, and erase the card. It also handles switching into 4 bit mode 
@@ -184,11 +214,11 @@ end sd_data;
 
 
 
-architecture Behavioral of sd_data is
+architecture Behavioral of microsd_data is
 
 
 	
-component sd_crc_7 is
+component microsd_crc_7 is
 			port(
 					bitval				:in std_logic;
 					enable				:in std_logic;
@@ -197,7 +227,7 @@ component sd_crc_7 is
 					crc_out				:out std_logic_vector(6 downto 0));
 end component;
 
-component sd_crc_16 is
+component microsd_crc_16 is
 			port(
 					bitval				:in std_logic;
 					enable				:in std_logic;
@@ -490,7 +520,7 @@ signal  cmd25_setup_counter_reg 		            :   unsigned(31 downto 0);
 begin
 
 --CRC used for commands.
-i_sd_crc_7_0:	sd_crc_7 
+i_sd_crc_7_0:	microsd_crc_7 
 		port map (
 						bitval      => crc7_bitval_signal,
 						enable      => crc7_gen_en,
@@ -500,7 +530,7 @@ i_sd_crc_7_0:	sd_crc_7
 					);	
 	
 --CRC used for data.	
-i_sd_crc_16_0:	sd_crc_16 
+i_sd_crc_16_0:	microsd_crc_16 
 		port map (
 						bitval      => crc16_bitval_signal_D0,
 						enable      => crc16_gen_en_D0,
@@ -510,7 +540,7 @@ i_sd_crc_16_0:	sd_crc_16
 					);
 					
 --CRC used for data.	
-i_sd_crc_16_1:	sd_crc_16 
+i_sd_crc_16_1:	microsd_crc_16 
 		port map (
 						bitval      => crc16_bitval_signal_D1,
 						enable      => crc16_gen_en_D1,
@@ -520,7 +550,7 @@ i_sd_crc_16_1:	sd_crc_16
 					);
 					
 --CRC used for data.	
-i_sd_crc_16_2:	sd_crc_16 
+i_sd_crc_16_2:	microsd_crc_16 
 		port map (
 						bitval      => crc16_bitval_signal_D2,
 						enable      => crc16_gen_en_D2,
@@ -530,7 +560,7 @@ i_sd_crc_16_2:	sd_crc_16
 					);
 					
 --CRC used for data.	
-i_sd_crc_16_3:	sd_crc_16 
+i_sd_crc_16_3:	microsd_crc_16 
 		port map (
 						bitval      => crc16_bitval_signal_D3,
 						enable      => crc16_gen_en_D3,

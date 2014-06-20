@@ -2,7 +2,7 @@
 -- // CRC Generation Unit - Linear Feedback Shift Register implementation
 -- // (c) Kay Gorontzi, GHSi.de, distributed under the terms of LGPL
 -- // ==========================================================================
---ADAPTED FROM http://ghsi.de/CRC/index.php?Polynom=10001000000100001&Message=48000001AA
+--Simple port from Verilog to VHDL by Christopher Casebeer from http://ghsi.de/CRC/index.php?Polynom=10001000000100001&Message=48000001AA
 
 
 library IEEE;
@@ -25,7 +25,7 @@ use IEEE.NUMERIC_STD.ALL;
 --
 ------------------------------------------------------------------------------     
 
-entity sd_crc_16 is
+entity microsd_crc_16 is
 port(
 
 
@@ -36,9 +36,9 @@ port(
 	crc_out			    :out std_logic_vector(15 downto 0)
 	);
 	
-	end sd_crc_16;
+	end microsd_crc_16;
 	
-	architecture Behaviorial of sd_crc_16 is
+	architecture Behaviorial of microsd_crc_16 is
    
 
         signal   crc		:std_logic_vector(15 downto 0);
