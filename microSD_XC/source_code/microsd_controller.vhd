@@ -23,7 +23,7 @@
 --
 -----------------------------------------------------------------------------------------------------
 --
---		This software is released under
+--	  This software is released under
 --            
 --    The MIT License (MIT)
 --
@@ -195,20 +195,21 @@ end microsd_controller;
 
 
 --!A chunk of data of N blocks (a block is 512 bytes) is signalled to to be written through use of data_nblocks.
---!The card expects the N blocks to flow through its internal buffer. The component should be presented with data only on the rising
---!edge of mem_clk and not when data_full is '1';
+--!The card expects the N blocks to flow through its internal buffer. The component should be presented with 
+--!data only on the rising edge of mem_clk and not when data_full is '1';
 --!The number of blocks to be written to the card will be written starting at sd card block 
 --!address data_sd_start_address. data_nblocks represents the number of blocks (512 bytes each) which
 --!will be  to the component's buffers and written to the sd card starting at 
 --!data_sd_start_address. The component will reset its buffers after it has written this data_nblocks blocks. 
---!The card signals with sd_block_written_flag pulse that the last block written at data_current_block_written address was successful.  
---!The bidirectional lines are tri-states internally. 
+--!The card signals with sd_block_written_flag pulse that the last block written at data_current_block_written 
+--!address was successful. The bidirectional lines are tri-states internally. 
 --!sd_cmd and sd_dat thus must be inout to top entity and tied to bidirectional pins.
 --!By default the card will transmit data at 1.8V signalling level. To achieve this a 
---!level translator must be present between the FPGA GPIO (3.3V) and the sd card. The outputs of the switches are tied together.
---!and routed to the voltage reference port of the level translator. 
+--!level translator must be present between the FPGA GPIO (3.3V) and the sd card. The outputs of the switches 
+--!are tied together and routed to the voltage reference port of the level translator. 
 --!The component will handle the switching of the sd card side supply voltage pin 
---!of the level translator. An internal signal of the design can also be changed easily to run  the card in 3.3V mode if so desired.
+--!of the level translator. An internal signal of the design can also be changed easily to run  the card in 
+--!3.3V mode if so desired.
 
 architecture Behavioral of microsd_controller is
 
@@ -334,7 +335,7 @@ signal  D1_top_signal_in			        :	std_logic;
 signal  D2_top_signal_in			        :	std_logic;	
 signal  D3_top_signal_in			        :	std_logic;	
 
---sd_data will leave its APP_WAIT state to do execute differt commands.
+--sd_data will leave its APP_WAIT state to execute differt commands.
 signal  sd_control_signal					:	std_logic_vector(7 downto 0); 
 --Byte enconding of the current state of sd_data. Not complete or unique.       
 signal  sd_status_signal					:	std_logic_vector(7 downto 0);       
@@ -623,7 +624,7 @@ begin
         D3_top_signal_in    <= 	    sd_dat(3)	;
     end if;
 end process; 
---data_nblocks scales down to 128 if its over. Otherwise data_nblocks is the number of multiblocks.
+--data_nblocks scales down to 128 if its over 128. Otherwise data_nblocks is the number of multiblocks.
 num_blocks_to_write_signal <= to_integer(unsigned(data_nblocks)) when (to_integer(unsigned(data_nblocks)) < 128) else 128;  
         
 --If 3.3V mode is desired, set this bit to 0.
@@ -631,7 +632,7 @@ signalling_18_en				<= '1';
                            
 --Setting this bit makes the CMD6 in the data modes switch into SDR25 mode. This should be on 25Mhz to 50Mhz.
 --My finding abouts sending CMD6_HS. @ 25Mhz this should be on for any 33 and off for 18. 
--- Above 25Mhz it can be on. Below 25Mhz leave it off.                										
+--Above 25Mhz it can be on. Below 25Mhz leave it off.                										
 hs_sdr25_mode_en				<= HS_SDR25_MODE;                   
                                                                    
                                                                     
@@ -668,7 +669,7 @@ begin
 
             end if;
         end if;
-        --If there is some data in the buffer, begin
+        --If there is data in the buffer, begin
         if (sd_write_rdy_top = '1') then 	            
             if (stop_write = '0') then
                 --if in idle state change address and data to write.
@@ -685,7 +686,7 @@ begin
 			    --Must wait past APP_WAIT of sd_data to change control signal. CMD12_INIT end of multiblock transmit. 
                 --Works for both 1 bit and 4 bit writing. They both rely on CMD12.		
                 if (sd_status_signal = x"48") then	   
-                    --In process of writing 2048th block. 
+                    --In process of writing data_nblock block 
                     if (num_of_single_blocks_to_write = to_integer(unsigned(data_nblocks))) then
                             --This system keeps track of how many blocks have been singly written. 
                             --It will halt writing when the counter reach X number of blocks. 

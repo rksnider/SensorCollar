@@ -1,39 +1,70 @@
 ----------------------------------------------------------------------------------------------------
--- Filename:     	microsd_controller_tester.vhd
--- Description:  	Source code for microsd serial data logger
--- Author:			Christopher Casebeer
--- Creation Date:	June 2014			
+--
+-- Filename:     	    microsd_tester.vhd
+-- Description:  	    Source code for microsd serial data logger
+-- Author:			    Christopher Casebeer
+-- Lab:                 Dr. Snider
+-- Department:          Electrical and Computer Engineering
+-- Institution:         Montana State University
+-- Support:             This work was supported under NSF award No. DBI-1254309
+-- Creation Date:	    June 2014	
+--		
 -----------------------------------------------------------------------------------------------------
 --
 -- Version 1.0
 --
 -----------------------------------------------------------------------------------------------------
-
+--
+-- Modification Hisory (give date, author, description)
+--
+-- None
+--
+-- Please send bug reports and enhancement requests to Dr. Snider at rksnider@ece.montana.edu
+--
 -----------------------------------------------------------------------------------------------------
+--
+--	  This software is released under
 --            
---    Copyright (C) 2014  Ross K. Snider and Christopher N. Casebeer
+--    The MIT License (MIT)
 --
---    This program is free software: you can redistribute it and/or modify
---    it under the terms of the GNU General Public License as published by
---    the Free Software Foundation, either version 3 of the License, or
---    (at your option) any later version.
+--    Copyright (C) 2014  Christopher C. Casebeer and Ross K. Snider
 --
---    This program is distributed in the hope that it will be useful,
---    but WITHOUT ANY WARRANTY; without even the implied warranty of
---    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
---    GNU General Public License for more details.
+--    Permission is hereby granted, free of charge, to any person obtaining a copy
+--    of this software and associated documentation files (the "Software"), to deal
+--    in the Software without restriction, including without limitation the rights
+--    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+--    copies of the Software, and to permit persons to whom the Software is
+--    furnished to do so, subject to the following conditions:
 --
---    You should have received a copy of the GNU General Public License
---    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--    The above copyright notice and this permission notice shall be included in
+--    all copies or substantial portions of the Software.
+--
+--    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+--    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+--    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+--    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+--    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+--    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+--    THE SOFTWARE.
 --
 --    Christopher Casebeer
 --    Electrical and Computer Engineering
 --    Montana State University
---    610 Cobleigh Hall
+--    541 Cobleigh Hall
 --    Bozeman, MT 59717
 --    christopher.casebee1@msu.montana.edu
---    
 --
+--    Ross K. Snider
+--    Associate Professor
+--    Electrical and Computer Engineering
+--    Montana State University
+--    538 Cobleigh Hall
+--    Bozeman, MT 59717
+--    rksnider@ece.montana.edu
+--
+--    Information on the MIT license can be found at http://opensource.org/licenses/MIT
+--
+-----------------------------------------------------------------------------------------------------
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
@@ -172,12 +203,18 @@ signal num_writes			    :   natural ;
   
 signal mem_clk_en			    :   std_logic ;
 
+--Address to data output is delayed two clock cycles. 
+signal ct_data_lag_done              :   std_logic;
+signal ct_data_lag_counter      :   unsigned(2 downto 0);
+
 
 
 
 
 	attribute noprune: boolean;
 	attribute noprune of signal_tap_clock : signal is true;
+    attribute noprune of ct_data_lag_done: signal is true;
+    attribute noprune of ct_data_lag_counter: signal is true;
 		  
 		  
 		  
@@ -224,7 +261,9 @@ sd_tester : microsd_controller
 	);
     
     
-    
+--This 2 port ram is initialized with 512 bytes of random uint8 integers
+--created with the included matlab script. The script will also generate
+--a 1MB .bin file for comparison with cmp in linux.  
 altsyncram_component : altsyncram
 	GENERIC MAP (
 		clock_enable_input_a => "BYPASS",
@@ -274,8 +313,11 @@ altsyncram_component : altsyncram
 -------------------------------------------------------
 --CLOCK USED FOR SIGNAL TAP SAMPLING
 -------------------------------------------------------	
-signal_tap_clock <= CLOCK_50;		
---signal_tap_clock				<= pll_clk;
+--signal_tap_clock <= CLOCK_50;	
+
+--Wiring to pin will preserve for Signal Tap.
+gpio(0) <= signal_tap_clock;	
+signal_tap_clock				<= pll_clk;
 -- signal_tap_clock_GEN:	process(CLOCK_50)
 -- begin 
 	-- if rising_edge(CLOCK_50) then 
@@ -287,8 +329,35 @@ signal_tap_clock <= CLOCK_50;
 		-- cnt <= cnt + 1 ; 
 	-- end if; 
 -- end if; 
-
 -- end process; 
+
+--Pulling data out of the ram has a 2 clock cycle lag. 
+--Thus we only start data_we after a 2 clock cycle lag
+--on the address.  
+--This counter and lag must be reset after each buffer_full
+--event as the address value continues to increment.
+data_delay:process(rst_n,pll_clk)
+begin
+if(rst_n = '0') then
+        ct_data_lag_counter     <= "001";
+        ct_data_lag_done          <= '0';
+elsif rising_edge(pll_clk) then
+    if (init_started = '1') then
+        if (buffer_full_abstract = '1') then
+           ct_data_lag_counter     <= "001";
+           ct_data_lag_done <= '0';
+        else
+            if (ct_data_lag_counter = 0) then
+                ct_data_lag_done <= '1';
+            else
+                ct_data_lag_counter     <= ct_data_lag_counter - 1;
+            end if;
+        end if;
+    end if;
+end if;
+end process;
+
+
 
 startup_init:process(rst_n, pll_clk)
 begin
@@ -350,8 +419,9 @@ elsif rising_edge(pll_clk) then
         end if;
 
         if (n_block_done = '0') then
-            if (mem_clk_en = '1') then
-                    --Only increment ct_data dummy data on block boundries.
+            --Address increment starts 2 clocks before data_we
+            --is enabled. 
+            if (buffer_full_abstract = '0') then
                     if (ct_data_count = 511) then           
                         ct_data_count <= 0;
                         block_count <= block_count + 1;
@@ -359,6 +429,12 @@ elsif rising_edge(pll_clk) then
                     else
                         ct_data_count <= ct_data_count + 1;
                     end if;
+            else
+                    --Reset address after buf_ful event
+                    --due to 2 cycle delay out of ram.
+                    --Count gets ahead of data and needs
+                    --reset. 
+                    ct_data_count <= 0;
             end if;
         else
 
@@ -386,7 +462,7 @@ if (rst_n = '0') then
 mem_clk_en <= '0';
 elsif falling_edge(pll_clk) then
 
-	if (buffer_full_abstract = '0' and init_started = '1' and n_block_done_follower = '0') then
+	if (buffer_full_abstract = '0' and init_started = '1' and n_block_done_follower = '0' and ct_data_lag_done = '1') then
 		mem_clk_en <= '1';
 	else
 		mem_clk_en <= '0';

@@ -1,9 +1,12 @@
-% Mif generation
+% Mif and Bin Generation
 
 %.bin test for 1MB writes.
 
-% Creates a 512 byte * 2048 block 1MB .bin file for comparing with 
-% cmp() after having dd'ed from the sd card.
+%Creates a 512 byte mif file for initialization of microsd_controller_tester
+%ram.
+
+% Also creates a 512 byte * 2048 block (1MB) .bin file for comparing with 
+% unix cmp() after having dd'ed from the sd card.
 
 fid = fopen('512bytecount_rand.mif','w');
 
@@ -22,6 +25,7 @@ i = randi([0 255],1,1);
 for k = 0:511
     
    
+%Convert to 8 bit unsigns. 
 a(k+1) = uint8(i);
 
 fprintf(fid,'%x : %x;\n',k,i);
@@ -30,7 +34,7 @@ i = randi([0 255],1,1);
        
 end
 
-
+%fwrite is a binary write. 
 fwrite(fid2,repmat(a,1,2048));
 fprintf(fid,'END;');
 fclose(fid2);

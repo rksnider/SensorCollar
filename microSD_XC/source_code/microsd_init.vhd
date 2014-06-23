@@ -23,7 +23,7 @@
 --
 -----------------------------------------------------------------------------------------------------
 --
---		This software is released under
+--	  This software is released under
 --            
 --    The MIT License (MIT)
 --
