@@ -81,16 +81,16 @@ USE altera_mf.altera_mf_components.all;
 ------------------------------------------------------------------------------
 --
 --! @brief      Data buffer of the microsd_controller
---! @details    The host puts data here while the card is busy writing that data. 
+--! @details    The host puts data here while the card is busy writing data. 
 --!
 --! @param      BUFSIZE         Number of bytes in the double buffer. Must be specified as N * 512 bytes.   
 --! @param      rst_n           Reset to initial conditions.
 --! @param      clk             Data Transmission Clock. Clock can be from 400kHz to 100MHz 
 --!                             depending on timing of target device.
---! @param      mem_address     microsd_controller's address into the memory.
+--! @param      mem_address     microsd_data's address into the buffer.
 --!
---! @param      data_out        Data presented a byte at a time. 
---! @param      mem_output      Data presented a byte at a time.     
+--! @param      data_out        Data presented a byte at a time out of the buffer. 
+--! @param      mem_output      Data presented a byte at a time into the buffer.     
 --! @param      mem_clk         Data is clocked into the circular buffer on the rising edge.
 --!                               
 --! @param      sd_write_rdy    Go bit for the sd card to start writing.
@@ -102,7 +102,7 @@ USE altera_mf.altera_mf_components.all;
 --! @param      buffer_reinit_done  Signal to microsd_controller that  buffer reinit is done.
 --!                              
 --!
---! @param      sd_write_count      N blocks ready to be written into buffer and out to sd card.
+--! @param      data_nblocks      N blocks that host will send to card. 
 --! @param      sd_block_written    Block received succesfully by the sd card.
 --!
 --! @param      init_start      Init start pushbutton or poweron.  
@@ -127,7 +127,7 @@ entity microsd_buffer is
         buf_ful						        :out	    std_logic;                                 
         sd_write_done					    :in		    std_logic;							       
         buffer_reinit_done			        :out 		std_logic;                                  
-        sd_write_count                      :in         std_logic_vector(31 downto 0);             
+        data_nblocks                        :in         std_logic_vector(31 downto 0);             
         sd_block_written				    :in         std_logic;                                 
         init_start					        :in 		std_logic                                  
     );
@@ -146,19 +146,18 @@ end microsd_buffer;
 
 architecture Behavioral of microsd_buffer is
 
---Calculation of the address size based on the BUFSIZE given Data is always 8 bits. .
 --The buffer is made up of blocks (512bytes) and bytes in those blocks. 
---The BUFFSIZE generic is a multiple of blocks ie 2048 = 4 *512. 
---In this instance 4 block addresses are sequenced through by this buffer. 
+--The BUFFSIZE generic is a multiple of blocks ie 2048 = 4 * 512. 
+--In the case of BUFSIZE = 2048, 4 addressable blocks exist. 
 
-
---Incrementing address for a 512 byte data with 1 byte word
+--Calculate size of memory address given BUFSIZE.
 signal mem_address_c    :std_logic_vector(natural(trunc(log2(real(BUFSIZE-1)))) downto 0);  
 
+--High memory is block number. Low memory is 512 addressable bytes. 
 constant BYTE_ADDR_LEN  :natural := 9;
 constant BLOCK_ADDR_LEN :natural := (mem_address_c'length - BYTE_ADDR_LEN);
 
- --Data level in the buffer.
+--Data level in the buffer.
 signal level 		    :natural; 
 --Simply a signal to allow creation of signal max_level.                                                                    
 signal max_level_pre 	:unsigned(mem_address_c'length - BYTE_ADDR_LEN - 1 downto 0) := (others => '1'); 
@@ -166,7 +165,7 @@ signal max_level_pre 	:unsigned(mem_address_c'length - BYTE_ADDR_LEN - 1 downto 
 signal max_level        :natural := to_integer(max_level_pre) + 1;                                          
 
 
--- The byte write pointer.
+--The byte write pointer.
 signal  ram_byte_address_wr     :unsigned (BYTE_ADDR_LEN-1 downto 0);       
 --The block write pointer.     
 signal  ram_block_address_wr    :unsigned (BLOCK_ADDR_LEN-1 downto 0);          
@@ -190,7 +189,6 @@ signal  ram_byte_address_wr_follower    :unsigned (BYTE_ADDR_LEN-1 downto 0);
 signal  num_blocks_through_buffer       :unsigned(31 downto 0);      
 
 
---DEBUG
 signal init_started : std_logic;
 
 
@@ -232,7 +230,7 @@ internal_buffer_instant : altsyncram
 		wren_a => '1',  
 		address_b => std_logic_vector(ram_block_address_rd) & std_logic_vector(ram_byte_address_rd),    --sd_data's byte read address and data_buffers handled block address.
 		clock1 => clk,                                                                                  --System clock.
-		q_b => data_out	                                                                                --The data sent to sd_data for writing to the sd card.
+		q_b => data_out	                                                                                --The data sent to microsd_data for writing to the sd card.
 	);
 	
 	
@@ -267,17 +265,18 @@ elsif rising_edge(clk) then
 
 		if (ram_byte_address_wr_follower /= ram_byte_address_wr) then
 		ram_byte_address_wr_follower <= ram_byte_address_wr;
-            --Increase the level only once (followers) when ram_byte_address_wr is 511. 
+            --Increase the level only once (use of followers) when ram_byte_address_wr is 511. 
             --Also increment the num of blocks through buffer.
 			if (ram_byte_address_wr = 511) then					                
 					level <= level + 1;
 					num_blocks_through_buffer <= num_blocks_through_buffer + 1;
 				end if;
 		end if;
-        --If the last block was recieved by the card successfully. crc check received back okay.
+        --If the last block was recieved by the card successfully.
 		if (sd_block_written = '1' ) then                                                   
-                        --Do not empty level until reinit if we've written Nblocks. 
-						if (num_blocks_through_buffer = unsigned(sd_write_count)) then		
+                        --Do not decrease level until reinit if we've written Nblocks. 
+                        --This will keep buf_ful high.
+						if (num_blocks_through_buffer = unsigned(data_nblocks)) then		
 							ram_block_address_rd <= ram_block_address_rd + 1;
                         --Else decrease the level of the buffer. Move to reading the next block in the buffer.
 						elsif(ram_byte_address_rd = 0) then                                 

@@ -85,6 +85,7 @@ entity microsd_controller_tester is
 		  --Clk Edge 46 Edge 51  EDGE 16
 		  --Dat0 Edge 48 Edge 52  EDGE 17
 		  --Data1 Edge 50 Edge 53   EDGE 18
+          
 		 CLOCK_50				:in	std_logic; --Input clock, 50-MHz max
 		 --Subtract 1 from 1-79
 		 EG_BOTTOM              :inout std_logic_vector(25 downto 0);
@@ -106,7 +107,6 @@ component data_pll is
 		refclk   : in  std_logic := '0'; --  refclk.clk
 		rst      : in  std_logic := '0'; --   reset.reset
 		outclk_0 : out std_logic;        -- outclk0.clk
-	--	outclk_1 : out std_logic;        -- outclk1.clk
 		locked   : out std_logic         --  locked.export
 	);
 end component;
@@ -145,11 +145,11 @@ end component;
 
 
 
---Dummy data to be written to card.
---signal ct_data		    	     :   unsigned(7 downto 0); 
-signal ct_data		           	  :   std_logic_vector(7 downto 0);
+
+--Data pulled from ram and sent to card.
+signal ct_data		            :   std_logic_vector(7 downto 0);
 --Data transmit counter. 
-signal ct_data_count	      	  :   natural;    
+signal ct_data_count	        :   natural;    
 --Block transmit counter.  
 signal block_count              :   unsigned(31 downto 0);
 --nblock done. The first nblock set of data and commands has finished.  
@@ -172,6 +172,7 @@ signal sd_block_written_abstract              :   std_logic;
 
 signal VC_22960_33_ON	        :   std_logic := '0';	
 signal VC_22960_18_ON	        :   std_logic := '0';
+
 --Power up sequence bit.
 signal power_up_done	        :   std_logic := '0';
 --Rst_n pulse on startup.   
@@ -197,13 +198,15 @@ signal mem_clk_abstract_follower 		    :   std_logic;
 --Start address passed to controller.  
 signal sd_start_address_internal            :   std_logic_vector(31 downto 0)  := std_logic_vector(to_unsigned(0,32));
 --data_nblocks passed to controller. 
-signal sd_write_count_internal              :   unsigned(31 downto 0) 			:= to_unsigned(2048,32);                
-  
+signal sd_write_count_internal              :   unsigned(31 downto 0) 			:= to_unsigned(16,32);                
+--Count the number of nblocks sent to card.
 signal num_writes			    :   natural ;
-  
+--Turn on the data_we to the component. 
 signal mem_clk_en			    :   std_logic ;
 
---Address to data output is delayed two clock cycles. 
+--Address to data output is delayed two clock cycles.
+--data_we must be delayed two clock cycles while data
+--gets out of ram. 
 signal ct_data_lag_done              :   std_logic;
 signal ct_data_lag_counter      :   unsigned(2 downto 0);
 
@@ -255,7 +258,7 @@ sd_tester : microsd_controller
         
         --Personal Debug for now
         
-        init_start                          => tact(1),                                     
+        init_start                          => sd_init_start_top,                                     
         user_led_n_out                      => user_led_n
 
 	);
@@ -263,7 +266,7 @@ sd_tester : microsd_controller
     
 --This 2 port ram is initialized with 512 bytes of random uint8 integers
 --created with the included matlab script. The script will also generate
---a 1MB .bin file for comparison with cmp in linux.  
+--a 1MB .bin file for comparison with function cmp in linux.  
 altsyncram_component : altsyncram
 	GENERIC MAP (
 		clock_enable_input_a => "BYPASS",
@@ -306,6 +309,7 @@ altsyncram_component : altsyncram
 	EG_BOTTOM(13 downto 0) <= (others => '0');
 	EG_BOTTOM(24 downto 19) <= (others => '0');
 
+    --Turn off the other voltage switch I didn't use.
 	EG_TOP(22) <=  VC_22960_33_ON ;	
 	EG_TOP(23) <=  VC_22960_18_ON ;	
             
@@ -370,6 +374,7 @@ elsif rising_edge(pll_clk) then
 end if;
 end process startup_init;
 
+--Delayed read of buffer_full and n_block_done.
 test_writing_followers:process(rst_n, pll_clk)
 begin
 if(rst_n = '0') then
@@ -389,13 +394,13 @@ end if;
 end process test_writing_followers;
 
 -- This is the test writing process. It was used in a 2048 nblock write and 
--- a 128x16nblock write excercising either one large write or many small 
+-- a 128x16 nblock write excercising either one large write or many small 
 -- writes (with many internal buffer resets)
--- The process increments the dummy data sent to the card by one every 
--- 512 bytes. It tracks the block_count to determine if data_nblocks has 
--- been sent. Num_writes can then specify X data_nblock sets.
+-- Address into ram data is incremented.
+-- It tracks the block_count to determine if data_nblocks has 
+-- been sent. Num_writes can then specify X data_nblock sets to be sent in total.
 -- The address passed into the microsd_controller will increment appropriately 
--- at the end of sending a data_nblock.
+-- at the end of sending a data_nblock, as to place the next nblock contiguous. 
 
 test_writing:process(rst_n, pll_clk)
 begin
@@ -425,6 +430,7 @@ elsif rising_edge(pll_clk) then
                     if (ct_data_count = 511) then           
                         ct_data_count <= 0;
                         block_count <= block_count + 1;
+                        --Prev used for dummy counter data.
                         -- ct_data <= ct_data + 1;
                     else
                         ct_data_count <= ct_data_count + 1;
@@ -444,7 +450,7 @@ elsif rising_edge(pll_clk) then
                 else
                 --If not send another nblock set of data. Uncomment for 128*16 data_nblocks. 
                 --Commented for 2048 data_nblocks.
-                --n_block_done <= '0';              
+                n_block_done <= '0';              
                 end if;
             end if;
 			
@@ -455,7 +461,7 @@ elsif rising_edge(pll_clk) then
 end if;
 end process;
 
-
+--data_we gating scheme in relation to pulling data out of ram.
 mem_clk_enable:process(rst_n, pll_clk)
 begin
 if (rst_n = '0') then
@@ -474,7 +480,7 @@ end process mem_clk_enable;
 
 mem_clk_abstract <= pll_clk and mem_clk_en;
 
---Drive reset on power up.
+--Drive reset low on power up.
 --sd_init_start_top can be used to automatically start card into init on power up. 
 power_up_sequence:process(pll_clk)
 begin

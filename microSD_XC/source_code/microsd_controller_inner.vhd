@@ -82,14 +82,14 @@ use IEEE.NUMERIC_STD.ALL;
 --! @param      clk             Input clock, Data Component Logic Clk and Data Transmission Clock  
 --! @param      rst_n           Start signal from input pushbutton
 --! @param      sd_init_start           Reset to initial conditions.
---! @param      sd_control              Used to select pathway in Data Component.
+--! @param      sd_control              Used to select pathway in microsd_data.
 --! @param      sd_status               Current State of State Machine.
 --!
 --! @param      block_byte_data         Read data from SD card memory
 --! @param      block_byte_wren         Signals that a data byte has been read. Ram wr_en.    
 --! @param      block_read_sd_addr      Address to read block from on sd card.
 --!                               
---! @param      block_byte_addr         Address to write read data to in ram..
+--! @param      block_byte_addr         Address to write read data to in ram.
 --!                              
 --! @param      block_write_sd_addr     Address where block is written on sd card.
 --!
@@ -120,7 +120,7 @@ use IEEE.NUMERIC_STD.ALL;
 --! @param      D2_signal_in        Read value of the tri-stated line.   
 --! @param      D3_signal_in        Read value of the tri-stated line. 
 --!  
---! @param      card_rca            Card RCA is passed from init.
+--! @param      card_rca            SD Card relative card address is passed from init.
 --! @param      init_done           Card has passed init phase.
 --! @param      signalling_18_en    Card should go into 1.8V mode during init.
 --! @param      hs_sdr25_mode_en        Card should transition to hs_sdr25 mode before first CMD25. 
@@ -210,7 +210,7 @@ entity microsd_controller_inner is
 	);
 end microsd_controller_inner;
 
---! microsd_controller inner simply muxes sd_init and sd_data control lines and signals
+--! microsd_controller inner simply muxes microsd_init and microsd_data control lines and signals
 --! It also generates the 400k init clock.
 --! 
 

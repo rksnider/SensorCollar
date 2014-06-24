@@ -79,28 +79,28 @@ use IEEE.MATH_REAL.ALL ;
 --! @brief      sd_data is the portion of microsd_controller which handles write comms with sd card.
 --! @details     
 --!
---! @param      clk                 Input clock, Init Component Logic Clk  
+--! @param      clk                 Input clock, Init Component Logic Clk (~400kHZ) 
 --! @param      rst_n               Active-low system reset
 --! @param      sd_init_start       Start signal from input pushbutton  Active Low
 --!
---! @param      cmd                 Cmd line control.
+--! @param      cmd                 Output CMD
 --!
---! @param      dat0                Data0 line control.
---! @param      dat3                Data3 line control
+--! @param      dat0                dat0 output.
+--! @param      dat3                dat3 output.
 --!
 --! @param      sclk                Sclk sent to card. Simply a reroute of clk.
---! @param      D0_signal_in        Data0 line read.
+--! @param      D0_signal_in        dat0 tri-state line read.
 --!
 --! @param      voltage_switch_en   Bit to start lagged voltage switch at upper level.
 --! @param      init_done           SD Initialization Complete
---! @param      signalling_18_en    1.8V Switch Enable During Ini
+--! @param      signalling_18_en    1.8V Switch Enable During Init
 --!
 --! @param      cmd_write_en        Enable Write on CMD line
---! @param      cmd_signal_in       Read CMD line
+--! @param      cmd_signal_in       cmd tri-state line read.
 --!
 --! @param      rca_out             Relative Card Address passed to sd_data. 
---! @param      state_leds          State indication
---! @param      rca_out             Clk sent to sd card
+--! @param      state_leds          State indication for leds
+--!
 --! @param      ext_trigger         External trigger bit. Used to trigger an Oscope if need arise.
 --!
 --
@@ -179,6 +179,7 @@ end component;
 	signal	command_send_done			:std_logic;
 	signal	command_send_bit_count	    :integer range 0 to 2**6 - 1;
     signal  cmdstartbit                 :std_logic;
+    
     -- 48-bit SD Card command register
 	signal	command_signal				:std_logic_vector(47 downto 0); 
 	
@@ -227,7 +228,8 @@ end component;
 	
     --Command Payload Signals
     -- This bit indicates whether or not the SD card is SDSC(0), 
-    --or SDHC/SDXC(1). Might better be a generic.
+    --or SDHC/SDXC(1). Might better be a generic. Was always set to '1'
+    -- during development as I was using a SDXC card.
     signal	sd_hcs_bit					:std_logic := '1';		
     --Default RCA addressed used with ACMD41 on init
 	signal 	card_rca_signal 			:std_logic_vector (15 downto 0); 
@@ -298,7 +300,8 @@ end process;
 	--**********************************************************************--
 	--**********************************************************************--
 process(current_state, sd_init_start, pwr_on_delay_done, command_send_done, read_r1_response_done, 
-          read_r7_response_done, read_r3_response_done,read_r2_response_done,read_r6_response_done,d0_signal_in,voltage_switch_done)
+        read_r7_response_done, read_r3_response_done,read_r2_response_done,read_r6_response_done,
+        d0_signal_in,voltage_switch_done)
 
 begin
     
@@ -332,12 +335,12 @@ case current_state is
                 next_state <= CMD8_INIT;
 
         
---CMD8				
---Sends SD Memory Card interface
---condition, which includes host supply
---voltage information and asks the card
---whether card supports voltage.
---Reserved bits shall be set to '0'.
+    --CMD8				
+    --Sends SD Memory Card interface
+    --condition, which includes host supply
+    --voltage information and asks the card
+    --whether card supports voltage.
+    --Reserved bits shall be set to '0'.
     -- Send CMD8 (SEND_IF_COND) to the SD card. Expand the SD card instruction set. SEND_IF_COND
     when CMD8_INIT =>  
         next_state <= CMD8_SEND;
@@ -378,6 +381,11 @@ case current_state is
         end if;
     -- Send ACMD41 (SD_SEND_OP_COND) to the SD card to send 
     --host capacity support info and to begin card initialization process. 
+    --ACMD41 is sent repeatedly with the same setup as the first ACMD41 sent.
+    --The card becomes initialized and ready to continue when the R3 response
+    --which cotains the OCR register has bit 31 set to a '1', the Card power
+    --up status bit. Only then do we continue.
+    --
     when ACMD41_INIT =>  
         next_state <= ACMD41_SEND;
 
@@ -392,6 +400,7 @@ case current_state is
             --We check for that bit in the R3 response here. 
             if (r3_response_bytes(39) ='1') then 
                         --If switching voltages is a go, proceed to CMD11.
+                        --Signified by bit 24 of OCR, Switching to 1.8V Accepted.
                         if (r3_response_bytes(32) = '1') then	
                         next_state <= CMD11_INIT;
                         else
@@ -423,7 +432,9 @@ case current_state is
         
     when VOLTAGE_SWITCH =>
         --Voltage switch sequence is done when d0-d3 goes high.
-        --d0 going high is handled in other process.
+        --d0 going high detection is handled in other process.
+        --Card waits for level translation to finish as the card itself
+        --detects 1.8V signalling on the lines.
         if (voltage_switch_done = '1') then			    
                 next_state <= CMD2_INIT;
         end if;
@@ -459,8 +470,9 @@ case current_state is
             --Card is in standby mode Binary Coded Decimal == 3 means standby. 
             --Initial CMD3 yields BCD 2 == INIT. 
             --I am waiting for card to be in standby here.
-            --Not needed most likely as card state in response is at the time of cmd issue. So the card is most likely in standby
-            --after the first CMD3. 
+            --Not needed most likely as card state in response is at the time of cmd issue. 
+            --So the card is most likely in standby
+            --after the first CMD3. Two CMD3's are sent anway.
             if (response_6_status(12 downto 9) = "0011") then   
                     next_state <= IDLE;
                 else
@@ -585,7 +597,7 @@ begin
             dat3_signal <= '1';							
             dat0_signal <= '1';
             command_signal <= '0' & '1' & "001000" & x"00000" & "0001" & "10101010" & "1000011" & '1'; 
-                                                            --0001b 2.7-3.6V  --check pattern --crc7 --end bit
+            -- start bits      -- cmd index --stuff bits --0001b 2.7-3.6V  --check pattern --crc7 --end bit
             command_load_en <= '1';
             state_leds <= "0100";							
             cmd_write_en			<= '0';
@@ -662,7 +674,7 @@ begin
             -----------
             --ACMD41(SD_SEND_OP_COND) Main init command. 
             --Power Savings, Signalling Level and Card Type Specified.
-            --Host waits while issuing this command until card is ready(bit sent back for ready) 
+            --Hosts repeatedly issues this command until card is ready(response bit indicates ready. OCR(31)) 
             -----------
             
         when ACMD41_INIT =>
@@ -673,7 +685,8 @@ begin
             dat0_signal <= '1';
             
             if(signalling_18_en = '1') then
-            --More bits of ACMD41 can be set. Page 23 of SD Spec. Card kept to SDXC Power saving & 3.3 Volt Signalling. 
+            --More bits of ACMD41 can be set. Page 23 of SD Spec. Card kept to SDXC and Power saving.
+            --1.8V or 3.3V signalling is decided here.
             --FF80 references 23 downto 8 of OCR register.
             command_signal <= '0' & '1' & "101001" & '0' & sd_hcs_bit & "000001" & x"FF80" & x"00" & "0001000" & '1'; 
             else
@@ -691,8 +704,9 @@ begin
             cmd_signal <= output_command(47);
             
             if(signalling_18_en = '1') then
-            --More bits of ACMD41 can be set. Page 23 of SD Spec. Card kept to SDXC Power saving & 3.3 Volt Signalling.
-            --F80 references 23 downto 8 of OCR register.
+            --More bits of ACMD41 can be set. Page 23 of SD Spec. Card kept to SDXC and Power saving.
+            --1.8V or 3.3V signalling is decided here.
+            --FF80 references 23 downto 8 of OCR register.
             command_signal <= '0' & '1' & "101001" & '0' & sd_hcs_bit & "000001" & x"FF80" & x"00" & "0001000" & '1'; 
             else
             command_signal <= '0' & '1' & "101001" & '0' & sd_hcs_bit & "000000" & x"FF80" & x"00" &   "0001011" & '1';	
@@ -765,7 +779,7 @@ begin
             
             -----------
             --Custom state. This is where the level shifter is switched to new voltage level.
-            --SD Card halts with d0 low until the levels are changed. 
+            --The SD card halts with d0 low until the levels are changed. 
             -----------
 
         when VOLTAGE_SWITCH =>
@@ -859,7 +873,7 @@ begin
             --This command is sent with a CRC7 generated for it. CRC7 is not hardcoded. 
             --crc7_gen_en enabled while sending command
             --if you want CRC7 appended during send. Not absolutely needed here, but
-            --always neeeded after we received RCA and start including
+            --always neeeded after we received variable RCA and start including
             --it inside every command thereafter.
             
         when CMD3_READ =>
@@ -935,9 +949,9 @@ cmd_send:	process(rst_n, clk)
         command_send_done       <= '0';
         command_send_bit_count  <= 0;
         output_command          <= x"FFFFFFFFFFFF";
-    --Data is shifted on falling edge of clock. This is necessary.
+    --Data is shifted on falling edge of clock.
     elsif falling_edge(clk) then  
-    --cmdstarbit allows the start bit to stay for two falling edges that it can be sampled.     
+    --cmdstarbit is a once off start bit align.      
     if (command_load_en = '1') then				
         cmdstartbit <= '1';
     end if;
@@ -982,8 +996,10 @@ crc7_gen:	process(rst_n, clk)
 							end if;
 					end if;		
 	end process crc7_gen;
-	
-	--Read an SD repsonse. Similar response processes for R1,R2
+
+--Below are incoming response handlers which sample the cmd lines
+--for responses sent after commands. 
+
 cmd_read_r1_response:	process(rst_n, clk)
 	begin
     if (rst_n = '0') then
@@ -1120,6 +1136,7 @@ if (rst_n = '0') then
     voltage_switch_done <= '0';
 elsif rising_edge(clk) then
         if (voltage_switch_en_signal = '1') then  
+                --Follower signals allow detecting a transition once and not multiple times. 
                 if(d0_signal_in_follower /= d0_signal_in) then
                         d0_signal_in_follower <= d0_signal_in;
                         if (d0_signal_in = '1') then

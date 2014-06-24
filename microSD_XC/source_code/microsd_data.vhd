@@ -76,12 +76,12 @@ use IEEE.MATH_REAL.ALL ;
 
 ------------------------------------------------------------------------------
 --
---! @brief      sd_data is the portion of microsd_controller which handles write comms with sd card.
+--! @brief      sd_data is the portion of microsd_controller which handles write communications with sd card.
 --! @details     
 --!
 --! @param      clk             Input clock, Data Component Logic Clk and Data Transmission Clock  
---! @param      rst_n           Start signal from input pushbutton
---! @param      sd_init_start           Reset to initial conditions.
+--! @param      rst_n           Reset to initial conditions.
+            
 --! @param      sd_control              Used to select pathway in Data Component.
 --! @param      sd_status               Current State of State Machine.
 --!
@@ -89,7 +89,7 @@ use IEEE.MATH_REAL.ALL ;
 --! @param      block_byte_wren         Signals that a data byte has been read. Ram wr_en.    
 --! @param      block_read_sd_addr      Address to read block from on sd card.
 --!                               
---! @param      block_byte_addr         Address to write read data to in ram..
+--! @param      block_byte_addr         Address to write read data to in ram.
 --!                              
 --! @param      block_write_sd_addr     Address where block is written on sd card.
 --!
@@ -119,10 +119,10 @@ use IEEE.MATH_REAL.ALL ;
 --! @param      D3_signal_in        Read value of the tri-stated line.   
 --! @param      card_rca            Card RCA is passed from init.
 --! @param      init_done           Card has passed init phase.
---! @param      signalling_18_en    Card should go into 1.8V mode during init.
+
 --! @param      hs_sdr25_mode_en        Card should transition to hs_sdr25 mode before first CMD25. 
---! @param      init_out_sclk_signal      400k init clocked out to voltage switching process.
---! @param      voltage_switch_en      Enable voltage switching sequence.    
+
+ 
 --! @param      dat0                dat0 line out
 --! @param      dat1                dat1 line out
 --! @param      dat2                dat2 line out
@@ -139,13 +139,12 @@ entity microsd_data is
 
         clk								    :in	    std_logic;                          
         rst_n							    :in	    std_logic;
-        sd_init_start				        :in	    std_logic;	                        
+                        
 		  
 		
         sd_control					        :in	    std_logic_vector(7 downto 0);       
         sd_status						    :out	std_logic_vector(7 downto 0);       
 		  
-		  --Data Signals
 
 
         block_byte_data			            :out	std_logic_vector(7 downto 0);		
@@ -183,10 +182,10 @@ entity microsd_data is
 		  
 
         init_done						    :in    std_logic;                           
-        signalling_18_en			        :in     std_logic;                          
+                       
         hs_sdr25_mode_en				    :in     std_logic;                           
 
-        init_out_sclk_signal			    :out    std_logic;                          
+                      
             
     --SD Signals 
         voltage_switch_en			        :out    std_logic;                           
@@ -205,7 +204,7 @@ entity microsd_data is
 end microsd_data;
 
 
---! sd_data is responsible for writing, reading, and erase the card. It also handles switching into 4 bit mode 
+--! sd_data is responsible for writing, reading, and erase of the card. It also handles switching into 4 bit mode 
 --! and also switching  into different speed modes. 
 --! 
 --! 
@@ -263,7 +262,6 @@ END component;
 								CMD25_INIT_4,CMD25_SEND_4,CMD25_READ_4,CMD25_DATA_4,CMD25_DATA_INIT_4,
 								CMD25_DATA_4_READ_12,CMD25_DATA_4_READ_13MULTI,
 								CMD25_DATA_4_READ_12_CRC_SUCCESS,CMD25_DATA_4_READ_13MULTI_CRC_SUCCESS,
-							--	CMD25_DELAY,
 								CMD55_INIT, CMD55_SEND, CMD55_READ,
 								CMD55_INIT_ACMD6, CMD55_SEND_ACMD6, CMD55_READ_ACMD6,
 								CMD55_INIT_ACMD42, CMD55_SEND_ACMD42, CMD55_READ_ACMD42,
@@ -281,7 +279,6 @@ END component;
 								CMD13_INIT, CMD13_SEND, CMD13_READ,
 								CMD13_INIT_MULTI, CMD13_SEND_MULTI, CMD13_READ_MULTI,
 								CMD13_INIT_MULTI_4, CMD13_SEND_MULTI_4, CMD13_READ_MULTI_4,
-                            --  CMD3_INIT, CMD3_SEND, CMD3_READ, 
 								DELAY,
 							--  APP_CMD12_CLEAR_BUFFER, APP_CMD17_CLEAR_BUFFER, APP_ACK_WAIT, 
 								IDLE, ERROR);
@@ -349,7 +346,7 @@ END component;
 	signal	block_start_flag			:   std_logic;
     --Data being read
 	signal	block_byte_data_signal	    :   std_logic_vector(7 downto 0);
-    --Data done being read and presented to the outside inbetween chars.    
+    --Data done being read and presented to the outside inbetween bytes.    
 	signal	block_byte_data_signal_out	:   std_logic_vector(7 downto 0);
     --Sync bit 0 of read to block_bit_count 0. Otherwise off by one.    
 	signal 	start_read_bit				:   std_logic;	                                             
@@ -364,7 +361,6 @@ END component;
 
 	
 	--SD Card I/O signals
-    --CMD in SD
 	signal	CMD_signal					:   std_logic;	    
 	signal	dat0_signal					:   std_logic;	    
 	signal	dat1_signal					:   std_logic;					
@@ -433,10 +429,9 @@ END component;
 	
 
 --Master Block write process signals.
-    --Enable multiblock write process
+    --Enable for single block writes.
     signal 	block_write_process_en 			:	std_logic;			                
     
---Master block write process signals
     --Address for reading 512byte ram of tracking collar system --Starts at address 0.
 	signal 	ram_read_address_signal			:	std_logic_vector(8 downto 0);
     --Keep track of number of bits written while writing
@@ -455,7 +450,7 @@ END component;
     
     --Single block done flag
     signal 	block_write_done			    :	std_logic;
-    --Number of blocks to stream in a multiblock write
+    --Number of blocks that have been written. Checked to flag multiblock write done.
 	signal 	num_blocks_written				:	integer range 0 to 2**16 - 1;	        
     
     --A Multiblock write has finished
@@ -472,7 +467,7 @@ END component;
 --FSM Flow Signals
     --Flag to only execute the ACMD6 wide mode switch once vs after every exit from APP_WAIT.
 	signal widedone 			            :   std_logic;
-    --Flag to only execute after the CMD6 Access Mode Switch has been completed.
+--Flag to only execute after the CMD6 Access Mode Switch has been completed.
 	signal ac_mode_switch_done              :   std_logic;			                 
 	
 
@@ -633,7 +628,6 @@ end process;
 	D0_signal_in_signal <= D0_signal_in;
 	ram_read_address <= ram_read_address_signal;
 
-	--Signals to output mapping.Data read off sd card signals. 
 	block_byte_data	<= block_byte_data_signal_out	;		
 	block_byte_wren	<= block_byte_wren_signal	;									
 	block_byte_addr <= ram_write_address_signal;
@@ -703,7 +697,7 @@ end process;
 					when x"03" =>                                       
 						next_state <= CMD24_INIT;
                         
-                    -- Perform a multiblock write 
+                    -- Perform a multiblock write single bit
 					when x"04" => 
                         --If the hs_sdr25 bit set, insert a CMD6 to switch to sdr25 mode. 
 						if (hs_sdr25_mode_en = '1') then                
@@ -731,7 +725,7 @@ end process;
 					if (widedone = '0') then
                             --Do a wide mode (4bit switch). This requires a CMD55 followed by an ACMD6. 
 							next_state <= CMD55_INIT_ACMD6;
-                            --hs_sdr25_mode_en check is tied into the 
+                            --hs_sdr25_mode_en check and switch is tied into the 
                             --next state logic. Unlike in the single bit case above.                             
 					else 
                         --If already in 4 bit mode, start or continue writing. 
@@ -822,7 +816,7 @@ end process;
 					
 			when CMD25_DATA_READ_12 =>	
 					if(read_data_token_reponse_done = '1') then
-                        --Check that data was received okay. Mysterious!!! SPI Data token of SD card mode. 
+                        --Check that data was received okay. Mysterious SPI Data token of SD card mode. 
 						if(read_data_token_byte(3 downto 1) = "010") then	
 								next_state <= CMD12_INIT;	
 	
@@ -835,7 +829,7 @@ end process;
 					
 			when CMD25_DATA_READ_13MULTI =>	
 					if(read_data_token_reponse_done = '1') then
-                        --Check that data was received okay. Mysterious!!! SPI Data token of SD card mode. 
+                        --Check that data was received okay. Mysterious SPI Data token of SD card mode. 
 						if(read_data_token_byte(3 downto 1) = "010") then	
 								next_state <= CMD13_INIT_MULTI;	
 	
@@ -892,7 +886,7 @@ end process;
                     
                     
                 -----------
-				-- Read the data response token that comes after a sent block. 
+				--Read the data response token that comes after a sent block. 
                 --Jump to appropriate CMD (12/13) depending if we want to send more blocks.
                 -----------
 					
@@ -923,7 +917,7 @@ end process;
                     
                     
                 -----------
-				-- CRC SUCCESS states. These are included to detect if the last block was received correctly.
+				--CRC SUCCESS states. These states are included to detect if the last block was received correctly.
                 -----------
 				
 			when CMD25_DATA_4_READ_12_CRC_SUCCESS =>	
@@ -946,13 +940,13 @@ end process;
                 -----------
 
 --CMD 13's broken into single bit and multi bit and inbetween 
---blocks and at the end of a CMD25. 
+--blocks and at the end of a CMD25/CMD12 
 --CMD13 Returns card status field in an R1 response. 
 --Used for checking 
 --that card is READY_FOR_DATA inbetween blocks of 
 --a multiblock write primarily. 
 --Other bits of interest are APP_CMD, ILLEGAL COMMAND, etc.
-			--Used anywhere but inbetween blocks of a multiblock write. 
+			--CMD13_ is used anywhere but inbetween blocks of a multiblock write. 
 			when CMD13_INIT => 								
 				next_state <= CMD13_SEND;
 				
@@ -980,7 +974,7 @@ end process;
                 --sending another block to the 
                 --card in a multiblock stream/write.
                 -----------
-                --The 1 bit multiblock path
+                --**The CMD13 for the 1 bit multiblock path**
 			--CMD13 string of commands used with CMD25 Multiblock write. 
             --Used between blocks of a multiblock write.	
 			when CMD13_INIT_MULTI => 						
@@ -1032,14 +1026,14 @@ end process;
 				end if;
                 
                 
-            		-----------
-					--CMD7(SELECT/DESELECT_CARD) 
-                    --Take card from Standby to Transfer State.
-					----------- 
-                    --After init, take the card from standby to transfer mode.
-                    --A nice state diagram exists in the SD SPEC. Page 27.            
-                    --Command to take SD card from standby mode to transfer mode, 
-                    --from which data writing is initiated. 
+                -----------
+                --CMD7(SELECT/DESELECT_CARD) 
+                --Take card from Standby to Transfer State.
+                ----------- 
+                --After init, take the card from standby to transfer mode.
+                --A nice state diagram exists in the SD SPEC. Page 27.            
+                --Command to take SD card from standby mode to transfer mode, 
+                --from which data writing is initiated. 
 			when CMD7_INIT =>				  
 						next_state <= CMD7_SEND;
 
@@ -1062,7 +1056,7 @@ end process;
 				--CMD6 is the function switch command. Page 41 SD Spec 3.01
                 --1 bit pathway               
                 
-             --CMD6 is the function switch command.
+            --CMD6 is the function switch command.
             --We can change speeds and current levels. See page 44 Sd Spec 3.01
 			when CMD6_INIT =>				                   
 						next_state <= CMD6_SEND;
@@ -1074,8 +1068,9 @@ end process;
 				end if;
 				
 			when CMD6_READ =>
-                --CMD6 inquiry and set function both included 512 bits sent to the host over D0. 
-                --We must wait for these. 
+                --CMD6 inquiry and set function both included 512 bits sent back to the host over D0. 
+                --We must wait for these even if we don't do anything with them currently.
+                --Response was checked and written up to verify it was done correctly. 
                 if (CMD6_D0_read_done = '1') then 			
                     next_state <= CMD25_INIT;	
                     
@@ -1102,7 +1097,8 @@ end process;
 				
 			when CMD6_READ_4 =>
                 --CMD6 inquiry and set function both included 512 bits sent to the host over D0. 
-                --We must wait for these. 
+                --We must wait for these bit before proceeding, even if they aren't checked
+                --with program
                 if (CMD6_D0_read_done = '1') then 			
                     next_state <= CMD25_INIT_4;	
 				end if;
@@ -1213,7 +1209,7 @@ end process;
 			when CMD55_READ =>
 				if (read_r1_response_done = '1') then
                 --This bit is the APP_CMD bit of the status register. 
-                --The other bit set on first CMD55 response is READY FOR DATA.				
+                --The other bit set on CMD55 response is READY FOR DATA.				
 					if (r1_response_bytes(13) = '1') then
 						next_state <= return_state;			
 					else
@@ -1360,10 +1356,10 @@ end process;
 				next_state <= ERROR;
 				
 				
--- The following CMD55 are pathways to get to particular APP CMDS. 
+--The following CMD55s are pathways to get to particular APP CMDS. 
 --Each APP CMD has its one CMD55 pathway. 
---This method was done as return_state provided warnings initially. 
--- Send CMD55 (APP_CMD) to the SD card to preface impending 
+--This method was done creating a return_state enumeration caused warnings initially. 
+--Send CMD55 (APP_CMD) to the SD card to preface impending 
 --application-specific command
 			when CMD55_INIT_ACMD6 =>  
 				next_state <= CMD55_SEND_ACMD6;
@@ -1800,8 +1796,8 @@ end process;
             dat1_signal <= '1';
             dat2_signal <= '1';
             dat3_signal <= '1';	
-            --This command it attempting a switch "80" [most sig bit] and changing
-            --to high speed mode, "FFFFF1", the one being the switch.                
+            --This command it attempting an actual switch "80" rather than a check [most sig bit] and changing
+            --to high speed mode, "FFFFF1", the '1' being the mode switch.                
             command_signal <= '0' & '1' & "000110" & x"80" & x"FFFFF1"  &  x"01";  
             
             command_load_en <= '1';
@@ -1816,8 +1812,8 @@ end process;
             when CMD6_SEND =>
                 
             CMD_signal <= output_command(47);
-            --This command it attempting a switch "80" [most sig bit] and changing 
-            --to high speed mode, "FFFFF1", the one being the switch.
+            --This command it attempting an actual switch "80" rather than a check [most sig bit] and changing
+            --to high speed mode, "FFFFF1", the '1' being the mode switch.
             command_signal <= '0' & '1' & "000110" & x"80" & x"FFFFF1"  &  x"01";  
             dat0_signal <= '1';
             dat1_signal <= '1';
@@ -1863,8 +1859,8 @@ end process;
             dat1_signal <= '1';
             dat2_signal <= '1';
             dat3_signal <= '1';
-            --This command it attempting a switch "80" [most sig bit] and changing 
-            --to high speed mode, "FFFFF1", the one being the switch.                
+            --This command it attempting an actual switch "80" rather than a check [most sig bit] and changing
+            --to high speed mode, "FFFFF1", the '1' being the mode switch.               
             command_signal <= '0' & '1' & "000110" & x"80" & x"FFFFF1"  &  x"01";  
             
             command_load_en <= '1';
@@ -1879,8 +1875,8 @@ end process;
             when CMD6_SEND_4 =>
                 
             CMD_signal <= output_command(47);
-            --This command it attempting a switch "80" [most sig bit] and 
-            --changing to high speed mode, "FFFFF1", the one being the switch.
+            --This command it attempting an actual switch "80" rather than a check [most sig bit] and changing
+            --to high speed mode, "FFFFF1", the '1' being the mode switch.
             command_signal <= '0' & '1' & "000110" & x"80" & x"FFFFF1"  &  x"01";  
             dat0_signal <= '1';
             dat1_signal <= '1';
@@ -1915,10 +1911,10 @@ end process;
                 
             -----------
             --ACMD13(SD_STATUS)  
-            --Program/Deprogram the pullup resistor on D3. 
-            --Tested but never used. 
+            --Send back the sd status. 
+            --Only used for debug currently. 
+            --512 status bits will come back on the D0 line.
             -----------
-            
         
             when ACMD13_INIT =>
                                         
@@ -1975,9 +1971,11 @@ end process;
             
             
             -----------
-            --ACMD42(SET_CLR_CARD_DETECT) 
-            --Send back the sd status register. Used for Debug.
-            -----------
+            --ACMD42(SET_CLR_CARD_DETECT)  
+            --Program/Deprogram the pullup resistor on D3.
+            --Tested but never used.
+            -----------      
+            --Never implemented, but played with during debugging. 
             
             when ACMD42_INIT =>
                 
@@ -2705,8 +2703,9 @@ end process;
             --if the card is ready for data before sending another         
             --block to the card in a multiblock stream/write.
             --4 bit path.
+            -----------
         
-                when CMD13_INIT_MULTI_4 =>
+            when CMD13_INIT_MULTI_4 =>
                                 
             CMD_signal <= '1';
             dat0_signal <= '1';
@@ -3004,7 +3003,6 @@ end process;
             D2_write_en 			<= '0';
             D3_write_en 			<= '0';
             
-            --widedone <= '1';
             
             
             -----------
@@ -3252,6 +3250,7 @@ end process;
 	
 -------------------
 -- Delay Process --
+--Used upon first coming into microsd_data.--
 -------------------
 	
 first_delay :	process(rst_n, clk) is
@@ -3276,13 +3275,14 @@ first_delay :	process(rst_n, clk) is
 	
 	--Overview of data flow, crc7 gen, and sampling.
 	--Data is moved on the negative edge of the clock so its ready for 
-    --sampling on the positive edge of the clock. SD card is strictly 
+    --sampling on the positive edge of the clock at the SD Card. SD card is strictly 
     --rising edge sampling, apart from more advanced ddr modes.
 	--The crcs are updated at the same time that data is sampled, 
     --on the rising edge of the clock.
     --The final bit of a crc is quick. The data must be sampled on 
     --the rising edge, and the crc appended and put on line for sampling on following rising edge.
     --This is how it is currently done.
+    
 	--CRC7 process. --Enabled on ANY CMDXX_SEND state. This process
     --is compact. The crc7 is generated streaming and readied within 
     --1/2 clock cycle for append to streaming data. 
@@ -3490,7 +3490,7 @@ elsif falling_edge(clk) then
     if (command_load_en = '1') then				
         cmdstartbit <= '1';
     end if;
-        command_send_done <= '0';  -- Default Value
+        command_send_done <= '0';  
         if (command_send_en = '1') then						
             if (command_send_bit_count = 48) then
                 command_send_done <= '1';
@@ -3511,7 +3511,8 @@ elsif falling_edge(clk) then
     end if;
 end process cmd_send;
 	
-
+--Below are incoming response handlers which sample the cmd lines
+--for response sent after commands. 
 	
 read_r1_response:	process(rst_n, clk)
 begin
@@ -3528,7 +3529,7 @@ elsif rising_edge(clk) then
         if (read_bytes(47) = '0') then
             read_r1_response_done <= '1';
             r1_response_bytes <= read_bytes;
-            --Debug register to look at card status field of r1 reponse
+            --Debug register to look at card status field of r1 response
             response_1_status <= read_bytes(39 downto 8); 
             --A debug register to look at CARD STATE of the card status reponse field.
             response_1_current_state_bits <= read_bytes(20 downto 17); 
@@ -3568,14 +3569,18 @@ end process read_r6_response;
 	
 
 ------------------------------------------------------------------------
----- Single Block WRITE and Multi Block Write  Card Data --
+---- Single Block WRITE and Multi Block Write Card Data --
+--This is the block writing process. It handles both single block and 
+--multi block writing to the sd card. Supporting processes such as the
+--crc gen processes aid it, but the actual data movement is here.
 -----------------------------------------------------------------------
 master_block_write: process(rst_n, clk) is
 	begin
     if (rst_n = '0') then
         wr_block_bit_count <= 0;
         wr_block_byte_count <= 0;
-        --Best to initialized lines and data to F as start bit is always  in sd comms.
+        --Best to initialized lines and data to F as start bit 
+        --is always '0' in communications.
         wr_block_byte_data <= x"FF";        
         load <= '1';						
         ram_read_address_signal <= "000000000";
@@ -3585,6 +3590,7 @@ master_block_write: process(rst_n, clk) is
 
     --falling edge of sclk. --DATA IS SHIFTED/LOADED ON THE FALLING EDGE OF TRANSMISSION CLOCK.
     elsif falling_edge(clk) 	then 
+        
         if (block_write_process_en = '1' or block_write_process_en_4 = '1') then
             --Make sure start bit goes through.                                
             if ( start_bit = '0') then			
@@ -3636,7 +3642,7 @@ master_block_write: process(rst_n, clk) is
                         if (wr_block_byte_count = 511) then
 
                             
-                            --wr_block_byte_data <= crc16_signal_D0(15 downto 8); 
+                             
                             --Append the first 8 bits of the crc16
                             append_crc_4_bit <= '1';
                             --Grab/Store the entire crc16 at this moment
@@ -3711,7 +3717,7 @@ master_block_write: process(rst_n, clk) is
         else
             wr_block_bit_count <= 0;
             wr_block_byte_count <= 0;
-            --Best to initialized lines and data to F as start bit is always  in sd comms.
+            
             wr_block_byte_data <= x"FF";        
             load <= '1';						
             ram_read_address_signal <= "000000000";
@@ -3725,7 +3731,9 @@ end process;
 
 	
 	---------------------------------------
-	-- Single Block Write Done --
+	-- Block Write Done Signals --
+    -- Signal that one block has finished writing--
+    -- Multi block is the next process--
 	---------------------------------------
 
  block_write_finished:process(rst_n, clk) is
@@ -3756,7 +3764,8 @@ begin
                     end if;	
                 end if;
         else	
-                --We need to keep num_blocks_written around inbetween CMD25, but reset once we leave multiblock_en zone.
+                --We need to keep num_blocks_written around inbetween CMD25, 
+                --but reset once we leave multiblock_en zone.
                 if(multiblock_en = '1') then									
                     num_blocks_written <= num_blocks_written;				 
                     block_write_done <= '0';
@@ -3772,6 +3781,8 @@ end process block_write_finished;
 
 ---------------------------------------
 -- Multiblock Write Done --
+-- Signal that the entire multiblock has finished--
+-- Done by counting the number of single blocks written--
 ---------------------------------------
 process(num_blocks_written) is
 	begin
@@ -3795,9 +3806,11 @@ end process;
 
 --------------------------
 -- Block Read Card Data --
+-- Process responsible for sampling data -- 
+-- line when reading from card --
 --------------------------
 -- Shift Register and Start Byte Sync
-	read_shifter: process(rst_n, clk) is
+read_shifter: process(rst_n, clk) is
 	begin
     
     if (rst_n = '0') then
@@ -3838,9 +3851,14 @@ end process;
         end if;
         
     end if;
-	end process read_shifter;
+end process read_shifter;
 	
-	-- Memory Write Enable Signal Generation, Byte Counter, and Address Counter for Single Block Read.
+    
+--------------------------
+-- Memory Write Enable Signal Generation -- 
+-- Byte Counter, and --
+-- Address Counter for Single Block Read. --
+--------------------------
 read_lines_handler: process(rst_n, clk) is
 	begin
     if (rst_n = '0') then
@@ -3882,7 +3900,9 @@ read_lines_handler: process(rst_n, clk) is
             end if;
         else
             block_byte_wren_signal <= '0';
-            --Rather than do another once off flag.....I'll roll over on first increment to byte 0 address. Otherwise byte 0 is written to address 1. 
+            --Rather than do another once off flag.....
+            --I'll roll over on first increment to byte 0 address. 
+            --Otherwise byte 0 is written to address 1. 
             ram_write_address_signal <= (others => '1');				
             block_byte_count <=  "0000000000";
         end if;
@@ -3890,8 +3910,11 @@ read_lines_handler: process(rst_n, clk) is
 	end process read_lines_handler;
 	
 	
-	-- Block Read Done Generation Process
-	block_read_done: process(rst_n, clk) is
+    
+--------------------------
+-- Block Read Done Generation Process -- 
+--------------------------    
+block_read_done: process(rst_n, clk) is
 	begin
     if (rst_n = '0') then
         CMD6_D0_read_done <= '0';
@@ -3916,6 +3939,11 @@ read_lines_handler: process(rst_n, clk) is
     end if;
 	end process block_read_done;
 	
+    
+    
+--------------------------
+-- Track wide mode (4bit) switch complete --
+--------------------------
 wide_mode_switch_done:	process(rst_n, clk)				
 	begin												
 		if (rst_n = '0') then
@@ -3926,6 +3954,10 @@ wide_mode_switch_done:	process(rst_n, clk)
 			end if;
 		end if;
 	end process wide_mode_switch_done;
+    
+--------------------------
+-- Track Change into HS/SDR25 Mode via CMD6  --
+--------------------------    
 	
 ac_mode_switch_done_process:	process(rst_n, clk)				
 	begin															
@@ -3938,6 +3970,17 @@ ac_mode_switch_done_process:	process(rst_n, clk)
 		end if;
 	end process ac_mode_switch_done_process;
 	
+    
+--------------------------
+-- Data Response Token Handler  --
+-- After sending write data to the sd card --
+-- via CMD25, a response comes back immediately --
+-- on the D0 line. This response is a Data Response --
+-- token indicating data accepted or not --
+-- This is not immediately evident in the SD protocol --
+-- and the formation of the response is under the SPI --
+-- section of the manual. PAGE 132 of 3.01 spec. --
+--------------------------   
 	
 		
 READ_DATA_TOKEN_RESPONSE: process(rst_n, clk)
@@ -4037,7 +4080,14 @@ end process;
 
 
 
---Last block address and success flag generation. 
+--------------------------
+-- data_current_block_written --
+-- and
+-- sd_block_written_flag --
+-- generation. --
+-- Generate the last successful address written global --
+-- output as well as the valid pulse which accompanies it. --
+--------------------------
 
 address_success : process (rst_n, clk)
 begin
