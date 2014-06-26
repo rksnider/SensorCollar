@@ -1,0 +1,186 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>mif_gen_rand</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-06-26"><meta name="DC.source" content="mif_gen_rand.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Verification of MicroSD_controller</a></li><li><a href="#2">The Altera MIF file has a specific format and header.</a></li><li><a href="#3">Construct 512 bytes of data</a></li><li><a href="#4">512 bytes * 2048 block (1MB) binary .bin file.</a></li><li><a href="#5">Usage</a></li></ul></div><h2>Verification of MicroSD_controller<a name="1"></a></h2><p>This script generates a mif memory ininitialization file for use with the microsd_controller_tester vhdl files associated with the microsd_controller component. The script also generates a .bin file for use with the unix compare function (cmp()). This is so a dump of the SD card in linux can be verified.</p><p>A 512 byte mif file for initialization of microsd_controller_tester top port ram. This ram is initialized with random 8 bit integer values. The mif file takes strings of the hex values. However the bin file must be constructed into strict binary.</p><pre class="codeinput"><span class="comment">% Filename:     	mif_bin_gen_rand.m</span>
+<span class="comment">% Description:  	The script generates verification files for</span>
+<span class="comment">%                   microSD_controller</span>
+<span class="comment">%</span>
+<span class="comment">% Author:			Christopher Casebeer</span>
+<span class="comment">% Lab:              Dr. Snider</span>
+<span class="comment">% Department:       Electrical and Computer Engineering</span>
+<span class="comment">% Institution:      Montana State University</span>
+<span class="comment">% Support:          This work was supported under NSF award No. DBI-1254309</span>
+<span class="comment">% Creation Date:	June 2014</span>
+
+
+fid = fopen(<span class="string">'512byte_rand.mif'</span>,<span class="string">'w'</span>);
+fid2 = fopen(<span class="string">'512byte_rand.bin'</span>,<span class="string">'w'</span>);
+</pre><h2>The Altera MIF file has a specific format and header.<a name="2"></a></h2><pre class="codeinput">fprintf(fid,<span class="string">'--MIF data generated by MATLAB\n'</span>);
+fprintf(fid,<span class="string">'--Date: %s \n\n'</span>, date);
+fprintf(fid,<span class="string">'WIDTH=8;\n'</span>);
+fprintf(fid,<span class="string">'DEPTH=512;\n'</span>);
+fprintf(fid,<span class="string">'ADDRESS_RADIX=HEX;\n'</span>);
+fprintf(fid,<span class="string">'DATA_RADIX=HEX;\n'</span>);
+fprintf(fid,<span class="string">'CONTENT BEGIN\n'</span>);
+</pre><h2>Construct 512 bytes of data<a name="3"></a></h2><pre class="codeinput">i = randi([0 255],1,1);
+<span class="keyword">for</span> k = 0:511
+<span class="comment">%Convert to 8 bit unsigns for the bin file.</span>
+a(k+1) = uint8(i);
+<span class="comment">%The mif file takes strings representing the hex values.</span>
+fprintf(fid,<span class="string">'%x : %x;\n'</span>,k,i);
+
+i = randi([0 255],1,1);
+
+<span class="keyword">end</span>
+</pre><h2>512 bytes * 2048 block (1MB) binary .bin file.<a name="4"></a></h2><p>fwrite constructs a binary file. repmat replicates 512 bytes 2048 times for a total of 1MB of data.</p><pre class="codeinput">fwrite(fid2,repmat(a,1,2048));
+fprintf(fid,<span class="string">'END;'</span>);
+fclose(fid2);
+fclose(fid);
+</pre><h2>Usage<a name="5"></a></h2><p>The .mif file should be supplied to the microSD_controller_tester files for initialization of the 2 port ram. The 2 port ram supplies the test data microsd_controller writes to the SD card.</p><p>The .bin file should be copied to a linux environment. A dd command should be used to dump 2048 blocks off the SD card after the microsd_controller_tester file has been compiled and run on the FPGA and attached SD card. A USB reader was used to read the microSD card. A command &#8220;dd if=/dev/sdb of=/home/user/desktop/2048_dd_dump.bin count= 2048&#8221; can be used for the dump.</p><p>After having used dd to dump 1MB or 2048 blocks off the SD card starting at address 0 a compare should be done between the dumped data and the generated .bin file. This can be accomplished with the unix cmp function. A command such as "cmp 2048_dd_dump.bin 512byte_rand.bin" should return 0. If so the microsd_controller has written 1MB of the 512 byte random data successfully to the attached SD card.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Verification of MicroSD_controller
+% This script generates a mif memory ininitialization file for use with the
+% microsd_controller_tester vhdl files associated with the
+% microsd_controller component. The script also generates a .bin file for
+% use with the unix compare function (cmp()). This is so a dump of the SD
+% card in linux can be verified.
+%
+% A 512 byte mif file for initialization of microsd_controller_tester
+% top port ram. This ram is initialized with random 8 bit integer values.
+% The mif file takes strings of the hex values. However the bin file must be
+% constructed into strict binary. 
+
+
+% Filename:     	mif_bin_gen_rand.m
+% Description:  	The script generates verification files for
+%                   microSD_controller
+%                   
+% Author:			Christopher Casebeer
+% Lab:              Dr. Snider
+% Department:       Electrical and Computer Engineering
+% Institution:      Montana State University
+% Support:          This work was supported under NSF award No. DBI-1254309
+% Creation Date:	June 2014	
+
+
+fid = fopen('512byte_rand.mif','w');
+fid2 = fopen('512byte_rand.bin','w');
+
+%% The Altera MIF file has a specific format and header.
+
+fprintf(fid,'REPLACE_WITH_DASH_DASHMIF data generated by MATLAB\n');
+fprintf(fid,'REPLACE_WITH_DASH_DASHDate: %s \n\n', date);
+fprintf(fid,'WIDTH=8;\n');
+fprintf(fid,'DEPTH=512;\n');
+fprintf(fid,'ADDRESS_RADIX=HEX;\n');
+fprintf(fid,'DATA_RADIX=HEX;\n');
+fprintf(fid,'CONTENT BEGIN\n');
+
+%% Construct 512 bytes of data
+
+i = randi([0 255],1,1);
+for k = 0:511
+%Convert to 8 bit unsigns for the bin file. 
+a(k+1) = uint8(i);
+%The mif file takes strings representing the hex values.
+fprintf(fid,'%x : %x;\n',k,i);
+
+i = randi([0 255],1,1);
+       
+end
+%% 512 bytes * 2048 block (1MB) binary .bin file.
+% fwrite constructs a binary file. repmat replicates 512 bytes 2048 times
+% for a total of 1MB of data. 
+
+
+fwrite(fid2,repmat(a,1,2048));
+fprintf(fid,'END;');
+fclose(fid2);
+fclose(fid);
+
+%% Usage
+% The .mif file should be supplied to the microSD_controller_tester files
+% for initialization of the 2 port ram. The 2 port ram supplies the test
+% data microsd_controller writes to the SD card. 
+%
+% The .bin file should be copied to a linux environment. A dd command
+% should be used to dump 2048 blocks off the SD card after the
+% microsd_controller_tester file has been compiled and run on the FPGA and
+% attached SD card. A USB reader was used to read the microSD card. A
+% command “dd if=/dev/sdb of=/home/user/desktop/2048_dd_dump.bin count= 2048”
+% can be used for the dump.
+%
+% After having used dd to dump 1MB or 2048 blocks off the SD card starting
+% at address 0 a compare should be done between the dumped data and the
+% generated .bin file. This can be accomplished with the unix cmp function.
+% A command such as "cmp 2048_dd_dump.bin 512byte_rand.bin" should return
+% 0. If so the microsd_controller has written 1MB of the 512 byte random
+% data successfully to the attached SD card.
+
+##### SOURCE END #####
+--></body></html>
