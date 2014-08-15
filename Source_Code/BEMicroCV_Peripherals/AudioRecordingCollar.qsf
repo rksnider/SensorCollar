@@ -1,0 +1,142 @@
+# -------------------------------------------------------------------------- #
+#
+# Copyright (C) 1991-2013 Altera Corporation
+# Your use of Altera Corporation's design tools, logic functions 
+# and other software and tools, and its AMPP partner logic 
+# functions, and any output files from any of the foregoing 
+# (including device programming or simulation files), and any 
+# associated documentation or information are expressly subject 
+# to the terms and conditions of the Altera Program License 
+# Subscription Agreement, Altera MegaCore Function License 
+# Agreement, or other applicable license agreement, including, 
+# without limitation, that your use is for the sole purpose of 
+# programming logic devices manufactured by Altera and sold by 
+# Altera or its authorized distributors.  Please refer to the 
+# applicable agreement for further details.
+#
+# -------------------------------------------------------------------------- #
+#
+# Quartus II 64-Bit
+# Version 13.1.0 Build 162 10/23/2013 SJ Full Version
+# Date created = 14:59:10  August 15, 2014
+#
+# -------------------------------------------------------------------------- #
+#
+# Notes:
+#
+# 1) The default values for assignments are stored in the file:
+#		AudioRecordingCollar_assignment_defaults.qdf
+#    If this file doesn't exist, see file:
+#		assignment_defaults.qdf
+#
+# 2) Altera recommends that you do not modify this file. This
+#    file is updated automatically by the Quartus II software
+#    and any changes you make may be lost or overwritten.
+#
+# -------------------------------------------------------------------------- #
+
+set_global_assignment -name PRE_FLOW_SCRIPT_FILE    quartus_sh:at_compile_start.tcl
+# set_global_assignment -name POST_MODULE_SCRIPT_FILE quartus_sh:at_compile_module_end.tcl
+# set_global_assignment -name POST_FLOW_SCRIPT_FILE   quartus_sh:at_compile_end.tcl
+
+set_global_assignment -name FAMILY "Cyclone V"
+set_global_assignment -name DEVICE 5CEFA2F23C8
+set_global_assignment -name TOP_LEVEL_ENTITY BEMicroCV
+set_global_assignment -name ORIGINAL_QUARTUS_VERSION 13.1
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "14:59:10  AUGUST 15, 2014"
+set_global_assignment -name LAST_QUARTUS_VERSION 13.1
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
+set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
+set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 256
+set_global_assignment -name EDA_SIMULATION_TOOL "ModelSim-Altera (VHDL)"
+set_global_assignment -name EDA_OUTPUT_DATA_FORMAT VHDL -section_id eda_simulation
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
+set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+set_location_assignment PIN_N1 -to user_led_n[0]
+set_location_assignment PIN_N2 -to user_led_n[1]
+set_location_assignment PIN_U1 -to user_led_n[2]
+set_location_assignment PIN_U2 -to user_led_n[3]
+set_location_assignment PIN_W2 -to user_led_n[4]
+set_location_assignment PIN_AA1 -to user_led_n[5]
+set_location_assignment PIN_AA2 -to user_led_n[6]
+set_location_assignment PIN_Y3 -to user_led_n[7]
+set_location_assignment PIN_C16 -to dip_sw[0]
+set_location_assignment PIN_D17 -to dip_sw[1]
+set_location_assignment PIN_G17 -to dip_sw[2]
+set_location_assignment PIN_H18 -to tact[0]
+set_location_assignment PIN_J18 -to tact[1]
+set_location_assignment PIN_E2 -to sd_cmd
+set_location_assignment PIN_L1 -to sd_clk
+set_location_assignment PIN_D3 -to sd_d[0]
+set_location_assignment PIN_L2 -to sd_d[1]
+set_location_assignment PIN_C1 -to sd_d[2]
+set_location_assignment PIN_C2 -to sd_d[3]
+set_location_assignment PIN_T22 -to sd_mon_clk
+set_location_assignment PIN_T15 -to sd_mon_cmd
+set_location_assignment PIN_R22 -to sd_mon_data[0]
+set_location_assignment PIN_R15 -to sd_mon_data[1]
+set_location_assignment PIN_R21 -to sd_mon_data[2]
+set_location_assignment PIN_R16 -to sd_mon_data[3]
+set_location_assignment PIN_V15 -to psd_clk
+set_location_assignment PIN_P18 -to psd_cmd
+set_location_assignment PIN_U15 -to psd_data[0]
+set_location_assignment PIN_U16 -to psd_data[1]
+set_location_assignment PIN_T14 -to psd_data[2]
+set_location_assignment PIN_V14 -to psd_data[3]
+set_location_assignment PIN_W22 -to psd_vsw1[0]
+set_location_assignment PIN_W21 -to psd_vsw1[1]
+set_location_assignment PIN_Y22 -to psd_vsw2[0]
+set_location_assignment PIN_Y21 -to psd_vsw2[1]
+set_location_assignment PIN_AA12 -to GPS_RX
+set_location_assignment PIN_AB11 -to GPS_TX
+set_location_assignment PIN_P12 -to GPS_TIMEMARK
+set_location_assignment PIN_Y15 -to GPS_TXD1
+set_location_assignment PIN_Y16 -to GPS_RXD1
+set_location_assignment PIN_Y17 -to GPS_ExtInt0
+set_location_assignment PIN_R10 -to Inertial_XM_CS
+set_location_assignment PIN_U11 -to Inertial_XM_Int1
+set_location_assignment PIN_T10 -to Inertial_XM_Int2
+set_location_assignment PIN_T9 -to Inertial_XM_MISO
+set_location_assignment PIN_M16 -to Inertial_MOSI
+set_location_assignment PIN_M18 -to Inertial_Clk
+set_location_assignment PIN_L17 -to Inertial_G_CS
+set_location_assignment PIN_L18 -to Inertial_G_Int
+set_location_assignment PIN_T17 -to Inertial_DRdy
+set_location_assignment PIN_T20 -to Inertial_G_DEn
+set_location_assignment PIN_K22 -to Inertial_G_MISO
+set_location_assignment PIN_M6 -to InertialDEn_G
+set_location_assignment PIN_N6 -to InertialInt_G
+set_location_assignment PIN_P6 -to InertialDRdy_G
+set_location_assignment PIN_R5 -to InertialInt1_XM
+set_location_assignment PIN_R6 -to InertialInt2_XM
+set_location_assignment PIN_T7 -to InertialCS_G
+set_location_assignment PIN_T8 -to InertialCS_XM
+set_location_assignment PIN_P14 -to InertialSPI_Clk
+set_location_assignment PIN_R14 -to InertialSPI_DO_G
+set_location_assignment PIN_T12 -to InertialSPI_DO_XM
+set_location_assignment PIN_T13 -to InertialSPI_DI
+set_location_assignment PIN_U17 -to MagRAM_CS
+set_location_assignment PIN_V18 -to MagRAM_MISO
+set_location_assignment PIN_W19 -to MagRAM_WriteProt
+set_location_assignment PIN_V19 -to MagRAM_Hold
+set_location_assignment PIN_V20 -to MagRAM_SPIclk
+set_location_assignment PIN_U20 -to MagRAM_MOSI
+set_location_assignment PIN_P9 -to MicData
+set_location_assignment PIN_M7 -to MicClk
+set_location_assignment PIN_H13 -to DDR3_CLK_50MHz
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -entity bemicrocv -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -entity bemicrocv -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -entity bemicrocv -section_id Top
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -entity bemicrocv -section_id Top
+set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "2.5 V"
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name VHDL_FILE compile_start_time_pkg.vhd
+set_global_assignment -name VHDL_FILE ../MainCollar/General/Utilities_pkg.vhd
+set_global_assignment -name VHDL_FILE ../MainCollar/General/GPS_Clock_pkg.vhd
+set_global_assignment -name VHDL_FILE ../MainCollar/Collar_Control_pkg.vhd
+set_global_assignment -name VHDL_FILE ../MainCollar/Collar.vhd
+set_global_assignment -name VHDL_FILE BEMicroCV.vhd

@@ -1,0 +1,48 @@
+#!/bin/bash
+#
+# --------------------------------------------------------------------------
+#
+##  @file       commit_timestamps.bsh
+#   @brief      Update all commit timestamp files with current time.
+#   @details    This script finds all files with the commit timestamp
+#               file name in the current directory tree and re-writes
+#               them with the current time (just prior to the project
+#               being comitted).  Seconds since the Unix epoch are used.
+#               (1970-01-01T00:00:00Z)
+#               This file will need to be renamed to 'pre-commit' in the
+#               '.git/hooks' directory or run from the script that is
+#               named 'pre-commit' there.
+#   @author     Emery Newlon
+#   @date       August 2014
+#   @copyright  Copyright (C) 2014 Ross K. Snider and Emery L. Newlon
+
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#   Emery Newlon
+#   Electrical and Computer Engineering
+#   Montana State University
+#   610 Cobleigh Hall
+#   Bozeman, MT 59717
+#   emery.newlon@msu.montana.edu
+#
+# --------------------------------------------------------------------------
+
+COMMIT_TIME=`date +%s`
+TIMESTAMP_NAME=commit_timestamp.log
+
+set +C
+
+for fname in `find . -name $TIMESTAMP_NAME -print` ; do
+  echo $COMMIT_TIME > $fname ;
+done

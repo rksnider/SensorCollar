@@ -1,0 +1,41 @@
+# --------------------------------------------------------------------------
+#
+##  @file       set_tcl_compile_scripts.qsf
+#   @brief      Script to set Quartus II's compile TCL scripts.
+#   @details    This Quartus Settings File sets the global variables
+#               in a Quartus project to run the specified TCL scripts
+#               at the specified points in the compile flow.
+#               The settings from this file must be made in the project
+#               to take effect.  This can be done by copying the lines to
+#               the top of the project's QSF file when Quartus is not
+#               running.  The QSF file will be named "project.qsf" with the
+#               word 'project' replaced by the project's actual name.
+#   @author     Emery Newlon
+#   @date       August 2014
+#   @copyright  Copyright (C) 2014 Ross K. Snider and Emery L. Newlon
+
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#   Emery Newlon
+#   Electrical and Computer Engineering
+#   Montana State University
+#   610 Cobleigh Hall
+#   Bozeman, MT 59717
+#   emery.newlon@msu.montana.edu
+#
+# --------------------------------------------------------------------------
+
+set_global_assignment -name PRE_FLOW_SCRIPT_FILE    quartus_sh:at_compile_start.tcl
+# set_global_assignment -name POST_MODULE_SCRIPT_FILE quartus_sh:at_compile_module_end.tcl
+# set_global_assignment -name POST_FLOW_SCRIPT_FILE   quartus_sh:at_compile_end.tcl
