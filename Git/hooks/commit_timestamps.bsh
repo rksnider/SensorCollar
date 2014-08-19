@@ -38,11 +38,23 @@
 #
 # --------------------------------------------------------------------------
 
-COMMIT_TIME=`date +%s`
+# Find the top level of the GIT repository.
+
+gitdir="$PWD"
+
+until [[ -d "$gitdir/.git" || "$gitdir" == "/" || "$gitdir" == "." ]] ; do
+  gitdir=$(dirname "$gitdir")
+done
+
+# Change the timestamps for all timestamp log files in the GIT repository.
+
+NOWFILE="$TEMP/now.log"
 TIMESTAMP_NAME=commit_timestamp.log
 
 set +C
 
-for fname in `find . -name $TIMESTAMP_NAME -print` ; do
-  echo $COMMIT_TIME > $fname ;
-done
+date +%s > "$NOWFILE"
+
+find "$gitdir" -name $TIMESTAMP_NAME -type f -print0 | xargs -0 -n 1 cp -f "$NOWFILE"
+
+rm -f "$NOWFILE"

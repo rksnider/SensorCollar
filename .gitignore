@@ -223,6 +223,7 @@ output_files/
 hc_output/
 *.ipinfo
 *.qsf.bak
+*.qws
 c5_pin_model_dump.txt
 compile_start_time_pkg.vhd
-
+!commit_timestamp.log
