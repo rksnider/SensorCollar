@@ -1,0 +1,53 @@
+DEPTH = 000000 ;
+WIDTH = 8 ;
+ADDRESS_RADIX = DEC ;
+DATA_RADIX = HEX ;
+CONTENT
+BEGIN
+
+--  Message MSG_UBX_NAV_SOL
+
+0      : 11 ;  --  Message 0, 17 fields
+1      : 09 ;  --  iTOW         4 bytes store
+2      : 09 ;  --  fTOW         4 bytes store
+3      : 05 ;  --  week         2 bytes store
+4      : 03 ;  --  gpsFix       1 bytes store
+5      : 02 ;  --  flags        1 bytes discard
+6      : 09 ;  --  ecefX        4 bytes store
+7      : 09 ;  --  ecefY        4 bytes store
+8      : 09 ;  --  ecefZ        4 bytes store
+9      : 09 ;  --  pAcc         4 bytes store
+10     : 08 ;  --  ecefVX       4 bytes discard
+11     : 08 ;  --  ecefVY       4 bytes discard
+12     : 08 ;  --  ecefVZ       4 bytes discard
+13     : 08 ;  --  sAcc         4 bytes discard
+14     : 05 ;  --  pDOP         2 bytes store
+15     : 02 ;  --  res1         1 bytes discard
+16     : 03 ;  --  numSV        1 bytes store
+17     : 08 ;  --  res2         4 bytes discard
+
+--  Message MSG_UBX_NAV_AOPSTATUS
+
+18     : 08 ;  --  Message 1, 8 fields
+19     : 09 ;  --  iTOW         4 bytes store
+20     : 03 ;  --  config       1 bytes store
+21     : 03 ;  --  status       1 bytes store
+22     : 02 ;  --  res0         1 bytes discard
+23     : 02 ;  --  res1         1 bytes discard
+24     : 09 ;  --  avail        4 bytes store
+25     : 08 ;  --  res2         4 bytes discard
+26     : 08 ;  --  res3         4 bytes discard
+
+--  Message MSG_UBX_TIM_TM2
+
+27     : 0A ;  --  Message 2, 10 fields
+28     : 02 ;  --  ch           1 bytes discard
+29     : 03 ;  --  flags        1 bytes store
+30     : 04 ;  --  count        2 bytes discard
+31     : 04 ;  --  wnR          2 bytes discard
+32     : 05 ;  --  wnF          2 bytes store
+33     : 08 ;  --  towMsR       4 bytes discard
+34     : 08 ;  --  towSubMsR    4 bytes discard
+35     : 09 ;  --  towMsF       4 bytes store
+36     : 09 ;  --  towSubMsF    4 bytes store
+37     : 09 ;  --  accEst       4 bytes store

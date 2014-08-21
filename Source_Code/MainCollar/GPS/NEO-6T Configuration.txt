@@ -1,0 +1,296 @@
+NEO-6T Conguration Commands and Pin Settings.
+
+Pin Settings
+  CFG_COM0      = 0     -- Baud Rate 38400, Self Powered, NMEA 
+  CFG_COM1      = 1
+  CFG_GPS0      = 0     -- ECO Mode
+  EXTINT0               -- Time Mark
+
+
+Load Current Configuration from Battery Backed Up RAM (BBR).  (CFG-CFG)
+      (Automatic at Startup)
+  clearMask     = 0
+  saveMask      = 0
+  loadMask
+    ioPort      = 1
+    msgConf     = 1
+    infMsg      = 1
+    navConf     = 1
+    rxmConf     = 1
+    rinvconf    = 1
+    antConf     = 1
+  deviceMask
+    devBBR      = 1
+    devFlash    = 0
+    devEEPROM   = 0
+    devSpiFlash = 0
+
+Save Current Configuration to Battery Backed Up RAM (BBR).  (CFG-CFG)
+  clearMask     = 0
+  saveMask
+    ioPort      = 1
+    msgConf     = 1
+    infMsg      = 1
+    navConf     = 1
+    rxmConf     = 1
+    rinvconf    = 1
+    antConf     = 1
+  loadMask      = 0
+  deviceMask
+    devBBR      = 1
+    devFlash    = 0
+    devEEPROM   = 0
+    devSpiFlash = 0
+
+Turn off Antenna Power.  (CFG-ANT)
+  flags
+    svcs        = 0
+    scd         = 0
+    ocd         = 0
+    pdwnOnSCD   = 0
+    recovery    = 0
+  pins
+    pinSwitch   = 0
+    pinSCD      = 0
+    pinOCD      = 0
+    reconfig    = 1   -- Reconfigure as specified
+
+Set Standard Datum.  (CFG-DAT)
+  majA          = 6378137.000
+  flat          = 298.257223563
+  dX            = 0.0
+  dY            = 0.0
+  dZ            = 0.0
+  rotX          = 0.0
+  rotY          = 0.0
+  rotZ          = 0.0
+  scale         = 0.0
+
+Information Message Configuration.  (CFG-INF)
+Repeated 5 times for ports 0 (IIC), 1 (UART1), 2 (UART2), 3 (USB), 4 (SPI)
+  protocolID    = 1
+  reserved0
+  reseverd1
+  infMsgMask
+    TEST        = 0
+    DEBUG       = 0
+    NOTICE      = 0
+    WARNING     = 0
+    ERROR       = 0
+  protocolID    = 0
+  reserved0
+  reseverd1
+  infMsgMask
+    TEST        = 0
+    DEBUG       = 0
+    NOTICE      = 0
+    WARNING     = 0
+    ERROR       = 0
+
+Jamming/Interference Monitor Configuration.  (CFG-ITFM)
+  config        = 0
+  config2       = 0
+
+Message Configuration.  (CFG-MSG)
+  msgClass      = F1 ; F0
+  msgID         = 00 03 04 05 06 40 41 ; 0A 09 00 01 40 06 02 07 03 04 0E 41 05 08
+  rate          = 0
+  
+    On initially in self powered mode the NMEA commands automatically sent:
+      F0,03 F0,04 F0,02 F0,00 F0,01 F0,05 F0,41
+
+Set Navigation Engine Settings.  (CFG-NAV5)
+  mask
+    dyn         = 1
+    minEl       = 0
+    fixMode     = 0
+    drLim       = 0
+    posMask     = 0
+    timeMask    = 0
+    staticHoldMask  = 0
+    dgpsMask    = 0
+  dynModel      = 3     -- Pedestrian
+  fixMode       = 0     -- Auto 2D/3D
+  fixedAlt      = 0
+  fixedAltVar   = 0
+  minElev       = 0
+  drLimit       = 0
+  pDop          = 0
+  tDop          = 0
+  pAcc          = 0
+  tAcc          = 0
+  staticHoldThresh  = 0
+  dgpsTimeOut   = 0
+  reserved2
+  reserved3
+  reserved4
+
+Set NavigationEngine Expert Settings.  (CFG-NAVX5)
+  version       = 0
+  mask1
+    minMax      = 0
+    minCno      = 0
+    3dfix       = 0
+    wknRoll     = 0
+    ppp         = 0
+    aop         = 1
+  reserved0
+  reserved1
+  reserved2
+  minSVs        = 0
+  maxSvs        = 0
+  minCNO        = 0
+  reserved5     = 0
+  iniFix3D      = 0
+  reserved6
+  reserved7
+  reserved8
+  wknRollover   = 0
+  reserved9
+  reserved10
+  reserved11
+  usePPP        = 0
+  useAOP        = 1
+  reserved12
+  reserved13
+  aopOrbMaxErr  = 0
+  reserved3
+  reserved4
+
+Set the NMEA Protocol Configuration.  (CFG-NMEA)
+  filter
+    posFilt     = 1
+    mskPosFilt  = 1
+    timeFilt    = 1
+    dateFilt    = 1
+    sbasFilt    = 0
+    trackFilt   = 1
+  version       = x23
+  numSV         = 0
+  flags
+    compat      = 0
+    consider    = 0
+
+Clear, Save, and Load Non-Volatile Storage Data.  (CFG_NVS)
+  clearMask
+    alm         = 0
+    aop         = 0
+  saveMask
+    alm         = 1
+    aop         = 1
+  loadmask
+    alm         = 0?
+    aop         = 0?
+  deviceMask
+    devBBR      = 1
+    devFlash    = 0
+    devEEPROM   = 0
+    devSpiFlash = 0
+
+Extended Power Management Configuration.  (CFG-PM2)
+  version       = 1
+  reserved1
+  reserved2
+  reserved3
+  flags
+    internal    = 000
+    extintSelect  = 0
+    extintWake  = 0
+    extintBackup  = 0
+    limitPeakCurr = 00
+    WaitTimeFix = 0
+    updateRTC   = 0
+    updateEPH   = 1
+    doNotEnterOff = 0
+    mode        = 01   -- Cyclic Tracking
+  updatePeriod  = 1000
+  searchPeriod  = 10000
+  gridOffset    = 0
+  onTime        = 0
+  minAcqTime    = 0
+  reserved4
+  reserved5
+  reserved6
+  reserved7
+  reserved8
+  reserved9
+  reserved10
+  reserved11
+
+Power Management Configuration.  (CFG-PM)
+  version       = 0
+  reserved1
+  reserved2
+  reserved3
+  flags
+    internal    = 01
+    extintSelect  = 0
+    extintWake    = 0
+    extintBackup  = 0
+    limitPeakCurr = 01    -- Peak Current is limited.
+    WaitTimeFix   = 0
+    updateRTC     = 0
+    updateEPH     = 0
+  updatePeriod    =
+  searchPeriod    =
+  gridOffset      =
+  onTime          =
+  minAcqTime      =
+
+Configure UART, USB, SPI, or DDC Port.  (CFG-PRT)
+
+Configure Navigation/Measurement Rate Settings.  (CFG-RATE)
+  measRate        = 1000
+  navRate         = 1
+  timeRef         = 1     -- GPS time used.
+
+Set contents of Remote Inventory.  (CFG-RINV)
+  flags           = 0
+
+Reset Receiver/Clear Backup Data Structures.  (CFG-RST)
+  navBbrmask      = 0
+  resetMode       = 08    -- Controlled GPS stop.
+  reserved1
+
+RXM Configuration.  (CFG-RXM)
+  reserved1       = 8 !!!
+  lpMode          = 4     -- Eco mode.
+
+SBAS Configuration.  (CFG-SBAS)
+  mode
+    enabled       = 0
+    test          = 0
+  usage
+    range         = 0
+    diffCorr      = 0
+    integrity     = 0
+  maxSBAS         = 0
+  scanmode2       = 0
+  scanmode1       = 0
+
+Configure Time Mode Settings 2.  (CFG-TMODE2)
+      (Not used as Time Mode only makes the GPS receiver just a clock.)
+  timeMode        = 0
+  reserved1
+  flags
+    lla           = 0
+    altInv        = 0
+  ecefXOrLat      = 0
+  ecefYOrLon      = 0
+  ecefZOrAlt      = 0
+  fixedPosAcc     = 0
+  svinMinDur      = 0
+  svinAccLimit    = 0
+
+Set TimePulse Parameters.  (CFG-TP5)
+  tpIdx           = 0 and 1
+  antCableDelay   = 0
+  rfGroupDelay    = 0
+  freqPeriod      = 0
+  freqPeriodLock  = 0
+  pulseLenRatio   = 0
+  userConfigDelay = 0
+  flags           = 0
+
+Set USB Configurate.  (CFG-USB)
+  (not used as USB is not used.)
