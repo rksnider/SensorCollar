@@ -20,3 +20,6 @@
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
+
+# Set the current date in a commit log file.
+commit_timestamp.log  filter=setnow
