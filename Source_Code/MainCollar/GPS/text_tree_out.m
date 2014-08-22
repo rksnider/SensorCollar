@@ -1,6 +1,7 @@
 function naddr = text_tree_out (miffile, saddr, text_tree, string_count)
 %TEXT_TREE_OUT  Output the text tree nodes to a MIF file.
-% usage naddr = text_tree_out (miffile, out_file, saddr, text_tree, string_count)
+% usage naddr = text_tree_out (miffile, out_file, saddr, text_tree,
+%                              string_count)
 %         naddr = Next address in the MIF file after this function has run.
 %       miffile = MIF file handle to write the ROM information to.
 %         saddr = Address in the MIF file to start writing data at.

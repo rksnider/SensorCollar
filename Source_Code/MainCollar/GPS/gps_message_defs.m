@@ -1,16 +1,53 @@
 function next_meminfo = gps_message_defs (miffile, start_meminfo, mem_bytes)
-%GPS_MESSAGE_DEFS   Build and output the GPS Message definitions to MIF and VHD files.
+%GPS_MESSAGE_DEFS   Build and output GPS Message defs to MIF and VHDL files.
 % usage next_meminfo = gps_message_defs (miffile, start_address)
-%      next_meminfo  = Address of [ROM RAM RAM_BLOCK RAM_TEMP MSG FLD MSG_BUFF] on return.
-%         miffile    = File handle of the MIF file the ROM contents is to go into.
-%     start_meminfo  = Next available address of [ROM RAM RAM_BLOCK RAM_TEMP MSG FLD MSG_BUFF].
+%      next_meminfo  = Address of [ROM RAM RAM_BLOCK RAM_TEMP MSG
+%                                  FLD MSG_BUFF] on return.
+%         miffile    = File handle of the MIF file the ROM contents is to go
+%                      into.
+%     start_meminfo  = Next available address of [ROM RAM RAM_BLOCK RAM_TEMP
+%                                                 MSG FLD MSG_BUFF].
 %          mem_bytes = Number of bytes in a memory allocation unit.
 %
+
+% --------------------------------------------------------------------------
+%
+%%  @file       gps_message_defs.m
+%   @brief      Build and output GPS Message defs to MIF and VHDL files.
+%   @details    Information to parse and store/retrieve from GPS memory
+%               is stored in a MIF file and set of VHDL files.
+%   @author     Emery Newlon
+%   @date       August 2014
+%   @copyright  Copyright (C) 2014 Ross K. Snider and Emery L. Newlon
+
+%   This program is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This program is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+%
+%   Emery Newlon
+%   Electrical and Computer Engineering
+%   Montana State University
+%   610 Cobleigh Hall
+%   Bozeman, MT 59717
+%   emery.newlon@msu.montana.edu
+%
+% --------------------------------------------------------------------------
+
 
 %   The message information vector is:
 %     ROM       Next available address in the ROM.
 %     RAM       Next available address in RAM for permanent storage.  The
-%               temporary storage area falls after all of the permanent storage.
+%               temporary storage area falls after all of the permanent
+%               storage.
 %     RAM_BLOCK Next RAM block number for permanent storage blocks.
 %     RAM_TEMP  Total amount of temporary RAM needed.
 %     MSG       Next message number.
@@ -18,20 +55,21 @@ function next_meminfo = gps_message_defs (miffile, start_meminfo, mem_bytes)
 
 mem_info = start_meminfo ;
 
-%   Message ID information is used to build a litteral tree and lookup table.
-%   The litteral tree consists of character nodes and the message number that
-%   the node's character ends the message ID string.  The lookup table contains
-%   the ROM addresses the message extraction information starts at indexed by
-%   message number.
+%   Message ID information is used to build a litteral tree and lookup
+%   table.  The litteral tree consists of character nodes and the message
+%   number that the node's character ends the message ID string.  The lookup
+%   table contains the ROM addresses the message extraction information
+%   starts at indexed by message number.
 
 ubx_msg_ids     = cell (1, 2) ;
 ubx_msg_cnt     = 0 ;
 
-%   Message Definitions consist of a set of field definitions each row of which
-%   has a field name, a field length, and a flag indicating whether the field
-%   is saved in memory.
+%   Message Definitions consist of a set of field definitions each row of
+%   which has a field name, a field length, and a flag indicating whether
+%   the field is saved in memory.
 
-%   Field Definitions for UBX-NAV-SOL Navigation Solution Information message.
+%   Field Definitions for UBX-NAV-SOL Navigation Solution Information
+%   message.
 
 ubx_nav_sol     = {'iTOW'       4 1 ;   ...
                    'fTOW'       4 1 ;   ...
@@ -59,10 +97,11 @@ ubx_msg_cnt                   = ubx_msg_cnt + 1 ;
 ubx_msg_ids (ubx_msg_cnt, 1)  = {char(msg_id)} ;
 ubx_msg_ids (ubx_msg_cnt, 2)  = {mem_info(1)} ;
 
-mem_info = gps_message_out (miffile, mem_info, 1, msg_name, msg_id, 'MUNSol', ...
-                            ubx_nav_sol) ;
+mem_info = gps_message_out (miffile, mem_info, 1, msg_name, msg_id,   ...
+                            'MUNSol', ubx_nav_sol) ;
 
-%   Field Definitions for UBX-NAV-AOPSTATUS AssistNow Autonomous Status message.
+%   Field Definitions for UBX-NAV-AOPSTATUS AssistNow Autonomous Status
+%   message.
 
 ubx_nav_aopstatus = {'iTOW'       4 1 ;   ...
                      'config'     1 1 ;   ...
@@ -81,8 +120,8 @@ ubx_msg_cnt                   = ubx_msg_cnt + 1 ;
 ubx_msg_ids (ubx_msg_cnt, 1)  = {char(msg_id)} ;
 ubx_msg_ids (ubx_msg_cnt, 2)  = {mem_info(1)} ;
 
-mem_info = gps_message_out (miffile, mem_info, 0, msg_name, msg_id, 'MUNAOPstatus', ...
-                            ubx_nav_aopstatus) ;
+mem_info = gps_message_out (miffile, mem_info, 0, msg_name, msg_id,   ...
+                            'MUNAOPstatus', ubx_nav_aopstatus) ;
 
 %   Field Definitions for UBX-TIM-TM2 Time Mark Data message.
 
@@ -105,8 +144,8 @@ ubx_msg_cnt                   = ubx_msg_cnt + 1 ;
 ubx_msg_ids (ubx_msg_cnt, 1)  = {char(msg_id)} ;
 ubx_msg_ids (ubx_msg_cnt, 2)  = {mem_info(1)} ;
 
-mem_info = gps_message_out (miffile, mem_info, 1, msg_name, msg_id, 'MUTTm2', ...
-                            ubx_tim_tm2) ;
+mem_info = gps_message_out (miffile, mem_info, 1, msg_name, msg_id,   ...
+                            'MUTTm2', ubx_tim_tm2) ;
 
 %   Build a text tree out of the message IDs and add it to the ROM.
 
@@ -132,7 +171,8 @@ mem_info      = lookup_tbl_out (miffile, mem_info, msg_addrs) ;
 
 msgno_addr    = mem_info (1) ;
 
-mem_info      = msgno_tbl_out (miffile, mem_info, uint8 ([ubx_msg_ids{:, 1}])) ;
+mem_info      = msgno_tbl_out (miffile, mem_info,     ...
+                               uint8 ([ubx_msg_ids{:, 1}])) ;
 
 %
 %   Add initialization data to the ROM.
@@ -140,7 +180,8 @@ mem_info      = msgno_tbl_out (miffile, mem_info, uint8 ([ubx_msg_ids{:, 1}])) ;
 
 init_addr     = mem_info (1) ;
 
-%   Clear all automatically generated message by setting their rates to zero.
+%   Clear all automatically generated message by setting their rates to
+%   zero.
 
 msg_info      = {'msgClass'   1 240 ;   ...
                  'msgID'      1 0   ;   ...
@@ -149,7 +190,8 @@ msg_info      = {'msgClass'   1 240 ;   ...
 msg_id        = [6 1] ;
 msg_name      = 'msg_ubx_cfg_msg_nmea_gga' ;
 
-mem_info      = gps_init_out (miffile, mem_info, 0, msg_name, msg_id, msg_info) ;
+mem_info      = gps_init_out (miffile, mem_info, 0, msg_name, msg_id,   ...
+                              msg_info) ;
 
 
 msg_info      = {'msgClass'   1 240 ;   ...
@@ -159,7 +201,8 @@ msg_info      = {'msgClass'   1 240 ;   ...
 msg_id        = [6 1] ;
 msg_name      = 'msg_ubx_cfg_msg_nmea_gll' ;
 
-mem_info      = gps_init_out (miffile, mem_info, 0, msg_name, msg_id, msg_info) ;
+mem_info      = gps_init_out (miffile, mem_info, 0, msg_name, msg_id,   ...
+                              msg_info) ;
 
 
 msg_info      = {'msgClass'   1 240 ;   ...
@@ -169,7 +212,8 @@ msg_info      = {'msgClass'   1 240 ;   ...
 msg_id        = [6 1] ;
 msg_name      = 'msg_ubx_cfg_msg_nmea_gsa' ;
 
-mem_info      = gps_init_out (miffile, mem_info, 0, msg_name, msg_id, msg_info) ;
+mem_info      = gps_init_out (miffile, mem_info, 0, msg_name, msg_id,   ...
+                              msg_info) ;
 
 
 msg_info      = {'msgClass'   1 240 ;   ...
@@ -179,7 +223,8 @@ msg_info      = {'msgClass'   1 240 ;   ...
 msg_id        = [6 1] ;
 msg_name      = 'msg_ubx_cfg_msg_nmea_gsv' ;
 
-mem_info      = gps_init_out (miffile, mem_info, 0, msg_name, msg_id, msg_info) ;
+mem_info      = gps_init_out (miffile, mem_info, 0, msg_name, msg_id,   ...
+                              msg_info) ;
 
 
 msg_info      = {'msgClass'   1 240 ;   ...
@@ -189,7 +234,8 @@ msg_info      = {'msgClass'   1 240 ;   ...
 msg_id        = [6 1] ;
 msg_name      = 'msg_ubx_cfg_msg_nmea_rmc' ;
 
-mem_info      = gps_init_out (miffile, mem_info, 0, msg_name, msg_id, msg_info) ;
+mem_info      = gps_init_out (miffile, mem_info, 0, msg_name, msg_id,   ...
+                              msg_info) ;
 
 
 msg_info      = {'msgClass'   1 240 ;   ...
@@ -199,7 +245,8 @@ msg_info      = {'msgClass'   1 240 ;   ...
 msg_id        = [6 1] ;
 msg_name      = 'msg_ubx_cfg_msg_nmea_vtg' ;
 
-mem_info      = gps_init_out (miffile, mem_info, 0, msg_name, msg_id, msg_info) ;
+mem_info      = gps_init_out (miffile, mem_info, 0, msg_name, msg_id,   ...
+                              msg_info) ;
 
 
 msg_info      = {'msgClass'   1 240 ;   ...
@@ -209,9 +256,11 @@ msg_info      = {'msgClass'   1 240 ;   ...
 msg_id        = [6 1] ;
 msg_name      = 'msg_ubx_cfg_msg_nmea_txt' ;
 
-mem_info      = gps_init_out (miffile, mem_info, 0, msg_name, msg_id, msg_info) ;
+mem_info      = gps_init_out (miffile, mem_info, 0, msg_name, msg_id,   ...
+                              msg_info) ;
 
-%   Navigation Settings.  Default except that the Dynamic Model is Pedestrian.
+%   Navigation Settings.  Default except that the Dynamic Model is
+%   Pedestrian.
 
 msg_info      = {'mask'             2 1   ;   ...
                  'dynModel'         1 3   ;   ...
@@ -235,9 +284,11 @@ msg_info      = {'mask'             2 1   ;   ...
 msg_id        = [6 36] ;
 msg_name      = 'msg_ubx_cfg_nav5' ;
 
-mem_info      = gps_init_out (miffile, mem_info, 0, msg_name, msg_id, msg_info) ;
+mem_info      = gps_init_out (miffile, mem_info, 0, msg_name, msg_id,   ...
+                              msg_info) ;
 
-%   Navigation Settings.  Default except that AssistNow Autonomous is turned on.
+%   Navigation Settings.  Default except that AssistNow Autonomous is turned
+%   on.
 
 msg_info      = {'version'          2 0   ;   ...
                  'mask'             2 16384 ; ...
@@ -269,7 +320,8 @@ msg_info      = {'version'          2 0   ;   ...
 msg_id        = [6 35] ;
 msg_name      = 'msg_ubx_cfg_navx5' ;
 
-mem_info      = gps_init_out (miffile, mem_info, 0, msg_name, msg_id, msg_info) ;
+mem_info      = gps_init_out (miffile, mem_info, 0, msg_name, msg_id,   ...
+                              msg_info) ;
 
 %   Receiver Power Management.
 
@@ -279,7 +331,8 @@ msg_info      = {'reserved'         1 8   ;   ...
 msg_id        = [6 17] ;
 msg_name      = 'msg_ubx_cfg_rxm' ;
 
-mem_info      = gps_init_out (miffile, mem_info, 0, msg_name, msg_id, msg_info) ;
+mem_info      = gps_init_out (miffile, mem_info, 0, msg_name, msg_id,   ...
+                              msg_info) ;
 
 %   Information Messages Allowed.
 
@@ -307,7 +360,8 @@ msg_info      = {'protocolID-I2C'   1 1   ;   ...
 msg_id        = [6 2] ;
 msg_name      = 'msg_ubx_cfg_inf' ;
 
-mem_info      = gps_init_out (miffile, mem_info, 0, msg_name, msg_id, msg_info) ;
+mem_info      = gps_init_out (miffile, mem_info, 0, msg_name, msg_id,   ...
+                              msg_info) ;
 
 %   Information Messages Allowed.
 
@@ -326,13 +380,15 @@ msg_info      = {'tpIdx'              1 0       ;   ...
 msg_id        = [6 49] ;
 msg_name      = 'msg_ubx_cfg_tp5' ;
 
-mem_info      = gps_init_out (miffile, mem_info, 1, msg_name, msg_id, msg_info) ;
+mem_info      = gps_init_out (miffile, mem_info, 1, msg_name, msg_id,   ...
+                              msg_info) ;
 
 %   Output the message control symbols.
 
 romseg_addr   = [tree_addr lookup_addr msgno_addr init_addr] ;
 
-gps_message_ctl_out (mem_info, romseg_addr, offset_max, msg_addrs, mem_bytes) ;
+gps_message_ctl_out (mem_info, romseg_addr, offset_max, msg_addrs,      ...
+                     mem_bytes) ;
 
 
 next_meminfo = mem_info ;
