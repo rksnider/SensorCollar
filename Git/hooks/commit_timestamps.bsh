@@ -55,8 +55,10 @@ set +C
 
 date +%s > "$NOWFILE"
 
-find "$gitdir" -name $TIMESTAMP_NAME -type f -print0 | xargs -0 -n 1 cp -f "$NOWFILE"
+cd "$gitdir"
 
-find "$gitdir" -name $TIMESTAMP_NAME -type f -print0 | xargs -0 -n 1 git add
+find . -name $TIMESTAMP_NAME -type f -print0 | xargs -0 -n 1 cp -f "$NOWFILE"
+
+find . -name $TIMESTAMP_NAME -type f -print0 | xargs -0 -n 1 git add
 
 rm -f "$NOWFILE"
