@@ -1,2 +1,1 @@
-The current date is: Mon 08/25/2014 
-Enter the new date: (mm-dd-yy) 
+"rand" 
