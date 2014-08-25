@@ -16,7 +16,7 @@ constant msg_ubx_nav_sol_id_c           : natural := 16#06# ;
 constant msg_ubx_nav_sol_number_c       : natural := 0 ;
 
 constant msg_ubx_nav_sol_romaddr_c      : natural := 0 ;
-constant msg_ubx_nav_sol_ramaddr_c      : natural := 0 * msg_ram_banks ;
+constant msg_ubx_nav_sol_ramaddr_c      : natural := 0 * msg_ram_banks_c ;
 constant msg_ubx_nav_sol_ramused_c      : natural := 30 ;
 constant msg_ubx_nav_sol_ramblock_c     : natural := 0 ;
 constant msg_ubx_nav_sol_fieldcnt_c     : natural := 17 ;

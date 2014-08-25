@@ -16,7 +16,7 @@ constant msg_ubx_tim_tm2_id_c           : natural := 16#03# ;
 constant msg_ubx_tim_tm2_number_c       : natural := 2 ;
 
 constant msg_ubx_tim_tm2_romaddr_c      : natural := 27 ;
-constant msg_ubx_tim_tm2_ramaddr_c      : natural := 30 * msg_ram_banks ;
+constant msg_ubx_tim_tm2_ramaddr_c      : natural := 30 * msg_ram_banks_c ;
 constant msg_ubx_tim_tm2_ramused_c      : natural := 15 ;
 constant msg_ubx_tim_tm2_ramblock_c     : natural := 1 ;
 constant msg_ubx_tim_tm2_fieldcnt_c     : natural := 10 ;
