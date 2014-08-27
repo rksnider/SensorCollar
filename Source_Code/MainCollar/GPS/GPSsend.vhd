@@ -1,69 +1,92 @@
-------------------------------------------------------------------------------
+----------------------------------------------------------------------------
 --
---! @file       $File$
+--! @file       GPSsend.vhd
 --! @brief      Send a UBX message to a NEO-6T GPS.
 --! @details    A message is sent to the GPS including an optional payload
 --!             in memory.
 --! @author     Emery Newlon
---! @version    $Revision$
+--! @date       August 2014
+--! @copyright  Copyright (C) 2014 Ross K. Snider and Emery L. Newlon
 --
-------------------------------------------------------------------------------
-
+--  This program is free software: you can redistribute it and/or modify
+--  it under the terms of the GNU General Public License as published by
+--  the Free Software Foundation, either version 3 of the License, or
+--  (at your option) any later version.
+--
+--  This program is distributed in the hope that it will be useful,
+--  but WITHOUT ANY WARRANTY; without even the implied warranty of
+--  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+--  GNU General Public License for more details.
+--
+--  You should have received a copy of the GNU General Public License
+--  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--
+--  Emery Newlon
+--  Electrical and Computer Engineering
+--  Montana State University
+--  610 Cobleigh Hall
+--  Bozeman, MT 59717
+--  emery.newlon@msu.montana.edu
+--
+----------------------------------------------------------------------------
 
 library IEEE ;                  --  Use standard library.
 use IEEE.STD_LOGIC_1164.ALL ;   --  Use standard logic elements.
 use IEEE.NUMERIC_STD.ALL ;      --  Use numeric standard.
 use IEEE.MATH_REAL.ALL ;        --  Real number functions.
 
-use WORK.gps_message_ctl.all ;  --  GPS message control definitions.
+library WORK ;
+use WORK.gps_message_ctl_pkg.all ;  --  GPS message control definitions.
 
 
-------------------------------------------------------------------------------
+----------------------------------------------------------------------------
 --
 --! @brief      GPS Message Sender.
 --! @details    Send a message to the GPS.
 --!
---! @param      MEMADDR_BITS  Bit width of the memory address.
---! @param      reset         Reset the entity to an initial state.
---! @param      clk           Clock used to move throuth states in the entity
---!                           and its components.
---! @param      outready      The communication port is ready for a character.
---! @param      msgclass      Class of the message to send.
---! @param      msgid         ID of the message to sent.
---! @param      memstart      Starting address to read payload from.
---! @param      memlength     Length of the payload.
---! @param      meminput      Data byte read from memory that is addressed.
---! @param      memrcv        Receive access to memory.
---! @param      memreq        Request access to memory.
---! @param      memaddr       Address of the byte of memory to read.
---! @param      memread_en    Enable the memory for reading.
---! @param      outchar       Character to send to the GPS.
---! @param      outsend       Send the charater.
---! @param      outdone       The message has been completely sent.
+--! @param      memaddr_bits_c  Bit width of the memory address.
+--! @param      reset           Reset the entity to an initial state.
+--! @param      clk             Clock used to move throuth states in the
+--!                             entity and its components.
+--! @param      outready_in     The communication port is ready for a
+--!                             character.
+--! @param      msgclass_in     Class of the message to send.
+--! @param      msgid_in        ID of the message to sent.
+--! @param      memstart_in     Starting address to read payload from.
+--! @param      memlength_in    Length of the payload.
+--! @param      meminput_in     Data byte read from memory that is
+--!                             addressed.
+--! @param      memrcv_in       Receive access to memory.
+--! @param      memreq_out      Request access to memory.
+--! @param      memaddr_out     Address of the byte of memory to read.
+--! @param      memread_en_out  Enable the memory for reading.
+--! @param      outchar_out     Character to send to the GPS.
+--! @param      outsend_out     Send the charater.
+--! @param      outdone_out     The message has been completely sent.
 --
-------------------------------------------------------------------------------
+----------------------------------------------------------------------------
 
 entity GPSsend is
 
   Generic (
-    MEMADDR_BITS          : natural := 8
+    memaddr_bits_c  : natural := 8
   ) ;
   Port (
-    reset                 : in    std_logic ;
-    clk                   : in    std_logic ;
-    outready              : in    std_logic ;
-    msgclass              : in    std_logic_vector (7 downto 0) ;
-    msgid                 : in    std_logic_vector (7 downto 0) ;
-    memstart              : in    std_logic_vector (MEMADDR_BITS-1 downto 0) ;
-    memlength             : in    unsigned (15 downto 0) ;
-    meminput              : in    std_logic_vector (7 downto 0) ;
-    memrcv                : in    std_logic ;
-    memreq                : out   std_logic ;
-    memaddr               : out   std_logic_vector (MEMADDR_BITS-1 downto 0) ;
-    memread_en            : out   std_logic ;
-    outchar               : out   std_logic_vector (7 downto 0) ;
-    outsend               : out   std_logic ;
-    outdone               : out   std_logic
+    reset           : in    std_logic ;
+    clk             : in    std_logic ;
+    outready_in     : in    std_logic ;
+    msgclass_in     : in    std_logic_vector (7 downto 0) ;
+    msgid_in        : in    std_logic_vector (7 downto 0) ;
+    memstart_in     : in    std_logic_vector (memaddr_bits_c-1 downto 0) ;
+    memlength_in    : in    unsigned (15 downto 0) ;
+    meminput_in     : in    std_logic_vector (7 downto 0) ;
+    memrcv_in       : in    std_logic ;
+    memreq_out      : out   std_logic ;
+    memaddr_out     : out   std_logic_vector (memaddr_bits_c-1 downto 0) ;
+    memread_en_out  : out   std_logic ;
+    outchar_out     : out   std_logic_vector (7 downto 0) ;
+    outsend_out     : out   std_logic ;
+    outdone_out     : out   std_logic
   ) ;
 
 end entity GPSsend ;
@@ -89,8 +112,8 @@ architecture behavior of GPSsend is
     SEND_STATE_DONE
   ) ;
 
-  signal cur_state        : SendState ;
-  signal next_state       : SendState ;
+  signal cur_state              : SendState ;
+  signal next_state             : SendState ;
 
   --  Checksum processing.
 
@@ -100,7 +123,7 @@ architecture behavior of GPSsend is
 
   --  Message handling signals.
 
-  signal msg_memaddr            : unsigned (MEMADDR_BITS-1 downto 0) ;
+  signal msg_memaddr            : unsigned (memaddr_bits_c-1 downto 0) ;
   signal msg_length             : unsigned (15 downto 0) ;
 
   signal nextout                : std_logic_vector (7 downto 0) ;
@@ -111,33 +134,27 @@ begin
 
   --  Output signals that must be read.
 
-  memaddr             <= std_logic_vector (msg_memaddr) ;
+  memaddr_out             <= std_logic_vector (msg_memaddr) ;
 
 
-  ------------------------------------------------------------------------------
-  --
-  --! @brief      Send the message to the GPS.
-  --! @details    Send the message to the GPS one byte at a time.
-  --!
-  --! @param      reset         Reset the Parser.
-  --! @param      clk           Multi-state per character clock.
-  --
-  ------------------------------------------------------------------------------
+  --------------------------------------------------------------------------
+  --  Send the message to the GPS one byte at a time.
+  --------------------------------------------------------------------------
 
   send_message:  process (reset, clk)
   begin
-    if reset = '1' then
+    if (reset = '1') then
       outready_fwl    <= '0' ;
-      memreq          <= '0' ;
-      memread_en      <= '0' ;
+      memreq_out      <= '0' ;
+      memread_en_out  <= '0' ;
       msg_memaddr     <= (others => '0') ;
-      outchar         <= (others => '0') ;
-      outsend         <= '0' ;
-      outdone         <= '0' ;
+      outchar_out     <= (others => '0') ;
+      outsend_out     <= '0' ;
+      outdone_out     <= '0' ;
       cur_state       <= SEND_STATE_GET_MEM ;
       next_state      <= SEND_STATE_START ;
 
-    elsif clk'event and clk = '1' then
+    elsif (rising_edge (clk)) then
 
       --  Always wait for output ready unless changed within a state.
       --  In most cases the output must be sent before a state can proceed.
@@ -161,37 +178,37 @@ begin
         --  byte out.
 
         when SEND_STATE_WAIT_READY    =>
-          memreq              <= '0' ;
+          memreq_out          <= '0' ;
 
-          if outready_fwl /= outready then
-            outready_fwl      <= outready ;
+          if (outready_fwl /= outready_in) then
+            outready_fwl      <= outready_in ;
 
-            if outready = '1' then
-              if calc_checksum = '1' then
+            if (outready_in = '1') then
+              if (calc_checksum = '1') then
                 m_checksum_B  <= m_checksum_B + m_checksum_A +
                                  unsigned (nextout) ;
                 m_checksum_A  <= m_checksum_A + unsigned (nextout) ;
               end if ;
 
-              outchar         <= nextout ;
-              outsend         <= '1' ;
+              outchar_out     <= nextout ;
+              outsend_out     <= '1' ;
 
               cur_state       <= SEND_STATE_GET_MEM ;
             else
-              outsend         <= '0' ;
+              outsend_out     <= '0' ;
             end if ;
           end if ;
 
         when SEND_STATE_GET_MEM       =>
-          if memrcv = '0' then
-            memreq            <= '1' ;
+          if (memrcv_in = '0') then
+            memreq_out        <= '1' ;
             cur_state         <= SEND_STATE_WAIT_MEM ;
           else
             cur_state         <= SEND_STATE_GET_MEM ;
           end if ;
 
         when SEND_STATE_WAIT_MEM      =>
-          if memrcv = '1' then
+          if (memrcv_in = '1') then
             cur_state         <= next_state ;
           else
             cur_state         <= SEND_STATE_WAIT_MEM ;
@@ -200,11 +217,11 @@ begin
         --  Send the message start and sync bytes.
 
         when SEND_STATE_START         =>
-          nextout             <= MSG_UBX_SYNC_1 ;
+          nextout             <= msg_ubx_sync_1_c ;
           next_state          <= SEND_STATE_SYNC ;
 
         when SEND_STATE_SYNC          =>
-          nextout             <= MSG_UBX_SYNC_2 ;
+          nextout             <= msg_ubx_sync_2_c ;
           calc_checksum       <= '1' ;
           next_state          <= SEND_STATE_CLASS ;
 
@@ -213,35 +230,37 @@ begin
         when SEND_STATE_CLASS         =>
           m_checksum_A        <= (others => '0') ;
           m_checksum_B        <= (others => '0') ;
-          nextout             <= msgclass ;
+          nextout             <= msgclass_in ;
           next_state          <= SEND_STATE_ID ;
 
         when SEND_STATE_ID            =>
-          nextout             <= msgid ;
+          nextout             <= msgid_in ;
           next_state          <= SEND_STATE_LEN_LOW ;
 
         --  Send the message length.
 
         when SEND_STATE_LEN_LOW       =>
-          nextout             <= std_logic_vector (memlength (7 downto 0)) ;
+          nextout             <=
+                std_logic_vector (memlength_in (7 downto 0)) ;
           next_state          <= SEND_STATE_LEN_HIGH ;
 
         when SEND_STATE_LEN_HIGH      =>
-          nextout             <= std_logic_vector (memlength (15 downto 8)) ;
-          msg_memaddr         <= unsigned (memstart) ;
-          msg_length          <= memlength ;
-          memread_en          <= '1' ;
+          nextout             <=
+                std_logic_vector (memlength_in (15 downto 8)) ;
+          msg_memaddr         <= unsigned (memstart_in) ;
+          msg_length          <= memlength_in ;
+          memread_en_out      <= '1' ;
           next_state          <= SEND_STATE_PAYLOAD ;
 
         --  Find the message parsing information in ROM.
 
         when SEND_STATE_PAYLOAD       =>
-          if msg_length = 0 then
+          if (msg_length = 0) then
             calc_checksum     <= '0' ;
-            memread_en        <= '0' ;
+            memread_en_out    <= '0' ;
             cur_state         <= SEND_STATE_CHECKSUM ;
           else
-            nextout           <= meminput ;
+            nextout           <= meminput_in ;
             msg_memaddr       <= msg_memaddr + 1 ;
             msg_length        <= msg_length - 1 ;
             next_state        <= SEND_STATE_PAYLOAD ;
@@ -260,13 +279,13 @@ begin
         --  Message has been completely sent.
 
         when SEND_STATE_DONE          =>
-          memreq              <= '0' ;
-          outsend             <= '0' ;
-          outdone             <= '1' ;
+          memreq_out          <= '0' ;
+          outsend_out         <= '0' ;
+          outdone_out         <= '1' ;
           cur_state           <= SEND_STATE_DONE ;
 
        end case ;
     end if ;
   end process send_message ;
 
-end behavior ;
+end architecture rtl ;
