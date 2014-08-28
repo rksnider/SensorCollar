@@ -60,6 +60,7 @@ use WORK.msg_ubx_tim_tm2_pkg.all ;
 --! @param      curtime_in      The GPS Time to use for logging events at.
 --! @param      inbyte_in       Byte received to add to message to parse.
 --! @param      inready_in      The byte is ready to be parsed.
+--! @param      inreceived_out  The byte has been received for parsing.
 --! @param      memreq_out      Request access to memory.
 --! @param      memrcv_in       Receive access to memory.
 --! @param      memaddr_in      Address of the byte of memory to read/write.
@@ -91,6 +92,7 @@ entity GPSmessageParser is
     curtime_in      : in    std_logic_vector (gps_time_bits_c-1 downto 0) ;
     inbyte_in       : in    std_logic_vector (7 downto 0) ;
     inready_in      : in    std_logic ;
+    inreceived_out  : out   std_logic ;
     memreq_out      : out   std_logic ;
     memrcv_in       : in    std_logic ;
     memaddr_out     : out   std_logic_vector (memaddr_bits_g-1 downto 0) ;
@@ -219,6 +221,13 @@ architecture rtl of GPSmessageParser is
   signal temp_ramaddr           : unsigned (memaddr_bits_g-1 downto 0) ;
   signal save_ramaddr           : unsigned (memaddr_bits_g-1 downto 0) ;
 
+  --  Gated clock control information.
+
+  signal gated_clk              : std_logic ;
+  signal gated_clk_en           : std_logic ;
+
+  signal message_done           : std_logic ;
+
   --  Scratch area used for loading/storing bit vectors to/from
   --  memory.  Each signal using it is defined via an alias.
 
@@ -245,6 +254,14 @@ architecture rtl of GPSmessageParser is
 
 
 begin
+
+  --  Gated clock.
+
+  gated_clk       <= clk and gated_clk_en ;
+
+  --  The byte received state is saved in the follower signal.
+
+  inreceived_out  <= inready_fwl ;
 
   --  Request memory when someone wants it and release it when everyone
   --  is done with it.
@@ -296,10 +313,33 @@ begin
 
 
   --------------------------------------------------------------------------
+  --  Gate the processing clock on only when processing a message.
+  --------------------------------------------------------------------------
+
+  gate_clk:   process (reset_clk)
+  begin
+    if (reset = '1') then
+      gated_clk_en      <= '0' ;
+
+    elsif (falling_edge (clk)) then
+      if (inready_in = '1') then
+        gated_clk_en    <= '1' ;
+
+      elsif (message_done = '1') then
+        gated_clk_en    <= '0' ;
+
+      end if ;
+    end if ;
+  end process gate_clk ;
+
+  gated_clk             <= clk and gated_clk_en ;
+
+
+  --------------------------------------------------------------------------
   --  Parse the individual fields in a line and save the results to memory.
   --------------------------------------------------------------------------
 
-  parse_fields:  process (reset, clk)
+  parse_fields:  process (reset, gated_clk)
   begin
     if (reset = '1') then
       text_reset      <= '1' ;
@@ -316,12 +356,19 @@ begin
       next_state      <= PARSE_STATE_WAIT ;
       msgnumber_out   <= (others => '0') ;
       msgreceived_out <= '0' ;
+      message_done    <= '0' ;
 
-    elsif (rising_edge (clk)) then
+    elsif (rising_edge (gated_clk)) then
 
       --  Always allow the write enable to be high for just one clock cycle.
 
       memwrite_en_out <= '0' ;
+
+      --  A message is not done when there is a byte ready to be processed.
+
+      if (inready = '1') then
+        message_done  <= '0' ;
+      end if ;
 
       --  Always wait for a new character unless changed within a state.
       --  In most cases a new byte is needed before a state can proceed.
@@ -412,6 +459,7 @@ begin
           if (inbyte_in = msg_ubx_sync_1_c) then
             next_state        <= PARSE_STATE_SYNC ;
           else
+            message_done      <= '1' ;
             next_state        <= PARSE_STATE_WAIT ;
           end if ;
 
@@ -425,6 +473,7 @@ begin
 
             cur_state         <= PARSE_STATE_INIT_STR ;
           else
+            message_done      <= '1' ;
             next_state        <= PARSE_STATE_WAIT ;
           end if ;
 
@@ -712,6 +761,7 @@ begin
         when PARSE_STATE_SUCCESS      =>
           msgnumber_out             <= std_logic_vector (m_number) ;
           msgreceived_out           <= '1' ;
+          message_done              <= '1' ;
           next_state                <= PARSE_STATE_WAIT ;
 
           --  Indicate the bank with the most recent valid message.
@@ -743,6 +793,7 @@ begin
             m_length                <= TO_UNSIGNED (2, m_length'length) ;
             next_state              <= PARSE_STATE_ABORT_LOOP ;
           else
+            message_done            <= '1' ;
             next_state              <= PARSE_STATE_WAIT ;
           end if ;
 

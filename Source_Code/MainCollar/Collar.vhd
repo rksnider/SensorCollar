@@ -206,7 +206,7 @@ entity Collar is
 end entity Collar ;
 
 
-architecture structure of Collar is
+architecture structural of Collar is
 
   --  Button specifications.
 
@@ -229,6 +229,50 @@ architecture structure of Collar is
   signal reset_pushed       : std_logic := '0' ;
   signal pb_counter         : unsigned (pb_count_bits_c-1 downto 0) :=
                                 (others => '0') ;
+
+  --  GPS signals.
+
+  signal aop_running        : std_logic ;
+
+  --  GPS dual port RAM communication signals.
+
+  constant gpsmemsrc_addrbits_c : natural := 9 ;
+  constant gpsmemsrc_databits_c : natural := 8 ;
+
+  signal gpsmemsrc_addr         : std_logic_vector (gpsmemsrc_addrbits_c-1
+                                                    downto 0) ;
+  signal gpsmemsrc_clk          : std_logic ;
+  signal gpsmemsrc_writeto      : std_logic_vector (gpsmemsrc_databits_c-1
+                                                    downto 0) ;
+  signal gpsmemsrc_readfrom     : std_logic_vector (gpsmemsrc_databits_c-1
+                                                    downto 0) ;
+  signal gpsmemsrc_read_en      : std_logic ;
+  signal gpsmemsrc_write_en     : std_logic ;
+
+  constant gpsmemdst_addrbits_c : natural := 9 ;
+  constant gpsmemdst_databits_c : natural := 8 ;
+
+  signal gpsmemdst_addr         : std_logic_vector (gpsmemdst_addrbits_c-1
+                                                    downto 0) ;
+  signal gpsmemdst_clk          : std_logic ;
+  signal gpsmemdst_readfrom     : std_logic_vector (gpsmemdst_databits_c-1
+                                                    downto 0) ;
+  signal gpsmemdst_read_en      : std_logic ;
+  signal gpsmemdst_write_en     : std_logic ;
+
+  constant gps_baudrate_c       : natural := 9600 ;
+
+  --  Clock specifications.
+
+  constant gps_clk_freq_c     : natural := gps_baudrate_c * 16 ;
+  constant gps_clk_cntmax_c   : natural := master_clk_freq_g /
+                                           (gps_clk_freq_c * 2) ;
+
+  constant gps_clk_cntbits_c  : natural := const_bits (gps_clk_cntmax_c) ;
+
+  signal gps_clk_cnt          : unsigned (gps_clk_cntbits_c-1 downto 0) ;
+
+  signal gps_clk              : std_logic ;
 
 begin
 
@@ -465,6 +509,71 @@ begin
   end generate no_use_SDH ;
 
   --------------------------------------------------------------------------
+  --  GPS RAM
+  --------------------------------------------------------------------------
+
+  use_GPS_RAM:
+    if (Collar_Control_useGPS_c = '1') generate
+
+      component gps_ram IS
+        PORT
+        (
+          address_a		: IN STD_LOGIC_VECTOR (8 DOWNTO 0);
+          address_b		: IN STD_LOGIC_VECTOR (8 DOWNTO 0);
+          clock_a		: IN STD_LOGIC  := '1';
+          clock_b		: IN STD_LOGIC ;
+          data_a		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+          data_b		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+          rden_a		: IN STD_LOGIC  := '1';
+          rden_b		: IN STD_LOGIC  := '1';
+          wren_a		: IN STD_LOGIC  := '0';
+          wren_b		: IN STD_LOGIC  := '0';
+          q_a		: OUT STD_LOGIC_VECTOR (7 DOWNTO 0);
+          q_b		: OUT STD_LOGIC_VECTOR (7 DOWNTO 0)
+        );
+      END component gps_ram;
+
+    begin
+
+      --  Memory component.  Clock is triggered on negative going edge to allow
+      --  input signals to propagate in one half clock cycle and to produce
+      --  output by the next clock cycle.  The memory is fast enough to produce
+      --  output in less than one half clock cycle.
+
+      gps_ramblocks : gps_ram
+        Port Map (
+          address_a		            => gpsmemsrc_addr,
+          address_b		            => gpsmemdst_addr,
+          clock_a		              => gpsmemsrc_clk,
+          clock_b		              => gpsmemdst_clk,
+          data_a		              => gpsmemsrc_writeto,
+          data_b		              => (others => '0'),
+          rden_a		              => gpsmemsrc_read_en,
+          rden_b		              => gpsmemdst_read_en,
+          wren_a		              => gpsmemsrc_write_en,
+          wren_b		              => '0',
+          q_a		                  => gpsmemsrc_readfrom,
+          q_b		                  => gpsmemdst_readfrom
+        ) ;
+
+  end generate use_GPS_RAM ;
+
+  no_use_GPS_RAM:
+    if (Collar_Control_useGPS_c = '0') generate
+
+      gpsmemsrc_addr      <= (others => '0') ;
+      gpsmemsrc_clk       <= '0' ;
+      gpsmemsrc_writeto   <= (others => '0') ;
+      gpsmemsrc_read_en   <= '0' ;
+      gpsmemsrc_write_en  <= '0' ;
+
+      gpsmemdst_addr      <= (others => '0') ;
+      gpsmemdst_clk       <= '0' ;
+      gpsmemdst_read_en   <= '0' ;
+
+  end generate no_use_GPS_RAM ;
+
+  --------------------------------------------------------------------------
   --  GPS Message controller.
   --------------------------------------------------------------------------
 
@@ -474,21 +583,29 @@ begin
       component GPSmessages is
 
         Generic (
-          CLK_FREQ              : natural := 50e6
+          clk_freq_g            : natural := 50e6 ;
+          mem_addrbits_g        : natural := 9 ;
+          mem_databits_g        : natural := 8
         ) ;
         Port (
           reset                 : in    std_logic ;
           clk                   : in    std_logic ;
-          curtime               : in    GPS_Time ;
-          pollinterval          : in    unsigned (13 downto 0) ;
-          gpsmem_clock          : in    std_logic ;
-          gpsmem_addr           : in    std_logic_vector (8 downto 0) ;
-          gpsmem_read_en        : in    std_logic ;
-          gps_rx                : in    std_logic ;
-          gps_tx                : out   std_logic ;
-          timemarker            : out   std_logic ;
-          aop_running           : out   std_logic ;
-          gpsmem_read_from      : out   std_logic_vector (7 downto 0)
+          curtime_in            : in    std_logic_vector (gps_time_bits_c-1
+                                                          downto 0) ;
+          pollinterval_in       : in    unsigned (13 downto 0) ;
+          gpsmem_clk_out        : out   std_logic ;
+          gpsmem_addr_out       : out   std_logic_vector (mem_addrbits_g-1
+                                                          downto 0) ;
+          gpsmem_read_en_out    : out   std_logic ;
+          gpsmem_write_en_out   : out   std_logic ;
+          gpsmem_readfrom_in    : in    std_logic_vector (mem_databits_g-1
+                                                          downto 0) ;
+          gpsmem_writeto_out    : out   std_logic_vector (mem_databits_g-1
+                                                          downto 0) ;
+          gps_rx_in             : in    std_logic ;
+          gps_tx_out            : out   std_logic ;
+          timemarker_out        : out   std_logic ;
+          aop_running_out       : out   std_logic
         ) ;
 
       end component GPSmessages ;
@@ -502,19 +619,25 @@ begin
 
       gps_ctl : GPSmessages
         Generic Map (
-          CLK_FREQ              => master_clk_freq_g
+          clk_freq_g            => gps_clk_freq_c,
+          mem_addrbits_g        => gpsmemsrc_addrbits_c,
+          mem_databits_g        => gpsmemsrc_databits_c
         )
-        Port Map (
+        Port (
           reset                 => reset,
-          clk                   => master_clk,
-          curtime               => reset_time,
-          pollinterval          => poll_int,
-          gpsmem_clock          => '0',
-          gpsmem_addr           => (others => '0'),
-          gpsmem_read_en        => '0',
+          clk                   => gps_clk,
+          curtime_in            => reset_time,
+          pollinterval_in       => poll_int,
+          gpsmem_clk_out        => gpsmemsrc_clk,
+          gpsmem_addr_out       => gpsmemsrc_addr,
+          gpsmem_read_en_out    => gpsmemsrc_read_en,
+          gpsmem_write_en_out   => gpsmemsrc_write_en,
+          gpsmem_readfrom_in    => gpsmemsrc_readfrom,
+          gpsmem_writeto_out    => gpsmemsrc_writeto,
           gps_rx                => gps_rx_in,
           gps_tx                => gps_tx_out,
-          timemarker            => gps_timemark_out
+          timemarker            => gps_timemark_out,
+          aop_running_out       => aop_running
         ) ;
 
   end generate use_GPS ;
@@ -524,6 +647,7 @@ begin
 
       gps_tx_out        <= '0' ;
       gps_timemark_out  <= '0' ;
+      aop_running       <= '0' ;
 
   end generate no_use_GPS ;
 
@@ -615,4 +739,27 @@ begin
     end if ;
   end process reset_pb ;
 
-end structure ;
+  --------------------------------------------------------------------------
+  --  GPS clock generation.
+  --------------------------------------------------------------------------
+
+  gps_clk_gen : process (reset, master_clk)
+  begin
+    if (reset = '1') then
+      gps_clk_cnt     <= (others => '0') ;
+      gps_clk         <= '0' ;
+
+    elsif (rising_edge (master_clk)) then
+      if (gps_clk_cnt /= TO_UNSIGNED (gps_clk_cntmax_c,
+                                      gps_clk_cnt'length)) then
+
+        gps_clk_cnt  <= gps_clk_cnt + 1 ;
+      else
+        gps_clk_cnt  <= (others => '0') ;
+        gps_clk      <= not gps_clk;
+      end if ;
+    end if ;
+
+  end process gps_clk_gen ;
+
+end architecture structural ;

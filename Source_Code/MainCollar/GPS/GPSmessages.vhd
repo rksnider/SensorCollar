@@ -55,17 +55,25 @@ use WORK.msg_ubx_tim_tm2.all ;
 --! @details    Handles messages to and from the UBX GPS.
 --!
 --! @param      clk_freq_g            Frequency of the clock signal.
+--! @param      uart_rx_mult_g        Buad rate multiplier for UART
+--!                                   receiver.
+--! @param      mem_addrbits_g        Number of address bits used for the
+--!                                   GPS memory.
+--! @param      mem_databits_g        Number of data bits used for the GPS
+--!                                   memory.
 --! @param      reset                 Reset the entity to an initial state.
 --! @param      clk                   Clock used to move throuth states in
 --!                                   the entity and its components.
 --! @param      curtime_in            Time since reset in GPS time format.
 --! @param      pollinterval_in       Number of seconds between message
 --!                                   polls.
---! @param      gpsmem_clk_in         Clock used to drive the memory from
---!                                   port B.
---! @param      gpsmem_addr_in        Address to read from memory port B.
---! @param      gpsmem_read_en_in     Read enable for memory port B.
---! @param      gpsmem_read_from_out  Data read from memory on port B.
+--! @param      gpsmem_clk_out        Clock used to drive the memory from
+--!                                   port A.
+--! @param      gpsmem_addr_out       Address to read from memory port A.
+--! @param      gpsmem_read_en_out    Read enable for memory port A.
+--! @param      gpsmem_write_en_out   Write enable for memory port A.
+--! @param      gpsmem_readfrom_in    Data read from memory on port A.
+--! @param      gpsmem_writeto_out    Data written to memory on port A
 --! @param      gps_rx_in             UART receive line from the GPS.
 --! @param      gps_tx_out            UART transmit line to the GPS.
 --! @param      timemarker_out        Signal sent to GPS to generate a time
@@ -78,7 +86,10 @@ use WORK.msg_ubx_tim_tm2.all ;
 entity GPSmessages is
 
   Generic (
-    clk_freq_g              : natural := 50e6
+    clk_freq_g            : natural := 50e6 ;
+    uart_rx_mult_g        : natural := 16 ;
+    mem_addrbits_g        : natural := 9 ;
+    mem_databits_g        : natural := 8
   ) ;
   Port (
     reset                 : in    std_logic ;
@@ -86,10 +97,15 @@ entity GPSmessages is
     curtime_in            : in    std_logic_vector (gps_time_bits_c-1
                                                     downto 0) ;
     pollinterval_in       : in    unsigned (13 downto 0) ;
-    gpsmem_clk_in         : in    std_logic ;
-    gpsmem_addr_in        : in    std_logic_vector (8 downto 0) ;
-    gpsmem_read_en_in     : in    std_logic ;
-    gpsmem_read_from_out  : out   std_logic_vector (7 downto 0) ;
+    gpsmem_clk_out        : out   std_logic ;
+    gpsmem_addr_out       : out   std_logic_vector (mem_addrbits_g-1
+                                                    downto 0) ;
+    gpsmem_read_en_out    : out   std_logic ;
+    gpsmem_write_en_out   : out   std_logic ;
+    gpsmem_readfrom_in    : in    std_logic_vector (mem_databits_g-1
+                                                    downto 0) ;
+    gpsmem_writeto_out    : out   std_logic_vector (mem_databits_g-1
+                                                    downto 0) ;
     gps_rx_in             : in    std_logic ;
     gps_tx_out            : out   std_logic ;
     timemarker_out        : out   std_logic ;
@@ -124,26 +140,6 @@ architecture structural of GPSmessages is
     ) ;
 
   end component ResourceMUX ;
-
-  --  Memory component.
-
-  component gps_ram IS
-    PORT
-    (
-      address_a		: IN STD_LOGIC_VECTOR (8 DOWNTO 0);
-      address_b		: IN STD_LOGIC_VECTOR (8 DOWNTO 0);
-      clock_a		: IN STD_LOGIC  := '1';
-      clock_b		: IN STD_LOGIC ;
-      data_a		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
-      data_b		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
-      rden_a		: IN STD_LOGIC  := '1';
-      rden_b		: IN STD_LOGIC  := '1';
-      wren_a		: IN STD_LOGIC  := '0';
-      wren_b		: IN STD_LOGIC  := '0';
-      q_a		: OUT STD_LOGIC_VECTOR (7 DOWNTO 0);
-      q_b		: OUT STD_LOGIC_VECTOR (7 DOWNTO 0)
-    );
-  END component gps_ram;
 
   --  UART connection to the GPS.
   --    reset       Active high reset the device.
@@ -334,17 +330,15 @@ architecture structural of GPSmessages is
 
   --  Memory control signals.
 
-  constant memaddr_bits_c     : natural := 9 ;
-  constant memdata_bits_c     : natural := 8 ;
-  constant mem_io_bits_c      : natural := memaddr_bits_c +
-                                           memdata_bits_c + 2 ;
+  constant mem_io_bits_c      : natural := memaddr_bits_g +
+                                           memdata_bits_g + 2 ;
 
   signal memrequesters        : std_logic_vector (mem_user_cnt_c-1
                                                   downto 0) ;
   signal memreceivers         : std_logic_vector (mem_user_cnt_c-1
                                                   downto 0) ;
 
-  signal memread_from         : std_logic_vector (memdata_bits_c-1
+  signal memread_from         : std_logic_vector (memdata_bits_g-1
                                                   downto 0) ;
 
   signal meminput_tbl         : std_logic_2D (mem_user_cnt_c-1 downto 0,
@@ -353,90 +347,85 @@ architecture structural of GPSmessages is
   signal memselected          : std_logic_vector (mem_io_bits_c-1
                                                   downto 0) ;
 
-  alias  memaddr              : std_logic_vector (memaddr_bits_c-1
+  alias  memaddr              : std_logic_vector (memaddr_bits_g-1
                                                   downto 0) is
-                                memselected      (memaddr_bits_c-1
+                                memselected      (memaddr_bits_g-1
                                                   downto 0) ;
-  alias  memwrite_to          : std_logic_vector (memdata_bits_c-1
+  alias  memwrite_to          : std_logic_vector (memdata_bits_g-1
                                                   downto 0) is
-                                memselected      (memaddr_bits_c +
-                                                  memdata_bits_c-1 downto
-                                                  memaddr_bits_c) ;
+                                memselected      (memaddr_bits_g +
+                                                  memdata_bits_g-1 downto
+                                                  memaddr_bits_g) ;
   alias  memread_en           : std_logic is
-                                memselected      (memaddr_bits_c +
-                                                  memdata_bits_c) ;
+                                memselected      (memaddr_bits_g +
+                                                  memdata_bits_g) ;
   alias  memwrite_en          : std_logic is
-                                memselected      (memaddr_bits_c +
-                                                  memdata_bits_c + 1) ;
+                                memselected      (memaddr_bits_g +
+                                                  memdata_bits_g + 1) ;
 
   --  Message requester I/O bits.  Requesters that do not write to memory
   --  use the memwrite_to_none_c and memwrite_en_none_c constants instead of
   --  signals that they generate themselves.
 
-  constant memwrite_to_none_c   : std_logic_vector (memdata_bits_c-1
-                                                    downto 0) :=
+  constant memwrite_to_none_c : std_logic_vector (memdata_bits_g-1
+                                                  downto 0) :=
                                       (others => '0') ;
-  constant memwrite_en_none_c   : std_logic := '0' ;
+  constant memwrite_en_none_c : std_logic := '0' ;
 
-  signal memaddr_parser       : std_logic_vector (memaddr_bits_c-1
+  signal memaddr_parser       : std_logic_vector (memaddr_bits_g-1
                                                   downto 0) ;
-  signal memwrite_to_parser   : std_logic_vector (memdata_bits_c-1
+  signal memwrite_to_parser   : std_logic_vector (memdata_bits_g-1
                                                   downto 0) ;
   signal memwrite_en_parser   : std_logic ;
   signal memread_en_parser    : std_logic ;
   signal memctl_parser        : std_logic_vector (mem_io_bits_c-1
                                                   downto 0) ;
 
-  signal memaddr_send         : std_logic_vector (memaddr_bits_c-1
+  signal memaddr_send         : std_logic_vector (memaddr_bits_g-1
                                                   downto 0) ;
   signal memread_en_send      : std_logic ;
   signal memctl_send          : std_logic_vector (mem_io_bits_c-1
                                                   downto 0) ;
 
-  signal memaddr_poll         : std_logic_vector (memaddr_bits_c-1
+  signal memaddr_poll         : std_logic_vector (memaddr_bits_g-1
                                                   downto 0) ;
   signal memread_en_poll      : std_logic ;
   signal memctl_poll          : std_logic_vector (mem_io_bits_c-1
                                                   downto 0) ;
 
-  signal memaddr_aopstat      : std_logic_vector (memaddr_bits_c-1
+  signal memaddr_aopstat      : std_logic_vector (memaddr_bits_g-1
                                                   downto 0) ;
   signal memread_en_aopstat   : std_logic ;
   signal memctl_aopstat       : std_logic_vector (mem_io_bits_c-1
                                                   downto 0) ;
 
-  signal memaddr_timemark     : std_logic_vector (memaddr_bits_c-1
+  signal memaddr_timemark     : std_logic_vector (memaddr_bits_g-1
                                                   downto 0) ;
-  signal memwrite_to_timemark : std_logic_vector (memdata_bits_c-1
+  signal memwrite_to_timemark : std_logic_vector (memdata_bits_g-1
                                                   downto 0) ;
   signal memwrite_en_timemark : std_logic ;
   signal memread_en_timemark  : std_logic ;
   signal memctl_timemark      : std_logic_vector (mem_io_bits_c-1
                                                   downto 0) ;
 
-  --  GPS UART connecting signals.
+  --  GPS UART connecting signals.  The transmitter runs at the baud rate.
+  --  Clock counts are for half a clock cycle.
 
-  constant baud_rate_c          : natural := 9600 ;
-  constant rx_sample_cnt_c      : natural :=   16 ;
-  constant rx_clock_cnt_c       : natural :=
-              natural (real (clk_freq_g) /
-                       real (baud_rate_c * rx_sample_cnt_c * 2)) - 1 ;
+  constant tx_clk_cnt_c       : natural := (uart_rx_mult_g / 2) - 1 ;
+  constant tx_clk_bits_c      : natural := const_bits (tx_clk_cnt_c) ;
 
-  constant rx_clock_bits_c      : natural := const_bits (rx_clock_cnt_c) ;
+  signal tx_clk               : std_logic ;
+  signal tx_gated_clk         : std_logic ;
+  signal tx_gated_clk_en      : std_logic ;
 
-  constant tx_clock_cnt_c       : natural := rx_sample_cnt_c - 1 ;
-  constant tx_clock_bits_c      : natural := const_bits (tx_clock_cnt_c) ;
-
-  signal tx_clock             : std_logic ;
   signal tx_load              : std_logic ;
   signal tx_empty             : std_logic ;
   signal tx_data              : std_logic_vector (7 downto 0) ;
-  signal tx_clock_counter     : unsigned (tx_clock_bits_c-1 downto 0) ;
+  signal tx_clk_counter       : unsigned (tx_clk_bits_c-1 downto 0) ;
 
-  signal rx_clock             : std_logic ;
   signal rx_empty             : std_logic ;
+  signal rx_unload            : std_logic ;
   signal rx_data              : std_logic_vector (7 downto 0) ;
-  signal rx_clock_counter     : unsigned (rx_clock_bits_c-1 downto 0) ;
 
   --  Parsed message information.
 
@@ -450,13 +439,13 @@ architecture structural of GPSmessages is
 
   --  Information about messages to send.
 
-  constant send_poll_c          : natural := 0 ;
+  constant send_poll_c        : natural := 0 ;
 
-  constant sendcnt_c            : natural := send_poll_c + 1 ;
+  constant sendcnt_c          : natural := send_poll_c + 1 ;
 
   signal msgclass             : std_logic_vector (7 downto 0) ;
   signal msgid                : std_logic_vector (7 downto 0) ;
-  signal memstart             : std_logic_vector (memaddr_bits_c-1
+  signal memstart             : std_logic_vector (memaddr_bits_g-1
                                                   downto 0) ;
   signal memlength            : unsigned (15 downto 0) ;
   signal sendready            : std_logic ;
@@ -478,8 +467,29 @@ architecture structural of GPSmessages is
   signal tm_req_position      : std_logic ;
   signal tm_req_timemark      : std_logic ;
 
+  --  Information about GPS parsing.  The parser requires 16 clock cycles
+  --  to process a byte.  There are 10 input bits (baud) per received byte.
+  --  Counts are for half a clock cycle.
+
+  constant parse_per_rx_cnt_c : natural :=
+      natural (trunc ((real (uart_rx_mult_g) * 10.0) / (16.0 * 2.0)) ;
+
+  constant parse_clk_cnt_c    : natural := parse_per_rx_cnt_c - 1 ;
+  constant parse_clk_bits_c   : natural := const_bits (parse_clk_cnt_c) ;
+
+  signal parse_clk            : std_logic ;
+  signal parse_clk_counter    : unsigned (parse_clk_bits_c-1 downto 0) ;
+
+  signal mem_gated_clk_en     : std_logic ;
 
 begin
+
+  --  Memory component.  Clock is triggered on negative going edge to allow
+  --  input signals to propagate in one half clock cycle and to produce
+  --  output by the next clock cycle.  The memory is fast enough to produce
+  --  output in less than one half clock cycle.
+
+  gpsram_clk                  <= (not parse_clk) and mem_gated_clk_en ;
 
   --  Memory multiplexer allows multiple entities to share access to the
   --  same memory module.
@@ -491,32 +501,11 @@ begin
     )
     Port Map (
       reset                   => reset,
-      clk                     => clk,
+      clk                     => parse_clk,
       requesters_in           => memrequesters,
       resource_tbl_in         => meminput_tbl,
       receivers_out           => memreceivers,
       resources_out           => memselected
-    ) ;
-
-  --  Memory component.  Clock is triggered on negative going edge to allow
-  --  input signals to propagate in one half clock cycle and to produce
-  --  output by the next clock cycle.  The memory is fast enough to produce
-  --  output in less than one half clock cycle.
-
-  memory : gps_ram
-    Port Map (
-      address_a		            => memaddr,
-      address_b		            => gpsmem_addr_in,
-      clock_a		              => not clk,
-      clock_b		              => gpsmem_clk_in,
-      data_a		              => memwrite_to,
-      data_b		              => (others => '0'),
-      rden_a		              => memread_en,
-      rden_b		              => gpsmem_read_en_in,
-      wren_a		              => memwrite_en,
-      wren_b		              => '0',
-      q_a		                  => memread_from,
-      q_b		                  => gpsmem_read_from_out
     ) ;
 
   --  UART connecting the GPS to the sender and receive parser.
@@ -524,14 +513,14 @@ begin
   gps_uart : uart
     Port Map (
       reset                   => reset,
-      txclk                   => tx_clock,
+      txclk                   => tx_gated_clk,
       ld_tx_data              => tx_load,
       tx_data                 => tx_data,
       tx_enable               => '1',
       tx_out                  => gps_tx_out,
       tx_empty                => tx_empty,
-      rxclk                   => rx_clock,
-      uld_rx_data             => not rx_empty,
+      rxclk                   => clk,
+      uld_rx_data             => rx_unload,
       rx_data                 => rx_data,
       rx_enable               => '1',
       rx_in                   => gps_rx_in,
@@ -542,14 +531,15 @@ begin
 
   gps_parser : GPSmessageParser
     Generic Map (
-      memaddr_bits_g          => memaddr_bits_c
+      memaddr_bits_g          => memaddr_bits_g
     )
     Port Map (
       reset                   => reset,
-      clk                     => clk,
+      clk                     => parse_clk,
       curtime_in              => curtime_in,
       inbyte_in               => rx_data,
-      inready_in              => rx_empty,
+      inready_in              => not rx_empty,
+      inreceived_out          => rx_unload,
       meminput_in             => memread_from,
       memrcv_in               => memreceivers  (memreq_parser_c),
       memreq_out              => memrequesters (memreq_parser_c),
@@ -572,11 +562,11 @@ begin
 
   gps_send : GPSsend
     Generic Map (
-      memaddr_bits_g          => memaddr_bits_c
+      memaddr_bits_g          => memaddr_bits_g
     )
     Port Map (
       reset                   => reset or (not sendout),
-      clk                     => clk,
+      clk                     => parse_clk,
       outready_in             => tx_empty,
       msgclass_in             => msgclass,
       msgid_in                => msgid,
@@ -601,11 +591,11 @@ begin
 
   gps_poll : GPSpoll
     Generic Map (
-      memaddr_bits_g          => memaddr_bits_c
+      memaddr_bits_g          => memaddr_bits_g
     )
     Port Map (
       reset                   => reset,
-      clk                     => clk,
+      clk                     => parse_clk,
       curtime_in              => curtime_in,
       pollinterval_in         => pollinterval_in,
       pollmessages_in         => pollmessages,
@@ -648,12 +638,12 @@ begin
 
   gps_aopstatus : AOPstatus
     Generic Map (
-      memaddr_bits_g          => memaddr_bits_c,
+      memaddr_bits_g          => memaddr_bits_g,
       quiet_count_g           => 5
     )
     Port Map (
-      clk                     => clk,
       reset                   => reset,
+      clk                     => parse_clk,
       msgnumber_in            => msg_number,
       msgreceived_in          => msg_received,
       tempbank_in             => tempbank,
@@ -674,11 +664,11 @@ begin
 
   gps_timemark : TimeMark
     Generic Map (
-      memaddr_bits_g          => memaddr_bits_c
+      memaddr_bits_g          => memaddr_bits_g
     )
     Port Map (
-      clk                     => clk,
       reset                   => reset,
+      clk                     => parse_clk,
       curtime_in              => curtime_in,
       posbank_in              => databank (msg_ubx_nav_sol_ramblock_c),
       tmbank_in               => databank (msg_ubx_tim_tm2_ramblock_c),
@@ -707,38 +697,95 @@ begin
   pollmessages (msg_ubx_nav_aopstatus_number_c) <= '1' ;
   pollmessages (msg_ubx_tim_tm2_number_c)       <= tm_req_timemark ;
 
-  --  Implement the GPS UART clocks.
+  --------------------------------------------------------------------------
+  --  Implement the GPS UART tx clock.
+  --------------------------------------------------------------------------
 
-  uart_clocks : process (reset, clk)
+  uart_tx_clk : process (reset, clk)
   begin
     if (reset = '1') then
-      rx_clock                <= '0' ;
-      rx_clock_counter        <= (others => '0') ;
-      tx_clock                <= '0' ;
-      tx_clock_counter        <= (others => '0') ;
+      tx_clk                  <= '0' ;
+      tx_clk_counter          <= (others => '0') ;
 
     elsif (rising_edge (clk)) then
 
-      --  Toggle the clock line when the counters reach their max
-      --  values.  Otherwise simply increment the clock counters.
+      --  Toggle the clock line when the counter reach its max
+      --  value.  Otherwise simply increment the clock counter.
 
-      if (rx_clock_counter /= rx_clock_cnt_c) then
-        rx_clock_counter      <= rx_clock_counter + 1 ;
+      if (tx_clk_counter /= tx_clk_cnt_c) then
+        tx_clk_counter      <= tx_clk_counter + 1 ;
       else
-        rx_clock_counter      <= (others => '0') ;
+        tx_clk_counter      <= (others => '0') ;
 
-        rx_clock              <= not rx_clock ;
-
-        if (tx_clock_counter /= tx_clock_cnt_c) then
-          tx_clock_counter    <= tx_clock_counter + 1 ;
-        else
-          tx_clock_counter    <= (others => '0') ;
-
-          tx_clock            <= not tx_clock ;
-        end if ;
+        tx_clk              <= not tx_clk ;
       end if ;
     end if ;
-  end process uart_clocks ;
+  end process uart_tx_clk ;
+
+  --  Enable the gated transmitter clock when time to load a byte and
+  --  disable it after the byte is sent.
+
+  uart_tx_gated_clk : process (reset, tx_clk)
+  begin
+    if (reset = '1') then
+      tx_gated_clk_en       <= '0' ;
+
+    elsif (falling_edge (tx_clk))
+      if (tx_load = '1') then
+        tx_gated_clk_en     <= '1' ;
+
+      elsif (tx_empty = '1') then
+        tx_gated_clk_en     <= '0' ;
+      end if ;
+    end if ;
+  end process uart_tx_gated_clk ;
+
+  tx_gated_clk              <= tx_clk and tx_gated_clk_en ;
+
+
+  --------------------------------------------------------------------------
+  --  Implement the GPS parser clock.
+  --------------------------------------------------------------------------
+
+  gps_parse_clk : process (reset, clk)
+  begin
+    if (reset = '1') then
+      parse_clk             <= '0' ;
+      parse_clk_counter     <= (others => '0') ;
+
+    elsif (rising_edge (clk)) then
+
+      --  Toggle the clock line when the counter reach its max
+      --  value.  Otherwise simply increment the clock counter.
+
+      if (parse_clk_counter /= parse_clk_cnt_c) then
+        parse_clk_counter   <= parse_clk_counter + 1 ;
+      else
+        parse_clk_counter      <= (others => '0') ;
+
+        parse_clk              <= not parse_clk ;
+      end if ;
+    end if ;
+  end process gps_parse_clk ;
+
+  --  Enable the gated memory clock when there is at least one memory
+  --  requester, and disable it when there are none.  The memory clock is
+  --  inverted from the parse clock requiring the gating clock edge to be
+  --  rising rather than falling.
+
+  mem_gated_clk : process (reset, parse_clk)
+  begin
+    if (reset = '1') then
+      mem_gated_clk_en      <= '0' ;
+
+    elsif (rising_edge (parse_clk))
+      if (memrequesters = 0) then
+        mem_gated_clk_en    <= '0' ;
+      else
+        mem_gated_clk_en    <= '1' ;
+      end if ;
+    end if ;
+  end process mem_gated_clk ;
 
 
 end architecture structural ;
