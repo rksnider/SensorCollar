@@ -423,8 +423,9 @@ architecture structural of GPSmessages is
   signal tx_data              : std_logic_vector (7 downto 0) ;
   signal tx_clk_counter       : unsigned (tx_clk_bits_c-1 downto 0) ;
 
+  signal rx_ready             : std_logic ;
+  signal rx_received          : std_logic ;
   signal rx_empty             : std_logic ;
-  signal rx_unload            : std_logic ;
   signal rx_data              : std_logic_vector (7 downto 0) ;
 
   --  Parsed message information.
@@ -480,7 +481,11 @@ architecture structural of GPSmessages is
   signal parse_clk            : std_logic ;
   signal parse_clk_counter    : unsigned (parse_clk_bits_c-1 downto 0) ;
 
-  signal mem_gated_clk_en     : std_logic ;
+  --  Memory allocation and memory clock control.
+
+  signal mem_gated_clk_en       : std_logic ;
+
+  signal memalloc_gated_clk_en  : std_logic ;
 
 begin
 
@@ -501,7 +506,7 @@ begin
     )
     Port Map (
       reset                   => reset,
-      clk                     => parse_clk,
+      clk                     => (parse_clk and memalloc_gated_clk_en),
       requesters_in           => memrequesters,
       resource_tbl_in         => meminput_tbl,
       receivers_out           => memreceivers,
@@ -520,12 +525,28 @@ begin
       tx_out                  => gps_tx_out,
       tx_empty                => tx_empty,
       rxclk                   => clk,
-      uld_rx_data             => rx_unload,
+      uld_rx_data             => not rx_empty,
       rx_data                 => rx_data,
       rx_enable               => '1',
       rx_in                   => gps_rx_in,
       rx_empty                => rx_empty
     ) ;
+
+  process (reset, rx_clk)
+  begin
+    if (reset = '1') then
+      rx_ready    <= '0' ;
+
+    elsif (rising_edge (rx_clk)) then
+      if (rx_empty = '0') then
+        rx_ready  <= '1' ;
+
+      elsif (rx_recieved = '1') then
+        rx_ready  <= '0' ;
+
+      end if ;
+    end if ;
+  end process ;
 
   --  GPS Message receiver and parser.
 
@@ -538,8 +559,8 @@ begin
       clk                     => parse_clk,
       curtime_in              => curtime_in,
       inbyte_in               => rx_data,
-      inready_in              => not rx_empty,
-      inreceived_out          => rx_unload,
+      inready_in              => rx_ready,
+      inreceived_out          => rx_received,
       meminput_in             => memread_from,
       memrcv_in               => memreceivers  (memreq_parser_c),
       memreq_out              => memrequesters (memreq_parser_c),
@@ -761,29 +782,38 @@ begin
       if (parse_clk_counter /= parse_clk_cnt_c) then
         parse_clk_counter   <= parse_clk_counter + 1 ;
       else
-        parse_clk_counter      <= (others => '0') ;
+        parse_clk_counter   <= (others => '0') ;
 
-        parse_clk              <= not parse_clk ;
+        parse_clk           <= not parse_clk ;
       end if ;
     end if ;
   end process gps_parse_clk ;
 
-  --  Enable the gated memory clock when there is at least one memory
-  --  requester, and disable it when there are none.  The memory clock is
-  --  inverted from the parse clock requiring the gating clock edge to be
-  --  rising rather than falling.
+  --------------------------------------------------------------------------
+  --  Enable the gated memory allocater and memory clocks when there is at
+  --  least one memory requester, and disable them when there are none.
+  --  The memory clock is inverted from the parse clock requiring the gating
+  --  clock edge to be rising rather than falling.
+  --------------------------------------------------------------------------
 
   mem_gated_clk : process (reset, parse_clk)
   begin
     if (reset = '1') then
-      mem_gated_clk_en      <= '0' ;
+      mem_gated_clk_en          <= '0' ;
+      memalloc_gated_clk_en     <= '0' ;
 
     elsif (rising_edge (parse_clk))
       if (memrequesters = 0) then
-        mem_gated_clk_en    <= '0' ;
+        mem_gated_clk_en        <= '0' ;
       else
-        mem_gated_clk_en    <= '1' ;
+        mem_gated_clk_en        <= '1' ;
       end if ;
+
+    else
+      if (memrequesters = 0) then
+        memalloc_gated_clk_en   <= '0' ;
+      else
+        memalloc_gated_clk_en   <= '1' ;
     end if ;
   end process mem_gated_clk ;
 

@@ -130,6 +130,11 @@ architecture rtl of TimeMark is
   signal cur_state        : TimeMarkState ;
   signal return_state     : TimeMarkState ;
 
+  --  Gate the clock that drives the state machine.
+
+  signal gated_clk          : std_logic ;
+  signal gated_clk_en       : std_logic ;
+
   --  Output signals that must be read.
 
   signal mem_address        : unsigned (memaddr_bits_g-1 downto 0) ;
@@ -217,23 +222,60 @@ begin
 
     elsif (rising_edge (time_mark_clock)) then
 
+      --  Order time mark generation when the time has arrived for one
+      --  until that operation has started.
+
       if (time_mark_pending = '1') then
         send_time_mark      <= '0' ;
 
-      elsif (send_time_mark = '0') then
-        if (time_mark_target = unsigned (curtime.week_millisecond)) then
-          send_time_mark    <= '1' ;
+      else
+
+        if (send_time_mark = '0') then
+          if (time_mark_target = unsigned (curtime.week_millisecond)) then
+            send_time_mark    <= '1' ;
+          end if ;
+        end if ;
+
+        --  After processing a time mark request, request a time mark
+        --  message until one is received.
+
+        if (tmbank_in = last_tmbank) then
+          req_timemark_out  <= '1' ;
+        else
+          req_timemark_out  <= '0' ;
         end if ;
       end if ;
     end if ;
   end process marker_alarm ;
+
+  --------------------------------------------------------------------------
+  --  Gate the marker clock on when it is time for a new time mark.
+  --------------------------------------------------------------------------
+
+  marker_gate : process (reset, clk)
+  begin
+    if (reset = '1') then
+      gated_clk_en          <= '0' ;
+
+    elsif (falling_edge (clk)) then
+      if (send_time_mark = '1') then
+        gated_clk_en        <= '1' ;
+
+      elsif (time_mark_pending = '0') then
+        gated_clk_en        <= '0' ;
+
+      end if ;
+    end if ;
+  end process marker_gate ;
+
+  gated_clk                 <= clk and gated_clk_en ;
 
 
   --------------------------------------------------------------------------
   --  Handle pending time mark requests.
   --------------------------------------------------------------------------
 
-  marker_pending : process (reset, clk)
+  marker_pending : process (reset, gated_clk)
   begin
     if (reset = '1') then
       time_mark_pending         <= '1' ;
@@ -249,17 +291,11 @@ begin
       req_timemark_out          <= '0' ;
       cur_state                 <= MARK_STATE_POS_WAIT ;
 
-    elsif (rising_edge (clk)) then
+    elsif (rising_edge (gated_clk)) then
 
       --  Write enable is set for only one clock cycle.
 
       memwrite_en_out           <= '0' ;
-
-      --  Request a time mark poll until new information has arrived.
-
-      if (tmbank_in /= last_tmbank) then
-        req_timemark_out        <= '0' ;
-      end if ;
 
       --  Start a new time mark generation sequence.
 
@@ -443,7 +479,6 @@ begin
             time_mark_pending     <= '0' ;
 
             last_tmbank           <= tmbank_in ;
-            req_timemark_out      <= '1' ;
 
           --  Wait until a new position has been received and then check
           --  it out.  When the bank the position data is stored in changes,

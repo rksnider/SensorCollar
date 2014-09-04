@@ -46,22 +46,22 @@ use WORK.gps_message_ctl_pkg.all ;  --  GPS message control definitions.
 --!
 --! @param      memaddr_bits_c  Bit width of the memory address.
 --! @param      reset           Reset the entity to an initial state.
---! @param      clk             Clock used to move throuth states in the
+--! @param      clk             Clock used to move through states in the
 --!                             entity and its components.
---! @param      outready_in     The communication port is ready for a
---!                             character.
 --! @param      msgclass_in     Class of the message to send.
 --! @param      msgid_in        ID of the message to sent.
 --! @param      memstart_in     Starting address to read payload from.
 --! @param      memlength_in    Length of the payload.
---! @param      meminput_in     Data byte read from memory that is
---!                             addressed.
---! @param      memrcv_in       Receive access to memory.
 --! @param      memreq_out      Request access to memory.
+--! @param      memrcv_in       Receive access to memory.
 --! @param      memaddr_out     Address of the byte of memory to read.
 --! @param      memread_en_out  Enable the memory for reading.
+--! @param      meminput_in     Data byte read from memory that is
+--!                             addressed.
+--! @param      outready_in     The communication port is ready for a
+--!                             character.
+--! @param      outsend_out     Send a charater.
 --! @param      outchar_out     Character to send to the GPS.
---! @param      outsend_out     Send the charater.
 --! @param      outdone_out     The message has been completely sent.
 --
 ----------------------------------------------------------------------------
@@ -74,19 +74,19 @@ entity GPSsend is
   Port (
     reset           : in    std_logic ;
     clk             : in    std_logic ;
-    outready_in     : in    std_logic ;
     msgclass_in     : in    std_logic_vector (7 downto 0) ;
     msgid_in        : in    std_logic_vector (7 downto 0) ;
     memstart_in     : in    std_logic_vector (memaddr_bits_c-1 downto 0) ;
     memlength_in    : in    unsigned (15 downto 0) ;
-    meminput_in     : in    std_logic_vector (7 downto 0) ;
-    memrcv_in       : in    std_logic ;
     memreq_out      : out   std_logic ;
+    memrcv_in       : in    std_logic ;
     memaddr_out     : out   std_logic_vector (memaddr_bits_c-1 downto 0) ;
     memread_en_out  : out   std_logic ;
+    meminput_in     : in    std_logic_vector (7 downto 0) ;
+    outready_in     : in    std_logic ;
+    outsend_out     : out   std_logic
     outchar_out     : out   std_logic_vector (7 downto 0) ;
-    outsend_out     : out   std_logic ;
-    outdone_out     : out   std_logic
+    outdone_out     : out   std_logic ;
   ) ;
 
 end entity GPSsend ;
@@ -158,7 +158,7 @@ begin
 
       --  Always wait for output ready unless changed within a state.
       --  In most cases the output must be sent before a state can proceed.
-      --  Thus the state machine waits in the WAIT_READY state until a the
+      --  Thus the state machine waits in the WAIT_READY state until the
       --  transmitter is ready for output, sends the output byte, then
       --  proceeds to the next specified state.  In some states multiple
       --  clock cycles are needed to process the information received.  In

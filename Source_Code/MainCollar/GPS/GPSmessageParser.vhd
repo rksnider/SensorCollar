@@ -332,8 +332,6 @@ begin
     end if ;
   end process gate_clk ;
 
-  gated_clk             <= clk and gated_clk_en ;
-
 
   --------------------------------------------------------------------------
   --  Parse the individual fields in a line and save the results to memory.
