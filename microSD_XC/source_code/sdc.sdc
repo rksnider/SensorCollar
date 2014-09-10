@@ -1,8 +1,6 @@
-#**************************************************************
-# Create Clock
-#**************************************************************
+#External clock pin
 create_clock -name {CLOCK_50} -period 20.000 -waveform { 0.000 10.000 } [get_ports { CLOCK_50}]
-
+#Auto constrain all clocks coming from plls.
 derive_pll_clocks
 
 derive_clock_uncertainty
@@ -17,17 +15,18 @@ create_generated_clock -source [get_pins {pll_data|data_pll_inst|altera_pll_i|ge
 #10mhz 100ns
 #2mhz  500ns
 
-#Virtual clock created for constraining input pins. 
+#Virtual clock created for constraining input pins.
+#This clock name is used with the set_input_delay constraint.
 create_clock -period 25 -name sd_clk_ext
 			
-#Create generated clock on the pin used for the SD clock. Then! use this clock
-#to constrain data and cmd output pins.
+#Assign a generated clock to the output pin which sends this clock to the sd card. You can then
+#use this clock name to set_output_delay on the associated cmd and data pins.
 create_generated_clock -name sd_clk -source [get_pins {pll_data|data_pll_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk}] [get_ports {EG_BOTTOM[16]}]
 
 #False paths I don't care about like leds and push buttons. 
 #EG_TOP24/25 were the switches associated with switching voltage to the level translator. 
 
-# Only constrain the sd data,and cmd. Leave other non-essential lines tact/gpio/leds alone, ie false path
+# Only constrain the sd data and cmd lines. Leave other non-essential lines tact/gpio/leds alone, ie false path
 
 #The following two commands only serve to make sure TimeQuest does not issue warnings on these false path I/O.
 #If the sdc is only supplied with set_false_path without input/output delay, warnings may still be issued. 
@@ -38,6 +37,7 @@ set_false_path -from * -to [get_ports {user_led_n[3] gpio[0] gpio[1] gpio[2] gpi
 set_false_path -from [get_ports {tact[0] tact[1]}] -to *
 
 #Set inputdelay on the data input ports.
+#Specifies the data required time at the specified input ports relative to the clock.
 #These values are calculated from Altera's Constraining Source Synchronous Interfaces 
 #online training section 3.14. The -Tcomax and -Tcomin times taken from 
 #SanDisk SD Card Product Manual 
@@ -60,6 +60,7 @@ set_false_path -to INITCLK
 set_false_path -to [get_ports {EG_BOTTOM[16]}]
 
 #Set output delay on the data output ports.
+#Specifies the required data arrival times at the specified output ports relative to the clock
 #These values calculated from Altera's Constraining Source Synchronous Interfaces 
 #online training section 4.13. The -Tsu and -Th times taken from SanDisk 
 #SD Card Product Manual 
@@ -69,8 +70,8 @@ set_output_delay -clock sd_clk  -min -5 [get_ports {EG_BOTTOM[25] EG_BOTTOM[17] 
 set_output_delay -clock sd_clk  -max 5 [get_ports {EG_BOTTOM[25] EG_BOTTOM[17] EG_BOTTOM[18] EG_BOTTOM[14] EG_BOTTOM[15]}]
 
 
-#Set everything except falling edge to rising edge to false path. sdcard_controller puts data on the line on the falling edge and the sd card samples on the rising edge of the clock.
-#This is not entirely true for the sd card responses in 1.8V mode. 
+#For output timing I only want to consider the falling edge of the sd_data clk which sends the data
+#and the rising edge of the sd_clk which receives the data. 
 
 set_false_path -setup  -rise_from [get_clocks {pll_data|data_pll_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk}] \
    -rise_to [get_clocks sd_clk]
@@ -91,9 +92,8 @@ set_false_path -hold  -rise_from [get_clocks {pll_data|data_pll_inst|altera_pll_
    -fall_to [get_clocks sd_clk]
    
 	
-#Set everything except falling edge to rising edge to false path.  
-#This setup is an overconstraint as data is actually pushed back to
-#the master slightly after the rising edge of the clock.
+#For input timing I only want to consider the falling edge of the sd_clk_ext which sends the data
+#and the rising edge of the sd_data clk which receives the data. 
 	
 set_false_path -setup  -rise_from [get_clocks sd_clk_ext] \
    -rise_to [get_clocks {pll_data|data_pll_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk}]
