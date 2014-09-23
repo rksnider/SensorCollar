@@ -63,7 +63,7 @@ use WORK.msg_ubx_tim_tm2_pkg.all ;
 --! @param      inreceived_out  The byte has been received for parsing.
 --! @param      memreq_out      Request access to memory.
 --! @param      memrcv_in       Receive access to memory.
---! @param      memaddr_in      Address of the byte of memory to read/write.
+--! @param      memaddr_out     Address of the byte of memory to read/write.
 --! @param      meminput_in     Data byte read from memory that is
 --!                             addressed.
 --! @param      memoutput_out   Data byte written to memory that is
@@ -271,7 +271,7 @@ begin
   --  Select who can set the memory address.
 
   with memaddr_select select
-    memaddr_in    <= std_logic_vector (text_memaddr +
+    memaddr_out   <= std_logic_vector (text_memaddr +
                                        msg_extract_tree_c +
                                        msg_rom_base_c)
                                               when memaddr_select_text_c,
@@ -304,7 +304,7 @@ begin
       inready_in          => inready_in,
       memreq_out          => text_memreq,
       memrcv_in           => memrcv_in,
-      memaddr_in          => text_memaddr,
+      memaddr_out         => text_memaddr,
       memdata_in          => meminput_in,
       memread_en_out      => text_memread_en,
       valid_out           => text_valid,
@@ -316,7 +316,7 @@ begin
   --  Gate the processing clock on only when processing a message.
   --------------------------------------------------------------------------
 
-  gate_clk:   process (reset_clk)
+  gate_clk:   process (reset, clk)
   begin
     if (reset = '1') then
       gated_clk_en      <= '0' ;
@@ -364,7 +364,7 @@ begin
 
       --  A message is not done when there is a byte ready to be processed.
 
-      if (inready = '1') then
+      if (inready_in = '1') then
         message_done  <= '0' ;
       end if ;
 

@@ -1,4 +1,4 @@
-DEPTH = 000000 ;
+DEPTH =    512 ;
 WIDTH = 8 ;
 ADDRESS_RADIX = DEC ;
 DATA_RADIX = HEX ;
@@ -51,3 +51,5 @@ BEGIN
 35     : 09 ;  --  towMsF       4 bytes store
 36     : 09 ;  --  towSubMsF    4 bytes store
 37     : 09 ;  --  accEst       4 bytes store
+
+END

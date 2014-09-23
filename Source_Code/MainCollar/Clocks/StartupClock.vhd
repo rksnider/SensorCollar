@@ -105,7 +105,7 @@ begin
 
   --  Conversion from GPS time format to standard logic vector output.
 
-  time_since_reset_out    <= TO_GPS_TIME (time_since_reset) ;
+  time_since_reset_out    <= TO_STD_LOGIC_VECTOR (time_since_reset) ;
 
   --  Counter definitions.
 

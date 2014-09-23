@@ -133,10 +133,30 @@ set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "2.5 V"
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
-set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name VHDL_FILE ../MainCollar/gps_ram.vhd
+set_global_assignment -name VHDL_FILE ../MainCollar/Clocks/GatedClock.vhd
+set_global_assignment -name VHDL_FILE ../MainCollar/Clocks/GenClock.vhd
+set_global_assignment -name VHDL_FILE ../MainCollar/GPS/GPSclocks.vhd
+set_global_assignment -name VHDL_FILE local_vhdl/Collar_Control_pkg.vhd
 set_global_assignment -name VHDL_FILE compile_start_time_pkg.vhd
 set_global_assignment -name VHDL_FILE ../MainCollar/General/Utilities_pkg.vhd
 set_global_assignment -name VHDL_FILE ../MainCollar/General/GPS_Clock_pkg.vhd
-set_global_assignment -name VHDL_FILE ../MainCollar/Collar_Control_pkg.vhd
 set_global_assignment -name VHDL_FILE ../MainCollar/Collar.vhd
 set_global_assignment -name VHDL_FILE BEMicroCV.vhd
+set_global_assignment -name VHDL_FILE ../MainCollar/Clocks/StartupClock.vhd
+set_global_assignment -name VHDL_FILE ../MainCollar/Resources/ResourceMUX.vhd
+set_global_assignment -name VHDL_FILE ../MainCollar/Resources/ResourceAllocator.vhd
+set_global_assignment -name VHDL_FILE ../MainCollar/UART/uart.vhd
+set_global_assignment -name VHDL_FILE ../MainCollar/GPS/TimeMark.vhd
+set_global_assignment -name VHDL_FILE ../MainCollar/GPS/ParseTextField.vhd
+set_global_assignment -name VHDL_FILE ../MainCollar/GPS/msg_ubx_tim_tm2_pkg.vhd
+set_global_assignment -name VHDL_FILE ../MainCollar/GPS/msg_ubx_nav_sol_pkg.vhd
+set_global_assignment -name VHDL_FILE ../MainCollar/GPS/msg_ubx_nav_aopstatus_pkg.vhd
+set_global_assignment -name VHDL_FILE ../MainCollar/GPS/GPSsend.vhd
+set_global_assignment -name VHDL_FILE ../MainCollar/GPS/GPSpoll.vhd
+set_global_assignment -name VHDL_FILE ../MainCollar/GPS/GPSmessages.vhd
+set_global_assignment -name VHDL_FILE ../MainCollar/GPS/GPSmessageParser.vhd
+set_global_assignment -name VHDL_FILE ../MainCollar/GPS/GPSmessageInfo_pkg.vhd
+set_global_assignment -name VHDL_FILE ../MainCollar/GPS/gps_message_ctl_pkg.vhd
+set_global_assignment -name VHDL_FILE ../MainCollar/GPS/AOPstatus.vhd
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

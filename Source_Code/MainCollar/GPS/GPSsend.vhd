@@ -69,30 +69,30 @@ use WORK.gps_message_ctl_pkg.all ;  --  GPS message control definitions.
 entity GPSsend is
 
   Generic (
-    memaddr_bits_c  : natural := 8
+    memaddr_bits_g  : natural := 8
   ) ;
   Port (
     reset           : in    std_logic ;
     clk             : in    std_logic ;
     msgclass_in     : in    std_logic_vector (7 downto 0) ;
     msgid_in        : in    std_logic_vector (7 downto 0) ;
-    memstart_in     : in    std_logic_vector (memaddr_bits_c-1 downto 0) ;
+    memstart_in     : in    std_logic_vector (memaddr_bits_g-1 downto 0) ;
     memlength_in    : in    unsigned (15 downto 0) ;
     memreq_out      : out   std_logic ;
     memrcv_in       : in    std_logic ;
-    memaddr_out     : out   std_logic_vector (memaddr_bits_c-1 downto 0) ;
+    memaddr_out     : out   std_logic_vector (memaddr_bits_g-1 downto 0) ;
     memread_en_out  : out   std_logic ;
     meminput_in     : in    std_logic_vector (7 downto 0) ;
     outready_in     : in    std_logic ;
-    outsend_out     : out   std_logic
+    outsend_out     : out   std_logic ;
     outchar_out     : out   std_logic_vector (7 downto 0) ;
-    outdone_out     : out   std_logic ;
+    outdone_out     : out   std_logic
   ) ;
 
 end entity GPSsend ;
 
 
-architecture behavior of GPSsend is
+architecture rtl of GPSsend is
 
   --  Send Message States.
 
@@ -123,7 +123,7 @@ architecture behavior of GPSsend is
 
   --  Message handling signals.
 
-  signal msg_memaddr            : unsigned (memaddr_bits_c-1 downto 0) ;
+  signal msg_memaddr            : unsigned (memaddr_bits_g-1 downto 0) ;
   signal msg_length             : unsigned (15 downto 0) ;
 
   signal nextout                : std_logic_vector (7 downto 0) ;

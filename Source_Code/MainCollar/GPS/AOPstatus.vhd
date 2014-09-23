@@ -79,7 +79,7 @@ entity AOPstatus is
   Port (
     clk                   : in    std_logic ;
     reset                 : in    std_logic ;
-    msgnumber_in          : in    std_logic_vector (MSG_COUNT_BITS-1
+    msgnumber_in          : in    std_logic_vector (msg_count_bits_c-1
                                                       downto 0) ;
     msgreceived_in        : in    std_logic ;
     tempbank_in           : in    std_logic ;

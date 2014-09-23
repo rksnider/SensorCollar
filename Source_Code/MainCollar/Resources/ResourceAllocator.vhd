@@ -35,7 +35,7 @@ use IEEE.STD_LOGIC_1164.ALL ;   --! Use standard logic elements.
 use IEEE.NUMERIC_STD.ALL ;      --! Use numeric standard.
 
 library GENERAL ;               --! General libraries
-use GENERAL.UTILITIES.ALL ;
+use GENERAL.UTILITIES_PKG.ALL ;
 
 
 ----------------------------------------------------------------------------
@@ -77,9 +77,9 @@ entity ResourceAllocator is
   Port (
     reset                 : in    std_logic ;
     clk                   : in    std_logic ;
-    requesters_in         : in    std_logic_vector (requester_cnt_g_g-1
+    requesters_in         : in    std_logic_vector (requester_cnt_g-1
                                                       downto 0) ;
-    receivers_out         : out   std_logic_vector (requester_cnt_g_g-1
+    receivers_out         : out   std_logic_vector (requester_cnt_g-1
                                                       downto 0) ;
     receiver_no_out       : out   unsigned (number_len_g-1 downto 0)
   ) ;
@@ -87,7 +87,7 @@ entity ResourceAllocator is
 end entity ResourceAllocator ;
 
 
-architecture behavior of ResourceAllocator is
+architecture rtl of ResourceAllocator is
 
   signal granted_to         : unsigned (requester_cnt_g-1 downto 0) ;
   signal low_priority_mask  : unsigned (requester_cnt_g-1 downto 0) ;
@@ -121,20 +121,22 @@ begin
         --  requests are always those whose bits are above the bit of the
         --  last request granted.
 
-        granted_low_v     <= lsb_find (unsigned (requesters_in) and
+        granted_low_v     := lsb_find (unsigned (requesters_in) and
                                        low_priority_mask) ;
-        granted_all_v     <= lsb_find (unsigned (requesters_in)) ;
+        granted_all_v     := lsb_find (unsigned (requesters_in)) ;
 
-        granted_bit_v     <= granted_low_v  when (granted_low_v /= 0 and
-                                                  prioritized_g = '0')
-                                            else granted_all_v ;
+        if (granted_low_v /= 0 and prioritized_g = '0') then
+          granted_bit_v   := granted_low_v ;
+        else
+          granted_bit_v   := granted_all_v ;
+        end if ;
 
         --  Set the receiver's bit and its bit number as well.
 
-        receivers_out     <= granted_bit_v ;
+        receivers_out     <= std_logic_vector (granted_bit_v) ;
         receiver_no_out   <=
               bit_to_number (std_logic_vector (granted_bit_v),
-                             receiver_no'length) ;
+                             receiver_no_out'length) ;
 
         --  Save the bit that was granted and create a mask of lower
         --  priority bits for the next allocation.
@@ -146,4 +148,4 @@ begin
     end if ;
   end process allocate_resource ;
 
-end rtl ;
+end architecture rtl ;

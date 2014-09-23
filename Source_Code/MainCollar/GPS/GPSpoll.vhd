@@ -102,7 +102,7 @@ entity GPSpoll is
 end entity GPSpoll ;
 
 
-architecture behavior of GPSpoll is
+architecture rtl of GPSpoll is
 
   --  Resource allocator to find next message to poll.
 
@@ -251,10 +251,10 @@ begin
       gated_clk_en      <= '0' ;
 
     elsif (falling_edge (clk)) then
-      if (newpoll = '1' or poll_input /= 0) then
+      if (newpoll = '1' or unsigned (poll_input) /= 0) then
         gated_clk_en    <= '1' ;
 
-      elsif (poll_select = 1 and message_bit = 0) then
+      elsif (poll_select = '1' and unsigned (message_bit) = 0) then
         gated_clk_en    <= '0' ;
       end if ;
     end if ;

@@ -221,6 +221,7 @@ db/
 incremental_db/
 output_files/
 hc_output/
+local_vhdl/
 *.ipinfo
 *.qsf.bak
 *.qws

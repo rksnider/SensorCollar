@@ -108,6 +108,20 @@ end entity TimeMark ;
 
 architecture rtl of TimeMark is
 
+  --  Convert a clock into a gated clock.
+
+  component GatedClock is
+
+    Port (
+      reset                   : in    std_logic ;
+      clk                     : in    std_logic ;
+      clk_on_in               : in    std_logic ;
+      clk_off_in              : in    std_logic ;
+      clk_out                 : out   std_logic
+    ) ;
+
+  end component GatedClock ;
+
   --  Time Mark Generation States.
 
   type TimeMarkState is   (
@@ -211,6 +225,7 @@ begin
   time_mark_clock   <=
       curtime.millisecond_nanosecond (gps_time_nanobits_c-1) ;
 
+
   --------------------------------------------------------------------------
   --  Wait until the next time for a marker has arrived.
   --------------------------------------------------------------------------
@@ -218,6 +233,7 @@ begin
   marker_alarm : process (reset, time_mark_clock)
   begin
     if (reset = '1') then
+      req_timemark_out      <= '0' ;
       send_time_mark        <= '0' ;
 
     elsif (rising_edge (time_mark_clock)) then
@@ -252,23 +268,14 @@ begin
   --  Gate the marker clock on when it is time for a new time mark.
   --------------------------------------------------------------------------
 
-  marker_gate : process (reset, clk)
-  begin
-    if (reset = '1') then
-      gated_clk_en          <= '0' ;
-
-    elsif (falling_edge (clk)) then
-      if (send_time_mark = '1') then
-        gated_clk_en        <= '1' ;
-
-      elsif (time_mark_pending = '0') then
-        gated_clk_en        <= '0' ;
-
-      end if ;
-    end if ;
-  end process marker_gate ;
-
-  gated_clk                 <= clk and gated_clk_en ;
+  marker_gate : GatedClock
+    Port Map (
+      reset                 => reset,
+      clk                   => clk,
+      clk_on_in             => send_time_mark,
+      clk_off_in            => not time_mark_pending,
+      clk_out               => gated_clk
+    ) ;
 
 
   --------------------------------------------------------------------------
@@ -285,10 +292,9 @@ begin
       memwrite_en_out           <= '0' ;
       time_mark_target          <= (others => '0') ;
       marker_out                <= '0' ;
-      last_posbank              <= posbank_in ;
-      last_tmbank               <= tmbank_in ;
+      last_posbank              <= '0' ;
+      last_tmbank               <= '0' ;
       req_position_out          <= '0' ;
-      req_timemark_out          <= '0' ;
       cur_state                 <= MARK_STATE_POS_WAIT ;
 
     elsif (rising_edge (gated_clk)) then

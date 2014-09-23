@@ -60,7 +60,7 @@ fprintf (vhdfile, 'use IEEE.STD_LOGIC_1164.ALL ;\n') ;
 fprintf (vhdfile, 'use IEEE.NUMERIC_STD.ALL ;\n') ;
 fprintf (vhdfile, 'use IEEE.MATH_REAL.ALL ;\n\n') ;
 fprintf (vhdfile, 'LIBRARY GENERAL ;\n') ;
-fprintf (vhdfile, 'USE GENERAL.GPS_CLOCK.ALL ;\n\n') ;
+fprintf (vhdfile, 'USE GENERAL.GPS_CLOCK_PKG.ALL ;\n\n') ;
 
 fprintf (vhdfile, 'package %s_pkg is\n\n', package_name) ;
 

@@ -38,7 +38,7 @@ LIBRARY lpm ;                   --  Use Library of Parameterized Modules.
 USE lpm.lpm_components.all ;
 
 library GENERAL ;               --! Local libraries
-use GENERAL.UTILITIES.ALL ;
+use GENERAL.UTILITIES_PKG.ALL ;
 
 
 ----------------------------------------------------------------------------
@@ -130,7 +130,7 @@ architecture rtl of ResourceMUX is
 
   constant selector_bits_c  : natural := const_bits (requester_cnt_g) ;
 
-  signal selector           : unsigned (selector_bits_g-1 downto 0) ;
+  signal selector           : unsigned (selector_bits_c-1 downto 0) ;
 
 begin
 

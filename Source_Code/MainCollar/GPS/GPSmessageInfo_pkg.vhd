@@ -36,7 +36,7 @@ use IEEE.NUMERIC_STD.ALL ;
 use IEEE.MATH_REAL.ALL ;
 
 library WORK ;
-use WORK.gps_message_ctl.ALL ;
+use WORK.gps_message_ctl_pkg.ALL ;
 
 package GPSmessageInfo_pkg is
 
@@ -55,7 +55,7 @@ constant NAV_SOL_flags_WKNSET_c     : unsigned (7 downto 0) := x"04" ;
 constant NAV_SOL_flags_TOWSET_c     : unsigned (7 downto 0) := x"08" ;
 
 constant NAV_SOL_flags_OK_c         : unsigned (7 downto 0) :=
-               NAV_SOL_flags_GPSfix_OK_c
+               NAV_SOL_flags_GPSfixOK_c
             or NAV_SOL_flags_WKNSET_c
             or NAV_SOL_flags_TOWSET_c ;
 
