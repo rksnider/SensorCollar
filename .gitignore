@@ -222,6 +222,7 @@ incremental_db/
 output_files/
 hc_output/
 local_vhdl/
+greybox_tmp/
 *.ipinfo
 *.qsf.bak
 *.qws
