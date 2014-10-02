@@ -56,4 +56,7 @@ set_global_assignment -name PRE_FLOW_SCRIPT_FILE    quartus_sh:at_compile_start.
 # set_global_assignment -name POST_FLOW_SCRIPT_FILE   quartus_sh:at_compile_end.tcl
 
 
-set_global_assignment -name QIP_FILE ../../MainCollar/PFL.qip
+set_global_assignment -name QIP_FILE ../../MainCollar/PowerController/PFL.qip
+set_global_assignment -name VHDL_FILE ../../MainCollar/PowerController/PowerController.vhd
+set_global_assignment -name QIP_FILE ../../MainCollar/PowerController/InternalFlash.qip
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "NO HEAT SINK WITH STILL AIR"
