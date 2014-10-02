@@ -61,11 +61,18 @@ use GENERAL.UTILITIES_PKG.ALL ;
 --! @param      fpga_toflash_dir_in   FPGA to Flash data direction.
 --!
 --! @param      fpga_cnf_dclk_out     FPGA Configuration data clock.
---! @param      fpga_cnf_data_out     FPGA Configuration data to FPGA.
---! @param      fpga_cnf_nstatus_in   FPGA Configuration status not.
---! @param      fpga_cnf_conf_done_in FPGA Configuration config done.
---! @param      fpga_cnf_init_done_in FPGA Configuration init done.
+--! @param      fpga_cnf_data_out     FPGA Configuration data to FPGA.  Must
+--!                                   not be left floating after
+--!                                   configuration.
+--! @param      fpga_cnf_nstatus_in   FPGA Configuration status not.  Must
+--!                                   have a pull-up resistor.
+--! @param      fpga_cnf_conf_done_in FPGA Configuration config done.  Must
+--!                                   have a pull-up resistor.
+--! @param      fpga_cnf_init_done_in FPGA Configuration init done.  Must
+--!                                   have a pull-up resistor.
 --! @param      fpga_cnf_nconfig_out  FPGA Configuration configure not.
+--!                                   Must have a pull-up resistor if used
+--!                                   as an open drain pin.
 --!
 --! @param      statchg_out       The status register has changed.
 --! @param      spi_clk_in        The PC status register / FPGA control
@@ -132,10 +139,10 @@ entity PowerController is
     flash_cs_out          : out   std_logic ;
     pfl_flash_data_io     : inout std_logic_vector (3 downto 0) ;
     fpga_flash_data_io    : inout std_logic_vector (3 downto 0) ;
-    fpga_toflash_clk_in   : in    std_logic ;
-    fpga_toflash_cs_in    : in    std_logic ;
+    fpga_toflash_clk_in   : inout std_logic ;
+    fpga_toflash_cs_in    : inout std_logic ;
     fpga_toflash_data_io  : inout std_logic_vector (3 downto 0) ;
-    fpga_toflash_dir_in   : in    std_logic ;
+    fpga_toflash_dir_in   : inout std_logic ;
 
     fpga_cnf_dclk_out     : out   std_logic ;
     fpga_cnf_data_out     : out   std_logic ;
@@ -145,9 +152,9 @@ entity PowerController is
     fpga_cnf_nconfig_out  : out   std_logic ;
 
     statchg_out           : out   std_logic ;
-    spi_clk_in            : in    std_logic ;
-    spi_cs_in             : in    std_logic ;
-    spi_mosi_in           : in    std_logic ;
+    spi_clk_in            : inout std_logic ;
+    spi_cs_in             : inout std_logic ;
+    spi_mosi_in           : inout std_logic ;
     spi_miso_out          : out   std_logic ;
 
     i2c_clk_io            : inout std_logic ;
@@ -199,13 +206,49 @@ architecture structural of PowerController is
 
   --  FPGA state
 
+  signal fpga_powering            : std_logic := '0' ;
+  signal fpga_powered             : std_logic := '0' ;
   signal fpga_running             : std_logic := '0' ;
+
+  --  Parallel Flash Loader.
+
+  component PFL is
+    port
+    (
+      fpga_conf_done            : IN    STD_LOGIC ;
+      fpga_nstatus              : IN    STD_LOGIC ;
+      fpga_pgm                  : IN    STD_LOGIC_VECTOR (2 DOWNTO 0);
+      pfl_clk                   : IN    STD_LOGIC ;
+      pfl_flash_access_granted  : IN    STD_LOGIC ;
+      pfl_nreset                : IN    STD_LOGIC ;
+      flash_io0                 : INOUT STD_LOGIC_VECTOR (0 DOWNTO 0) ;
+      flash_io1                 : INOUT STD_LOGIC_VECTOR (0 DOWNTO 0) ;
+      flash_io2                 : INOUT STD_LOGIC_VECTOR (0 DOWNTO 0) ;
+      flash_io3                 : INOUT STD_LOGIC_VECTOR (0 DOWNTO 0) ;
+      flash_ncs                 : OUT   STD_LOGIC_VECTOR (0 DOWNTO 0) ;
+      flash_sck                 : OUT   STD_LOGIC_VECTOR (0 DOWNTO 0) ;
+      fpga_data                 : OUT   STD_LOGIC_VECTOR (0 DOWNTO 0) ;
+      fpga_dclk                 : OUT   STD_LOGIC ;
+      fpga_nconfig              : OUT   STD_LOGIC ;
+      pfl_flash_access_request  : OUT   STD_LOGIC
+    ) ;
+  end component PFL ;
 
 
 begin
 
-  --  When the FPGA is not running all outputs to it will be zero.  All
-  --  inputs from it will be high impedence.
+  --  When the FPGA is not running all outputs to it will be zero.
+  --  When the FPGA is not powered all inputs from it will be driven zero.
+  --  When it is powered they will be high impedence.
+  --
+  --  Thus, when the FPGA is powered down all lines going to it from the
+  --  Power Controller will be 0V, preventing any current flow through
+  --  the FPGA to them.
+  --  When the FPGA is starting up it sets all its lines to high impedence
+  --  with a weak pull-up resistor.  At his time the Power Controller sets
+  --  all its input lines from the FPGA to high impedence without a weak
+  --  pull-up.  This results in no current flow through these lines then
+  --  and into the time the FPGA is running.
 
   master_clk_out        <= '0' when (fpga_running = '0') else master_clk ;
 
@@ -213,29 +256,73 @@ begin
                            fpga_toflash_clk_in ;
   flash_cs_out          <= pfl_flash_cs  when (fpga_running = '0') else
                            fpga_toflash_cs_in ;
-  fpga_flash_data_io    <= 'Z' when (fpga_running = '0') else
-                           'Z' when (fpga_toflash_dir_in = '0') else
+  fpga_flash_data_io    <= '0000' when (fpga_powered = '0') else
+                           'ZZZZ' when (fpga_running = '0') else
+                           'ZZZZ' when (fpga_toflash_dir_in = '0') else
                            fpga_toflash_data_io ;
-  fpga_toflash_data_io  <= '0' when (fpga_running = '0') else
-                           'Z' when (fpga_toflash_dir_in = '1') else
+  fpga_toflash_data_io  <= '0000' when (fpga_powered = '0') else
+                           'ZZZZ' when (fpga_running = '0') else
+                           'ZZZZ' when (fpga_toflash_dir_in = '1') else
                            fpga_flash_data_io ;
+  fpga_toflash_clk_in   <= '0' when (fpga_powered = '0') else 'Z' ;
+  fpga_toflash_cs_in    <= '0' when (fpga_powered = '0') else 'Z' ;
+  fpga_toflash_dir_in   <= '0' when (fpga_powered = '0') else 'Z' ;
 
-  fpga_cnf_dclk_out     <= '0' when (fpga_running = '0') else
+  fpga_cnf_dclk_out     <= '0' when (fpga_powered = '0') else
                            pfl_dclk ;
-  fpga_cnf_data_out     <= '0' when (fpga_running = '0') else
+  fpga_cnf_data_out     <= '0' when (fpga_powered = '0') else
                            pfl_data ;
-  fpga_cnf_nconfig_out  <= '0' when (fpga_running = '0') else
+  fpga_cnf_nconfig_out  <= '1' when (fpga_powered = '0') else
                            pfl_nconfig ;
 
   statchg_out           <= '0' when (fpga_running = '0') else
                            statreg_changed ;
   spi_miso_out          <= '0' when (fpga_running = '0') else
                            spi_miso ;
+  spi_clk_in            <= '0' when (fpga_powered = '0') else 'Z' ;
+  spi_cs_in             <= '0' when (fpga_powered = '0') else 'Z' ;
+  spi_mosi_in           <= '0' when (fpga_powered = '0') else 'Z' ;
 
   bat_int_fpga_out      <= '0' when (fpga_running = '0') else
                            bat_int_in ;
   fpga_fs_out           <= '0' when (fpga_running = '0') else
                            forced_start_in ;
+
+  i2c_clk_io            <= 'Z' ;
+  i2c_data_io           <= 'Z' ;
+
+  --  Parallel Flash Loader.
+  --  When pfl_flash_access_granted is low all flash_* lines are
+  --  tri-stated.  (PFL Users Guide Table 15).  This prevents JTAG access
+  --  to flash and FPGA configuration.  (PFL Users Guide Table 17).
+  --  Hold the pfl_nreset low to prevent FPGA configuration.  (PFL Users
+  --  Guide Table 15).  This does not prevent JTAG programming of flash.
+
+  pfl_inst : PFL
+    port map
+    (
+      fpga_conf_done            => fpga_cnf_conf_done_in,
+      fpga_nstatus              => fpga_cnf_nstatus_in,
+      fpga_pgm                  => '000',
+      pfl_clk                   => master_clk,
+      pfl_flash_access_granted  => pfl_run and pfl_flash_req,
+      pfl_nreset                => pfl_run,
+      flash_io0                 => pfl_flash_data_io [0],
+      flash_io1                 => pfl_flash_data_io [1],
+      flash_io2                 => pfl_flash_data_io [2],
+      flash_io3                 => pfl_flash_data_io [3],
+      flash_ncs                 => not pfl_flash_cs,
+      flash_sck                 => pfl_flash_clk,
+      fpga_data                 => pfl_data,
+      fpga_dclk                 => pfl_dclk,
+      fpga_nconfig              => pfl_nconfig,
+      pfl_flash_access_request  => pfl_flash_req
+    ) ;
+
+
+
+
+
 
 
 end architecture structural ;
