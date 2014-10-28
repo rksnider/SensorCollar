@@ -30,13 +30,16 @@
 --
 ----------------------------------------------------------------------------
 
-library IEEE ;                  --! Use standard library.
-use IEEE.STD_LOGIC_1164.ALL ;   --! Use standard logic elements.
-use IEEE.NUMERIC_STD.ALL ;      --! Use numeric standard.
-use IEEE.MATH_REAL.ALL ;        --! Real number functions.
+library IEEE ;                      --! Use standard library.
+use IEEE.STD_LOGIC_1164.ALL ;       --! Use standard logic elements.
+use IEEE.NUMERIC_STD.ALL ;          --! Use numeric standard.
+use IEEE.MATH_REAL.ALL ;            --! Real number functions.
 
-library GENERAL ;               --! General libraries
+library GENERAL ;                   --! General libraries
 use GENERAL.UTILITIES_PKG.ALL ;
+
+library WORK ;                      --! Local Libaries
+use WORK.PC_STATUSCONTROL_PKG.All ;
 
 
 ----------------------------------------------------------------------------
@@ -163,7 +166,7 @@ entity PowerController is
     bat_power_out         : out   std_logic ;
     bat_recharge_out      : out   std_logic ;
     bat_int_in            : in    std_logic ;
-    bat_int_fpga_out      : out   std_logic ;
+    bat_int_fpga_out      : inout std_logic ;
     bat_low_in            : in    std_logic ;
     bat_good_in           : in    std_logic ;
 
@@ -210,6 +213,13 @@ architecture structural of PowerController is
   signal fpga_powered             : std_logic := '0' ;
   signal fpga_running             : std_logic := '0' ;
 
+  --  Status and Control Registers.
+
+  signal PC_StatusReg             : std_logic_vector (StatusSignalsCnt_c-1
+                                                      downto 0) ;
+  signal PC_ControlReg            : std_logic_vector (ControlSignalsCnt_c-1
+                                                      downto 0) ;
+
   --  Parallel Flash Loader.
 
   component PFL is
@@ -234,6 +244,28 @@ architecture structural of PowerController is
     ) ;
   end component PFL ;
 
+  --  Status/Control SPI to FPGA.
+
+  component StatCtlSPI is
+
+    Generic (
+      status_bits_g           : natural := 1 ;
+      control_bits_g          : natural := 1
+    ) ;
+    Port (
+      reset                   : in    std_logic ;
+      clk                     : in    std_logic ;
+      status_in               : in    std_logic_vector (status_bits_g-1
+                                                        downto 0) ;
+      status_chg_out          : out   std_logic ;
+      control_out             : out   std_logic_vector (control_bits_g-1
+                                                        downto 0) ;
+      enable_in               : in    std_logic ;
+      data_in                 : in    std_logic ;
+      data_out                : out   std_logic
+    ) ;
+
+  end component StatCtlSPI ;
 
 begin
 
@@ -291,6 +323,51 @@ begin
   i2c_clk_io            <= 'Z' ;
   i2c_data_io           <= 'Z' ;
 
+  --  Status Register Bit Mappings.
+
+  PC_StatusReg (StatusSignals'pos(Stat_BatteryGood_e))  <= bat_good_in ;
+  PC_StatusReg (StatusSignals'pos(Stat_SolarCtlOn_e))   <= solar_on_in ;
+  PC_StatusReg (StatusSignals'pos(Stat_SolarCtlMax_e))  <= solar_max_in ;
+  PC_StatusReg (StatusSignals'pos(Stat_BattMonLow_e))   <= bat_low_in ;
+  PC_StatusReg (StatusSignals'pos(Stat_ForceStartup_e)) <= forced_start_in ;
+  PC_StatusReg (StatusSignals'pos(Stat_PwrGood2p5_e))   <= pwr_2p5_good_in ;
+  PC_StatusReg (StatusSignals'pos(Stat_PwrGood3p3_e))   <= pwr_3p3_good_in ;
+  PC_StatusReg (StatusSignals'pos(Stat_Spacer1_e))      <= '0' ;
+  PC_StatusReg (StatusSignals'pos(Stat_Spacer2_e))      <= '0' ;
+
+  --  Control Register Bit Mappings.
+
+  bat_power_out         <=
+        PC_ControlReg (ControlSignals'pos(Ctl_MainPowerSwitch_e)) ;
+  bat_recharge_out      <=
+        PC_ControlReg (ControlSignals'pos(Ctl_RechargeSwitch_e)) ;
+  solar_run_out         <=
+        PC_ControlReg (ControlSignals'pos(Ctl_SolarCtlShutdown_e)) ;
+  pwr_ls_3p3_out        <=
+        PC_ControlReg (ControlSignals'pos(Ctl_LevelShifter3p3_e)) ;
+  pwr_ls_1p8_out        <=
+        PC_ControlReg (ControlSignals'pos(Ctl_LevelShifter1p8_e)) ;
+  pwr_im_1p8_out        <=
+        PC_ControlReg (ControlSignals'pos(Ctl_InertialOn1p8_e)) ;
+  pwr_im_2p5_out        <=
+        PC_ControlReg (ControlSignals'pos(Ctl_InertialOn2p5_e)) ;
+  pwr_micL_out          <=
+        PC_ControlReg (ControlSignals'pos(Ctl_MicLeftOn_e)) ;
+  pwr_micR_out          <=
+        PC_ControlReg (ControlSignals'pos(Ctl_MicRightOn_e)) ;
+  pwr_sdram_out         <=
+        PC_ControlReg (ControlSignals'pos(Ctl_SDRAM_On_e)) ;
+  pwr_sdcard_out        <=
+        PC_ControlReg (ControlSignals'pos(Ctl_SDCardOn_e)) ;
+  pwr_mram_out          <=
+        PC_ControlReg (ControlSignals'pos(Ctl_MagMemOn_e)) ;
+  pwr_gps_out           <=
+        PC_ControlReg (ControlSignals'pos(Ctl_GPS_On_e)) ;
+  pwr_datatx_out        <=
+        PC_ControlReg (ControlSignals'pos(Ctl_DataTX_On_e)) ;
+  pwr_fpga_shudown      <=
+        PC_ControlReg (ControlSignals'pos(Ctl_FPGA_Shutdown_e)) ;
+
   --  Parallel Flash Loader.
   --  When pfl_flash_access_granted is low all flash_* lines are
   --  tri-stated.  (PFL Users Guide Table 15).  This prevents JTAG access
@@ -317,6 +394,25 @@ begin
       fpga_dclk                 => pfl_dclk,
       fpga_nconfig              => pfl_nconfig,
       pfl_flash_access_request  => pfl_flash_req
+    ) ;
+
+  --  Status/Control SPI to FPGA.
+
+  FPGA_SPI : StatCtlSPI
+
+    Generic Map (
+      status_bits_g           => PC_StatusReg'length,
+      control_bits_g          => PC_ControlReg'length
+    )
+    Port Map (
+      reset                   => reset,
+      clk                     => not spi_clk_in,
+      status_in               => PC_StatusReg,
+      status_chg_out          => statchg_out,
+      control_out             => PC_ControlReg,
+      enable_in               => not spi_cs_in,
+      data_in                 => spi_mosi_in,
+      data_out                => spi_miso_out
     ) ;
 
 

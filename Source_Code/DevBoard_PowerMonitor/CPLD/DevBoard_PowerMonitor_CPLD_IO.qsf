@@ -100,10 +100,10 @@ set_location_assignment PIN_57  -to BATT_GD_N_TO_CPLD
 #   Power Supply Control Connections
 
 set_location_assignment PIN_74  -to VCC1P1_RUN_TO_CPLD
-set_location_assignment PIN_75  -to VCC2P2_RUN_TO_CPLD
+set_location_assignment PIN_75  -to VCC2P5_RUN_TO_CPLD
 set_location_assignment PIN_81  -to VCC3P3_RUN_TO_CPLD
 set_location_assignment PIN_89  -to PWR_GOOD_1P1_TO_CPLD
-set_location_assignment PIN_84  -to PWR_GOOD_2P2_TO_CPLD
+set_location_assignment PIN_84  -to PWR_GOOD_2P5_TO_CPLD
 set_location_assignment PIN_85  -to PWR_GOOD_3P3_TO_CPLD
 set_location_assignment PIN_83  -to BUCK_PWM_TO_CPLD
 

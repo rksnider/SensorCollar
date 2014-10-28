@@ -111,7 +111,8 @@ architecture rtl of StatCtlSPI is
   --  register being shifted out the SPI.  Flash is shifted out after
   --  the status register is.
 
-  signal status_saved       : std_logic_vector (status_bits_g-1 downto 0) ;
+  signal status_saved       : std_logic_vector (status_bits_g-1 downto 0) :=
+                                  (others => '0') ;
   signal status_shift       : std_logic_vector (status_bits_g-1 downto 0) ;
 
   signal status_shift_cnt   : unsigned (const_bits (status_bits_g-1) - 1
@@ -167,28 +168,42 @@ begin
     variable control_temp   : std_logic_vector (control_bits_g-1 downto 0) ;
   begin
     if (spi_init = '1') then
-      control_shift       <= (others => '0') ;
-      control_shift_cnt   <= (others => '0') ;
-      status_saved        <= status_in ;
-      status_shift        <= status_in ;
-      statis_shift_cnt    <= (others => '0') ;
-      flash_read          <= '0' ;
+      control_shift         <= (others => '0') ;
+      control_shift_cnt     <= (others => '0') ;
+      status_shift_cnt      <= (others => '0') ;
+      flash_read            <= '0' ;
 
     elsif (rising_edge (clk)) then
 
       --  Shift the status register out until it is done, then shift out
       --  Flash data.
 
-      if (status_shift_cnt /= status_bits_g) then
-        status_shift_cnt  <= status_shift_cnt + 1 ;
+      elsif (status_shift_cnt /= status_bits_g) then
+        if (status_shift_cnt = 0) then
 
-        data_out          <= status_shift (status_bits_g-1) ;
+          --  Initialize the shift out operations.
 
-        status_shift (status_bits_g-1 downto 1)   <=
-                      status_shift (status_bits_g-2 downto 0) ;
+          status_saved      <= status_in ;
+          data_out          <= status_in (status_bits_g-1) ;
+
+          status_shift (0)  <= '0' ;
+          status_shift (status_bits_g-1 downto 1) <=
+                        status_in (status_bits_g-2 downto 0) ;
+        else
+          --  Output from the shift register.
+
+          data_out          <= status_shift (status_bits_g-1) ;
+
+          status_shift (status_bits_g-1 downto 1) <=
+                        status_shift (status_bits_g-2 downto 0) ;
+        end if ;
+
+        status_shift_cnt    <= status_shift_cnt + 1 ;
+
+        --  Output from the flash memory.
       else
-        flash_read        <= '1' ;
-        data_out          <= flash_bit ;
+        flash_read          <= '1' ;
+        data_out            <= flash_bit ;
       end if ;
 
     else
@@ -196,16 +211,16 @@ begin
       --  Shift the control register in and save it when it is full.
 
       if (control_shift_cnt /= control_bits_g) then
-        control_shift_cnt <=  control_shift_cnt + 1 ;
+        control_shift_cnt   <= control_shift_cnt + 1 ;
 
         control_temp (control_bits_g-1 downto 1)    :=
                       control_shift (control_bits_g-2 downto 0) ;
-        control_temp (0)  := data_in ;
+        control_temp (0)    := data_in ;
 
         if (control_shift_cnt = control_bits_g - 1) then
-          control_out     <= control_temp ;
+          control_out       <= control_temp ;
         else
-          control_shift   <= control_temp ;
+          control_shift     <= control_temp ;
         end if ;
       end if ;
     end if ;
