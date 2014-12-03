@@ -57,20 +57,20 @@ use GENERAL.UTILITIES_PKG.ALL ;
 --!                             status register.
 --! @param      control_bits_g  The number of bits in the Power Controller's
 --!                             control register.
---! @param      reset           Reset the component to its initial state.
 --! @param      clk             Driving clock for the component.
 --! @param      status_in       The Power Controller's status register.
 --! @param      status_chg_in   Set when the status register has changed
 --!                             since it was last tranferred by SPI.
 --! @param      control_out     The Power Controller's control register.
+--! @param      control_set_out The control register has been set.
 --! @param      enable_in       Enable the component to start operating.  It
 --!                             is the inverse of the Chip Select nCS for
 --!                             the SPI bus.
 --! @param      data_in         MOSI line from the SPI bus.  The Control
 --!                             register contents are shifted in over this
---!                             line.  The LAST bits shifted in will be
+--!                             line.  The FIRST bits shifted in will be
 --!                             loaded into the control register.  Any
---!                             earlier bits will be discarded.
+--!                             later bits will be discarded.
 --! @param      data_out        MISO line from the SPI bus.  The Status
 --!                             register contents are shifted out over this
 --!                             line, followed by the contents of the User
@@ -86,13 +86,13 @@ entity StatCtlSPI is
     control_bits_g          : natural := 1
   ) ;
   Port (
-    reset                   : in    std_logic ;
     clk                     : in    std_logic ;
     status_in               : in    std_logic_vector (status_bits_g-1
                                                       downto 0) ;
     status_chg_out          : out   std_logic ;
     control_out             : out   std_logic_vector (control_bits_g-1
                                                       downto 0) ;
+    control_set_out         : out   std_logic ;
     enable_in               : in    std_logic ;
     data_in                 : in    std_logic ;
     data_out                : out   std_logic
@@ -102,10 +102,6 @@ end entity StatCtlSPI ;
 
 
 architecture rtl of StatCtlSPI is
-
-  --  Initialize the SPI shifting process on reset and enable.
-
-  signal spi_init           : std_logic ;
 
   --  Status register when last shifted out the SPI and the status
   --  register being shifted out the SPI.  Flash is shifted out after
@@ -126,11 +122,12 @@ architecture rtl of StatCtlSPI is
   signal control_shift_cnt  : unsigned (const_bits (control_bits_g-1) - 1
                                         downto 0) ;
 
+  signal control_set        : std_logic := '0' ;
+
   --  Power Controller's User Flash Memory access component.
 
   component PC_UFM is
     Port (
-      reset                 : in    std_logic ;
       clk                   : in    std_logic ;
       enable_in             : in    std_logic ;
       read_in               : in    std_logic ;
@@ -139,6 +136,8 @@ architecture rtl of StatCtlSPI is
   end component PC_UFM ;
 
 begin
+
+  control_set_out         <= control_set ;
 
   --  The status changed condition occurs when the status register no longer
   --  matches its value when it was last transferred over the SPI.
@@ -149,25 +148,21 @@ begin
 
   flash : PC_UFM
     Port Map (
-      reset               => reset,
       clk                 => clk,
       enable_in           => enable_in,
       read_in             => flash_read,
       data_out            => flash_bit
     ) ;
 
-  --  Initialize the SPI shift process on a reset and not enable.
-
-  spi_init                <= reset or not enable_in ;
-
   --------------------------------------------------------------------------
   --  Shift the data into and out of the SPI when it is enabled.
   --------------------------------------------------------------------------
 
-  SPI_shift : process (spi_init, clk)
+  SPI_shift : process (enable_in, clk)
     variable control_temp   : std_logic_vector (control_bits_g-1 downto 0) ;
   begin
-    if (spi_init = '1') then
+    if (enable_in = '0') then
+      control_set           <= '0' ;
       control_shift         <= (others => '0') ;
       control_shift_cnt     <= (others => '0') ;
       status_shift_cnt      <= (others => '0') ;
@@ -178,7 +173,7 @@ begin
       --  Shift the status register out until it is done, then shift out
       --  Flash data.
 
-      elsif (status_shift_cnt /= status_bits_g) then
+      if (status_shift_cnt /= status_bits_g) then
         if (status_shift_cnt = 0) then
 
           --  Initialize the shift out operations.
@@ -199,6 +194,7 @@ begin
         end if ;
 
         status_shift_cnt    <= status_shift_cnt + 1 ;
+        flash_read          <= '0' ;
 
         --  Output from the flash memory.
       else
@@ -206,7 +202,7 @@ begin
         data_out            <= flash_bit ;
       end if ;
 
-    else
+    elsif (falling_edge (clk)) then
 
       --  Shift the control register in and save it when it is full.
 
@@ -219,6 +215,7 @@ begin
 
         if (control_shift_cnt = control_bits_g - 1) then
           control_out       <= control_temp ;
+          control_set       <= '1' ;
         else
           control_shift     <= control_temp ;
         end if ;

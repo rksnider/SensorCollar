@@ -29,23 +29,27 @@
 --
 ----------------------------------------------------------------------------
 
+library IEEE ;                      --! Use standard library.
+use IEEE.STD_LOGIC_1164.ALL ;       --! Use standard logic elements.
+use IEEE.NUMERIC_STD.ALL ;          --! Use numeric standard.
+
 entity DevBoard_PowerMonitorCPLD_TopLevel is
 
   Port (
 
-    #   Flash Connections
+    --  Flash Connections
 
     FLASH_C                     : out   std_logic ;
     FLASH_PFL                   : inout std_logic_vector (3 downto 0) ;
     FLASH_FPGA                  : inout std_logic_vector (3 downto 0) ;
     FLASH_S_N                   : out   std_logic ;
 
-    #   Clocks
+    --  Clocks
 
     CLK_50MHZ                   : in    std_logic ;
     CLK_50MHZ_TO_FPGA           : out   std_logic ;
 
-    #   FPGA Configuration Connections
+    --  FPGA Configuration Connections
 
     DCLK_FPGA                   : out   std_logic ;
     NSTATUS_FPGA                : in    std_logic ;
@@ -54,14 +58,14 @@ entity DevBoard_PowerMonitorCPLD_TopLevel is
     NCONFIG_FPGA                : out   std_logic ;
     DATA0_FPGA                  : out   std_logic ;
 
-    #   FPGA Flash Connections
+    --  FPGA Flash Connections
 
     PC_FLASH_CLK                : inout std_logic ;
     PC_FLASH_CS_N               : inout std_logic ;
     PC_FLASH_DATA               : inout std_logic_vector (3 downto 0) ;
     PC_FLASH_DIR                : inout std_logic ;
 
-    #   FPGA Status and SPI Connections
+    --  FPGA Status and SPI Connections
 
     PC_STATUS_CHG               : out   std_logic ;
     PC_SPI_CLK                  : inout std_logic ;
@@ -69,12 +73,12 @@ entity DevBoard_PowerMonitorCPLD_TopLevel is
     PC_SPI_DOUT                 : out   std_logic ;
     PC_SPI_NCS                  : inout std_logic ;
 
-    #   I2C Bus Connections
+    --  I2C Bus Connections
 
     SDA_TO_FPGA_CPLD            : inout std_logic ;
     SCL_TO_FPGA_CPLD            : inout std_logic ;
 
-    #   Device Power Control Connections
+    --  Device Power Control Connections
 
     GPS_CNTRL_TO_CPLD           : out   std_logic ;
     SDRAM_CNTRL_TO_CPLD         : out   std_logic ;
@@ -91,7 +95,7 @@ entity DevBoard_PowerMonitorCPLD_TopLevel is
 
     OBUFFER_ENABLE_OUT_TO_CPLD  : out   std_logic ;
 
-    #   Battery Control Connections
+    --  Battery Control Connections
 
     MAIN_ON_TO_CPLD             : out   std_logic ;
     RECHARGE_EN_TO_CPLD         : out   std_logic ;
@@ -100,7 +104,7 @@ entity DevBoard_PowerMonitorCPLD_TopLevel is
     BAT_LOW_TO_CPLD             : in    std_logic ;
     BATT_GD_N_TO_CPLD           : in    std_logic ;
 
-    #   Power Supply Control Connections
+    --  Power Supply Control Connections
 
     VCC1P1_RUN_TO_CPLD          : out   std_logic ;
     VCC2P5_RUN_TO_CPLD          : out   std_logic ;
@@ -110,22 +114,22 @@ entity DevBoard_PowerMonitorCPLD_TopLevel is
     PWR_GOOD_3P3_TO_CPLD        : in    std_logic ;
     BUCK_PWM_TO_CPLD            : out   std_logic ;
 
-    #   Solar Controller Connections
+    --  Solar Controller Connections
 
     SOLAR_PGOOD_TO_CPLD         : in    std_logic ;
     SOLAR_CTRL_ON_TO_CPLD       : in    std_logic ;
     SOLAR_CTRL_SHDN_N_TO_CPLD   : out   std_logic ;
 
-    #   Real Time Clock Connections
+    --  Real Time Clock Connections
 
     RTC_ALARM_TO_CPLD           : in    std_logic ;
 
-    #   Off Board Connections
+    --  Off Board Connections
 
     FORCED_START_N_TO_CPLD      : in    std_logic ;
     FORCED_START_N_TO_FPGA      : inout std_logic ;
 
-    #   General Purpose I/O Connections
+    --  General Purpose I/O Connections
 
     CPLD_GPIO1                  : in    std_logic ;
     CPLD_GPIO2                  : in    std_logic ;
@@ -139,7 +143,7 @@ entity DevBoard_PowerMonitorCPLD_TopLevel is
 
   end entity DevBoard_PowerMonitorCPLD_TopLevel ;
 
-architecture structural of DevBoard_PowerMonitorCPLD_TopLevel ;
+architecture structural of DevBoard_PowerMonitorCPLD_TopLevel is
 
   component PowerController is
 
@@ -216,7 +220,18 @@ architecture structural of DevBoard_PowerMonitorCPLD_TopLevel ;
 
   end component PowerController ;
 
+  --  Signals required for connecting I/O lines.
+
+  signal pwr_drive_not    : std_logic ;
+  signal solar_run_not    : std_logic ;
+
 begin
+
+  --  Invert output signals between the power controller and the outside
+  --  world.
+
+  OBUFFER_ENABLE_OUT_TO_CPLD  <= not pwr_drive_not ;
+  SOLAR_CTRL_SHDN_N_TO_CPLD   <= not solar_run_not ;
 
   --  Mapping between pins and power controller port signals.
 
@@ -224,8 +239,8 @@ begin
 
     Generic Map (
       master_clk_freq_g     => 50e6
-    ) ;
-    Port (
+    )
+    Port Map (
       master_clk            => CLK_50MHZ,
       master_clk_out        => CLK_50MHZ_TO_FPGA,
 
@@ -247,7 +262,7 @@ begin
 
       statchg_out           => PC_STATUS_CHG,
       spi_clk_in            => PC_SPI_CLK,
-      spi_cs_in             => not PC_SPI_NCS,
+      spi_cs_in             => PC_SPI_NCS,
       spi_mosi_in           => PC_SPI_DIN,
       spi_miso_out          => PC_SPI_DOUT,
 
@@ -269,7 +284,7 @@ begin
       pwr_3p3_good_in       => PWR_GOOD_3P3_TO_CPLD,
       pwr_pwm_out           => BUCK_PWM_TO_CPLD,
 
-      pwr_drive_out         => not OBUFFER_ENABLE_OUT_TO_CPLD,
+      pwr_drive_out         => pwr_drive_not,
       pwr_clock_out         => CLOCK_CNTRL_TO_CPLD,
       pwr_fpga_out          => FPGA_ON_TO_CPLD,
       pwr_sdram_out         => SDRAM_CNTRL_TO_CPLD,
@@ -285,10 +300,10 @@ begin
 
       solar_max_in          => SOLAR_PGOOD_TO_CPLD,
       solar_on_in           => SOLAR_CTRL_ON_TO_CPLD,
-      solar_run_out         => not SOLAR_CTRL_SHDN_N_TO_CPLD,
+      solar_run_out         => solar_run_not,
 
       forced_start_in       => not FORCED_START_N_TO_CPLD,
-      fpga_fs_out           => not FORCED_START_N_TO_FPGA,
+      fpga_fs_out           => FORCED_START_N_TO_FPGA,
       rtc_alarm_in          => RTC_ALARM_TO_CPLD
 
     ) ;

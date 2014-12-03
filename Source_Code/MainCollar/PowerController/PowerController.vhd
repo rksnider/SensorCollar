@@ -81,7 +81,7 @@ use WORK.PC_STATUSCONTROL_PKG.All ;
 --! @param      spi_clk_in        The PC status register / FPGA control
 --!                               register SPI bus clock.
 --! @param      spi_cs_in         The PC SPI bus chip select.  An SPI
---!                               transfer is initiated when it goes high.
+--!                               transfer is initiated when it goes low.
 --! @param      spi_mosi_in       Master Out/Slave In SPI data line.
 --! @param      spi_miso_out      Master In/Slave Out SPI data line.
 --!
@@ -209,16 +209,49 @@ architecture structural of PowerController is
 
   --  FPGA state
 
-  signal fpga_powering            : std_logic := '0' ;
+  signal fpga_turnon              : std_logic := '0' ;
+  signal fpga_activated           : std_logic := '0' ;
   signal fpga_powered             : std_logic := '0' ;
   signal fpga_running             : std_logic := '0' ;
 
   --  Status and Control Registers.
 
+  signal statreg_changed          : std_logic ;
   signal PC_StatusReg             : std_logic_vector (StatusSignalsCnt_c-1
                                                       downto 0) ;
   signal PC_ControlReg            : std_logic_vector (ControlSignalsCnt_c-1
                                                       downto 0) ;
+  signal PC_ControlSet            : std_logic ;
+  signal PC_ControlUse            : std_logic := '0' ;
+
+  signal pwr_fpga_shutdown        : std_logic ;
+
+  --  SPI lines.
+
+  signal spi_miso                 : std_logic ;
+
+  --  Signals that are inverts of the input of tri-stated signals.
+
+  signal spi_cs                   : std_logic ;
+  signal fpga_fs                  : std_logic ;
+
+  --  Parallel Flash Loader signals.
+
+  signal pfl_flash_cs             : std_logic_vector (0 downto 0) ;
+  signal pfl_flash_clk            : std_logic_vector (0 downto 0) ;
+  signal pfl_data                 : std_logic_vector (0 downto 0) ;
+  signal pfl_dclk                 : std_logic ;
+  signal pfl_nconfig              : std_logic ;
+  signal pfl_flash_req            : std_logic ;
+
+  alias  pfl_flash_io0            : std_logic_vector (0 downto 0) is
+                                    pfl_flash_data_io (0 downto 0) ;
+  alias  pfl_flash_io1            : std_logic_vector (0 downto 0) is
+                                    pfl_flash_data_io (1 downto 1) ;
+  alias  pfl_flash_io2            : std_logic_vector (0 downto 0) is
+                                    pfl_flash_data_io (2 downto 2) ;
+  alias  pfl_flash_io3            : std_logic_vector (0 downto 0) is
+                                    pfl_flash_data_io (3 downto 3) ;
 
   --  Parallel Flash Loader.
 
@@ -253,13 +286,13 @@ architecture structural of PowerController is
       control_bits_g          : natural := 1
     ) ;
     Port (
-      reset                   : in    std_logic ;
       clk                     : in    std_logic ;
       status_in               : in    std_logic_vector (status_bits_g-1
                                                         downto 0) ;
       status_chg_out          : out   std_logic ;
       control_out             : out   std_logic_vector (control_bits_g-1
                                                         downto 0) ;
+      control_set_out         : out   std_logic ;
       enable_in               : in    std_logic ;
       data_in                 : in    std_logic ;
       data_out                : out   std_logic
@@ -284,17 +317,17 @@ begin
 
   master_clk_out        <= '0' when (fpga_running = '0') else master_clk ;
 
-  flash_clk_out         <= pfl_flash_clk when (fpga_running = '0') else
+  flash_clk_out         <= pfl_flash_clk (0) when (fpga_running = '0') else
                            fpga_toflash_clk_in ;
-  flash_cs_out          <= pfl_flash_cs  when (fpga_running = '0') else
+  flash_cs_out          <= pfl_flash_cs  (0) when (fpga_running = '0') else
                            fpga_toflash_cs_in ;
-  fpga_flash_data_io    <= '0000' when (fpga_powered = '0') else
-                           'ZZZZ' when (fpga_running = '0') else
-                           'ZZZZ' when (fpga_toflash_dir_in = '0') else
+  fpga_flash_data_io    <= "0000" when (fpga_powered = '0') else
+                           "ZZZZ" when (fpga_running = '0') else
+                           "ZZZZ" when (fpga_toflash_dir_in = '0') else
                            fpga_toflash_data_io ;
-  fpga_toflash_data_io  <= '0000' when (fpga_powered = '0') else
-                           'ZZZZ' when (fpga_running = '0') else
-                           'ZZZZ' when (fpga_toflash_dir_in = '1') else
+  fpga_toflash_data_io  <= "0000" when (fpga_powered = '0') else
+                           "ZZZZ" when (fpga_running = '0') else
+                           "ZZZZ" when (fpga_toflash_dir_in = '1') else
                            fpga_flash_data_io ;
   fpga_toflash_clk_in   <= '0' when (fpga_powered = '0') else 'Z' ;
   fpga_toflash_cs_in    <= '0' when (fpga_powered = '0') else 'Z' ;
@@ -303,7 +336,7 @@ begin
   fpga_cnf_dclk_out     <= '0' when (fpga_powered = '0') else
                            pfl_dclk ;
   fpga_cnf_data_out     <= '0' when (fpga_powered = '0') else
-                           pfl_data ;
+                           pfl_data (0) ;
   fpga_cnf_nconfig_out  <= '1' when (fpga_powered = '0') else
                            pfl_nconfig ;
 
@@ -313,15 +346,45 @@ begin
                            spi_miso ;
   spi_clk_in            <= '0' when (fpga_powered = '0') else 'Z' ;
   spi_cs_in             <= '0' when (fpga_powered = '0') else 'Z' ;
+  spi_cs                <= not spi_cs_in ;
   spi_mosi_in           <= '0' when (fpga_powered = '0') else 'Z' ;
 
   bat_int_fpga_out      <= '0' when (fpga_running = '0') else
                            bat_int_in ;
   fpga_fs_out           <= '0' when (fpga_running = '0') else
-                           forced_start_in ;
+                           fpga_fs ;
+  fpga_fs               <= not forced_start_in ;
 
   i2c_clk_io            <= 'Z' ;
   i2c_data_io           <= 'Z' ;
+
+  --  Activate the Octal Buffer drive.
+
+  pwr_drive_out         <= '0' ;
+
+  --  Start the FPGA when a battery monitor interrupt occurs and the
+  --  FPGA is not running.
+
+  fpga_turnon           <= (not fpga_running) and
+                           (bat_int_in        or
+                            forced_start_in   or
+                            rtc_alarm_in) ;
+
+  --  Devices powered as FPGA is starting.
+
+  pwr_clock_out         <= '0' when (fpga_activated  = '0') else '1' ;
+
+  pwr_pwm_out           <= '0' when (fpga_activated  = '0') else '1' ;
+
+  pwr_2p5_run_out       <= '0' when (fpga_activated  = '0') else '1' ;
+  pwr_3p3_run_out       <= '0' when (pwr_2p5_good_in = '0') else '1' ;
+  pwr_1p1_run_out       <= '0' when (pwr_3p3_good_in = '0') else '1' ;
+
+  pwr_fpga_out          <= '0' when (pwr_1p1_good_in = '0') else '1' ;
+
+  fpga_running          <= '0' when (fpga_powered          = '0' or
+                                     fpga_cnf_init_done_in = '0')
+                               else '1' ;
 
   --  Status Register Bit Mappings.
 
@@ -335,38 +398,50 @@ begin
   PC_StatusReg (StatusSignals'pos(Stat_Spacer1_e))      <= '0' ;
   PC_StatusReg (StatusSignals'pos(Stat_Spacer2_e))      <= '0' ;
 
-  --  Control Register Bit Mappings.
+  --  Control Register Bit Mappings and default values.
 
   bat_power_out         <=
-        PC_ControlReg (ControlSignals'pos(Ctl_MainPowerSwitch_e)) ;
+        PC_ControlReg (ControlSignals'pos(Ctl_MainPowerSwitch_e))
+        when (PC_ControlUse = '1') else '1' ;
   bat_recharge_out      <=
-        PC_ControlReg (ControlSignals'pos(Ctl_RechargeSwitch_e)) ;
+        PC_ControlReg (ControlSignals'pos(Ctl_RechargeSwitch_e))
+        when (PC_ControlUse = '1') else '1' ;
   solar_run_out         <=
-        PC_ControlReg (ControlSignals'pos(Ctl_SolarCtlShutdown_e)) ;
+        PC_ControlReg (ControlSignals'pos(Ctl_SolarCtlShutdown_e))
+        when (PC_ControlUse = '1') else '0' ;
   pwr_ls_3p3_out        <=
-        PC_ControlReg (ControlSignals'pos(Ctl_LevelShifter3p3_e)) ;
+        PC_ControlReg (ControlSignals'pos(Ctl_LevelShifter3p3_e))
+        when (PC_ControlUse = '1') else '0' ;
   pwr_ls_1p8_out        <=
-        PC_ControlReg (ControlSignals'pos(Ctl_LevelShifter1p8_e)) ;
-  pwr_im_1p8_out        <=
-        PC_ControlReg (ControlSignals'pos(Ctl_InertialOn1p8_e)) ;
-  pwr_im_2p5_out        <=
-        PC_ControlReg (ControlSignals'pos(Ctl_InertialOn2p5_e)) ;
+        PC_ControlReg (ControlSignals'pos(Ctl_LevelShifter1p8_e))
+        when (PC_ControlUse = '1') else '0' ;
+  pwr_im_out            <=
+        PC_ControlReg (ControlSignals'pos(Ctl_InertialOn1p8_e))
+        when (PC_ControlUse = '1') else '0' ;
   pwr_micL_out          <=
-        PC_ControlReg (ControlSignals'pos(Ctl_MicLeftOn_e)) ;
+        PC_ControlReg (ControlSignals'pos(Ctl_MicLeftOn_e))
+        when (PC_ControlUse = '1') else '0' ;
   pwr_micR_out          <=
-        PC_ControlReg (ControlSignals'pos(Ctl_MicRightOn_e)) ;
+        PC_ControlReg (ControlSignals'pos(Ctl_MicRightOn_e))
+        when (PC_ControlUse = '1') else '0' ;
   pwr_sdram_out         <=
-        PC_ControlReg (ControlSignals'pos(Ctl_SDRAM_On_e)) ;
+        PC_ControlReg (ControlSignals'pos(Ctl_SDRAM_On_e))
+        when (PC_ControlUse = '1') else '0' ;
   pwr_sdcard_out        <=
-        PC_ControlReg (ControlSignals'pos(Ctl_SDCardOn_e)) ;
+        PC_ControlReg (ControlSignals'pos(Ctl_SDCardOn_e))
+        when (PC_ControlUse = '1') else '0' ;
   pwr_mram_out          <=
-        PC_ControlReg (ControlSignals'pos(Ctl_MagMemOn_e)) ;
+        PC_ControlReg (ControlSignals'pos(Ctl_MagMemOn_e))
+        when (PC_ControlUse = '1') else '0' ;
   pwr_gps_out           <=
-        PC_ControlReg (ControlSignals'pos(Ctl_GPS_On_e)) ;
+        PC_ControlReg (ControlSignals'pos(Ctl_GPS_On_e))
+        when (PC_ControlUse = '1') else '0' ;
   pwr_datatx_out        <=
-        PC_ControlReg (ControlSignals'pos(Ctl_DataTX_On_e)) ;
-  pwr_fpga_shudown      <=
-        PC_ControlReg (ControlSignals'pos(Ctl_FPGA_Shutdown_e)) ;
+        PC_ControlReg (ControlSignals'pos(Ctl_DataTX_On_e))
+        when (PC_ControlUse = '1') else '0' ;
+  pwr_fpga_shutdown     <=
+        PC_ControlReg (ControlSignals'pos(Ctl_FPGA_Shutdown_e))
+        when (PC_ControlUse = '1') else '0' ;
 
   --  Parallel Flash Loader.
   --  When pfl_flash_access_granted is low all flash_* lines are
@@ -380,15 +455,15 @@ begin
     (
       fpga_conf_done            => fpga_cnf_conf_done_in,
       fpga_nstatus              => fpga_cnf_nstatus_in,
-      fpga_pgm                  => '000',
+      fpga_pgm                  => "000",
       pfl_clk                   => master_clk,
-      pfl_flash_access_granted  => pfl_run and pfl_flash_req,
-      pfl_nreset                => pfl_run,
-      flash_io0                 => pfl_flash_data_io [0],
-      flash_io1                 => pfl_flash_data_io [1],
-      flash_io2                 => pfl_flash_data_io [2],
-      flash_io3                 => pfl_flash_data_io [3],
-      flash_ncs                 => not pfl_flash_cs,
+      pfl_flash_access_granted  => '1',
+      pfl_nreset                => (fpga_activated and not fpga_running),
+      flash_io0                 => pfl_flash_io0,
+      flash_io1                 => pfl_flash_io1,
+      flash_io2                 => pfl_flash_io2,
+      flash_io3                 => pfl_flash_io3,
+      flash_ncs                 => pfl_flash_cs,
       flash_sck                 => pfl_flash_clk,
       fpga_data                 => pfl_data,
       fpga_dclk                 => pfl_dclk,
@@ -405,20 +480,60 @@ begin
       control_bits_g          => PC_ControlReg'length
     )
     Port Map (
-      reset                   => reset,
       clk                     => not spi_clk_in,
       status_in               => PC_StatusReg,
-      status_chg_out          => statchg_out,
+      status_chg_out          => statreg_changed,
       control_out             => PC_ControlReg,
-      enable_in               => not spi_cs_in,
+      control_set_out         => PC_ControlSet,
+      enable_in               => not spi_cs,
       data_in                 => spi_mosi_in,
-      data_out                => spi_miso_out
+      data_out                => spi_miso
     ) ;
 
+  --------------------------------------------------------------------------
+  --  Turn the FPGA on and off based on the turnon and shutdown signals.
+  --------------------------------------------------------------------------
+
+  fpga_on_off : process (fpga_turnon, pwr_fpga_shutdown)
+  begin
+    if (fpga_turnon = '1') then
+      fpga_activated    <= '1' ;
+
+    elsif (rising_edge (pwr_fpga_shutdown)) then
+      fpga_activated    <= '0' ;
+    end if ;
+  end process fpga_on_off ;
 
 
+  --------------------------------------------------------------------------
+  --  Set the FPGA powered condition when the FPGA responds that it is
+  --  ready to be configured.
+  --------------------------------------------------------------------------
+
+  fpga_powerup : process (fpga_activated, fpga_cnf_nstatus_in)
+  begin
+    if (fpga_activated = '0') then
+      fpga_powered      <= '0' ;
+
+    elsif (rising_edge (fpga_cnf_nstatus_in)) then
+      fpga_powered      <= '1' ;
+    end if ;
+  end process fpga_powerup ;
 
 
+  --------------------------------------------------------------------------
+  --  Set the control register value.
+  --------------------------------------------------------------------------
+
+  ctl_set : process (fpga_running, PC_ControlSet)
+  begin
+    if (fpga_running = '0') then
+      PC_ControlUse     <= '0' ;
+
+    elsif (rising_edge (PC_ControlSet)) then
+      PC_ControlUse     <= '1' ;
+    end if ;
+  end process ctl_set ;
 
 
 end architecture structural ;

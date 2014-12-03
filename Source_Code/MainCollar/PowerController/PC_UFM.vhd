@@ -45,7 +45,6 @@ use GENERAL.UTILITIES_PKG.ALL ;
 --! @details    This entity reads the Power Controller's User Accessable
 --!             Flash memory sequencially.
 --!
---! @param      reset         Reset the component to its initial state.
 --! @param      clk           Driving clock for the component.
 --! @param      enable_in     Enable the component to start operating.
 --! @param      read_in       Start reading the Flash data.  When this
@@ -59,7 +58,6 @@ use GENERAL.UTILITIES_PKG.ALL ;
 entity PC_UFM is
 
   Port (
-    reset                 : in    std_logic ;
     clk                   : in    std_logic ;
     enable_in             : in    std_logic ;
     read_in               : in    std_logic ;
@@ -78,7 +76,7 @@ architecture rtl of PC_UFM is
   signal addr_shift : std_logic ;
   signal data_clk   : std_logic ;
   signal data_shift : std_logic ;
-  signal data_cnt   : unsigned (3 downto 0) ;
+  signal data_cnt   : unsigned (3 downto 0) := (others => '0') ;
 
   --  UTM megafunction component.  Only read operations will be done.  Thus,
   --  many signals are ignored.
@@ -100,7 +98,7 @@ architecture rtl of PC_UFM is
       osc    : OUT STD_LOGIC ;
       rtpbusy    : OUT STD_LOGIC
     );
-  END Flash;
+  END COMPONENT Flash;
 
 
 begin
@@ -116,7 +114,11 @@ begin
       ardin         => '0',
       arshft        => addr_shift,
       drclk         => data_clk,
+      drdin         => '0',
       drshft        => data_shift,
+      erase         => '0',
+      oscena        => '0',
+      program       => '0',
       drdout        => data_out
     ) ;
 
@@ -141,12 +143,9 @@ begin
   --  the data register.
   --------------------------------------------------------------------------
 
-  data_counter : process (reset, flash_clk)
+  data_counter : process (flash_clk)
   begin
-    if (reset = '1') then
-      data_cnt        <= (others => '0') ;
-
-    elsif (rising_edge (flash_clk)) then
+    if (rising_edge (flash_clk)) then
       if (read_in = '0') then
         data_cnt      <= (others => '0') ;
       else
