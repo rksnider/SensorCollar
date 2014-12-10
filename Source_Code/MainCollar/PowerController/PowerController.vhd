@@ -205,7 +205,7 @@ entity PowerController is
 end entity PowerController ;
 
 
-architecture structural of PowerController is
+architecture rtl of PowerController is
 
   --  FPGA state
 
@@ -536,4 +536,4 @@ begin
   end process ctl_set ;
 
 
-end architecture structural ;
+end architecture rtl ;

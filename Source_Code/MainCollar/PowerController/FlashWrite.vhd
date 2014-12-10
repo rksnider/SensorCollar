@@ -4,7 +4,7 @@
 -- MODULE: altparallel_flash_loader 
 
 -- ============================================================
--- File Name: PFL.vhd
+-- File Name: FlashWrite.vhd
 -- Megafunction Name(s):
 -- 			altparallel_flash_loader
 --
@@ -36,13 +36,9 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 
-ENTITY PFL IS
+ENTITY FlashWrite IS
 	PORT
 	(
-		fpga_conf_done		: IN STD_LOGIC ;
-		fpga_nstatus		: IN STD_LOGIC ;
-		fpga_pgm		: IN STD_LOGIC_VECTOR (2 DOWNTO 0);
-		pfl_clk		: IN STD_LOGIC ;
 		pfl_flash_access_granted		: IN STD_LOGIC ;
 		pfl_nreset		: IN STD_LOGIC ;
 		flash_io0		: INOUT STD_LOGIC_VECTOR (0 DOWNTO 0);
@@ -51,122 +47,71 @@ ENTITY PFL IS
 		flash_io3		: INOUT STD_LOGIC_VECTOR (0 DOWNTO 0);
 		flash_ncs		: OUT STD_LOGIC_VECTOR (0 DOWNTO 0);
 		flash_sck		: OUT STD_LOGIC_VECTOR (0 DOWNTO 0);
-		fpga_data		: OUT STD_LOGIC_VECTOR (0 DOWNTO 0);
-		fpga_dclk		: OUT STD_LOGIC ;
-		fpga_nconfig		: OUT STD_LOGIC ;
 		pfl_flash_access_request		: OUT STD_LOGIC 
 	);
-END PFL;
+END FlashWrite;
 
 
-ARCHITECTURE SYN OF pfl IS
+ARCHITECTURE SYN OF flashwrite IS
 
 	SIGNAL sub_wire0	: STD_LOGIC ;
 	SIGNAL sub_wire1	: STD_LOGIC_VECTOR (0 DOWNTO 0);
-	SIGNAL sub_wire2	: STD_LOGIC ;
-	SIGNAL sub_wire3	: STD_LOGIC_VECTOR (0 DOWNTO 0);
-	SIGNAL sub_wire4	: STD_LOGIC_VECTOR (0 DOWNTO 0);
-	SIGNAL sub_wire5	: STD_LOGIC ;
+	SIGNAL sub_wire2	: STD_LOGIC_VECTOR (0 DOWNTO 0);
 
 
 
 	COMPONENT altparallel_flash_loader
 	GENERIC (
-		addr_width		: NATURAL;
-		conf_data_width		: NATURAL;
-		conf_wait_timer_width		: NATURAL;
-		dclk_divisor		: NATURAL;
-		decompressor_mode		: STRING;
 		extra_addr_byte		: NATURAL;
 		features_cfg		: NATURAL;
 		features_pgm		: NATURAL;
-		flash_burst_extra_cycle		: NATURAL;
-		flash_static_wait_width		: NATURAL;
 		flash_type		: STRING;
 		n_flash		: NATURAL;
-		option_bits_start_address		: NATURAL;
 		qflash_fast_speed		: NATURAL;
 		qflash_mfc		: STRING;
-		qspi_data_delay		: NATURAL;
-		qspi_data_delay_count		: NATURAL;
-		safe_mode_halt		: NATURAL;
-		safe_mode_retry		: NATURAL;
-		safe_mode_revert		: NATURAL;
-		safe_mode_revert_addr		: NATURAL;
 		tristate_checkbox		: NATURAL;
 		lpm_type		: STRING
 	);
 	PORT (
 			flash_io3	: INOUT STD_LOGIC_VECTOR (0 DOWNTO 0);
-			fpga_conf_done	: IN STD_LOGIC ;
 			pfl_flash_access_granted	: IN STD_LOGIC ;
 			pfl_flash_access_request	: OUT STD_LOGIC ;
 			flash_io0	: INOUT STD_LOGIC_VECTOR (0 DOWNTO 0);
+			flash_io2	: INOUT STD_LOGIC_VECTOR (0 DOWNTO 0);
 			flash_ncs	: OUT STD_LOGIC_VECTOR (0 DOWNTO 0);
-			fpga_nconfig	: OUT STD_LOGIC ;
-			fpga_pgm	: IN STD_LOGIC_VECTOR (2 DOWNTO 0);
 			flash_io1	: INOUT STD_LOGIC_VECTOR (0 DOWNTO 0);
 			flash_sck	: OUT STD_LOGIC_VECTOR (0 DOWNTO 0);
-			pfl_nreset	: IN STD_LOGIC ;
-			flash_io2	: INOUT STD_LOGIC_VECTOR (0 DOWNTO 0);
-			fpga_data	: OUT STD_LOGIC_VECTOR (0 DOWNTO 0);
-			fpga_dclk	: OUT STD_LOGIC ;
-			fpga_nstatus	: IN STD_LOGIC ;
-			pfl_clk	: IN STD_LOGIC 
+			pfl_nreset	: IN STD_LOGIC 
 	);
 	END COMPONENT;
 
 BEGIN
 	pfl_flash_access_request    <= sub_wire0;
 	flash_ncs    <= sub_wire1(0 DOWNTO 0);
-	fpga_nconfig    <= sub_wire2;
-	flash_sck    <= sub_wire3(0 DOWNTO 0);
-	fpga_data    <= sub_wire4(0 DOWNTO 0);
-	fpga_dclk    <= sub_wire5;
+	flash_sck    <= sub_wire2(0 DOWNTO 0);
 
 	altparallel_flash_loader_component : altparallel_flash_loader
 	GENERIC MAP (
-		addr_width => 24,
-		conf_data_width => 1,
-		conf_wait_timer_width => 19,
-		dclk_divisor => 1,
-		decompressor_mode => "NONE",
 		extra_addr_byte => 0,
-		features_cfg => 1,
-		features_pgm => 0,
-		flash_burst_extra_cycle => 1,
-		flash_static_wait_width => 14,
+		features_cfg => 0,
+		features_pgm => 1,
 		flash_type => "QUAD_SPI_FLASH",
 		n_flash => 1,
-		option_bits_start_address => 0,
 		qflash_fast_speed => 0,
 		qflash_mfc => "NUMONYX",
-		qspi_data_delay => 0,
-		qspi_data_delay_count => 1,
-		safe_mode_halt => 0,
-		safe_mode_retry => 1,
-		safe_mode_revert => 0,
-		safe_mode_revert_addr => 0,
 		tristate_checkbox => 0,
 		lpm_type => "altparallel_flash_loader"
 	)
 	PORT MAP (
-		fpga_conf_done => fpga_conf_done,
 		pfl_flash_access_granted => pfl_flash_access_granted,
-		fpga_pgm => fpga_pgm,
 		pfl_nreset => pfl_nreset,
-		fpga_nstatus => fpga_nstatus,
-		pfl_clk => pfl_clk,
 		pfl_flash_access_request => sub_wire0,
 		flash_ncs => sub_wire1,
-		fpga_nconfig => sub_wire2,
-		flash_sck => sub_wire3,
-		fpga_data => sub_wire4,
-		fpga_dclk => sub_wire5,
+		flash_sck => sub_wire2,
 		flash_io3 => flash_io3,
 		flash_io0 => flash_io0,
-		flash_io1 => flash_io1,
-		flash_io2 => flash_io2
+		flash_io2 => flash_io2,
+		flash_io1 => flash_io1
 	);
 
 
@@ -176,47 +121,21 @@ END SYN;
 -- ============================================================
 -- CNX file retrieval info
 -- ============================================================
--- Retrieval info: PRIVATE: CLOCK_FREQUENCY_EDIT STRING "50.0"
--- Retrieval info: PRIVATE: DCLK_DIVISOR_COMBO STRING "1"
--- Retrieval info: PRIVATE: FLASH_ACCESS_TIME_EDIT STRING "100"
--- Retrieval info: PRIVATE: IDC_DECOMPRESSOR_COMBO STRING "None"
 -- Retrieval info: PRIVATE: IDC_FLASH_TYPE_COMBO STRING "Quad SPI Flash"
--- Retrieval info: PRIVATE: IDC_FPGA_CONF_SCHEME_COMBO STRING "PS (passive serial)"
 -- Retrieval info: PRIVATE: IDC_NUM_QFLASH_COMBO STRING "1"
--- Retrieval info: PRIVATE: IDC_OPERATING_MODES_COMBO STRING "FPGA Configuration"
+-- Retrieval info: PRIVATE: IDC_OPERATING_MODES_COMBO STRING "Flash Programming"
 -- Retrieval info: PRIVATE: IDC_QFLASH_FAST_SPEED_CHECKBOX STRING "0"
 -- Retrieval info: PRIVATE: IDC_QFLASH_MFC_COMBO STRING "Micron"
 -- Retrieval info: PRIVATE: IDC_QFLASH_SIZE_COMBO STRING "QSPI 128 Mbit"
--- Retrieval info: PRIVATE: IDC_READ_MODES_COMBO STRING "Normal Mode"
--- Retrieval info: PRIVATE: IDC_SAFE_MODE_COMBO STRING "Retry same page"
 -- Retrieval info: PRIVATE: INTENDED_DEVICE_FAMILY STRING "MAX V"
--- Retrieval info: PRIVATE: OPTION_BIT_ADDRESS_EDIT STRING "00000000"
--- Retrieval info: PRIVATE: RECONFIGURE_CHECKBOX STRING "0"
--- Retrieval info: PRIVATE: RSU_WATCHHDOG_CHECKBOX STRING "0"
--- Retrieval info: PRIVATE: RSU_WATCHHDOG_COUNTER_EDIT STRING "100"
--- Retrieval info: PRIVATE: SAFE_MODE_REVERT_EDIT STRING ""
 -- Retrieval info: PRIVATE: TRISTATE_CHECKBOX STRING "0"
--- Retrieval info: CONSTANT: ADDR_WIDTH NUMERIC "24"
--- Retrieval info: CONSTANT: CONF_DATA_WIDTH NUMERIC "1"
--- Retrieval info: CONSTANT: CONF_WAIT_TIMER_WIDTH NUMERIC "19"
--- Retrieval info: CONSTANT: DCLK_DIVISOR NUMERIC "1"
--- Retrieval info: CONSTANT: DECOMPRESSOR_MODE STRING "NONE"
 -- Retrieval info: CONSTANT: EXTRA_ADDR_BYTE NUMERIC "0"
--- Retrieval info: CONSTANT: FEATURES_CFG NUMERIC "1"
--- Retrieval info: CONSTANT: FEATURES_PGM NUMERIC "0"
--- Retrieval info: CONSTANT: FLASH_BURST_EXTRA_CYCLE NUMERIC "1"
--- Retrieval info: CONSTANT: FLASH_STATIC_WAIT_WIDTH NUMERIC "14"
+-- Retrieval info: CONSTANT: FEATURES_CFG NUMERIC "0"
+-- Retrieval info: CONSTANT: FEATURES_PGM NUMERIC "1"
 -- Retrieval info: CONSTANT: FLASH_TYPE STRING "QUAD_SPI_FLASH"
 -- Retrieval info: CONSTANT: N_FLASH NUMERIC "1"
--- Retrieval info: CONSTANT: OPTION_BITS_START_ADDRESS NUMERIC "0"
 -- Retrieval info: CONSTANT: QFLASH_FAST_SPEED NUMERIC "0"
 -- Retrieval info: CONSTANT: QFLASH_MFC STRING "NUMONYX"
--- Retrieval info: CONSTANT: QSPI_DATA_DELAY NUMERIC "0"
--- Retrieval info: CONSTANT: QSPI_DATA_DELAY_COUNT NUMERIC "1"
--- Retrieval info: CONSTANT: SAFE_MODE_HALT NUMERIC "0"
--- Retrieval info: CONSTANT: SAFE_MODE_RETRY NUMERIC "1"
--- Retrieval info: CONSTANT: SAFE_MODE_REVERT NUMERIC "0"
--- Retrieval info: CONSTANT: SAFE_MODE_REVERT_ADDR NUMERIC "0"
 -- Retrieval info: CONSTANT: TRISTATE_CHECKBOX NUMERIC "0"
 -- Retrieval info: USED_PORT: flash_io0 0 0 1 0 BIDIR NODEFVAL "flash_io0[0..0]"
 -- Retrieval info: USED_PORT: flash_io1 0 0 1 0 BIDIR NODEFVAL "flash_io1[0..0]"
@@ -224,20 +143,9 @@ END SYN;
 -- Retrieval info: USED_PORT: flash_io3 0 0 1 0 BIDIR NODEFVAL "flash_io3[0..0]"
 -- Retrieval info: USED_PORT: flash_ncs 0 0 1 0 OUTPUT NODEFVAL "flash_ncs[0..0]"
 -- Retrieval info: USED_PORT: flash_sck 0 0 1 0 OUTPUT NODEFVAL "flash_sck[0..0]"
--- Retrieval info: USED_PORT: fpga_conf_done 0 0 0 0 INPUT NODEFVAL "fpga_conf_done"
--- Retrieval info: USED_PORT: fpga_data 0 0 1 0 OUTPUT NODEFVAL "fpga_data[0..0]"
--- Retrieval info: USED_PORT: fpga_dclk 0 0 0 0 OUTPUT NODEFVAL "fpga_dclk"
--- Retrieval info: USED_PORT: fpga_nconfig 0 0 0 0 OUTPUT NODEFVAL "fpga_nconfig"
--- Retrieval info: USED_PORT: fpga_nstatus 0 0 0 0 INPUT NODEFVAL "fpga_nstatus"
--- Retrieval info: USED_PORT: fpga_pgm 0 0 3 0 INPUT NODEFVAL "fpga_pgm[2..0]"
--- Retrieval info: USED_PORT: pfl_clk 0 0 0 0 INPUT NODEFVAL "pfl_clk"
 -- Retrieval info: USED_PORT: pfl_flash_access_granted 0 0 0 0 INPUT NODEFVAL "pfl_flash_access_granted"
 -- Retrieval info: USED_PORT: pfl_flash_access_request 0 0 0 0 OUTPUT NODEFVAL "pfl_flash_access_request"
 -- Retrieval info: USED_PORT: pfl_nreset 0 0 0 0 INPUT NODEFVAL "pfl_nreset"
--- Retrieval info: CONNECT: @fpga_conf_done 0 0 0 0 fpga_conf_done 0 0 0 0
--- Retrieval info: CONNECT: @fpga_nstatus 0 0 0 0 fpga_nstatus 0 0 0 0
--- Retrieval info: CONNECT: @fpga_pgm 0 0 3 0 fpga_pgm 0 0 3 0
--- Retrieval info: CONNECT: @pfl_clk 0 0 0 0 pfl_clk 0 0 0 0
 -- Retrieval info: CONNECT: @pfl_flash_access_granted 0 0 0 0 pfl_flash_access_granted 0 0 0 0
 -- Retrieval info: CONNECT: @pfl_nreset 0 0 0 0 pfl_nreset 0 0 0 0
 -- Retrieval info: CONNECT: flash_io0 0 0 1 0 @flash_io0 0 0 1 0
@@ -246,13 +154,10 @@ END SYN;
 -- Retrieval info: CONNECT: flash_io3 0 0 1 0 @flash_io3 0 0 1 0
 -- Retrieval info: CONNECT: flash_ncs 0 0 1 0 @flash_ncs 0 0 1 0
 -- Retrieval info: CONNECT: flash_sck 0 0 1 0 @flash_sck 0 0 1 0
--- Retrieval info: CONNECT: fpga_data 0 0 1 0 @fpga_data 0 0 1 0
--- Retrieval info: CONNECT: fpga_dclk 0 0 0 0 @fpga_dclk 0 0 0 0
--- Retrieval info: CONNECT: fpga_nconfig 0 0 0 0 @fpga_nconfig 0 0 0 0
 -- Retrieval info: CONNECT: pfl_flash_access_request 0 0 0 0 @pfl_flash_access_request 0 0 0 0
--- Retrieval info: GEN_FILE: TYPE_NORMAL PFL.vhd TRUE
--- Retrieval info: GEN_FILE: TYPE_NORMAL PFL.inc FALSE
--- Retrieval info: GEN_FILE: TYPE_NORMAL PFL.cmp FALSE
--- Retrieval info: GEN_FILE: TYPE_NORMAL PFL.bsf FALSE
--- Retrieval info: GEN_FILE: TYPE_NORMAL PFL_inst.vhd FALSE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL FlashWrite.vhd TRUE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL FlashWrite.inc FALSE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL FlashWrite.cmp FALSE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL FlashWrite.bsf FALSE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL FlashWrite_inst.vhd FALSE
 -- Retrieval info: LIB_FILE: altera_mf

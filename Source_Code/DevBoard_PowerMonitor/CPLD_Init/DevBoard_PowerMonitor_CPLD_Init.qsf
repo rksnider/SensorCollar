@@ -1,0 +1,135 @@
+
+#   Flash Connections
+
+set_location_assignment PIN_1   -to FLASH_C
+# set_location_assignment PIN_4   -to FLASH_DQ0_A
+# set_location_assignment PIN_5   -to FLASH_DQ0_B
+# set_location_assignment PIN_2   -to FLASH_DQ1_A
+# set_location_assignment PIN_3   -to FLASH_DQ1_B
+# set_location_assignment PIN_6   -to FLASH_DQ2_A
+# set_location_assignment PIN_7   -to FLASH_DQ2_B
+# set_location_assignment PIN_98  -to FLASH_DQ3_A
+# set_location_assignment PIN_99  -to FLASH_DQ3_B
+set_location_assignment PIN_4   -to FLASH_PFL[0]
+# set_location_assignment PIN_5   -to FLASH_FPGA[0]
+set_location_assignment PIN_2   -to FLASH_PFL[1]
+# set_location_assignment PIN_3   -to FLASH_FPGA[1]
+set_location_assignment PIN_6   -to FLASH_PFL[2]
+# set_location_assignment PIN_7   -to FLASH_FPGA[2]
+set_location_assignment PIN_98  -to FLASH_PFL[3]
+# set_location_assignment PIN_99  -to FLASH_FPGA[3]
+set_location_assignment PIN_100 -to FLASH_S_N
+
+#   Clocks
+
+set_location_assignment PIN_14  -to CLK_50MHZ
+# set_location_assignment PIN_33  -to CLK_50MHZ_TO_FPGA
+
+#   FPGA Configuration Connections
+
+set_location_assignment PIN_20  -to DCLK_FPGA
+set_location_assignment PIN_26  -to NSTATUS_FPGA
+set_location_assignment PIN_28  -to CONF_DONE_FPGA
+set_location_assignment PIN_52  -to INIT_DONE_FPGA
+set_location_assignment PIN_27  -to NCONFIG_FPGA
+set_location_assignment PIN_21  -to DATA0_FPGA
+
+#   FPGA Flash Connections
+
+# set_location_assignment PIN_51  -to PC_FLASH_IO0
+# set_location_assignment PIN_35  -to PC_FLASH_IO1
+# set_location_assignment PIN_48  -to PC_FLASH_IO2
+# set_location_assignment PIN_43  -to PC_FLASH_IO3
+# set_location_assignment PIN_40  -to PC_FLASH_IO4
+# set_location_assignment PIN_44  -to PC_FLASH_IO5
+# set_location_assignment PIN_49  -to PC_FLASH_IO6
+# set_location_assignment PIN_51  -to PC_FLASH_CLK
+# set_location_assignment PIN_35  -to PC_FLASH_CS_N
+# set_location_assignment PIN_48  -to PC_FLASH_DATA[0]
+# set_location_assignment PIN_43  -to PC_FLASH_DATA[1]
+# set_location_assignment PIN_40  -to PC_FLASH_DATA[2]
+# set_location_assignment PIN_44  -to PC_FLASH_DATA[3]
+# set_location_assignment PIN_49  -to PC_FLASH_DIR
+
+#   FPGA Status and SPI Connections
+
+# set_location_assignment PIN_47  -to PC_STATUS_CHG
+# set_location_assignment PIN_36  -to PC_SPI_CLK
+# set_location_assignment PIN_42  -to PC_SPI_DIN
+# set_location_assignment PIN_41  -to PC_SPI_DOUT
+# set_location_assignment PIN_50  -to PC_SPI_NCS
+
+#   I2C Bus Connections
+
+# set_location_assignment PIN_30  -to SDA_TO_FPGA_CPLD
+# set_location_assignment PIN_38  -to SCL_TO_FPGA_CPLD
+
+#   JTAG Connections
+
+set_location_assignment PIN_25  -to CPLD_TDO
+set_location_assignment PIN_24  -to TCK
+set_location_assignment PIN_23  -to TDI
+set_location_assignment PIN_22  -to TMS
+
+#   Device Power Control Connections
+
+set_location_assignment PIN_16  -to GPS_CNTRL_TO_CPLD
+set_location_assignment PIN_18  -to SDRAM_CNTRL_TO_CPLD
+set_location_assignment PIN_19  -to MRAM_CNTRL_TO_CPLD
+set_location_assignment PIN_58  -to MIC_R_CNTRL_TO_CPLD
+set_location_assignment PIN_53  -to MIC_L_CNTRL_TO_CPLD
+set_location_assignment PIN_72  -to CLOCK_CNTRL_TO_CPLD
+set_location_assignment PIN_97  -to DATA_TX_CNTRL_TO_CPLD
+set_location_assignment PIN_87  -to SDCARD_CNTRL_TO_CPLD
+set_location_assignment PIN_55  -to LS_1P8V_CNTRL_TO_CPLD
+set_location_assignment PIN_54  -to LS_3P3V_CNTRL_TO_CPLD
+set_location_assignment PIN_82  -to FPGA_ON_TO_CPLD
+set_location_assignment PIN_17  -to IM_ON_TO_CPLD
+
+set_location_assignment PIN_76  -to OBUFFER_ENABLE_OUT_TO_CPLD
+
+#   Battery Control Connections
+
+set_location_assignment PIN_78  -to MAIN_ON_TO_CPLD
+set_location_assignment PIN_77  -to RECHARGE_EN_TO_CPLD
+# set_location_assignment PIN_96  -to BAT_HIGH_TO_CPLD
+# set_location_assignment PIN_29  -to BAT_HIGH_TO_FPGA
+# set_location_assignment PIN_56  -to BAT_LOW_TO_CPLD
+# set_location_assignment PIN_57  -to BATT_GD_N_TO_CPLD
+
+#   Power Supply Control Connections
+
+set_location_assignment PIN_74  -to VCC1P1_RUN_TO_CPLD
+set_location_assignment PIN_75  -to VCC2P5_RUN_TO_CPLD
+set_location_assignment PIN_81  -to VCC3P3_RUN_TO_CPLD
+set_location_assignment PIN_89  -to PWR_GOOD_1P1_TO_CPLD
+set_location_assignment PIN_84  -to PWR_GOOD_2P5_TO_CPLD
+set_location_assignment PIN_85  -to PWR_GOOD_3P3_TO_CPLD
+set_location_assignment PIN_83  -to BUCK_PWM_TO_CPLD
+
+#   Solar Controller Connections
+
+# set_location_assignment PIN_92  -to SOLAR_PGOOD_TO_CPLD
+# set_location_assignment PIN_12  -to SOLAR_CTRL_ON_TO_CPLD
+# set_location_assignment PIN_73  -to SOLAR_CTRL_SHDN_N_TO_CPLD
+
+#   Real Time Clock Connections
+
+# set_location_assignment PIN_91  -to RTC_ALARM_TO_CPLD
+
+#   Off Board Connections
+
+# set_location_assignment PIN_15  -to FORCED_START_N_TO_CPLD
+# set_location_assignment PIN_34  -to FORCED_START_N_TO_FPGA
+
+#   General Purpose I/O Connections
+
+# set_location_assignment PIN_62  -to CPLD_GPIO1
+# set_location_assignment PIN_64  -to CPLD_GPIO2
+# set_location_assignment PIN_66  -to CPLD_GPIO3
+# set_location_assignment PIN_67  -to CPLD_GPIO4
+# set_location_assignment PIN_68  -to CPLD_GPIO5
+# set_location_assignment PIN_69  -to CPLD_GPIO6
+# set_location_assignment PIN_70  -to CPLD_GPIO7
+# set_location_assignment PIN_71  -to CPLD_GPIO8
+

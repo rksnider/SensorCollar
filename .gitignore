@@ -220,6 +220,7 @@ pip-log.txt
 db/
 incremental_db/
 output_files/
+simulation/
 hc_output/
 local_vhdl/
 greybox_tmp/
