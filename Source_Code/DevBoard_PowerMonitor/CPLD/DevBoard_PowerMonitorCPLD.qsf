@@ -98,10 +98,10 @@ set_location_assignment PIN_41 -to PC_SPI_DOUT
 set_location_assignment PIN_50 -to PC_SPI_NCS
 set_location_assignment PIN_30 -to SDA_TO_FPGA_CPLD
 set_location_assignment PIN_38 -to SCL_TO_FPGA_CPLD
-set_location_assignment PIN_25 -to CPLD_TDO
-set_location_assignment PIN_24 -to TCK
-set_location_assignment PIN_23 -to TDI
-set_location_assignment PIN_22 -to TMS
+# set_location_assignment PIN_25 -to CPLD_TDO
+# set_location_assignment PIN_24 -to TCK
+# set_location_assignment PIN_23 -to TDI
+# set_location_assignment PIN_22 -to TMS
 set_location_assignment PIN_16 -to GPS_CNTRL_TO_CPLD
 set_location_assignment PIN_18 -to SDRAM_CNTRL_TO_CPLD
 set_location_assignment PIN_19 -to MRAM_CNTRL_TO_CPLD
@@ -150,3 +150,9 @@ set_global_assignment -name ENABLE_CONFIGURATION_PINS OFF
 set_global_assignment -name ENABLE_NCE_PIN OFF
 set_global_assignment -name ENABLE_BOOT_SEL_PIN OFF
 set_global_assignment -name USE_CONFIGURATION_DEVICE ON
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to SOLAR_PGOOD_TO_CPLD
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to BAT_HIGH_TO_CPLD
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to RTC_ALARM_TO_CPLD
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to FORCED_START_N_TO_CPLD
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to CONF_DONE_FPGA
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to INIT_DONE_FPGA

@@ -30,7 +30,9 @@ set_location_assignment PIN_33  -to CLK_50MHZ_TO_FPGA
 set_location_assignment PIN_20  -to DCLK_FPGA
 set_location_assignment PIN_26  -to NSTATUS_FPGA
 set_location_assignment PIN_28  -to CONF_DONE_FPGA
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to CONF_DONE_FPGA
 set_location_assignment PIN_52  -to INIT_DONE_FPGA
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to INIT_DONE_FPGA
 set_location_assignment PIN_27  -to NCONFIG_FPGA
 set_location_assignment PIN_21  -to DATA0_FPGA
 
@@ -66,10 +68,10 @@ set_location_assignment PIN_38  -to SCL_TO_FPGA_CPLD
 
 #   JTAG Connections
 
-set_location_assignment PIN_25  -to CPLD_TDO
-set_location_assignment PIN_24  -to TCK
-set_location_assignment PIN_23  -to TDI
-set_location_assignment PIN_22  -to TMS
+# set_location_assignment PIN_25  -to CPLD_TDO
+# set_location_assignment PIN_24  -to TCK
+# set_location_assignment PIN_23  -to TDI
+# set_location_assignment PIN_22  -to TMS
 
 #   Device Power Control Connections
 
@@ -93,6 +95,7 @@ set_location_assignment PIN_76  -to OBUFFER_ENABLE_OUT_TO_CPLD
 set_location_assignment PIN_78  -to MAIN_ON_TO_CPLD
 set_location_assignment PIN_77  -to RECHARGE_EN_TO_CPLD
 set_location_assignment PIN_96  -to BAT_HIGH_TO_CPLD
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to BAT_HIGH_TO_CPLD
 set_location_assignment PIN_29  -to BAT_HIGH_TO_FPGA
 set_location_assignment PIN_56  -to BAT_LOW_TO_CPLD
 set_location_assignment PIN_57  -to BATT_GD_N_TO_CPLD
@@ -110,16 +113,19 @@ set_location_assignment PIN_83  -to BUCK_PWM_TO_CPLD
 #   Solar Controller Connections
 
 set_location_assignment PIN_92  -to SOLAR_PGOOD_TO_CPLD
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to SOLAR_PGOOD_TO_CPLD
 set_location_assignment PIN_12  -to SOLAR_CTRL_ON_TO_CPLD
 set_location_assignment PIN_73  -to SOLAR_CTRL_SHDN_N_TO_CPLD
 
 #   Real Time Clock Connections
 
 set_location_assignment PIN_91  -to RTC_ALARM_TO_CPLD
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to RTC_ALARM_TO_CPLD
 
 #   Off Board Connections
 
 set_location_assignment PIN_15  -to FORCED_START_N_TO_CPLD
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to FORCED_START_N_TO_CPLD
 set_location_assignment PIN_34  -to FORCED_START_N_TO_FPGA
 
 #   General Purpose I/O Connections
