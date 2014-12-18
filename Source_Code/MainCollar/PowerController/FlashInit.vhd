@@ -190,7 +190,7 @@ begin
 
   --  Activate the Octal Buffer drive.
 
-  pwr_drive_out         <= '0' ;
+  pwr_drive_out         <= '1' ;
 
   --  FPGA configuration.
 
