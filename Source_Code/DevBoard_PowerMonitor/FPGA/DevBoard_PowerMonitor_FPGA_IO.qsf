@@ -1,7 +1,7 @@
 
 #   System Control
 
-# set_location_assignment PIN_L14 -to INIT_DONE_FGPA
+# set_location_assignment PIN_L14 -to INIT_DONE_FGPA 
 # set_location_assignment PIN_C6  -to CONF_DONE_FPGA
 # set_location_assignment PIN_V1  -to DATA0_FPGA
 # set_location_assignment PIN_K6  -to DCLK_FPGA
@@ -9,7 +9,7 @@
 # set_location_assignment PIN_D6  -to NSTATUS_FPGA
 # set_location_assignment PIN_L6  -to TCK
 # set_location_assignment PIN_P5  -to TDO
-# set_location_assignment PIN_P6  -to DMS
+# set_location_assignment PIN_P6  -to TMS
 # set_location_assignment PIN_N6  -to CPLD_TDO
 
 
@@ -71,11 +71,11 @@ set_location_assignment PIN_U7  -to SDCARD_CD_DAT3_TO_FPGA
 
 #   Magnetic RAM Connections
 
-set_location_assignment PIN_    -to MRAM_SCLK_TO_FPGA
-set_location_assignment PIN_    -to MRAM_SI_TO_FPGA
-set_location_assignment PIN_    -to MRAM_SO_TO_FPGA
-set_location_assignment PIN_    -to MRAM_CS_N_TO_FPGA
-set_location_assignment PIN_    -to MRAM_WP_N_TO_FPGA
+set_location_assignment PIN_V7    -to MRAM_SCLK_TO_FPGA
+set_location_assignment PIN_V6    -to MRAM_SI_TO_FPGA
+set_location_assignment PIN_U8    -to MRAM_SO_TO_FPGA
+set_location_assignment PIN_U9    -to MRAM_CS_N_TO_FPGA
+set_location_assignment PIN_V8    -to MRAM_WP_N_TO_FPGA
 
 #   SD RAM Connections
 
