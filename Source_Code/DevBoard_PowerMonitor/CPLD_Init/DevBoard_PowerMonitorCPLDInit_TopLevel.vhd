@@ -46,7 +46,6 @@ entity DevBoard_PowerMonitorCPLDInit_TopLevel is
     --  Clocks
 
     CLK_50MHZ                   : in    std_logic ;
-
     --  FPGA Configuration Connections
 
     DCLK_FPGA                   : out   std_logic ;
@@ -100,8 +99,7 @@ architecture structural of DevBoard_PowerMonitorCPLDInit_TopLevel is
       master_clk_freq_g     : natural   := 10e6
     ) ;
     Port (
-      master_clk            : in    std_logic ;
-
+      master_clk            : in    std_logic ;                   
       flash_clk_out         : out   std_logic ;
       flash_cs_out          : out   std_logic ;
       pfl_flash_data_io     : inout std_logic_vector (3 downto 0) ;
@@ -162,7 +160,6 @@ begin
     )
     Port Map (
       master_clk            => CLK_50MHZ,
-
       flash_clk_out         => FLASH_C,
       flash_cs_out          => FLASH_S_N,
       pfl_flash_data_io     => FLASH_PFL,

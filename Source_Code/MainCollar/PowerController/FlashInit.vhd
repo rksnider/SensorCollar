@@ -96,11 +96,10 @@ use GENERAL.UTILITIES_PKG.ALL ;
 entity FlashInit is
 
   Generic (
-    master_clk_freq_g     : natural   := 10e6
+    master_clk_freq_g     : natural   := 50e6
   ) ;
   Port (
     master_clk            : in    std_logic ;
-
     flash_clk_out         : out   std_logic ;
     flash_cs_out          : out   std_logic ;
     pfl_flash_data_io     : inout std_logic_vector (3 downto 0) ;
@@ -202,6 +201,9 @@ begin
 
   pwr_clock_out         <= '0' ;
 
+
+  
+  
   pwr_pwm_out           <= '1' ;
 
   pwr_2p5_run_out       <= '1' ;
