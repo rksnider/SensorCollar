@@ -157,7 +157,8 @@ entity Collar is
     sdram_command_out     : out   std_logic_vector (3 downto 0) ;
     sdram_mask_out        : out   std_logic_vector (1 downto 0) ;
     sdram_bank_out        : out   std_logic_vector (1 downto 0) ;
-    sdram_addr_out        : out   std_logic_vector (13 downto 0) ;
+
+    sdram_addr_out        : out   std_logic_vector (12 downto 0) ;
     sdram_data_io         : inout std_logic_vector (15 downto 0) ;
 
     sd_clk                : out   std_logic ;
@@ -176,8 +177,8 @@ entity Collar is
     ms_clk                : out   std_logic ;
     ms_cs_out             : out   std_logic ;
     ms_mosi_out           : out   std_logic ;
-    ms_miso_in            : in    std_logic ;
-    ms_int_in             : in    std_logic ;
+    --ms_miso_in            : in    std_logic ;
+    --ms_int_in             : in    std_logic ;
 
     ms_cs_accgyro_out     : out   std_logic ;
     ms_miso_accgyro_in    : in    std_logic ;
@@ -200,7 +201,7 @@ entity Collar is
     mic_left_in           : in    std_logic ;
 
     radio_clk             : out   std_logic ;
-    radio_data_io         : inout std_logic_vector (4 downto 0)
+    radio_data_io         : inout std_logic_vector (3 downto 0)
   ) ;
 
 end entity Collar ;

@@ -227,6 +227,10 @@ greybox_tmp/
 *.ipinfo
 *.qsf.bak
 *.qws
+*.stp
+*.cdf
+*.ddb
 c5_pin_model_dump.txt
 compile_start_time_pkg.vhd
 !commit_timestamp.log
+
