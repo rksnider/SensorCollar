@@ -56,7 +56,14 @@ package PC_StatusControl_pkg is
     Stat_PwrGood2p5_e,
     Stat_PwrGood3p3_e,
     Stat_Spacer1_e,
-    Stat_Spacer2_e
+    Stat_Spacer2_e,
+    Stat_Spacer3_e,
+    Stat_Spacer4_e,
+    Stat_Spacer5_e,
+    Stat_Spacer6_e,
+    Stat_Spacer7_e,
+    Stat_Spacer8_e,
+    Stat_Spacer9_e
   ) ;
 
   constant StatusSignalsCnt_c     : natural :=
