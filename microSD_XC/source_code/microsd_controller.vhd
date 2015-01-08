@@ -1,39 +1,70 @@
 ----------------------------------------------------------------------------------------------------
--- Filename:     	microsd_controller.vhd
--- Description:  	Source code for microsd serial data logger
--- Author:			Christopher Casebeer
--- Creation Date:	June 2014			
+--
+-- Filename:     	    microsd_controller.vhd
+-- Description:  	    Source code for microsd serial data logger
+-- Author:			    Christopher Casebeer
+-- Lab:                 Dr. Snider
+-- Department:          Electrical and Computer Engineering
+-- Institution:         Montana State University
+-- Support:             This work was supported under NSF award No. DBI-1254309
+-- Creation Date:	    June 2014	
+--		
 -----------------------------------------------------------------------------------------------------
 --
 -- Version 1.0
 --
 -----------------------------------------------------------------------------------------------------
-
+--
+-- Modification Hisory (give date, author, description)
+--
+-- None
+--
+-- Please send bug reports and enhancement requests to Dr. Snider at rksnider@ece.montana.edu
+--
 -----------------------------------------------------------------------------------------------------
+--
+--	  This software is released under
 --            
---    Copyright (C) 2014  Ross K. Snider and Christopher N. Casebeer
+--    The MIT License (MIT)
 --
---    This program is free software: you can redistribute it and/or modify
---    it under the terms of the GNU General Public License as published by
---    the Free Software Foundation, either version 3 of the License, or
---    (at your option) any later version.
+--    Copyright (C) 2014  Christopher C. Casebeer and Ross K. Snider
 --
---    This program is distributed in the hope that it will be useful,
---    but WITHOUT ANY WARRANTY; without even the implied warranty of
---    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
---    GNU General Public License for more details.
+--    Permission is hereby granted, free of charge, to any person obtaining a copy
+--    of this software and associated documentation files (the "Software"), to deal
+--    in the Software without restriction, including without limitation the rights
+--    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+--    copies of the Software, and to permit persons to whom the Software is
+--    furnished to do so, subject to the following conditions:
 --
---    You should have received a copy of the GNU General Public License
---    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--    The above copyright notice and this permission notice shall be included in
+--    all copies or substantial portions of the Software.
+--
+--    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+--    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+--    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+--    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+--    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+--    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+--    THE SOFTWARE.
 --
 --    Christopher Casebeer
 --    Electrical and Computer Engineering
 --    Montana State University
---    610 Cobleigh Hall
+--    541 Cobleigh Hall
 --    Bozeman, MT 59717
 --    christopher.casebee1@msu.montana.edu
---    
 --
+--    Ross K. Snider
+--    Associate Professor
+--    Electrical and Computer Engineering
+--    Montana State University
+--    538 Cobleigh Hall
+--    Bozeman, MT 59717
+--    rksnider@ece.montana.edu
+--
+--    Information on the MIT license can be found at http://opensource.org/licenses/MIT
+--
+-----------------------------------------------------------------------------------------------------
 
 
 --In SD mode, data lines must be pulled up with a weak pull up resistor. 
@@ -68,25 +99,25 @@ USE altera_mf.altera_mf_components.all;
 --! @param      HS_SDR25_MODE       When operating clk @ 25Mhz or below, set '0'. @ above 25Mhz  set to '1'.
 --! @param      CLK_DIVIDE          The sd card init clock should be close to 400k. 
 --!                                 Specify this number to divide the provided data clock to an ~400k init clock. 
-
+--!
 --! @param      rst_n               Reset will cause the card to reinitialize immediately back 
---!                                 to the data_wait state.microsd_controller's address into the memory.
+--!                                 to the waiting for data state.
 --!
 --! @param      clk                 Data Transmission Clock. Clock can be from 400kHz 
---!                                 to 100MHz depending on timing of target device.
+--!                                 to 50MHz depending on timing of target device.
 --! @param      clock_enable                Disable the component. The component will finish 
 --!                                         its current write if writing, and then gate its clock.
 --! @param      data_input                  Data presented a byte at a time.   
---!                                         This is written into the components buffers. 
+--!                                         This is written into the component's buffer. 
 --!                               
 --! @param      data_we                     Data is clocked into the internal buffer on the rising edge.
 --!                                         Host should control this clock appropriately. 
 --!                              
 --! @param      data_full                   Buffer is full. Stop sending data.
 --!
---! @param      data_sd_start_address       The beginning address on the card the multiblock should be written.
+--! @param      data_sd_start_address       The beginning address on the card the sent data should be written.
 --!                              
---! @param      data_nblocks     N blocks ready to be written into buffer and out to sd card.  
+--! @param      data_nblocks                The number of blocks the host intends to send to component and write to SD card.
 --!                              
 --!
 --! @param      data_current_block_written      This is the sd block address which 
@@ -103,7 +134,7 @@ USE altera_mf.altera_mf_components.all;
 --! @param      V_1_8_ON_OFF        Wired to 1.8 switch on/off control. 
 --!                                 Output of switch goes to level translator sd card side bank control.
 --! @param      init_start          Start the init process.
---! @param      user_led_n_out      Init start pushbutton or poweron. 
+--! @param      user_led_n_out      Data FSM encoding used for LEDs. 
 --
 ------------------------------------------------------------------------------
 
@@ -164,20 +195,21 @@ end microsd_controller;
 
 
 --!A chunk of data of N blocks (a block is 512 bytes) is signalled to to be written through use of data_nblocks.
---!The card expects the N blocks to flow through its internal buffer. The component should be presented with data only on the rising
---!edge of mem_clk and not when data_full is '1';
+--!The card expects the N blocks to flow through its internal buffer. The component should be presented with 
+--!data only on the rising edge of mem_clk and not when data_full is '1';
 --!The number of blocks to be written to the card will be written starting at sd card block 
 --!address data_sd_start_address. data_nblocks represents the number of blocks (512 bytes each) which
---!will be  to the component's buffers and written to the sd card starting at 
---!data_sd_start_address. The component will reset its buffers after it has written this data_nblocks blocks. 
---!The card signals with sd_block_written_flag pulse that the last block written at data_current_block_written address was successful.  
---!The bidirectional lines are tri-states internally. 
+--!will be sent to the component's buffers and written to the sd card starting at 
+--!data_sd_start_address. The component will reset its buffers after it has written data_nblocks blocks. 
+--!The component signals with the sd_block_written_flag pulse that the last block written at data_current_block_written 
+--!address was successful. The bidirectional lines are tri-states internally. 
 --!sd_cmd and sd_dat thus must be inout to top entity and tied to bidirectional pins.
 --!By default the card will transmit data at 1.8V signalling level. To achieve this a 
---!level translator must be present between the FPGA GPIO (3.3V) and the sd card. The outputs of the switches are tied together.
---!and routed to the voltage reference port of the level translator. 
+--!level translator must be present between the FPGA GPIO and the sd card. The outputs of the switches 
+--!are tied together and routed to the voltage reference port of the level translator. 
 --!The component will handle the switching of the sd card side supply voltage pin 
---!of the level translator. An internal signal of the design can also be changed easily to run  the card in 3.3V mode if so desired.
+--!of the level translator. An internal signal of the design can also be changed easily to run  the card in 
+--!3.3V mode if so desired.
 
 architecture Behavioral of microsd_controller is
 
@@ -267,7 +299,7 @@ component microsd_controller_inner
 
 
 
-component data_buffer is
+component microsd_buffer is
     generic(
 
         BUFSIZE                             :natural    
@@ -283,7 +315,7 @@ component data_buffer is
 		buf_ful								:out	 std_logic;
 		sd_write_done						:in		 std_logic;										
 		buffer_reinit_done					:out     std_logic;
-		sd_write_count                 	    :in      std_logic_vector(31 downto 0);                 
+		data_nblocks                 	    :in      std_logic_vector(31 downto 0);                 
 		sd_block_written				    :in      std_logic;
 		init_start						    :in 	 std_logic
     );
@@ -303,7 +335,7 @@ signal  D1_top_signal_in			        :	std_logic;
 signal  D2_top_signal_in			        :	std_logic;	
 signal  D3_top_signal_in			        :	std_logic;	
 
---sd_data will leave its APP_WAIT state to do execute differt commands.
+--sd_data will leave its APP_WAIT state to execute differt commands.
 signal  sd_control_signal					:	std_logic_vector(7 downto 0); 
 --Byte enconding of the current state of sd_data. Not complete or unique.       
 signal  sd_status_signal					:	std_logic_vector(7 downto 0);       
@@ -312,7 +344,7 @@ signal  sd_status_signal					:	std_logic_vector(7 downto 0);
 signal  block_read_sd_addr_signal		    :	std_logic_vector(31 downto 0);      
 --Read data from SD card memory
 signal	block_byte_data_top			        :	std_logic_vector(7 downto 0);
---Signals that a data byte has been red. Ram wr_en.		
+--Signals that a data byte has been read. Ram wr_en.		
 signal 	block_byte_wren_top			        :	std_logic;
 --Address to write read data to in ram.							
 signal  block_byte_addr_top			        :	std_logic_vector(8 downto 0);  
@@ -346,19 +378,20 @@ signal  D3_write_en_signal					:	std_logic;
 signal  ram_read_address_top			    :	std_logic_vector(8 downto 0);  
 
 
---Counter to keep track of how many blocks have been written. 
-signal  num_of_single_blocks_to_write 	    :   natural;    
+--Counter to keep track of how many blocks have been written to card
+--using multiple cmd25s.  
+signal  num_of_blocks_written 	    :   natural;    
 
 --sd_init has finished init.
 signal  init_done_top					    :   std_logic;  
 --Starts the switching process on the voltages.
 signal 	voltage_switch_en_top			    :   std_logic ;
- --Wait time between 3.3V off and 1.8V on
+--Wait time between 3.3V off and 1.8V on
 signal 	voltage_switch_lag_counter		    :   integer range 0 to 2**4 - 1; 
- --The voltage switch has finished.  
+--The voltage switch has finished.  
 signal 	voltage_switch_run				    :   std_logic;  
                    
---Bit used to enable 1.8V transition during init.
+--Bit used to enable 1.8V transition process during initialization of the sd card.
 signal	signalling_18_en				    :   std_logic;  
 --Bit used to enable CMD6 hs_sdr25 mode transition before first CMD25 in the data core. 
 signal 	hs_sdr25_mode_en				    :   std_logic;      
@@ -370,19 +403,19 @@ signal  VC_22966_33_ON	                    :	std_logic;
 --Voltage switch on_off bit.   
 signal  VC_22966_18_ON	                    :	std_logic;	   
  
---Clk used in association with switch on_off process. Slower init clock. Switch happens during init.
+--Clk used in association with voltage switch process. Slower init clock. Switch happens during init.
 signal	init_sclk_signal_top                :   std_logic;      
---Bit signifying that buffer is either full OR data_nblocks number of blocks has streamedand the card must first flush the buffer to the card.
+--Bit signifying that buffer is either full OR data_nblocks number of blocks has streamed and the card must first flush the buffer to the card.
 signal 	buf_ful_top                         :   std_logic := '0';
 --Bit signifying that buffer has at least 1 writeable block in it.       
 signal 	sd_write_rdy_top                    :   std_logic := '0'; 
       
---Bit flag set which will gate clock upon setting enable bit of the entire component to '0'. 
+--clk_en gating signal.
 signal 	shut_off 			                :   std_logic;  
 --Main system clock. Renamed signal to allow shutoff with gating.
 signal	clk_internal		                :   std_logic;  
 
---The current block passed crc receive check by the sd card.
+--A CMD25 stream has finished.
 signal 	sd_write_done_internal          	:   std_logic;  
 --data_buffer has finished reinit.
 signal 	buffer_reinit_done_internal	        :   std_logic;  
@@ -422,19 +455,15 @@ i_microsd_controller_inner_0 :  microsd_controller_inner
 		CLK_DIVIDE 					    =>	CLK_DIVIDE
 	)
 	port map (
-		  --System Signals
         clk						        => clk_internal, 
         rst_n						    => rst_n,
 		 
         sd_init_start			        => init_start,	
-		  --Control Signals
         sd_control				        =>	sd_control_signal,
         sd_status					    =>	sd_status_signal,
  
-
         block_read_sd_addr		        =>	block_read_sd_addr_signal,
 		
-		  --SD Signals
         cmd						        =>  cmd_top_signal,
         sclk						    =>	sclk_top_signal,
         dat0							=>	dat0_top_signal,
@@ -482,7 +511,7 @@ i_microsd_controller_inner_0 :  microsd_controller_inner
 	);
 	
 	
-i_data_buffer_0: data_buffer 
+i_data_buffer_0: microsd_buffer 
 	generic map (
 		BUFSIZE 						=> BUFSIZE
 	)
@@ -497,7 +526,7 @@ i_data_buffer_0: data_buffer
 		buf_ful					        => buf_ful_top,
 		sd_write_done				    => sd_write_done_internal,
 		buffer_reinit_done			    => buffer_reinit_done_internal,
-		sd_write_count                  => data_nblocks,
+		data_nblocks                    => data_nblocks,
         sd_block_written			    => sd_block_written_internal,
 		init_start					    => init_start
   
@@ -592,15 +621,15 @@ begin
         D3_top_signal_in    <= 	    sd_dat(3)	;
     end if;
 end process; 
---data_nblocks scales down to 128 if its over. Otherwise data_nblocks is the number of multiblocks.
+--data_nblocks scales down to 128 if its over 128. Otherwise data_nblocks is the number of blocks in a multiblock write.
 num_blocks_to_write_signal <= to_integer(unsigned(data_nblocks)) when (to_integer(unsigned(data_nblocks)) < 128) else 128;  
         
 --If 3.3V mode is desired, set this bit to 0.
 signalling_18_en				<= '1';  
                            
 --Setting this bit makes the CMD6 in the data modes switch into SDR25 mode. This should be on 25Mhz to 50Mhz.
---My finding abouts sending CMD6_HS. @ 25Mhz this should be on for any 33 and off for 18. 
--- Above 25Mhz it can be on. Below 25Mhz leave it off.                										
+--My finding abouts sending CMD6_HS. @ 25Mhz this should be on for 3.3V and off for 1.8V. 
+--Above 25Mhz it can be on. Below 25Mhz leave it off.                										
 hs_sdr25_mode_en				<= HS_SDR25_MODE;                   
                                                                    
                                                                     
@@ -614,7 +643,7 @@ begin
     if (rst_n = '0') then
         stop_write <= '0';
         sd_write_done_internal <= '0';
-        num_of_single_blocks_to_write <= 0;
+        num_of_blocks_written <= 0;
         block_write_sd_addr_signal <= x"00000000";
         sd_control_signal <= x"FF"; 
         sd_write_done_internal <= '0';
@@ -624,7 +653,7 @@ begin
         if (buffer_reinit_done_internal = '1') then
             stop_write <= '0';
             sd_write_done_internal <= '0';
-            num_of_single_blocks_to_write <= 0;
+            num_of_blocks_written <= 0;
     
         end if;
         
@@ -637,7 +666,7 @@ begin
 
             end if;
         end if;
-        --If there is some data in the buffer, begin
+        --If there is data in the buffer, begin
         if (sd_write_rdy_top = '1') then 	            
             if (stop_write = '0') then
                 --if in idle state change address and data to write.
@@ -645,24 +674,24 @@ begin
                     --Which mode do we select. Single/m
                     sd_control_signal <= x"44";     
                     --Number of single multiblock writes to do.
-                    num_of_single_blocks_to_write <= num_of_single_blocks_to_write + num_blocks_to_write_signal; 
+                    num_of_blocks_written <= num_of_blocks_written + num_blocks_to_write_signal; 
                     --APP_WAIT is longer than 1 50_MHZ clock, so a stop bit is need so one increment once.                        
                     stop_write <= '1';              
                     
                 end if;
             else
-			    --Must wait past APP_WAIT of sd_data to change control signal. CMD12_INIT end of multiblock transmit. 
+			    --Must wait past APP_WAIT of sd_data to change control signal. We wait until CMD12_INIT of microsd_data FSM. 
                 --Works for both 1 bit and 4 bit writing. They both rely on CMD12.		
                 if (sd_status_signal = x"48") then	   
-                    --In process of writing 2048th block. 
-                    if (num_of_single_blocks_to_write = to_integer(unsigned(data_nblocks))) then
+                    --In process of writing data_nblock block 
+                    if (num_of_blocks_written = to_integer(unsigned(data_nblocks))) then
                             --This system keeps track of how many blocks have been singly written. 
                             --It will halt writing when the counter reach X number of blocks. 
                             stop_write <= '1';          
                             sd_write_done_internal <= '1';
                     else
                             block_write_sd_addr_signal <= std_logic_vector(unsigned(block_write_sd_addr_signal) + num_blocks_to_write_signal );
-                            --Keep writing.
+                            --Keep writing and update the address to write next numb_blocks_to_write.
                             stop_write <= '0';	         
                     end if;
                 sd_control_signal <= x"FF"; 
@@ -675,8 +704,8 @@ begin
 end process data_buffer_to_sd_data_handler;
 
 
---data_clk rising edge detection mech for grabbing first rising edge of any nblock set. 
---Will fire first time and then every new nblock thereafter, latching address appropriately. 
+--data_clk rising edge detection mechanism for grabbing first rising edge of any nblock set. 
+--This process will fire first time and then every new nblock thereafter, latching address appropriately. 
 buffer_reinit_data_clk_reset:process(rst_n, clk_internal)
 begin
 if (rst_n = '0') then

@@ -1,39 +1,70 @@
 ----------------------------------------------------------------------------------------------------
--- Filename:     	microsd_controller_tester.vhd
--- Description:  	Source code for microsd serial data logger
--- Author:			Christopher Casebeer
--- Creation Date:	June 2014			
+--
+-- Filename:     	    microsd_tester.vhd
+-- Description:  	    Source code for microsd serial data logger
+-- Author:			    Christopher Casebeer
+-- Lab:                 Dr. Snider
+-- Department:          Electrical and Computer Engineering
+-- Institution:         Montana State University
+-- Support:             This work was supported under NSF award No. DBI-1254309
+-- Creation Date:	    June 2014	
+--		
 -----------------------------------------------------------------------------------------------------
 --
 -- Version 1.0
 --
 -----------------------------------------------------------------------------------------------------
-
+--
+-- Modification Hisory (give date, author, description)
+--
+-- None
+--
+-- Please send bug reports and enhancement requests to Dr. Snider at rksnider@ece.montana.edu
+--
 -----------------------------------------------------------------------------------------------------
+--
+--	  This software is released under
 --            
---    Copyright (C) 2014  Ross K. Snider and Christopher N. Casebeer
+--    The MIT License (MIT)
 --
---    This program is free software: you can redistribute it and/or modify
---    it under the terms of the GNU General Public License as published by
---    the Free Software Foundation, either version 3 of the License, or
---    (at your option) any later version.
+--    Copyright (C) 2014  Christopher C. Casebeer and Ross K. Snider
 --
---    This program is distributed in the hope that it will be useful,
---    but WITHOUT ANY WARRANTY; without even the implied warranty of
---    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
---    GNU General Public License for more details.
+--    Permission is hereby granted, free of charge, to any person obtaining a copy
+--    of this software and associated documentation files (the "Software"), to deal
+--    in the Software without restriction, including without limitation the rights
+--    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+--    copies of the Software, and to permit persons to whom the Software is
+--    furnished to do so, subject to the following conditions:
 --
---    You should have received a copy of the GNU General Public License
---    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--    The above copyright notice and this permission notice shall be included in
+--    all copies or substantial portions of the Software.
+--
+--    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+--    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+--    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+--    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+--    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+--    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+--    THE SOFTWARE.
 --
 --    Christopher Casebeer
 --    Electrical and Computer Engineering
 --    Montana State University
---    610 Cobleigh Hall
+--    541 Cobleigh Hall
 --    Bozeman, MT 59717
 --    christopher.casebee1@msu.montana.edu
---    
 --
+--    Ross K. Snider
+--    Associate Professor
+--    Electrical and Computer Engineering
+--    Montana State University
+--    538 Cobleigh Hall
+--    Bozeman, MT 59717
+--    rksnider@ece.montana.edu
+--
+--    Information on the MIT license can be found at http://opensource.org/licenses/MIT
+--
+-----------------------------------------------------------------------------------------------------
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
@@ -54,6 +85,7 @@ entity microsd_controller_tester is
 		  --Clk Edge 46 Edge 51  EDGE 16
 		  --Dat0 Edge 48 Edge 52  EDGE 17
 		  --Data1 Edge 50 Edge 53   EDGE 18
+          
 		 CLOCK_50				:in	std_logic; --Input clock, 50-MHz max
 		 --Subtract 1 from 1-79
 		 EG_BOTTOM              :inout std_logic_vector(25 downto 0);
@@ -75,7 +107,6 @@ component data_pll is
 		refclk   : in  std_logic := '0'; --  refclk.clk
 		rst      : in  std_logic := '0'; --   reset.reset
 		outclk_0 : out std_logic;        -- outclk0.clk
-	--	outclk_1 : out std_logic;        -- outclk1.clk
 		locked   : out std_logic         --  locked.export
 	);
 end component;
@@ -114,11 +145,11 @@ end component;
 
 
 
---Dummy data to be written to card.
---signal ct_data		    	     :   unsigned(7 downto 0); 
-signal ct_data		           	  :   std_logic_vector(7 downto 0);
+
+--Data pulled from ram and sent to card.
+signal ct_data		            :   std_logic_vector(7 downto 0);
 --Data transmit counter. 
-signal ct_data_count	      	  :   natural;    
+signal ct_data_count	        :   natural;    
 --Block transmit counter.  
 signal block_count              :   unsigned(31 downto 0);
 --nblock done. The first nblock set of data and commands has finished.  
@@ -141,6 +172,7 @@ signal sd_block_written_abstract              :   std_logic;
 
 signal VC_22960_33_ON	        :   std_logic := '0';	
 signal VC_22960_18_ON	        :   std_logic := '0';
+
 --Power up sequence bit.
 signal power_up_done	        :   std_logic := '0';
 --Rst_n pulse on startup.   
@@ -166,11 +198,17 @@ signal mem_clk_abstract_follower 		    :   std_logic;
 --Start address passed to controller.  
 signal sd_start_address_internal            :   std_logic_vector(31 downto 0)  := std_logic_vector(to_unsigned(0,32));
 --data_nblocks passed to controller. 
-signal sd_write_count_internal              :   unsigned(31 downto 0) 			:= to_unsigned(2048,32);                
-  
+signal sd_write_count_internal              :   unsigned(31 downto 0) 			:= to_unsigned(16,32);                
+--Count the number of nblocks sent to card.
 signal num_writes			    :   natural ;
-  
+--Turn on the data_we to the component. 
 signal mem_clk_en			    :   std_logic ;
+
+--Address to data output is delayed two clock cycles.
+--data_we must be delayed two clock cycles while data
+--gets out of ram. 
+signal ct_data_lag_done              :   std_logic;
+signal ct_data_lag_counter      :   unsigned(2 downto 0);
 
 
 
@@ -178,6 +216,8 @@ signal mem_clk_en			    :   std_logic ;
 
 	attribute noprune: boolean;
 	attribute noprune of signal_tap_clock : signal is true;
+    attribute noprune of ct_data_lag_done: signal is true;
+    attribute noprune of ct_data_lag_counter: signal is true;
 		  
 		  
 		  
@@ -218,13 +258,15 @@ sd_tester : microsd_controller
         
         --Personal Debug for now
         
-        init_start                          => tact(1),                                     
+        init_start                          => sd_init_start_top,                                     
         user_led_n_out                      => user_led_n
 
 	);
     
     
-    
+--This 2 port ram is initialized with 512 bytes of random uint8 integers
+--created with the included matlab script. The script will also generate
+--a 1MB .bin file for comparison with function cmp in linux.  
 altsyncram_component : altsyncram
 	GENERIC MAP (
 		clock_enable_input_a => "BYPASS",
@@ -267,6 +309,7 @@ altsyncram_component : altsyncram
 	EG_BOTTOM(13 downto 0) <= (others => '0');
 	EG_BOTTOM(24 downto 19) <= (others => '0');
 
+    --Turn off the other voltage switch I didn't use.
 	EG_TOP(22) <=  VC_22960_33_ON ;	
 	EG_TOP(23) <=  VC_22960_18_ON ;	
             
@@ -274,8 +317,11 @@ altsyncram_component : altsyncram
 -------------------------------------------------------
 --CLOCK USED FOR SIGNAL TAP SAMPLING
 -------------------------------------------------------	
-signal_tap_clock <= CLOCK_50;		
---signal_tap_clock				<= pll_clk;
+--signal_tap_clock <= CLOCK_50;	
+
+--Wiring to pin will preserve for Signal Tap.
+gpio(0) <= signal_tap_clock;	
+signal_tap_clock				<= pll_clk;
 -- signal_tap_clock_GEN:	process(CLOCK_50)
 -- begin 
 	-- if rising_edge(CLOCK_50) then 
@@ -287,8 +333,35 @@ signal_tap_clock <= CLOCK_50;
 		-- cnt <= cnt + 1 ; 
 	-- end if; 
 -- end if; 
-
 -- end process; 
+
+--Pulling data out of the ram has a 2 clock cycle lag. 
+--Thus we only start data_we after a 2 clock cycle lag
+--on the address.  
+--This counter and lag must be reset after each buffer_full
+--event as the address value continues to increment.
+data_delay:process(rst_n,pll_clk)
+begin
+if(rst_n = '0') then
+        ct_data_lag_counter     <= "001";
+        ct_data_lag_done          <= '0';
+elsif rising_edge(pll_clk) then
+    if (init_started = '1') then
+        if (buffer_full_abstract = '1') then
+           ct_data_lag_counter     <= "001";
+           ct_data_lag_done <= '0';
+        else
+            if (ct_data_lag_counter = 0) then
+                ct_data_lag_done <= '1';
+            else
+                ct_data_lag_counter     <= ct_data_lag_counter - 1;
+            end if;
+        end if;
+    end if;
+end if;
+end process;
+
+
 
 startup_init:process(rst_n, pll_clk)
 begin
@@ -301,6 +374,7 @@ elsif rising_edge(pll_clk) then
 end if;
 end process startup_init;
 
+--Delayed read of buffer_full and n_block_done.
 test_writing_followers:process(rst_n, pll_clk)
 begin
 if(rst_n = '0') then
@@ -320,13 +394,13 @@ end if;
 end process test_writing_followers;
 
 -- This is the test writing process. It was used in a 2048 nblock write and 
--- a 128x16nblock write excercising either one large write or many small 
+-- a 128x16 nblock write excercising either one large write or many small 
 -- writes (with many internal buffer resets)
--- The process increments the dummy data sent to the card by one every 
--- 512 bytes. It tracks the block_count to determine if data_nblocks has 
--- been sent. Num_writes can then specify X data_nblock sets.
+-- Address into ram data is incremented.
+-- It tracks the block_count to determine if data_nblocks has 
+-- been sent. Num_writes can then specify X data_nblock sets to be sent in total.
 -- The address passed into the microsd_controller will increment appropriately 
--- at the end of sending a data_nblock.
+-- at the end of sending a data_nblock, as to place the next nblock contiguous. 
 
 test_writing:process(rst_n, pll_clk)
 begin
@@ -350,15 +424,23 @@ elsif rising_edge(pll_clk) then
         end if;
 
         if (n_block_done = '0') then
-            if (mem_clk_en = '1') then
-                    --Only increment ct_data dummy data on block boundries.
+            --Address increment starts 2 clocks before data_we
+            --is enabled. 
+            if (buffer_full_abstract = '0') then
                     if (ct_data_count = 511) then           
                         ct_data_count <= 0;
                         block_count <= block_count + 1;
+                        --Prev used for dummy counter data.
                         -- ct_data <= ct_data + 1;
                     else
                         ct_data_count <= ct_data_count + 1;
                     end if;
+            else
+                    --Reset address after buf_ful event
+                    --due to 2 cycle delay out of ram.
+                    --Count gets ahead of data and needs
+                    --reset. 
+                    ct_data_count <= 0;
             end if;
         else
 
@@ -368,7 +450,7 @@ elsif rising_edge(pll_clk) then
                 else
                 --If not send another nblock set of data. Uncomment for 128*16 data_nblocks. 
                 --Commented for 2048 data_nblocks.
-                --n_block_done <= '0';              
+                n_block_done <= '0';              
                 end if;
             end if;
 			
@@ -379,14 +461,14 @@ elsif rising_edge(pll_clk) then
 end if;
 end process;
 
-
+--data_we gating scheme in relation to pulling data out of ram.
 mem_clk_enable:process(rst_n, pll_clk)
 begin
 if (rst_n = '0') then
 mem_clk_en <= '0';
 elsif falling_edge(pll_clk) then
 
-	if (buffer_full_abstract = '0' and init_started = '1' and n_block_done_follower = '0') then
+	if (buffer_full_abstract = '0' and init_started = '1' and n_block_done_follower = '0' and ct_data_lag_done = '1') then
 		mem_clk_en <= '1';
 	else
 		mem_clk_en <= '0';
@@ -398,7 +480,7 @@ end process mem_clk_enable;
 
 mem_clk_abstract <= pll_clk and mem_clk_en;
 
---Drive reset on power up.
+--Drive reset low on power up.
 --sd_init_start_top can be used to automatically start card into init on power up. 
 power_up_sequence:process(pll_clk)
 begin
