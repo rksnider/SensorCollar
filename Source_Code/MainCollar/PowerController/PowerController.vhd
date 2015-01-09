@@ -195,15 +195,15 @@ entity PowerController is
     solar_max_in          : in    std_logic ;
     solar_on_in           : in    std_logic ;
     solar_run_out         : out   std_logic ;
-	 
-		gpio_1				    : out   std_logic ;
-		gpio_2				    : out   std_logic ;
-		gpio_3				    : out   std_logic ;
-		gpio_4				    : out   std_logic ;
-		gpio_5				    : out   std_logic ;
-		gpio_6				    : out   std_logic ;
-		gpio_7				    : out   std_logic ;
-		gpio_8				    : out   std_logic ;
+
+    gpio_1                : out   std_logic ;
+    gpio_2                : out   std_logic ;
+    gpio_3                : out   std_logic ;
+    gpio_4                : out   std_logic ;
+    gpio_5                : out   std_logic ;
+    gpio_6                : out   std_logic ;
+    gpio_7                : out   std_logic ;
+    gpio_8                : out   std_logic ;
 
     forced_start_in       : in    std_logic ;
     fpga_fs_out           : out   std_logic ;
@@ -346,15 +346,15 @@ begin
                            pfl_dclk ;
   fpga_cnf_data_out     <= '0' when (fpga_powered = '0') else
                            pfl_data (0) ;
-									
-                  
-                  
+
+
+
   --Debug--
   --This is the sequence of FPGA turn on events as conducted by the CPLD.
-  gpio_1 					<=	fpga_activated;
-  gpio_2 					<=	fpga_powered;
-  gpio_3 					<=	fpga_running;
-  --Debug--								
+  gpio_1                <=  fpga_activated;
+  gpio_2                <=  fpga_powered;
+  gpio_3                <=  fpga_running;
+  --Debug--
 
   fpga_cnf_nconfig_out  <= '1' when (fpga_activated = '0') else
                            pfl_nconfig ;
@@ -388,7 +388,7 @@ begin
                            --(bat_int_in        or
                             --forced_start_in   or
                             --rtc_alarm_in
-									 forced_start_in ;
+                            forced_start_in ;
 
   --  Devices powered as FPGA is starting.
 
@@ -403,8 +403,8 @@ begin
   pwr_fpga_out          <= '0' when (pwr_1p1_good_in = '0') else '1' ;
 
   fpga_running          <= '0' when (fpga_powered          = '0' or
-                                     fpga_cnf_init_done_in = '0' or 
-												  fpga_cnf_conf_done_in = '0' )
+                                     fpga_cnf_init_done_in = '0' or
+                                     fpga_cnf_conf_done_in = '0')
                                else '1' ;
 
   --  Status Register Bit Mappings.
@@ -418,6 +418,13 @@ begin
   PC_StatusReg (StatusSignals'pos(Stat_PwrGood3p3_e))   <= pwr_3p3_good_in ;
   PC_StatusReg (StatusSignals'pos(Stat_Spacer1_e))      <= '0' ;
   PC_StatusReg (StatusSignals'pos(Stat_Spacer2_e))      <= '0' ;
+  PC_StatusReg (StatusSignals'pos(Stat_Spacer3_e))      <= '0' ;
+  PC_StatusReg (StatusSignals'pos(Stat_Spacer4_e))      <= '0' ;
+  PC_StatusReg (StatusSignals'pos(Stat_Spacer5_e))      <= '0' ;
+  PC_StatusReg (StatusSignals'pos(Stat_Spacer6_e))      <= '0' ;
+  PC_StatusReg (StatusSignals'pos(Stat_Spacer7_e))      <= '0' ;
+  PC_StatusReg (StatusSignals'pos(Stat_Spacer8_e))      <= '0' ;
+  PC_StatusReg (StatusSignals'pos(Stat_Spacer9_e))      <= '0' ;
 
   --  Control Register Bit Mappings and default values.
 
