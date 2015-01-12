@@ -428,11 +428,14 @@ begin
 
   --  Control Register Bit Mappings and default values.
 
+  bat_recharge_out      <=
+        '0' when (bat_good_in = '0') else
+        PC_ControlReg (ControlSignals'pos(Ctl_RechargeSwitch_e))
+            when (PC_ControlUse = '1') else
+        '1' ;
+
   bat_power_out         <=
         PC_ControlReg (ControlSignals'pos(Ctl_MainPowerSwitch_e))
-        when (PC_ControlUse = '1') else '1' ;
-  bat_recharge_out      <=
-        PC_ControlReg (ControlSignals'pos(Ctl_RechargeSwitch_e))
         when (PC_ControlUse = '1') else '1' ;
   solar_run_out         <=
         PC_ControlReg (ControlSignals'pos(Ctl_SolarCtlShutdown_e))
