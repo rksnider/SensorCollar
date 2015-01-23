@@ -1,0 +1,293 @@
+----------------------------------------------------------------------------
+--
+--! @file       I2C_cmds.mif
+--! @brief      I2C commands and associated data.
+--! @details    The memory module is broken into three sections, the
+--!             command definitions, the data to write for the commands,
+--!             and the data to read for the commands.
+--!             The command definition format is:
+--!   1 byte      Subcmd Delay    Microseconds to delay between subcommands.
+--!   3 bytes     Cmd Delay       Microseconds to delay after the command.
+--!   1 byte      I2C Address     Address of the device to talk to.
+--!   1 byte      Write Length    Number of bytes to write.
+--!   1 byte      Write Offset    Offset from start of write section to
+--!                               write from.
+--!   1 byte      Write Max       Maximum number of bytes to write in a
+--!                               subcommand.
+--!   1 byte      Read Length     Number of bytes to read after writing.
+--!   1 byte      Read Offset     Offset from start of read section to
+--!                               read into.
+--!   1 byte      Read Max        Maximum number of bytes to read in a
+--!                               subcommand.
+--!
+--! @author     Emery Newlon
+--! @date       January 2015
+--! @copyright  Copyright (C) 2015 Ross K. Snider and Emery L. Newlon
+--
+--  This program is free software: you can redistribute it and/or modify
+--  it under the terms of the GNU General Public License as published by
+--  the Free Software Foundation, either version 3 of the License, or
+--  (at your option) any later version.
+--
+--  This program is distributed in the hope that it will be useful,
+--  but WITHOUT ANY WARRANTY; without even the implied warranty of
+--  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+--  GNU General Public License for more details.
+--
+--  You should have received a copy of the GNU General Public License
+--  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--
+--  Emery Newlon
+--  Electrical and Computer Engineering
+--  Montana State University
+--  610 Cobleigh Hall
+--  Bozeman, MT 59717
+--  emery.newlon@msu.montana.edu
+--
+----------------------------------------------------------------------------
+
+DEPTH =         512 ;
+WIDTH =           8 ;
+ADDRESS_RADIX = DEC ;
+DATA_RADIX =    HEX ;
+CONTENT
+BEGIN
+
+--  Command Structure Section.
+      --    Battery Monitor TI bq27520 Commands.
+      --    Get Status.
+
+0 :
+        66  --  Microseconds to wait between subcommands.
+        20  --  Microseconds to wait between commands (500000).
+        A1
+        07
+        55  --  I2C Address.
+        05  --  Control command with status subcommand.
+        00  --  Place to get bytes to write.
+        02  --  A control command byte and a status subcommand byte.
+        02  --  Status bytes.
+        00  --  Place to put status bytes.
+        02  --  Read all bytes in the same subcommand.
+
+      --    Get Flags.
+
+        66  --  Microseconds to wait between subcommands.
+        20  --  Microseconds to wait between commands (500000).
+        A1
+        07
+        55  --  I2C Address.
+        01  --  Flags command.
+        05  --  Place to get bytes to write.
+        01  --  Only need to write one byte.
+        02  --  Flag bytes to read.
+        02  --  Place to put flags bytes.
+        02  --  Read all bytes in the same subcommand.
+
+      --  Read the Voltage.
+
+        66  --  Microseconds to wait between subcommands.
+        20  --  Microseconds to wait between commands (500000).
+        A1
+        07
+        55  --  I2C Address.
+        01  --  Voltage command.
+        06  --  Place to get bytes to write.
+        01  --  Only need to write one byte.
+        02  --  Voltage bytes to read.
+        04  --  Place to put voltage bytes.
+        02  --  Read all bytes in the same subcommand.
+
+
+      --  Read the Average Current.
+
+        66  --  Microseconds to wait between subcommands.
+        20  --  Microseconds to wait between commands (500000).
+        A1
+        07
+        55  --  I2C Address.
+        01  --  Average Current command.
+        07  --  Place to get bytes to write.
+        01  --  Only need to write one byte.
+        02  --  Voltage bytes to read.
+        06  --  Place to put voltage bytes.
+        02  --  Read all bytes in the same subcommand.
+
+
+       --  Read the State of Charge Percentage.
+
+        66  --  Microseconds to wait between subcommands.
+        20  --  Microseconds to wait between commands (500000).
+        A1
+        07
+        55  --  I2C Address.
+        01  --  State of Charge command.
+        08  --  Place to get bytes to write.
+        01  --  Only need to write one byte.
+        02  --  State of Charge bytes to read.
+        08  --  Place to put State of Charge bytes.
+        02  --  Read all bytes in the same subcommand.
+
+
+        --  Read the Time to Empty.
+
+        66  --  Microseconds to wait between subcommands.
+        20  --  Microseconds to wait between commands (500000).
+        A1
+        07
+        55  --  I2C Address.
+        01  --  Time to Empty command.
+        09  --  Place to get bytes to write.
+        01  --  Only need to write one byte.
+        02  --  Time to Empty bytes to read.
+        0A  --  Place to put Time to Empty bytes.
+        02  --  Read all bytes in the same subcommand.
+
+
+      --  Read the Battery Temperature.
+
+        66  --  Microseconds to wait between subcommands.
+        20  --  Microseconds to wait between commands (500000).
+        A1
+        07
+        55  --  I2C Address.
+        01  --  Battery Temperature command.
+        0A  --  Place to get bytes to write.
+        01  --  Only need to write one byte.
+        02  --  Battery Temperature bytes to read.
+        0C  --  Place to put Battery Temperature bytes.
+        02  --  Read all bytes in the same subcommand.
+
+
+       --  Read the Battery Monitor Temperature.
+
+        66  --  Microseconds to wait between subcommands.
+        20  --  Microseconds to wait between commands (500000).
+        A1
+        07
+        55  --  I2C Address.
+        01  --  Internal Temperature command.
+        0B  --  Place to get bytes to write.
+        01  --  Only need to write one byte.
+        02  --  Internal Temperature bytes to read.
+        0E  --  Place to put Internal Temperature bytes.
+        02  --  Read all bytes in the same subcommand.
+
+
+     --  Read the Manufacturere Info Block.
+
+        66  --  Microseconds to wait between subcommands.
+        20  --  Microseconds to wait between commands (500000).
+        A1
+        07
+        55  --  I2C Address.
+        03  --  Data Flash Block command, then Block Data command.
+        0C  --  Place to get Command bytes.
+        02  --  Data Flash Block command, then Block Data command.
+        20  --  32 bytes of Manufacture information are available.
+        10  --  Place to put the data.
+        20  --  Read all data at once.
+
+;
+
+--  Write Data Section.
+      --    Battery Monitor Data.
+      --    Get Status command.
+
+192 :
+        00  --  Control Command first byte.
+        00  --  Status Subcommand first byte.
+        01  --  Control Command second byte.
+        00  --  Status Subcommand second byte.
+        00  --  Control Command first byte to start reading from.
+
+      --    Get Flags command.
+
+        0A  --  Command to get flag bytes.
+
+      --    Voltage command.
+
+        08  --  Command to get voltage.
+
+      --    Average Current command.
+
+        14  --  Command to get average current.
+
+      --    State of Charge Percentage command.
+
+        20  --  Command to get the State of Charge.
+
+      --    Time to Empty command.
+
+        16  --  Command to get the Time to Empty.
+
+      --    Battery Temperature command.
+
+        06  --  Command to get the Battery Temperature.
+
+      --    Internal Temperature command.
+
+        28  --  Command to get the Internal Temperature.
+
+      --    Data Flash Block for Manufacturer Info Block.
+
+        3F  --  Data Flash Block command.
+        01  --  Manufacturer Info Block.
+        40  --  Start of the block.
+
+
+;
+
+--  Read Data Section.
+      --    Battery Monitor Data.
+      --    Get Status command.
+
+256 :
+        00  --  Status bytes
+        00
+
+      --    Get Flags command.
+
+        00  --  Flag bytes
+        00
+
+      --    Get Voltage command.
+
+        00  --  Voltage bytes
+        00
+
+      --    Get Average Current command.
+
+        00  --  Average current bytes
+        00
+
+      --    Get the State of Charge Percentage command.
+
+        00  --  State of charge bytes.
+        00
+
+      --    Get Time to Empty.
+
+        00  --  Time to Empty bytes.
+        00
+
+      --    Get the Battery Temperature command.
+
+        00  --  Battery Temperature bytes.
+        00
+
+      --    Get the Internal Temperature command.
+
+        00  --  Internal Temperature bytes.
+        00
+
+      --  Manufacturer Info Block.
+
+        00 00 00 00 00 00 00 00
+        00 00 00 00 00 00 00 00
+        00 00 00 00 00 00 00 00
+        00 00 00 00 00 00 00 00
+
+;
+
+END
