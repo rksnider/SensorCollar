@@ -1,0 +1,1 @@
+.MODEL C02 CAP (C=1 DEV 2%)

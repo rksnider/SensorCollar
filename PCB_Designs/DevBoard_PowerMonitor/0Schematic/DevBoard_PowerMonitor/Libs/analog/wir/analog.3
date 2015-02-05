@@ -1,0 +1,202 @@
+| Wirelist created using version 5.4.
+| Sch_Warning - Component $3I42 (SW?), Symbol=Analog:pbswitch at (1205, 270), is not connected.
+| Sch_Warning - Component $3I43 (T?), Symbol=Analog:transf at (1170, 530), is not connected.
+| Sch_Warning - Component $3I44 (T?), Symbol=Analog:transfct at (1390, 530), is not connected.
+| Sch_Warning - Component $3I46 (X?), Symbol=Analog:crystal at (940, 280), is not connected.
+| Sch_Warning - Component $3I47 (U?), Symbol=Analog:nand at (960, 800), is not connected.
+| Sch_Warning - Component $3I48 (U?), Symbol=Analog:inv at (1180, 800), is not connected.
+| Sch_Warning - Component $3I49, Symbol=Analog:tline at (1390, 270), is not connected.
+| Sch_Warning - Component $3I50 (Z?), Symbol=Analog:bridge at (1350, 760), is not connected.
+| Sch_Warning - Component $3I24 (U?), Symbol=Analog:opamp at (365, 780), is not connected.
+V 5.4
+K 264627654100 analog
+DW analog
+Q Case
+|Q Analog:pbswitch 1
+AS Analog:pbswitch @ON=0
+AS Analog:pbswitch PINOFF
+AS Analog:pbswitch REFDES=SW?
+AS Analog:pbswitch PINORDER=N1 N2
+AS Analog:pbswitch PREFIX=S
+AS Analog:pbswitch PARTS=1
+AS Analog:pbswitch PKG_TYPE=PBSWITCH
+AS Analog:pbswitch LEVEL=STD
+AP Analog:pbswitch 1 #=1
+AP Analog:pbswitch 1 PINTYPE=BI
+AP Analog:pbswitch 2 #=2
+AP Analog:pbswitch 2 PINTYPE=BI
+|Q Analog:transf 1
+AS Analog:transf LEVEL=STD
+AS Analog:transf PARTS=1
+AS Analog:transf PKG_TYPE=SMD4
+AS Analog:transf PINOFF
+AS Analog:transf ORDER=MODEL$
+AS Analog:transf PINORDER=N4 N3 N1 N2
+AS Analog:transf MODEL=TRANSF
+AS Analog:transf REFDES=T?
+AS Analog:transf PREFIX=X
+AP Analog:transf 1 #=1
+AP Analog:transf 1 PINTYPE=IN
+AP Analog:transf 2 #=2
+AP Analog:transf 2 PINTYPE=IN
+AP Analog:transf 3 #=3
+AP Analog:transf 3 PINTYPE=IN
+AP Analog:transf 4 #=4
+AP Analog:transf 4 PINTYPE=IN
+|Q Analog:transfct 1
+AS Analog:transfct PINORDER=N1 N2 N3 N4 N5
+AS Analog:transfct REFDES=T?
+AS Analog:transfct MODEL=TRANSFCT
+AS Analog:transfct LEVEL=STD
+AS Analog:transfct PARTS=1
+AS Analog:transfct PARTSPEC=1
+AS Analog:transfct PINOFF
+AS Analog:transfct ORDER=MODEL$
+AS Analog:transfct PREFIX=X
+AS Analog:transfct PKG_TYPE=SMD5
+AP Analog:transfct 1 #=1
+AP Analog:transfct 2 #=2
+AP Analog:transfct 3 #=3
+AP Analog:transfct 4 #=4
+AP Analog:transfct 5 #=5
+|Q Analog:tcore 1
+AS Analog:tcore LABEL=K1
+AS Analog:tcore PREFIX=K
+AS Analog:tcore COEFFICIENT=0.999
+AS Analog:tcore ORDER=L1$ L2$ COEFFICIENT$ MODEL$
+AS Analog:tcore L2=L2
+AS Analog:tcore L1=L1
+|Q Analog:crystal 1
+AS Analog:crystal LEVEL=STD
+AS Analog:crystal PARTS=1
+AS Analog:crystal @LS=.0548H
+AS Analog:crystal @CS=.054PF
+AS Analog:crystal @CP=29PF
+AS Analog:crystal @RS=15
+AS Analog:crystal PKG_TYPE=HC
+AS Analog:crystal PINOFF
+AS Analog:crystal PINORDER=P N
+AS Analog:crystal REFDES=X?
+AS Analog:crystal PREFIX=X
+AP Analog:crystal 1 PINTYPE=BI
+AP Analog:crystal 1 #=1
+AP Analog:crystal 2 PINTYPE=BI
+AP Analog:crystal 2 #=2
+|Q Analog:nand 1
+AS Analog:nand LEVEL=STD
+AS Analog:nand REFDES=U?
+AS Analog:nand MODEL=NAND2
+AS Analog:nand LEVEL=VSIM
+AS Analog:nand TPLH=40
+AS Analog:nand TPHL=40
+AS Analog:nand @VOLTAGE=5V
+AS Analog:nand PINORDER=Y A B
+AS Analog:nand ORDER=MODEL=
+AS Analog:nand PARTS=4
+AS Analog:nand PKG_TYPE=14PDIP
+AS Analog:nand PINOFF
+AP Analog:nand 1 PINTYPE=OUT
+AP Analog:nand 1 #=3,6,8,11
+AP Analog:nand 2 PINTYPE=IN
+AP Analog:nand 2 #=1,4,9,12
+AP Analog:nand 3 PINTYPE=IN
+AP Analog:nand 3 #=2,5,10,13
+|Q Analog:inv 1
+AS Analog:inv @VOLTAGE=5V
+AS Analog:inv PKG_TYPE=DIP
+AS Analog:inv PARTS=1
+AS Analog:inv MODEL=NOT
+AS Analog:inv REFDES=U?
+AS Analog:inv LEVEL=VSIM
+AS Analog:inv PINORDER=Y A
+AS Analog:inv LEVEL=STD
+AS Analog:inv TPLH=20
+AS Analog:inv TPHL=20
+AS Analog:inv ORDER=MODEL=
+AS Analog:inv PINOFF
+AS Analog:inv PREFIX=X
+AP Analog:inv 1 #=2
+AP Analog:inv 1 PINTYPE=IN
+AP Analog:inv 2 #=1
+AP Analog:inv 2 PINTYPE=IN
+|Q Analog:tline 1
+AS Analog:tline Z0=50
+AS Analog:tline PINORDER=A+ A- B+ B-
+AS Analog:tline PREFIX=T
+AS Analog:tline ORDER=Z0= TD= F= NL=
+AP Analog:tline 1 PINTYPE=IN
+AP Analog:tline 2 PINTYPE=IN
+AP Analog:tline 3 PINTYPE=IN
+AP Analog:tline 4 PINTYPE=IN
+|Q Analog:bridge 1
+AS Analog:bridge LEVEL=STD
+AS Analog:bridge REFDES=Z?
+AS Analog:bridge PREFIX=X
+AS Analog:bridge PKG_TYPE=BRIDGE
+AS Analog:bridge PARTS=1
+AS Analog:bridge @MODEL=DMDA920
+AS Analog:bridge PINORDER=DC- DC+ AC2 AC1
+AP Analog:bridge 1 #=1
+AP Analog:bridge 2 #=3
+AP Analog:bridge 3 #=4
+AP Analog:bridge 4 #=2
+|Q Analog:opamp 1
+AS Analog:opamp REFDES=U?
+AS Analog:opamp PARTS=1
+AS Analog:opamp PREFIX=X
+AS Analog:opamp PKG_TYPE=DIP
+AS Analog:opamp PINOFF
+AS Analog:opamp LEVEL=STD
+AS Analog:opamp PINORDER=O - +
+AP Analog:opamp 1 PINTYPE=OUT
+AP Analog:opamp 1 #=6
+AP Analog:opamp 2 PINTYPE=IN
+AP Analog:opamp 2 #=2
+AP Analog:opamp 3 PINTYPE=IN
+AP Analog:opamp 3 #=3
+W Analog:pbswitch $3I42
+I $3I42 Analog:pbswitch ? ? REFDES=SW?`
+API $3I42 Analog:pbswitch 1 #=1
+API $3I42 Analog:pbswitch 2 #=2
+M Analog:transf $3I43
+I $3I43 Analog:transf ? ? ? ? REFDES=T?`
+API $3I43 Analog:transf 1 #=1
+API $3I43 Analog:transf 2 #=2
+API $3I43 Analog:transf 3 #=3
+API $3I43 Analog:transf 4 #=4
+M Analog:transfct $3I44
+I $3I44 Analog:transfct ? ? ? ? ? REFDES=T?`
+API $3I44 Analog:transfct 1 #=1
+API $3I44 Analog:transfct 2 #=2
+API $3I44 Analog:transfct 3 #=3
+API $3I44 Analog:transfct 4 #=4
+API $3I44 Analog:transfct 5 #=5
+M Analog:tcore $3I45
+I $3I45 Analog:tcore 
+W Analog:crystal $3I46
+I $3I46 Analog:crystal ? ? REFDES=X?`
+API $3I46 Analog:crystal 1 #=1
+API $3I46 Analog:crystal 2 #=2
+W Analog:nand $3I47
+I $3I47 Analog:nand ? ? ? REFDES=U?`
+API $3I47 Analog:nand 1 #=3
+API $3I47 Analog:nand 2 #=1
+API $3I47 Analog:nand 3 #=2
+W Analog:inv $3I48
+I $3I48 Analog:inv ? ? REFDES=U?`
+API $3I48 Analog:inv 1 #=2
+API $3I48 Analog:inv 2 #=1
+M Analog:tline $3I49
+I $3I49 Analog:tline ? ? ? ? 
+W Analog:bridge $3I50
+I $3I50 Analog:bridge ? ? ? ? REFDES=Z?`
+API $3I50 Analog:bridge 1 #=1
+API $3I50 Analog:bridge 2 #=3
+API $3I50 Analog:bridge 3 #=4
+API $3I50 Analog:bridge 4 #=2
+W Analog:opamp $3I24
+I $3I24 Analog:opamp ? ? ? REFDES=U?`
+API $3I24 Analog:opamp 1 #=6
+API $3I24 Analog:opamp 2 #=2
+API $3I24 Analog:opamp 3 #=3
+EW

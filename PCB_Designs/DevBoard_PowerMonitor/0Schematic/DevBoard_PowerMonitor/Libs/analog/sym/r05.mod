@@ -1,0 +1,2 @@
+.MODEL R05 RES (R=1 DEV 5%)
+

@@ -1,0 +1,58 @@
+SECTION DesignInfo
+LIST IndependentLibraries
+VALUE "DIR [W] . (marmoset_schematic)"
+VALUE "DIR [W] C:\Users\kyler.callahan\Documents\work\DevBoard_PowerMonitor\4Librarys\DxDesigner Library (DxDesigner_Library)"
+VALUE "DIR [W] C:\Users\kyler.callahan\Documents\work\DevBoard_PowerMonitor\4Librarys\DxDesigner Common Parts (DxDesigner_Common_Parts)"
+VALUE "DIR [R] Libs\analog (analog)"
+ENDLIST
+KEY BorderSymbols "./borders.ini"
+KEY Bus_Contents "./busconts.ini"
+KEY CentralLibrary ""
+KEY CnsFileName ""
+KEY DBCFile ""
+KEY FrontEndSnapshot "DxD"
+KEY LayoutID "PADS95"
+KEY PcbCfgFileName ""
+KEY PinComponents "./speccomp.ini"
+KEY PropertyDefinitions "%SDD_HOME%\standard\netlist.prp"
+KEY DxD_Version "7.9.4"
+KEY NumberingType "INDEPTH"
+KEY OrderFileName ".\"
+KEY PartListerCfg "C:\Users\kyler.callahan\Documents\work\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\PartLister.ipl"
+ENDSECTION
+SECTION ConfigurationInfo
+KEY LastIntegrityCheck "1233579769"
+ENDSECTION
+SECTION FlowSettings
+KEY FlowType "NETLIST"
+ENDSECTION
+SECTION ICXProInfo
+KEY ICXProDir "ICXPro"
+ENDSECTION
+SECTION ProjectBackup
+KEY ConfigFile ".\ProjectBackup\ProjectBackup.cfg"
+ENDSECTION
+SECTION Template_Design
+KEY CADBackAnno "0"
+KEY ConfigType "PCB"
+KEY SchematicConflict "FE"
+KEY SchematicDesignBackAnno "0"
+KEY SchematicDesignStatus "0"
+KEY SearchPathScheme "(Default)"
+ENDSECTION
+SECTION iCDB
+LIST Designs
+VALUE "Prototype Board 1"
+ENDLIST
+KEY DedicatedServerName ""
+KEY iCDBDir ".\database"
+ENDSECTION
+SECTION "Prototype Board 1"
+KEY CADBackAnno "0"
+KEY ConfigType "PCB"
+KEY SchematicConflict "FE"
+KEY SchematicDesignBackAnno "0"
+KEY SchematicDesignStatus "0"
+KEY SearchPathScheme "(Default)"
+KEY RootBlock "S1"
+ENDSECTION

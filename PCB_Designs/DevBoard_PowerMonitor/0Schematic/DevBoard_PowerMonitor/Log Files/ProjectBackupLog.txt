@@ -1,0 +1,134 @@
+[2014-08-13 15.17.00] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-08-13 15.17.00] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-08-13 15.17.03] Successfully created [AutoSave] backup [2014-08-13 15.17.01 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2014-08-13 15.18.07] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-08-13 15.18.07] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-08-13 15.23.39] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-08-13 15.23.39] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-08-14 09.58.37] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-08-14 09.58.37] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-08-14 09.59.59] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-08-14 09.59.59] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-08-14 11.05.08] Successfully created [AutoSave] backup [2014-08-14 11.05.05 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2014-08-14 15.05.08] Successfully created [AutoSave] backup [2014-08-14 15.05.05 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2014-08-15 10.05.21] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-08-15 10.05.21] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-08-15 11.10.32] Successfully created [AutoSave] backup [2014-08-15 11.10.27 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2014-08-15 11.10.32] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-13 15.17.01 - auto.zip].
+[2014-08-15 11.10.32] [AutoSave] backup file [DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-13 15.17.01 - auto.zip] removed.
+[2014-08-18 10.07.30] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-08-18 10.07.30] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-08-18 11.12.44] Successfully created [AutoSave] backup [2014-08-18 11.12.36 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2014-08-18 11.12.44] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-14 11.05.05 - auto.zip].
+[2014-08-18 11.12.44] [AutoSave] backup file [DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-14 11.05.05 - auto.zip] removed.
+[2014-08-18 15.12.45] Successfully created [AutoSave] backup [2014-08-18 15.12.36 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2014-08-18 15.12.45] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-14 15.05.05 - auto.zip].
+[2014-08-18 15.12.45] [AutoSave] backup file [DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-14 15.05.05 - auto.zip] removed.
+[2014-08-19 10.01.08] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-08-19 10.01.08] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-08-19 15.06.25] Successfully created [AutoSave] backup [2014-08-19 15.06.14 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2014-08-19 15.06.25] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-15 11.10.27 - auto.zip].
+[2014-08-19 15.06.25] [AutoSave] backup file [DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-15 11.10.27 - auto.zip] removed.
+[2014-08-20 09.51.19] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-08-20 09.51.19] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-08-20 10.56.29] Successfully created [AutoSave] backup [2014-08-20 10.56.25 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2014-08-20 10.56.29] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-18 11.12.36 - auto.zip].
+[2014-08-20 10.56.29] [AutoSave] backup file [DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-18 11.12.36 - auto.zip] removed.
+[2014-08-20 14.56.29] Successfully created [AutoSave] backup [2014-08-20 14.56.25 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2014-08-20 14.56.29] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-18 15.12.36 - auto.zip].
+[2014-08-20 14.56.29] [AutoSave] backup file [DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-18 15.12.36 - auto.zip] removed.
+[2014-08-21 09.40.23] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-08-21 09.40.23] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-08-21 14.45.35] Successfully created [AutoSave] backup [2014-08-21 14.45.29 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2014-08-21 14.45.35] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-19 15.06.14 - auto.zip].
+[2014-08-21 14.45.35] [AutoSave] backup file [DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-19 15.06.14 - auto.zip] removed.
+[2014-08-21 15.10.21] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-08-21 15.10.21] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-08-22 10.08.30] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-08-22 10.08.30] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-08-22 11.13.42] Successfully created [AutoSave] backup [2014-08-22 11.13.36 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2014-08-22 11.13.42] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-20 10.56.25 - auto.zip].
+[2014-08-22 11.13.42] [AutoSave] backup file [DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-20 10.56.25 - auto.zip] removed.
+[2014-08-22 15.13.43] Successfully created [AutoSave] backup [2014-08-22 15.13.36 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2014-08-22 15.13.43] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-20 14.56.25 - auto.zip].
+[2014-08-22 15.13.43] [AutoSave] backup file [DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-20 14.56.25 - auto.zip] removed.
+[2014-08-25 10.10.28] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-08-25 10.10.28] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-08-25 10.23.37] Successfully created [AutoSave] backup [2014-08-25 10.23.29 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2014-08-25 10.23.37] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-21 14.45.29 - auto.zip].
+[2014-08-25 10.23.37] [AutoSave] backup file [DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-21 14.45.29 - auto.zip] removed.
+[2014-08-25 14.23.32] Successfully created [AutoSave] backup [2014-08-25 14.23.29 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2014-08-25 14.23.32] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-22 11.13.36 - auto.zip].
+[2014-08-25 14.23.32] [AutoSave] backup file [DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-22 11.13.36 - auto.zip] removed.
+[2014-08-27 15.09.27] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-08-27 15.09.27] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-08-29 10.19.30] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-08-29 10.19.30] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-09-04 11.10.03] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-09-04 11.10.03] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-09-11 12.07.54] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-09-11 12.07.54] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-09-11 14.32.44] Successfully created [AutoSave] backup [2014-09-11 14.32.41 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2014-09-11 14.32.44] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-22 15.13.36 - auto.zip].
+[2014-09-11 14.32.44] [AutoSave] backup file [DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-22 15.13.36 - auto.zip] removed.
+[2014-09-11 14.32.44] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-25 10.23.29 - auto.zip].
+[2014-09-11 14.32.44] [AutoSave] backup file [DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-25 10.23.29 - auto.zip] removed.
+[2014-09-15 13.02.04] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-09-15 13.02.04] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-09-15 13.04.43] Successfully created [AutoSave] backup [2014-09-15 13.04.40 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2014-09-15 13.04.43] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-25 14.23.29 - auto.zip].
+[2014-09-15 13.04.43] [AutoSave] backup file [DevBoard_PowerMonitor\ProjectBackup\backups\2014-08-25 14.23.29 - auto.zip] removed.
+[2014-09-18 12.51.38] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-09-18 12.51.38] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-09-18 12.54.16] Successfully created [AutoSave] backup [2014-09-18 12.54.14 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2014-09-18 12.54.16] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2014-09-11 10.32.41 - auto.zip].
+[2014-09-18 12.54.16] [AutoSave] backup file [DevBoard_PowerMonitor\ProjectBackup\backups\2014-09-11 10.32.41 - auto.zip] removed.
+[2014-09-18 14.27.07] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-09-18 14.27.07] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-09-23 14.45.45] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-09-23 14.45.45] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-09-23 14.48.24] Successfully created [AutoSave] backup [2014-09-23 14.48.21 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2014-09-23 14.48.24] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2014-09-11 14.32.41 - auto.zip].
+[2014-09-23 14.48.24] [AutoSave] backup file [DevBoard_PowerMonitor\ProjectBackup\backups\2014-09-11 14.32.41 - auto.zip] removed.
+[2014-09-24 11.16.16] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-09-24 11.16.16] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-09-25 11.33.35] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-09-25 11.33.35] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-09-25 11.46.38] Successfully created [AutoSave] backup [2014-09-25 11.46.36 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2014-09-25 11.46.38] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2014-09-15 13.04.40 - auto.zip].
+[2014-09-25 11.46.38] [AutoSave] backup file [DevBoard_PowerMonitor\ProjectBackup\backups\2014-09-15 13.04.40 - auto.zip] removed.
+[2014-09-26 15.28.33] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-09-26 15.28.33] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-10-09 11.22.06] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-10-09 11.22.06] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-10-10 12.07.06] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-10-10 12.07.06] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-10-21 14.24.11] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-10-21 14.24.11] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-10-22 10.02.01] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-10-22 10.02.01] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-10-22 10.02.36] Successfully created [AutoSave] backup [2014-10-22 10.02.32 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2014-10-22 10.02.36] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2014-09-18 12.54.14 - auto.zip].
+[2014-10-22 10.02.36] [AutoSave] backup file [DevBoard_PowerMonitor\ProjectBackup\backups\2014-09-18 12.54.14 - auto.zip] removed.
+[2014-10-22 11.49.16] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-10-22 11.49.16] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-10-28 11.48.17] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-10-28 11.48.17] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-10-30 13.06.45] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-10-30 13.06.45] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-10-30 14.11.54] Successfully created [AutoSave] backup [2014-10-30 14.11.52 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2014-10-30 14.11.54] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2014-09-23 14.48.21 - auto.zip].
+[2014-10-30 14.11.54] [AutoSave] backup file [DevBoard_PowerMonitor\ProjectBackup\backups\2014-09-23 14.48.21 - auto.zip] removed.
+[2014-12-11 14.22.48] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-12-11 14.22.48] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-12-11 15.27.58] Successfully created [AutoSave] backup [2014-12-11 15.27.55 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2014-12-11 15.27.58] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2014-09-25 11.46.36 - auto.zip].
+[2014-12-11 15.27.58] [AutoSave] backup file [DevBoard_PowerMonitor\ProjectBackup\backups\2014-09-25 11.46.36 - auto.zip] removed.
+[2014-12-15 12.14.01] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-12-15 12.14.01] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-12-15 14.20.47] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-12-15 14.20.47] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-12-16 14.57.25] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-12-16 14.57.25] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014-12-30 12.24.42] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014-12-30 12.24.42] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.

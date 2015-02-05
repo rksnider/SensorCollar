@@ -1,0 +1,7 @@
+Pin Order,Pin Label,Pin Number,Pin Type,Side,Inverted
+L1,VCC_AUX1,E6,POWER,2,false
+L2,VCC_AUX2,C10,POWER,2,false
+L3,VCC_AUX3,D14,POWER,2,false
+L4,VCC_AUX4,R14,POWER,2,false
+L5,VCC_AUX5,T10,POWER,2,false
+L6,VCC_AUX6,R6,POWER,2,false

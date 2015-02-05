@@ -1,0 +1,374 @@
+| Wirelist created using version 6.0 
+V 6.0
+DW S1
+|Q DxDesigner_Common_Parts:0p1uF_cap_0603 1
+AS DxDesigner_Common_Parts:0p1uF_cap_0603 INOV_VER_REC=15:45:49_6-19-14
+AS DxDesigner_Common_Parts:0p1uF_cap_0603 PINSWAP=(1,2)
+AS DxDesigner_Common_Parts:0p1uF_cap_0603 REFDES=C?
+AS DxDesigner_Common_Parts:0p1uF_cap_0603 DEVICE=0p1uF_cap_0603
+AS DxDesigner_Common_Parts:0p1uF_cap_0603 VALUE=0.1uF
+AS DxDesigner_Common_Parts:0p1uF_cap_0603 PKG_TYPE=0603_MY
+AS DxDesigner_Common_Parts:0p1uF_cap_0603 TOLERANCE
+AS DxDesigner_Common_Parts:0p1uF_cap_0603 PINORDER=1 2
+AP DxDesigner_Common_Parts:0p1uF_cap_0603 1 #=1
+AP DxDesigner_Common_Parts:0p1uF_cap_0603 1 PINTYPE=ANALOG
+AP DxDesigner_Common_Parts:0p1uF_cap_0603 2 #=2
+AP DxDesigner_Common_Parts:0p1uF_cap_0603 2 PINTYPE=ANALOG
+|Q DxDesigner_Common_Parts:4p7uF_cap_0603 1
+AS DxDesigner_Common_Parts:4p7uF_cap_0603 PINSWAP=(1,2)
+AS DxDesigner_Common_Parts:4p7uF_cap_0603 REFDES=C?
+AS DxDesigner_Common_Parts:4p7uF_cap_0603 DEVICE=4p7uF_cap_0603
+AS DxDesigner_Common_Parts:4p7uF_cap_0603 VALUE=4.7uF
+AS DxDesigner_Common_Parts:4p7uF_cap_0603 PKG_TYPE=0603_MY
+AS DxDesigner_Common_Parts:4p7uF_cap_0603 TOLERANCE
+AS DxDesigner_Common_Parts:4p7uF_cap_0603 INOV_VER_REC=12:00:20_5-29-14
+AS DxDesigner_Common_Parts:4p7uF_cap_0603 PINORDER=1 2
+AP DxDesigner_Common_Parts:4p7uF_cap_0603 1 #=1
+AP DxDesigner_Common_Parts:4p7uF_cap_0603 1 PINTYPE=ANALOG
+AP DxDesigner_Common_Parts:4p7uF_cap_0603 2 #=2
+AP DxDesigner_Common_Parts:4p7uF_cap_0603 2 PINTYPE=ANALOG
+|Q DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 1
+AS DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 INOV_VER_REC=11:38:36_7-11-14
+AS DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 DEVICE=Dual_BUCK_With_Boost_LTC3521
+AS DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 REFDES=U?
+AS DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 PKG_TYPE=Dual_BUCK_With_Boost_LTC3521
+AS DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 PART_NUMBER=LTC3521
+AS DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 PINORDER=FB1 FB2 FB3 GND PGND2 PGOOD1 PGOOD2 PGOOD3 PVIN1 PVIN2 PWM SHDN1_N SHDN2_N SHDN3_N SW1A SW1B SW2 SW3 THERMAL_GND VIN VOUT1
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 1 #=10
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 1 PINTYPE=IN
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 2 #=2
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 2 PINTYPE=IN
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 3 #=1
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 3 PINTYPE=IN
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 4 #=8
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 4 PINTYPE=IN
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 5 #=18
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 5 PINTYPE=IN
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 6 #=6
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 6 PINTYPE=IN
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 7 #=5
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 7 PINTYPE=IN
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 8 #=4
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 8 PINTYPE=IN
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 9 #=13
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 9 PINTYPE=IN
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 10 #=20
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 10 PINTYPE=IN
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 11 #=9
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 11 PINTYPE=IN
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 12 #=12
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 12 PINTYPE=IN
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 13 #=3
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 13 PINTYPE=IN
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 14 #=11
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 14 PINTYPE=IN
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 15 #=15
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 15 PINTYPE=IN
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 16 #=14
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 16 PINTYPE=IN
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 17 #=19
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 17 PINTYPE=IN
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 18 #=17
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 18 PINTYPE=IN
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 19 #=21
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 19 PINTYPE=GROUND
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 20 #=7
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 20 PINTYPE=IN
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 21 #=16
+AP DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 21 PINTYPE=IN
+|Q DxDesigner_Common_Parts:Inductor_Sumida 1
+AS DxDesigner_Common_Parts:Inductor_Sumida VALUE
+AS DxDesigner_Common_Parts:Inductor_Sumida REFDES=L?
+AS DxDesigner_Common_Parts:Inductor_Sumida PKG_TYPE=INDUCTOR_252012CDMCD
+AS DxDesigner_Common_Parts:Inductor_Sumida PART_NUMBER=252012CDMCD
+AS DxDesigner_Common_Parts:Inductor_Sumida DEVICE=Inductor
+AS DxDesigner_Common_Parts:Inductor_Sumida INOV_VER_REC=15:42:38_6-26-14
+AS DxDesigner_Common_Parts:Inductor_Sumida PINORDER=N1 N2
+AP DxDesigner_Common_Parts:Inductor_Sumida 1 #=1
+AP DxDesigner_Common_Parts:Inductor_Sumida 1 PINTYPE=BI
+AP DxDesigner_Common_Parts:Inductor_Sumida 2 #=2
+AP DxDesigner_Common_Parts:Inductor_Sumida 2 PINTYPE=BI
+|Q DxDesigner_Common_Parts:Res_v_0603 1
+AS DxDesigner_Common_Parts:Res_v_0603 PINSWAP=(1,2)
+AS DxDesigner_Common_Parts:Res_v_0603 REFDES=R?
+AS DxDesigner_Common_Parts:Res_v_0603 DEVICE=Res_v_0603
+AS DxDesigner_Common_Parts:Res_v_0603 VALUE
+AS DxDesigner_Common_Parts:Res_v_0603 TOLERANCE
+AS DxDesigner_Common_Parts:Res_v_0603 PKG_TYPE=0603_MY
+AS DxDesigner_Common_Parts:Res_v_0603 PART_NUMBER
+AS DxDesigner_Common_Parts:Res_v_0603 INOV_VER_REC=13:53:4_7-3-14
+AS DxDesigner_Common_Parts:Res_v_0603 PINORDER=1 2
+AP DxDesigner_Common_Parts:Res_v_0603 1 #=1
+AP DxDesigner_Common_Parts:Res_v_0603 1 PINTYPE=ANALOG
+AP DxDesigner_Common_Parts:Res_v_0603 2 #=2
+AP DxDesigner_Common_Parts:Res_v_0603 2 PINTYPE=ANALOG
+|Q DxDesigner_Common_Parts:cap_0603 1
+AS DxDesigner_Common_Parts:cap_0603 INOV_VER_REC=13:47:58_7-25-14
+AS DxDesigner_Common_Parts:cap_0603 PINSWAP=(1,2)
+AS DxDesigner_Common_Parts:cap_0603 REFDES=C?
+AS DxDesigner_Common_Parts:cap_0603 DEVICE=cap_0603
+AS DxDesigner_Common_Parts:cap_0603 VALUE
+AS DxDesigner_Common_Parts:cap_0603 PKG_TYPE=0603_MY
+AS DxDesigner_Common_Parts:cap_0603 TOLERANCE
+AS DxDesigner_Common_Parts:cap_0603 PART_NUMBER
+AS DxDesigner_Common_Parts:cap_0603 PINORDER=1 2
+AP DxDesigner_Common_Parts:cap_0603 1 #=1
+AP DxDesigner_Common_Parts:cap_0603 1 PINTYPE=ANALOG
+AP DxDesigner_Common_Parts:cap_0603 2 #=2
+AP DxDesigner_Common_Parts:cap_0603 2 PINTYPE=ANALOG
+|Q DxDesigner_Library:SWITCH_DUAL_SiP32416 1
+AS DxDesigner_Library:SWITCH_DUAL_SiP32416 INOV_VER_REC=17:03:53_7-1-14
+AS DxDesigner_Library:SWITCH_DUAL_SiP32416 DEVICE=SWITCH_DUAL_SiP32416
+AS DxDesigner_Library:SWITCH_DUAL_SiP32416 REFDES=S?
+AS DxDesigner_Library:SWITCH_DUAL_SiP32416 PKG_TYPE=VISHNAY_DUAL_LOAD_SWITCH
+AS DxDesigner_Library:SWITCH_DUAL_SiP32416 PART_NUMBER=Sip32416
+AS DxDesigner_Library:SWITCH_DUAL_SiP32416 PINORDER=CNTRL1 CNTRL2 GND6 GND7 IN1 IN2 OUT1 OUT2 TERMAL_PAD
+AP DxDesigner_Library:SWITCH_DUAL_SiP32416 1 #=2
+AP DxDesigner_Library:SWITCH_DUAL_SiP32416 1 PINTYPE=BI
+AP DxDesigner_Library:SWITCH_DUAL_SiP32416 2 #=3
+AP DxDesigner_Library:SWITCH_DUAL_SiP32416 2 PINTYPE=BI
+AP DxDesigner_Library:SWITCH_DUAL_SiP32416 3 #=6
+AP DxDesigner_Library:SWITCH_DUAL_SiP32416 3 PINTYPE=BI
+AP DxDesigner_Library:SWITCH_DUAL_SiP32416 4 #=7
+AP DxDesigner_Library:SWITCH_DUAL_SiP32416 4 PINTYPE=BI
+AP DxDesigner_Library:SWITCH_DUAL_SiP32416 5 #=1
+AP DxDesigner_Library:SWITCH_DUAL_SiP32416 5 PINTYPE=BI
+AP DxDesigner_Library:SWITCH_DUAL_SiP32416 6 #=4
+AP DxDesigner_Library:SWITCH_DUAL_SiP32416 6 PINTYPE=BI
+AP DxDesigner_Library:SWITCH_DUAL_SiP32416 7 #=8
+AP DxDesigner_Library:SWITCH_DUAL_SiP32416 7 PINTYPE=BI
+AP DxDesigner_Library:SWITCH_DUAL_SiP32416 8 #=5
+AP DxDesigner_Library:SWITCH_DUAL_SiP32416 8 PINTYPE=BI
+AP DxDesigner_Library:SWITCH_DUAL_SiP32416 9 #=9
+AP DxDesigner_Library:SWITCH_DUAL_SiP32416 9 PINTYPE=IN
+|Q DxDesigner_Library:JUMPER_L 1
+AS DxDesigner_Library:JUMPER_L DEVICE=JUMPER_L
+AS DxDesigner_Library:JUMPER_L REFDES=J?
+AS DxDesigner_Library:JUMPER_L PKG_TYPE=JUMPER_L
+AS DxDesigner_Library:JUMPER_L INOV_VER_REC=12:21:15_6-2-14
+AS DxDesigner_Library:JUMPER_L PINORDER=IN1 IN2 OUT
+AP DxDesigner_Library:JUMPER_L 1 #=1
+AP DxDesigner_Library:JUMPER_L 1 PINTYPE=IN
+AP DxDesigner_Library:JUMPER_L 2 #=2
+AP DxDesigner_Library:JUMPER_L 2 PINTYPE=IN
+AP DxDesigner_Library:JUMPER_L 3 #=3
+AP DxDesigner_Library:JUMPER_L 3 PINTYPE=IN
+G GND
+M DxDesigner_Common_Parts:0p1uF_cap_0603 $10I409
+I $10I409 DxDesigner_Common_Parts:0p1uF_cap_0603 $10N905 GND REFDES=C?`
+|R 15:45:49_6-19-14
+API $10I409 DxDesigner_Common_Parts:0p1uF_cap_0603 1 #=1
+API $10I409 DxDesigner_Common_Parts:0p1uF_cap_0603 2 #=2
+M DxDesigner_Common_Parts:0p1uF_cap_0603 $10I410
+I $10I410 DxDesigner_Common_Parts:0p1uF_cap_0603 $10N916 GND REFDES=C?`
+|R 15:45:49_6-19-14
+API $10I410 DxDesigner_Common_Parts:0p1uF_cap_0603 1 #=1
+API $10I410 DxDesigner_Common_Parts:0p1uF_cap_0603 2 #=2
+M DxDesigner_Common_Parts:4p7uF_cap_0603 $10I411
+I $10I411 DxDesigner_Common_Parts:4p7uF_cap_0603 VCC1P8 GND REFDES=C?`
+|R 12:00:20_5-29-14
+API $10I411 DxDesigner_Common_Parts:4p7uF_cap_0603 1 #=1
+API $10I411 DxDesigner_Common_Parts:4p7uF_cap_0603 2 #=2
+M DxDesigner_Common_Parts:4p7uF_cap_0603 $10I412
+I $10I412 DxDesigner_Common_Parts:4p7uF_cap_0603 VCC2P5 GND VALUE=4.7uF`REFDES=C?`
+|R 12:00:20_5-29-14
+API $10I412 DxDesigner_Common_Parts:4p7uF_cap_0603 1 #=1
+API $10I412 DxDesigner_Common_Parts:4p7uF_cap_0603 2 #=2
+M DxDesigner_Common_Parts:0p1uF_cap_0603 $10I467
+I $10I467 DxDesigner_Common_Parts:0p1uF_cap_0603 $10N924 GND REFDES=C?`
+|R 15:45:49_6-19-14
+API $10I467 DxDesigner_Common_Parts:0p1uF_cap_0603 1 #=1
+API $10I467 DxDesigner_Common_Parts:0p1uF_cap_0603 2 #=2
+M DxDesigner_Common_Parts:4p7uF_cap_0603 $10I469
+I $10I469 DxDesigner_Common_Parts:4p7uF_cap_0603 VCC3P3 GND REFDES=C?`
+|R 12:00:20_5-29-14
+API $10I469 DxDesigner_Common_Parts:4p7uF_cap_0603 1 #=1
+API $10I469 DxDesigner_Common_Parts:4p7uF_cap_0603 2 #=2
+M DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 $10I609
+I $10I609 DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 $10N937 $10N784 $10N739 GND GND PWR_GOOD_3P3_TO_CPLD PWR_GOOD_2P5_TO_CPLD ? $10N887 $10N887 BUCK_PWM_TO_CPLD VCC3P3_RUN VCC2P5_RUN BATTERY_PACK+ $10N676 $10N653 $10N830 $10N829 GND $10N887 VCC3P3 PART_NUMBER=LTC3521`DEVICE=Dual_BUCK_With_Boost_LTC3521`REFDES=U?`
+|R 11:38:36_7-11-14
+API $10I609 DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 1 #=10
+API $10I609 DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 2 #=2
+API $10I609 DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 3 #=1
+API $10I609 DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 4 #=8
+API $10I609 DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 5 #=18
+API $10I609 DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 6 #=6
+API $10I609 DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 7 #=5
+API $10I609 DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 8 #=4
+API $10I609 DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 9 #=13
+API $10I609 DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 10 #=20
+API $10I609 DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 11 #=9
+API $10I609 DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 12 #=12
+API $10I609 DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 13 #=3
+API $10I609 DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 14 #=11
+API $10I609 DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 15 #=15
+API $10I609 DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 16 #=14
+API $10I609 DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 17 #=19
+API $10I609 DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 18 #=17
+API $10I609 DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 19 #=21
+API $10I609 DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 20 #=7
+API $10I609 DxDesigner_Library:Dual_BUCK_With_Boost_LTC3521 21 #=16
+M DxDesigner_Common_Parts:Inductor_Sumida $10I649
+I $10I649 DxDesigner_Common_Parts:Inductor_Sumida $10N676 $10N653 PART_NUMBER=252012CDMCD-4R7MC`VALUE=4.7uH`REFDES=L?`
+|R 15:42:38_6-26-14
+API $10I649 DxDesigner_Common_Parts:Inductor_Sumida 1 #=1
+API $10I649 DxDesigner_Common_Parts:Inductor_Sumida 2 #=2
+M DxDesigner_Common_Parts:Res_v_0603 $10I835
+I $10I835 DxDesigner_Common_Parts:Res_v_0603 PWR_GOOD_2P5_TO_CPLD VCC2P5_RUN VALUE=10k`REFDES=R?`
+|R 13:53:4_7-3-14
+API $10I835 DxDesigner_Common_Parts:Res_v_0603 1 #=1
+API $10I835 DxDesigner_Common_Parts:Res_v_0603 2 #=2
+M DxDesigner_Common_Parts:Res_v_0603 $10I841
+I $10I841 DxDesigner_Common_Parts:Res_v_0603 PWR_GOOD_3P3_TO_CPLD VCC3P3_RUN VALUE=10k`REFDES=R?`
+|R 13:53:4_7-3-14
+API $10I841 DxDesigner_Common_Parts:Res_v_0603 1 #=1
+API $10I841 DxDesigner_Common_Parts:Res_v_0603 2 #=2
+M DxDesigner_Common_Parts:Res_v_0603 $10I658
+I $10I658 DxDesigner_Common_Parts:Res_v_0603 $10N937 VCC3P3 VALUE=1.00M`TOLERANCE=0.1%`REFDES=R?`
+|R 13:53:4_7-3-14
+API $10I658 DxDesigner_Common_Parts:Res_v_0603 1 #=1
+API $10I658 DxDesigner_Common_Parts:Res_v_0603 2 #=2
+M DxDesigner_Common_Parts:Res_v_0603 $10I679
+I $10I679 DxDesigner_Common_Parts:Res_v_0603 GND $10N937 VALUE=221k`TOLERANCE=0.1%`REFDES=R?`
+|R 13:53:4_7-3-14
+API $10I679 DxDesigner_Common_Parts:Res_v_0603 1 #=1
+API $10I679 DxDesigner_Common_Parts:Res_v_0603 2 #=2
+M DxDesigner_Common_Parts:cap_0603 $10I685
+I $10I685 DxDesigner_Common_Parts:cap_0603 VCC3P3 GND VALUE=22uF`REFDES=C?`
+|R 13:47:58_7-25-14
+API $10I685 DxDesigner_Common_Parts:cap_0603 1 #=1
+API $10I685 DxDesigner_Common_Parts:cap_0603 2 #=2
+M DxDesigner_Common_Parts:cap_0603 $10I689
+I $10I689 DxDesigner_Common_Parts:cap_0603 VCC3P3 GND VALUE=0.1uF`REFDES=C?`
+|R 13:47:58_7-25-14
+API $10I689 DxDesigner_Common_Parts:cap_0603 1 #=1
+API $10I689 DxDesigner_Common_Parts:cap_0603 2 #=2
+M DxDesigner_Common_Parts:Inductor_Sumida $10I703
+I $10I703 DxDesigner_Common_Parts:Inductor_Sumida $10N829 VCC1P8 PART_NUMBER=252012CDMCD-3R3MC`VALUE=3.3uH`REFDES=L?`
+|R 15:42:38_6-26-14
+API $10I703 DxDesigner_Common_Parts:Inductor_Sumida 1 #=1
+API $10I703 DxDesigner_Common_Parts:Inductor_Sumida 2 #=2
+M DxDesigner_Common_Parts:Inductor_Sumida $10I708
+I $10I708 DxDesigner_Common_Parts:Inductor_Sumida $10N830 VCC2P5 PART_NUMBER=252012CDMCD-4R7MC`VALUE=4.7uH`REFDES=L?`
+|R 15:42:38_6-26-14
+API $10I708 DxDesigner_Common_Parts:Inductor_Sumida 1 #=1
+API $10I708 DxDesigner_Common_Parts:Inductor_Sumida 2 #=2
+M DxDesigner_Common_Parts:cap_0603 $10I716
+I $10I716 DxDesigner_Common_Parts:cap_0603 VCC1P8 GND VALUE=10uF`REFDES=C?`
+|R 13:47:58_7-25-14
+API $10I716 DxDesigner_Common_Parts:cap_0603 1 #=1
+API $10I716 DxDesigner_Common_Parts:cap_0603 2 #=2
+M DxDesigner_Common_Parts:cap_0603 $10I720
+I $10I720 DxDesigner_Common_Parts:cap_0603 VCC1P8 $10N739 VALUE=22pF`REFDES=C?`
+|R 13:47:58_7-25-14
+API $10I720 DxDesigner_Common_Parts:cap_0603 1 #=1
+API $10I720 DxDesigner_Common_Parts:cap_0603 2 #=2
+M DxDesigner_Common_Parts:cap_0603 $10I724
+I $10I724 DxDesigner_Common_Parts:cap_0603 VCC1P8 GND VALUE=0.1uF`REFDES=C?`
+|R 13:47:58_7-25-14
+API $10I724 DxDesigner_Common_Parts:cap_0603 1 #=1
+API $10I724 DxDesigner_Common_Parts:cap_0603 2 #=2
+M DxDesigner_Common_Parts:Res_v_0603 $10I734
+I $10I734 DxDesigner_Common_Parts:Res_v_0603 $10N739 VCC1P8 VALUE=137k`TOLERANCE=0.1%`REFDES=R?`
+|R 13:53:4_7-3-14
+API $10I734 DxDesigner_Common_Parts:Res_v_0603 1 #=1
+API $10I734 DxDesigner_Common_Parts:Res_v_0603 2 #=2
+M DxDesigner_Common_Parts:Res_v_0603 $10I745
+I $10I745 DxDesigner_Common_Parts:Res_v_0603 GND $10N739 VALUE=68.1k`TOLERANCE=0.1%`REFDES=R?`
+|R 13:53:4_7-3-14
+API $10I745 DxDesigner_Common_Parts:Res_v_0603 1 #=1
+API $10I745 DxDesigner_Common_Parts:Res_v_0603 2 #=2
+M DxDesigner_Common_Parts:cap_0603 $10I764
+I $10I764 DxDesigner_Common_Parts:cap_0603 VCC2P5 GND VALUE=10uF`REFDES=C?`
+|R 13:47:58_7-25-14
+API $10I764 DxDesigner_Common_Parts:cap_0603 1 #=1
+API $10I764 DxDesigner_Common_Parts:cap_0603 2 #=2
+M DxDesigner_Common_Parts:cap_0603 $10I768
+I $10I768 DxDesigner_Common_Parts:cap_0603 VCC2P5 $10N784 VALUE=33pF`REFDES=C?`
+|R 13:47:58_7-25-14
+API $10I768 DxDesigner_Common_Parts:cap_0603 1 #=1
+API $10I768 DxDesigner_Common_Parts:cap_0603 2 #=2
+M DxDesigner_Common_Parts:cap_0603 $10I772
+I $10I772 DxDesigner_Common_Parts:cap_0603 VCC2P5 GND VALUE=0.1uF`REFDES=C?`
+|R 13:47:58_7-25-14
+API $10I772 DxDesigner_Common_Parts:cap_0603 1 #=1
+API $10I772 DxDesigner_Common_Parts:cap_0603 2 #=2
+M DxDesigner_Common_Parts:Res_v_0603 $10I776
+I $10I776 DxDesigner_Common_Parts:Res_v_0603 $10N784 VCC2P5 VALUE=221k`TOLERANCE=0.1%`REFDES=R?`
+|R 13:53:4_7-3-14
+API $10I776 DxDesigner_Common_Parts:Res_v_0603 1 #=1
+API $10I776 DxDesigner_Common_Parts:Res_v_0603 2 #=2
+M DxDesigner_Common_Parts:Res_v_0603 $10I780
+I $10I780 DxDesigner_Common_Parts:Res_v_0603 GND $10N784 VALUE=69.8k`TOLERANCE=0.1%`REFDES=R?`
+|R 13:53:4_7-3-14
+API $10I780 DxDesigner_Common_Parts:Res_v_0603 1 #=1
+API $10I780 DxDesigner_Common_Parts:Res_v_0603 2 #=2
+M DxDesigner_Library:SWITCH_DUAL_SiP32416 $10I558
+I $10I558 DxDesigner_Library:SWITCH_DUAL_SiP32416 FPGA_ON FPGA_ON GND GND VCC2P5 VCC1P8 $10N916 $10N905 GND PART_NUMBER=Sip32416`REFDES=S?`
+|R 17:03:53_7-1-14
+API $10I558 DxDesigner_Library:SWITCH_DUAL_SiP32416 1 #=2
+API $10I558 DxDesigner_Library:SWITCH_DUAL_SiP32416 2 #=3
+API $10I558 DxDesigner_Library:SWITCH_DUAL_SiP32416 3 #=6
+API $10I558 DxDesigner_Library:SWITCH_DUAL_SiP32416 4 #=7
+API $10I558 DxDesigner_Library:SWITCH_DUAL_SiP32416 5 #=1
+API $10I558 DxDesigner_Library:SWITCH_DUAL_SiP32416 6 #=4
+API $10I558 DxDesigner_Library:SWITCH_DUAL_SiP32416 7 #=8
+API $10I558 DxDesigner_Library:SWITCH_DUAL_SiP32416 8 #=5
+API $10I558 DxDesigner_Library:SWITCH_DUAL_SiP32416 9 #=9
+M DxDesigner_Library:SWITCH_DUAL_SiP32416 $10I569
+I $10I569 DxDesigner_Library:SWITCH_DUAL_SiP32416 ? FPGA_ON GND GND ? VCC3P3 $10N924 ? GND PART_NUMBER=Sip32416`REFDES=S?`
+|R 17:03:53_7-1-14
+API $10I569 DxDesigner_Library:SWITCH_DUAL_SiP32416 1 #=2
+API $10I569 DxDesigner_Library:SWITCH_DUAL_SiP32416 2 #=3
+API $10I569 DxDesigner_Library:SWITCH_DUAL_SiP32416 3 #=6
+API $10I569 DxDesigner_Library:SWITCH_DUAL_SiP32416 4 #=7
+API $10I569 DxDesigner_Library:SWITCH_DUAL_SiP32416 5 #=1
+API $10I569 DxDesigner_Library:SWITCH_DUAL_SiP32416 6 #=4
+API $10I569 DxDesigner_Library:SWITCH_DUAL_SiP32416 7 #=8
+API $10I569 DxDesigner_Library:SWITCH_DUAL_SiP32416 8 #=5
+API $10I569 DxDesigner_Library:SWITCH_DUAL_SiP32416 9 #=9
+M DxDesigner_Common_Parts:cap_0603 $10I851
+I $10I851 DxDesigner_Common_Parts:cap_0603 $10N887 GND VALUE=10uF`REFDES=C?`
+|R 13:47:58_7-25-14
+API $10I851 DxDesigner_Common_Parts:cap_0603 1 #=1
+API $10I851 DxDesigner_Common_Parts:cap_0603 2 #=2
+M DxDesigner_Library:JUMPER_L $10I882
+I $10I882 DxDesigner_Library:JUMPER_L BATTERY_PACK+ BATTERY_PACK+ $10N887 REFDES=J?`
+|R 12:21:15_6-2-14
+API $10I882 DxDesigner_Library:JUMPER_L 1 #=1
+API $10I882 DxDesigner_Library:JUMPER_L 2 #=2
+API $10I882 DxDesigner_Library:JUMPER_L 3 #=3
+M DxDesigner_Common_Parts:cap_0603 $10I855
+I $10I855 DxDesigner_Common_Parts:cap_0603 $10N887 GND VALUE=4.7uF`REFDES=C?`
+|R 13:47:58_7-25-14
+API $10I855 DxDesigner_Common_Parts:cap_0603 1 #=1
+API $10I855 DxDesigner_Common_Parts:cap_0603 2 #=2
+M DxDesigner_Library:JUMPER_L $10I900
+I $10I900 DxDesigner_Library:JUMPER_L $10N905 $10N905 FPGA_1p8V REFDES=J?`
+|R 12:21:15_6-2-14
+API $10I900 DxDesigner_Library:JUMPER_L 1 #=1
+API $10I900 DxDesigner_Library:JUMPER_L 2 #=2
+API $10I900 DxDesigner_Library:JUMPER_L 3 #=3
+M DxDesigner_Common_Parts:cap_0603 $10I859
+I $10I859 DxDesigner_Common_Parts:cap_0603 $10N887 GND VALUE=4.7uF`REFDES=C?`
+|R 13:47:58_7-25-14
+API $10I859 DxDesigner_Common_Parts:cap_0603 1 #=1
+API $10I859 DxDesigner_Common_Parts:cap_0603 2 #=2
+M DxDesigner_Library:JUMPER_L $10I911
+I $10I911 DxDesigner_Library:JUMPER_L $10N916 $10N916 FPGA_2p5V REFDES=J?`
+|R 12:21:15_6-2-14
+API $10I911 DxDesigner_Library:JUMPER_L 1 #=1
+API $10I911 DxDesigner_Library:JUMPER_L 2 #=2
+API $10I911 DxDesigner_Library:JUMPER_L 3 #=3
+M DxDesigner_Library:JUMPER_L $10I926
+I $10I926 DxDesigner_Library:JUMPER_L $10N924 $10N924 FPGA_3P3V REFDES=J?`
+|R 12:21:15_6-2-14
+API $10I926 DxDesigner_Library:JUMPER_L 1 #=1
+API $10I926 DxDesigner_Library:JUMPER_L 2 #=2
+API $10I926 DxDesigner_Library:JUMPER_L 3 #=3
+M DxDesigner_Common_Parts:Res_v_0603 $10I942
+I $10I942 DxDesigner_Common_Parts:Res_v_0603 GND BUCK_PWM_TO_CPLD VALUE=1M`REFDES=R?`
+|R 13:53:4_7-3-14
+API $10I942 DxDesigner_Common_Parts:Res_v_0603 1 #=1
+API $10I942 DxDesigner_Common_Parts:Res_v_0603 2 #=2
+EW

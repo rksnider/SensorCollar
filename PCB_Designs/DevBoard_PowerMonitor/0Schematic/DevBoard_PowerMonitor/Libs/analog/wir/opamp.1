@@ -1,0 +1,41 @@
+| Wirelist created using version 5.4.
+| Sch_Warning - Component $1I40 (RIN), Symbol=discretes:res at (170, 100), is not connected.
+V 5.4
+K 112664625100 opamp
+DW opamp
+Q Case
+|Q Analog:vcvs 1
+AS Analog:vcvs PINORDER=P N CP CN
+AS Analog:vcvs ORDER=GAIN$
+AS Analog:vcvs PREFIX=E
+AS Analog:vcvs GAIN=1
+AP Analog:vcvs 1 PINTYPE=IN
+AP Analog:vcvs 2 PINTYPE=IN
+AP Analog:vcvs 3 PINTYPE=IN
+AP Analog:vcvs 4 PINTYPE=IN
+|Q discretes:res 2
+AS discretes:res PREFIX=R
+AS discretes:res PINOFF
+AS discretes:res REFDES=R?
+AS discretes:res DEVICE
+AS discretes:res PKG_TYPE
+AS discretes:res VALUE
+AS discretes:res PINORDER=N2 N1
+AS discretes:res INOV_VER_REC=20:33_8-26-04
+AP discretes:res 1 PINTYPE=BI
+AP discretes:res 1 #
+AP discretes:res 2 PINTYPE=BI
+AP discretes:res 2 #
+G GND
+M Analog:vcvs $1I41
+I $1I41 Analog:vcvs O GND + - GAIN=10000`
+|N 2
+M discretes:res $1I40
+I $1I40 discretes:res ? ? REFDES=RIN`VALUE=10MEG`
+P ? O
+I O ? O
+P ? -
+I - ? -
+P ? +
+I + ? +
+EW

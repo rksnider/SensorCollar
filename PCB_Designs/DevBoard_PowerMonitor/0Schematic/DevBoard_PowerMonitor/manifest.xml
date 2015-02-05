@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest version="1">
+	<fileset name="DxDesigner design" file-root="C:\Users\kyler.callahan\Documents\work\marmoset_board\0Schematic\DevBoard_PowerMonitor" project-root="C:\Users\kyler.callahan\Documents\work\marmoset_board\0Schematic\DevBoard_PowerMonitor">
+		<file name = "2014-06-17 14.51.17-4220-d.zip" path = "database\cdbback" modified = "2014-08-13 21:16:19" checksum = "2800444886"/>
+		<file name = "2014.05.27.txt" path = "database\cdbsvr\dbcheck\2014-05-27 10.02.34-968" modified = "2014-08-13 21:16:19" checksum = "576937177"/>
+		<file name = "2014.06.16.txt" path = "database\cdbsvr\dbcheck\2014-06-16 10.08.07-5364" modified = "2014-08-13 21:16:19" checksum = "1617333011"/>
+		<file name = "2014.06.16.txt" path = "database\cdbsvr\dbcheck\2014-06-16 10.32.43-3292" modified = "2014-08-13 21:16:19" checksum = "2346744383"/>
+		<file name = "2014.06.17.txt" path = "database\cdbsvr\dbcheck\2014-06-17 15.29.29-3040" modified = "2014-08-13 21:16:19" checksum = "3514439110"/>
+		<file name = "2014.06.26.txt" path = "database\cdbsvr\dbcheck\2014-06-26 09.46.52-3768" modified = "2014-08-13 21:16:19" checksum = "1841491643"/>
+		<file name = "2014.07.14.txt" path = "database\cdbsvr\dbcheck\2014-07-14 10.28.28-2508" modified = "2014-08-13 21:16:19" checksum = "2234875573"/>
+		<file name = "2014.08.07.txt" path = "database\cdbsvr\log\2014-08-07 10.13.59-1712" modified = "2014-08-13 21:16:19" checksum = "1776567665"/>
+		<file name = "2014.08.07.txt" path = "database\cdbsvr\log\2014-08-07 12.54.44-5580" modified = "2014-08-13 21:16:19" checksum = "2861743725"/>
+		<file name = "2014.08.08.txt" path = "database\cdbsvr\log\2014-08-08 09.39.21-676" modified = "2014-08-13 21:16:19" checksum = "1304148216"/>
+		<file name = "2014.08.11.txt" path = "database\cdbsvr\log\2014-08-11 11.48.20-3648" modified = "2014-08-13 21:16:19" checksum = "1801268870"/>
+		<file name = "2014.08.12.txt" path = "database\cdbsvr\log\2014-08-12 10.05.56-5800" modified = "2014-08-13 21:16:19" checksum = "277061289"/>
+		<file name = "2014.08.12.txt" path = "database\cdbsvr\log\2014-08-12 12.09.36-5764" modified = "2014-08-13 21:16:19" checksum = "849146212"/>
+		<file name = "2014.08.12.txt" path = "database\cdbsvr\log\2014-08-12 18.44.17-6116" modified = "2014-08-13 21:16:19" checksum = "257684490"/>
+		<file name = "2014.08.13.txt" path = "database\cdbsvr\log\2014-08-13 10.14.56-3856" modified = "2014-08-13 21:16:19" checksum = "2629760104"/>
+		<file name = "2014.08.13.txt" path = "database\cdbsvr\log\2014-08-13 15.07.32-5528" modified = "2014-08-13 21:16:19" checksum = "2815121148"/>
+		<file name = "2014.08.13.txt" path = "database\cdbsvr\log\2014-08-13 15.14.07-3624" modified = "2014-08-13 21:16:19" checksum = "349278325"/>
+		<file name = "2014.05.27.guid.3148.txt" path = "database\cdbsvr\plog" modified = "2014-08-13 21:16:19" checksum = "1168253655"/>
+		<file name = "2014.06.16.guid.2340.txt" path = "database\cdbsvr\plog" modified = "2014-08-13 21:16:19" checksum = "2542608818"/>
+		<file name = "2014.06.16.guid.5496.txt" path = "database\cdbsvr\plog" modified = "2014-08-13 21:16:19" checksum = "4063175332"/>
+		<file name = "2014.06.17.guid.3396.txt" path = "database\cdbsvr\plog" modified = "2014-08-13 21:16:19" checksum = "1243292652"/>
+		<file name = "2014.06.26.guid.3996.txt" path = "database\cdbsvr\plog" modified = "2014-08-13 21:16:19" checksum = "2080580321"/>
+		<file name = "2014.07.14.guid.2172.txt" path = "database\cdbsvr\plog" modified = "2014-08-13 21:16:19" checksum = "1721574235"/>
+		<file name = "icdb.dat" path = "database" modified = "2014-08-13 21:16:19" checksum = "2481477666"/>
+		<file name = "0vd.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:44" checksum = "947660768"/>
+		<file name = "12v.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:44" checksum = "2381390785"/>
+		<file name = "15v.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:44" checksum = "3034326011"/>
+		<file name = "1b_rip.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:44" checksum = "1596666853"/>
+		<file name = "1v2.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:44" checksum = "2525766606"/>
+		<file name = "1v8.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:44" checksum = "3214156817"/>
+		<file name = "24v.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:44" checksum = "2543723478"/>
+		<file name = "2b_rip.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:44" checksum = "1690715593"/>
+		<file name = "2v5.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:44" checksum = "3180471306"/>
+		<file name = "3v3.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:45" checksum = "3158516742"/>
+		<file name = "48v.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:45" checksum = "2604344295"/>
+		<file name = "4b_rip.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:45" checksum = "240277813"/>
+		<file name = "5v.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:45" checksum = "669786946"/>
+		<file name = "8b_rip.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:45" checksum = "359894230"/>
+		<file name = "9v.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:45" checksum = "705831757"/>
+		<file name = "a0sheet.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:45" checksum = "4217320264"/>
+		<file name = "a0sheet.2" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:45" checksum = "1059072141"/>
+		<file name = "a1sheet.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:45" checksum = "4050171842"/>
+		<file name = "a1sheet.2" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:45" checksum = "1468442698"/>
+		<file name = "a2sheet.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:45" checksum = "3575398019"/>
+		<file name = "a2sheet.2" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:45" checksum = "29113999"/>
+		<file name = "a3sheet.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:45" checksum = "4205447860"/>
+		<file name = "a3sheet.2" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:45" checksum = "3992634838"/>
+		<file name = "a4sheet.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:45" checksum = "255766648"/>
+		<file name = "a4sheet.2" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:45" checksum = "2885192480"/>
+		<file name = "agnd.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:46" checksum = "3762955689"/>
+		<file name = "asheet.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:46" checksum = "2540199884"/>
+		<file name = "asheet.2" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:46" checksum = "1929533064"/>
+		<file name = "bi.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:46" checksum = "3594135600"/>
+		<file name = "bi.2" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:46" checksum = "2334599194"/>
+		<file name = "bsheet.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2014-07-29 18:25:41" checksum = "2636315402"/>
+		<file name = "bsheet.2" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:46" checksum = "1553365161"/>
+		<file name = "celines.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:46" checksum = "2368140234"/>
+		<file name = "celines.2" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:46" checksum = "190515559"/>
+		<file name = "cgnd.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:46" checksum = "2095655820"/>
+		<file name = "con1l.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:46" checksum = "2902672869"/>
+		<file name = "con1r.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:46" checksum = "619921647"/>
+		<file name = "con25l.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:46" checksum = "2689284967"/>
+		<file name = "con25r.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:46" checksum = "26160657"/>
+		<file name = "csheet.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:46" checksum = "433720737"/>
+		<file name = "csheet.2" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:46" checksum = "2547780820"/>
+		<file name = "dsheet.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:46" checksum = "502147937"/>
+		<file name = "dsheet.2" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:46" checksum = "2453286732"/>
+		<file name = "esheet.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:46" checksum = "689729090"/>
+		<file name = "esheet.2" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:46" checksum = "3636096127"/>
+		<file name = "gnd.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:46" checksum = "1681860657"/>
+		<file name = "hier_bi.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:46" checksum = "2950507825"/>
+		<file name = "hier_in.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:46" checksum = "1867262928"/>
+		<file name = "hier_out.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:46" checksum = "3769249442"/>
+		<file name = "in.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:47" checksum = "499786966"/>
+		<file name = "in.2" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:47" checksum = "2863606051"/>
+		<file name = "neg12.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:47" checksum = "3120374786"/>
+		<file name = "neg5v.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:47" checksum = "410657585"/>
+		<file name = "offsheet.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:47" checksum = "2451973461"/>
+		<file name = "offsheet.2" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:47" checksum = "3484821786"/>
+		<file name = "onsheet.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:47" checksum = "1169369179"/>
+		<file name = "onsheet.2" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:47" checksum = "3564842018"/>
+		<file name = "out.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:47" checksum = "250422974"/>
+		<file name = "out.2" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:47" checksum = "540617325"/>
+		<file name = "vcc.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:47" checksum = "1162945103"/>
+		<file name = "vdd.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:47" checksum = "1172844193"/>
+		<file name = "vss.1" path = "Libs\%SDD_HOME%\Libraries\common\sym" modified = "2012-10-10 12:45:47" checksum = "1816863791"/>
+		<file name = "analog.1" path = "Libs\analog\sch" modified = "2012-10-10 12:45:47" checksum = "193262846"/>
+		<file name = "analog.2" path = "Libs\analog\sch" modified = "2012-10-10 12:45:47" checksum = "1758528688"/>
+		<file name = "analog.3" path = "Libs\analog\sch" modified = "2012-10-10 12:45:47" checksum = "1275209479"/>
+		<file name = "analog.4" path = "Libs\analog\sch" modified = "2012-10-10 12:45:47" checksum = "1652405398"/>
+		<file name = "bridge.1" path = "Libs\analog\sch" modified = "2012-10-10 12:45:47" checksum = "3115819498"/>
+		<file name = "crystal.1" path = "Libs\analog\sch" modified = "2012-10-10 12:45:47" checksum = "3658712577"/>
+		<file name = "generate.1" path = "Libs\analog\sch" modified = "2012-10-10 12:45:47" checksum = "3899302897"/>
+		<file name = "generate.2" path = "Libs\analog\sch" modified = "2012-10-10 12:45:48" checksum = "3354153045"/>
+		<file name = "inv.1" path = "Libs\analog\sch" modified = "2012-10-10 12:45:48" checksum = "3714357668"/>
+		<file name = "nand.1" path = "Libs\analog\sch" modified = "2012-10-10 12:45:48" checksum = "3695115254"/>
+		<file name = "opamp.1" path = "Libs\analog\sch" modified = "2012-10-10 12:45:48" checksum = "786330625"/>
+		<file name = "p4.1" path = "Libs\analog\sch" modified = "2012-10-10 12:45:48" checksum = "1358126347"/>
+		<file name = "pbswitch.1" path = "Libs\analog\sch" modified = "2012-10-10 12:45:48" checksum = "3963779953"/>
+		<file name = "transf.1" path = "Libs\analog\sch" modified = "2012-10-10 12:45:48" checksum = "1724220761"/>
+		<file name = "_oemod5.1" path = "Libs\analog\sch" modified = "2012-10-10 12:45:47" checksum = "2538473972"/>
+		<file name = "_op7mod.1" path = "Libs\analog\sch" modified = "2012-10-10 12:45:47" checksum = "3054161722"/>
+		<file name = "_opmod5.1" path = "Libs\analog\sch" modified = "2012-10-10 12:45:47" checksum = "811469326"/>
+		<file name = "_opmod6.1" path = "Libs\analog\sch" modified = "2012-10-10 12:45:47" checksum = "77192952"/>
+		<file name = "_opmod7.1" path = "Libs\analog\sch" modified = "2012-10-10 12:45:47" checksum = "2576861504"/>
+		<file name = "ac.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "1064986037"/>
+		<file name = "ammeter.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "2960354045"/>
+		<file name = "asheet.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "2036298845"/>
+		<file name = "asheet.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "2623951558"/>
+		<file name = "batt.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "2836948777"/>
+		<file name = "bfetn.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "3492576630"/>
+		<file name = "bfetp.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "2921561455"/>
+		<file name = "bjtn.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "2133884341"/>
+		<file name = "bjtn.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "3312132820"/>
+		<file name = "bjtp.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "1498905826"/>
+		<file name = "bodeplot.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "2762312043"/>
+		<file name = "bridge.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "2813897204"/>
+		<file name = "bsheet.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "2774116218"/>
+		<file name = "c.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "2420272998"/>
+		<file name = "c.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "1476423692"/>
+		<file name = "c01.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "1663174150"/>
+		<file name = "c02.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "1664812552"/>
+		<file name = "c05.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "1669727758"/>
+		<file name = "c10.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "1773405750"/>
+		<file name = "c20.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "1775240760"/>
+		<file name = "cap.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "943419497"/>
+		<file name = "cap.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "3577901412"/>
+		<file name = "cap1.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "2387701690"/>
+		<file name = "cap1.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "2678354028"/>
+		<file name = "cap2.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "780363990"/>
+		<file name = "cap2.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "620521462"/>
+		<file name = "cap3.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "1310156990"/>
+		<file name = "cap3.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "2410440752"/>
+		<file name = "cap4.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "3819004218"/>
+		<file name = "cap4.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "576217245"/>
+		<file name = "capac.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "1295081938"/>
+		<file name = "capac.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "881090986"/>
+		<file name = "cccs.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "3292747290"/>
+		<file name = "ccsw.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "395813286"/>
+		<file name = "ccsw.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "2530413863"/>
+		<file name = "ccvs.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "911431233"/>
+		<file name = "cmod.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "1994393270"/>
+		<file name = "cmos.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "1562283298"/>
+		<file name = "crystal.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "3393745772"/>
+		<file name = "csdf.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "2009954090"/>
+		<file name = "csheet.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "1027636496"/>
+		<file name = "csheet.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "2385008033"/>
+		<file name = "cup.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "3485298826"/>
+		<file name = "cup.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:56" checksum = "1069445007"/>
+		<file name = "dc.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:56" checksum = "2412216612"/>
+		<file name = "dep1.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:56" checksum = "2547528164"/>
+		<file name = "depg.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:56" checksum = "947424697"/>
+		<file name = "deps.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:56" checksum = "599297309"/>
+		<file name = "dio1.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:56" checksum = "3562700613"/>
+		<file name = "dio1.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:56" checksum = "2077195958"/>
+		<file name = "dio2.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:56" checksum = "3133768470"/>
+		<file name = "dio2.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:56" checksum = "2931983291"/>
+		<file name = "dio3.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:56" checksum = "1373405705"/>
+		<file name = "dio3.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:56" checksum = "2814738905"/>
+		<file name = "dio4.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:56" checksum = "3050680096"/>
+		<file name = "dio4.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:56" checksum = "850440168"/>
+		<file name = "dio5.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:56" checksum = "3127018240"/>
+		<file name = "dio5.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:56" checksum = "1126073092"/>
+		<file name = "diode.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:56" checksum = "3894764790"/>
+		<file name = "diode.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:56" checksum = "84567330"/>
+		<file name = "dmda920.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:56" checksum = "640429946"/>
+		<file name = "dsheet.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:56" checksum = "3764617120"/>
+		<file name = "enh1.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "1400644415"/>
+		<file name = "enh2.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "3595313356"/>
+		<file name = "esheet.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "4081549425"/>
+		<file name = "esheet.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "3590019056"/>
+		<file name = "exp.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "2195457411"/>
+		<file name = "fet1.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "3437525229"/>
+		<file name = "fet2.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "3672209647"/>
+		<file name = "four.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "2982181339"/>
+		<file name = "fourier.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "4218791752"/>
+		<file name = "func.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "502476478"/>
+		<file name = "gnd.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "991441333"/>
+		<file name = "hh.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "1800094408"/>
+		<file name = "highpass.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "3524146946"/>
+		<file name = "hspice.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "651123161"/>
+		<file name = "iac.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "2957009510"/>
+		<file name = "idc.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "3474411836"/>
+		<file name = "iexp.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "1716128850"/>
+		<file name = "inc.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "2018270660"/>
+		<file name = "ind.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "108358121"/>
+		<file name = "ind.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "3659819569"/>
+		<file name = "ind1.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "206202501"/>
+		<file name = "ind1.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "1531209407"/>
+		<file name = "inductor.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "792420914"/>
+		<file name = "inductor.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "1843552882"/>
+		<file name = "inv.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:49" checksum = "229735372"/>
+		<file name = "ipulse.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:50" checksum = "3150373560"/>
+		<file name = "ipwl.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:50" checksum = "1209608555"/>
+		<file name = "isffm.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:50" checksum = "3877208346"/>
+		<file name = "isin.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:50" checksum = "3625246490"/>
+		<file name = "isource.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:50" checksum = "2816297321"/>
+		<file name = "lbias.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:56" checksum = "3220124674"/>
+		<file name = "lib.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:56" checksum = "2137468119"/>
+		<file name = "logo.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:56" checksum = "2410498662"/>
+		<file name = "lowpass.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:56" checksum = "1742747298"/>
+		<file name = "lup.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:57" checksum = "3658049627"/>
+		<file name = "mc.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:50" checksum = "1531162992"/>
+		<file name = "mfet1.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:50" checksum = "530159523"/>
+		<file name = "mfet2.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:50" checksum = "917543479"/>
+		<file name = "nand.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:50" checksum = "2421199329"/>
+		<file name = "nfet.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:50" checksum = "1914206927"/>
+		<file name = "nfet.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:50" checksum = "1736579011"/>
+		<file name = "nmos.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:50" checksum = "2510265455"/>
+		<file name = "nmosdep.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:50" checksum = "3442450457"/>
+		<file name = "nmosg.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "1071156526"/>
+		<file name = "nmosg.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "1400644415"/>
+		<file name = "nmoss.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "28216423"/>
+		<file name = "nmoss.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "2711495619"/>
+		<file name = "noise.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "3761860758"/>
+		<file name = "npn.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "3297672800"/>
+		<file name = "nss.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "3896979549"/>
+		<file name = "op.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "1645833402"/>
+		<file name = "opamp.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "1596485560"/>
+		<file name = "options.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "1688834732"/>
+		<file name = "p4.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "1199801528"/>
+		<file name = "param.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "2180929418"/>
+		<file name = "params.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "4038542865"/>
+		<file name = "pbswitch.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "2315872704"/>
+		<file name = "pfet.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "849246776"/>
+		<file name = "pfet.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "1762138055"/>
+		<file name = "pmos.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "1488625395"/>
+		<file name = "pmosg.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "1797689018"/>
+		<file name = "pmosg.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "1428890434"/>
+		<file name = "pmoss.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "218205840"/>
+		<file name = "pmoss.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "3595313356"/>
+		<file name = "pnp.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "141917754"/>
+		<file name = "prb.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "2122800559"/>
+		<file name = "probe.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:51" checksum = "3780655840"/>
+		<file name = "probe.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:52" checksum = "1546204128"/>
+		<file name = "probe.3" path = "Libs\analog\sym" modified = "2012-10-10 12:45:52" checksum = "2049062223"/>
+		<file name = "probe.4" path = "Libs\analog\sym" modified = "2012-10-10 12:45:52" checksum = "835925186"/>
+		<file name = "probedb.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:52" checksum = "2706066292"/>
+		<file name = "probedb.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:52" checksum = "4050469985"/>
+		<file name = "probedb.3" path = "Libs\analog\sym" modified = "2012-10-10 12:45:52" checksum = "2439988870"/>
+		<file name = "probedb.4" path = "Libs\analog\sym" modified = "2012-10-10 12:45:52" checksum = "3700835833"/>
+		<file name = "probegd.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:52" checksum = "2507620722"/>
+		<file name = "probegd.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:52" checksum = "661207667"/>
+		<file name = "probegd.3" path = "Libs\analog\sym" modified = "2012-10-10 12:45:52" checksum = "3768204174"/>
+		<file name = "probegd.4" path = "Libs\analog\sym" modified = "2012-10-10 12:45:52" checksum = "2247179009"/>
+		<file name = "probeim.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:52" checksum = "3870574528"/>
+		<file name = "probeim.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:52" checksum = "3936174273"/>
+		<file name = "probeim.3" path = "Libs\analog\sym" modified = "2012-10-10 12:45:52" checksum = "1822835288"/>
+		<file name = "probeim.4" path = "Libs\analog\sym" modified = "2012-10-10 12:45:52" checksum = "772817451"/>
+		<file name = "probeph.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:52" checksum = "3242866679"/>
+		<file name = "probeph.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:52" checksum = "4054987000"/>
+		<file name = "probeph.3" path = "Libs\analog\sym" modified = "2012-10-10 12:45:52" checksum = "1539322355"/>
+		<file name = "probeph.4" path = "Libs\analog\sym" modified = "2012-10-10 12:45:52" checksum = "1045311894"/>
+		<file name = "probere.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "3022014387"/>
+		<file name = "probere.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "3077324980"/>
+		<file name = "probere.3" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "2870493667"/>
+		<file name = "probere.4" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "184631638"/>
+		<file name = "pss.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "3345822088"/>
+		<file name = "pulse.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "1096934384"/>
+		<file name = "pwl.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "2176006008"/>
+		<file name = "pwr.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "3039637332"/>
+		<file name = "q2n3904.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "3067249986"/>
+		<file name = "q2n3906.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "2374993641"/>
+		<file name = "qnl.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "1387363197"/>
+		<file name = "qnl.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "490738286"/>
+		<file name = "r.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "3563349019"/>
+		<file name = "r.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "429810843"/>
+		<file name = "r01.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "1934165585"/>
+		<file name = "r05.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "1941767769"/>
+		<file name = "r10.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "2054096513"/>
+		<file name = "r20.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "2056193667"/>
+		<file name = "relay.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "97994494"/>
+		<file name = "res.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "2184406549"/>
+		<file name = "res.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "1654285823"/>
+		<file name = "res1.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "1830774391"/>
+		<file name = "res1.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "2736285243"/>
+		<file name = "res2.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "137388760"/>
+		<file name = "res2.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "2472829687"/>
+		<file name = "rmod.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "2058094313"/>
+		<file name = "sbias.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "1220171994"/>
+		<file name = "sdiode.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "87387388"/>
+		<file name = "sdiode.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "3136908578"/>
+		<file name = "sens.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "1839936740"/>
+		<file name = "senstvty.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "3694436849"/>
+		<file name = "set.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "1985036208"/>
+		<file name = "sffm.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:53" checksum = "3666508598"/>
+		<file name = "sin.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:54" checksum = "2034030929"/>
+		<file name = "step.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:54" checksum = "1382249360"/>
+		<file name = "sweep.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:54" checksum = "4216359226"/>
+		<file name = "tcore.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:54" checksum = "1515208006"/>
+		<file name = "temp.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:54" checksum = "2777782465"/>
+		<file name = "tf.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:54" checksum = "1593984311"/>
+		<file name = "tline.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:54" checksum = "831813621"/>
+		<file name = "trans.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:54" checksum = "898932951"/>
+		<file name = "transf.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:54" checksum = "2188487993"/>
+		<file name = "transf.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:54" checksum = "1793250743"/>
+		<file name = "transfct.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:54" checksum = "3208359846"/>
+		<file name = "transfct.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:54" checksum = "236910737"/>
+		<file name = "uammeter.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:54" checksum = "2293862908"/>
+		<file name = "uammeter.2" path = "Libs\analog\sym" modified = "2012-10-10 12:45:54" checksum = "2591328281"/>
+		<file name = "uammeter.3" path = "Libs\analog\sym" modified = "2012-10-10 12:45:54" checksum = "97027845"/>
+		<file name = "uammeter.4" path = "Libs\analog\sym" modified = "2012-10-10 12:45:54" checksum = "4176971564"/>
+		<file name = "vccs.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:54" checksum = "56718084"/>
+		<file name = "vccs2.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:54" checksum = "1879368233"/>
+		<file name = "vcsw.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:54" checksum = "1158639493"/>
+		<file name = "vcsw.mod" path = "Libs\analog\sym" modified = "2012-10-10 12:45:54" checksum = "2469924204"/>
+		<file name = "vcvs.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:54" checksum = "3253695801"/>
+		<file name = "vcvs2.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "4211663693"/>
+		<file name = "vmeter.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "997152467"/>
+		<file name = "vreg.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "3246080145"/>
+		<file name = "vsource.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "1981565539"/>
+		<file name = "watch.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "1131433877"/>
+		<file name = "wcase.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "3438979553"/>
+		<file name = "width.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "2467712133"/>
+		<file name = "xferfunc.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:55" checksum = "1315019929"/>
+		<file name = "_oe5pin.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "159026044"/>
+		<file name = "_op5pin.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "3174796131"/>
+		<file name = "_op6pin.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "658414262"/>
+		<file name = "_op7pin.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "1326557614"/>
+		<file name = "_opsym5.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "2534974369"/>
+		<file name = "_opsym6.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "1466610991"/>
+		<file name = "_opsym7.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "2276706078"/>
+		<file name = "_opsym8.1" path = "Libs\analog\sym" modified = "2012-10-10 12:45:48" checksum = "3995392224"/>
+		<file name = "analog.1" path = "Libs\analog\wir" modified = "2012-10-10 12:45:57" checksum = "2674760999"/>
+		<file name = "analog.2" path = "Libs\analog\wir" modified = "2012-10-10 12:45:57" checksum = "1458445707"/>
+		<file name = "analog.3" path = "Libs\analog\wir" modified = "2012-10-10 12:45:57" checksum = "4195430008"/>
+		<file name = "analog.4" path = "Libs\analog\wir" modified = "2012-10-10 12:45:57" checksum = "3306009555"/>
+		<file name = "bridge.1" path = "Libs\analog\wir" modified = "2012-10-10 12:45:57" checksum = "3782741688"/>
+		<file name = "crystal.1" path = "Libs\analog\wir" modified = "2012-10-10 12:45:57" checksum = "490874390"/>
+		<file name = "generate.1" path = "Libs\analog\wir" modified = "2012-10-10 12:45:57" checksum = "3057806707"/>
+		<file name = "generate.2" path = "Libs\analog\wir" modified = "2012-10-10 12:45:57" checksum = "353186374"/>
+		<file name = "inv.1" path = "Libs\analog\wir" modified = "2012-10-10 12:45:57" checksum = "1139539655"/>
+		<file name = "nand.1" path = "Libs\analog\wir" modified = "2012-10-10 12:45:57" checksum = "3257691959"/>
+		<file name = "opamp.1" path = "Libs\analog\wir" modified = "2012-10-10 12:45:57" checksum = "1512709728"/>
+		<file name = "p4.1" path = "Libs\analog\wir" modified = "2012-10-10 12:45:57" checksum = "1657818083"/>
+		<file name = "pbswitch.1" path = "Libs\analog\wir" modified = "2012-10-10 12:45:57" checksum = "398214372"/>
+		<file name = "transf.1" path = "Libs\analog\wir" modified = "2012-10-10 12:45:57" checksum = "2628277089"/>
+		<file name = "_oemod5.1" path = "Libs\analog\wir" modified = "2012-10-10 12:45:57" checksum = "381113562"/>
+		<file name = "_op7mod.1" path = "Libs\analog\wir" modified = "2012-10-10 12:45:57" checksum = "1748139479"/>
+		<file name = "_opmod5.1" path = "Libs\analog\wir" modified = "2012-10-10 12:45:57" checksum = "1834374520"/>
+		<file name = "_opmod6.1" path = "Libs\analog\wir" modified = "2012-10-10 12:45:57" checksum = "2006255993"/>
+		<file name = "_opmod7.1" path = "Libs\analog\wir" modified = "2012-10-10 12:45:57" checksum = "2068347612"/>
+		<file name = "0p01uF_cap_0603.1" path = "Libs\DxDesigner Common Parts\SYM" modified = "2014-05-29 17:49:10" checksum = "598711568"/>
+		<file name = "0p1uF_cap_0603.1" path = "Libs\DxDesigner Common Parts\SYM" modified = "2014-06-19 21:45:49" checksum = "164994233"/>
+		<file name = "10K_Res_0603.1" path = "Libs\DxDesigner Common Parts\SYM" modified = "2014-05-29 17:44:26" checksum = "3424420414"/>
+		<file name = "10uF_cap_0603.1" path = "Libs\DxDesigner Common Parts\SYM" modified = "2014-06-26 16:59:19" checksum = "4040334255"/>
+		<file name = "20pF_cap_0603.1" path = "Libs\DxDesigner Common Parts\SYM" modified = "2014-06-24 21:57:22" checksum = "2819333013"/>
+		<file name = "22uF_cap_0603.1" path = "Libs\DxDesigner Common Parts\SYM" modified = "2014-06-20 16:55:24" checksum = "3214515104"/>
+		<file name = "4p7uF_cap_0603.1" path = "Libs\DxDesigner Common Parts\SYM" modified = "2014-05-29 18:00:20" checksum = "201170110"/>
+		<file name = "cap_0402.1" path = "Libs\DxDesigner Common Parts\SYM" modified = "2014-07-25 19:52:43" checksum = "1536859547"/>
+		<file name = "cap_0603.1" path = "Libs\DxDesigner Common Parts\SYM" modified = "2014-07-25 19:47:58" checksum = "2589892017"/>
+		<file name = "diode.1" path = "Libs\DxDesigner Common Parts\SYM" modified = "2014-07-07 23:18:25" checksum = "779967376"/>
+		<file name = "FERRITE_BEAD_FILTER.1" path = "Libs\DxDesigner Common Parts\SYM" modified = "2014-07-25 22:01:01" checksum = "3286000299"/>
+		<file name = "Inductor_Sumida.1" path = "Libs\DxDesigner Common Parts\SYM" modified = "2014-06-26 21:42:38" checksum = "2071754911"/>
+		<file name = "Resistor_Pack_EXB-2HV105JV.1" path = "Libs\DxDesigner Common Parts\SYM" modified = "2014-06-30 23:22:37" checksum = "2939769534"/>
+		<file name = "Res_0603.1" path = "Libs\DxDesigner Common Parts\SYM" modified = "2014-07-01 18:22:01" checksum = "1526105471"/>
+		<file name = "Res_v_0603.1" path = "Libs\DxDesigner Common Parts\SYM" modified = "2014-07-03 19:53:04" checksum = "3626470546"/>
+		<file name = "SCHOTTKY_DIODE.1" path = "Libs\DxDesigner Common Parts\SYM" modified = "2014-07-24 16:33:07" checksum = "1133146108"/>
+		<file name = "SDCARD_TP.1" path = "Libs\DxDesigner Common Parts\SYM" modified = "2014-07-24 17:29:01" checksum = "1917427851"/>
+		<file name = "TEST_POINT.1" path = "Libs\DxDesigner Common Parts\SYM" modified = "2014-07-22 19:47:05" checksum = "283984836"/>
+		<file name = "THERMISTOR_103AT.1" path = "Libs\DxDesigner Common Parts\SYM" modified = "2014-08-06 22:34:01" checksum = "489983205"/>
+		<file name = "$tmp$278242560$$$mytempname$$263.1" path = "Libs\DxDesigner Library\SYM\BAC" modified = "2014-05-21 16:58:20" checksum = "1"/>
+		<file name = "$tmp$278242560$$$mytempname$$306.1" path = "Libs\DxDesigner Library\SYM\BAC" modified = "2014-05-21 16:58:34" checksum = "1"/>
+		<file name = "$tmp$278242560$$$mytempname$$361.1" path = "Libs\DxDesigner Library\SYM\BAC" modified = "2014-05-21 16:57:02" checksum = "2631449797"/>
+		<file name = "5CEBA4U15.1" path = "Libs\DxDesigner Library\SYM\BAC" modified = "2014-05-21 17:06:39" checksum = "1824603642"/>
+		<file name = "Config.1" path = "Libs\DxDesigner Library\SYM\BAC" modified = "2014-05-21 17:06:37" checksum = "943734328"/>
+		<file name = "P1A.1" path = "Libs\DxDesigner Library\SYM\BAC" modified = "2014-05-21 17:03:08" checksum = "844840054"/>
+		<file name = "1p1V_Converter_TPS6085.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-06-19 20:51:25" checksum = "3911435325"/>
+		<file name = "ANTENNA.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-25 19:43:11" checksum = "34561946"/>
+		<file name = "AUX_Power_Header.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-29 21:43:17" checksum = "4085482736"/>
+		<file name = "BANK5B_HEADER.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-08-06 20:43:58" checksum = "2466527747"/>
+		<file name = "BATTERY.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-03 23:42:09" checksum = "4041564269"/>
+		<file name = "BATTERY_HEADER.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-28 21:14:59" checksum = "2420084905"/>
+		<file name = "Battery_Monitor_BQ27520-G3.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-11 20:22:00" checksum = "923035741"/>
+		<file name = "BAT_HOLDER_RENATA_SMTU357_LF.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-05-21 16:50:48" checksum = "2594345158"/>
+		<file name = "Buck_Converter_1p8V_TPS62120.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-05-23 19:35:29" checksum = "809951879"/>
+		<file name = "C5U324_B2A.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-06-09 20:56:08" checksum = "3262911063"/>
+		<file name = "C5U324_B3A.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-06-09 20:56:09" checksum = "1789059594"/>
+		<file name = "C5U324_B3B.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-06-09 20:56:09" checksum = "3920218557"/>
+		<file name = "C5U324_B4A.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-23 18:12:54" checksum = "3785436440"/>
+		<file name = "C5U324_B5A.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-06-09 20:56:09" checksum = "369025066"/>
+		<file name = "C5U324_B5B.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-06-09 20:56:09" checksum = "1235209022"/>
+		<file name = "C5U324_B7A.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-06-09 20:56:09" checksum = "4122810106"/>
+		<file name = "C5U324_B8A.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-06-09 20:56:10" checksum = "1093650385"/>
+		<file name = "C5U324_Config.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-16 18:56:14" checksum = "4013092905"/>
+		<file name = "C5U324_DNU.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-06-09 20:56:08" checksum = "672452335"/>
+		<file name = "C5U324_GND.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-06-09 20:56:08" checksum = "2337796533"/>
+		<file name = "C5U324_RREF_TL.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-06-09 20:56:08" checksum = "2354682789"/>
+		<file name = "C5U324_VCC.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-06-09 20:56:08" checksum = "2939075620"/>
+		<file name = "C5U324_VCCA_FPLL.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-06-09 20:56:08" checksum = "2536697916"/>
+		<file name = "C5U324_VCCIO.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-06-09 20:56:08" checksum = "2505987451"/>
+		<file name = "C5U324_VCCPD.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-14 19:59:53" checksum = "2356166580"/>
+		<file name = "C5U324_VCCPGM.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-06-09 20:56:09" checksum = "2325206806"/>
+		<file name = "C5U324_VCC_AUX.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-06-09 20:56:09" checksum = "2741895318"/>
+		<file name = "Clock_SG210STF.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-06-19 16:45:35" checksum = "1642628889"/>
+		<file name = "CPLD_GPIO.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-08-07 21:16:48" checksum = "3986877109"/>
+		<file name = "CPLD_MAXV_TQFP100.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-05-28 00:14:03" checksum = "2913418696"/>
+		<file name = "DATA_TX_HEADER.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-29 17:49:03" checksum = "903526259"/>
+		<file name = "Dual_BUCK_With_Boost_LTC3521.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-11 17:38:36" checksum = "3006850629"/>
+		<file name = "FLASH_Micron_N25Q128A.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-11 22:20:02" checksum = "2131811305"/>
+		<file name = "GPIO_1P8V.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-08-06 20:21:11" checksum = "2165697117"/>
+		<file name = "GPIO_3P3V.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-08-06 20:28:55" checksum = "1572004649"/>
+		<file name = "GPS_MAX-7C.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-24 22:13:52" checksum = "2110886625"/>
+		<file name = "GPS_NEO_6T.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-05-21 16:50:48" checksum = "3193806802"/>
+		<file name = "I2C_Header.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-07 18:58:55" checksum = "1163360228"/>
+		<file name = "Inertial_Module_LSM9DS0.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-05-21 16:50:48" checksum = "7772841"/>
+		<file name = "Inertial_Module_MPU-9250.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-23 19:05:46" checksum = "869669263"/>
+		<file name = "JTAG_HEADER.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-09 17:32:08" checksum = "3334269441"/>
+		<file name = "JUMPER_100MIL.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-05-21 16:50:48" checksum = "632711395"/>
+		<file name = "JUMPER_32_DEBUG_HEADER.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-05-21 16:50:48" checksum = "3709492776"/>
+		<file name = "JUMPER_FLASH_HEADER.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-24 21:30:34" checksum = "371277154"/>
+		<file name = "JUMPER_L.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-06-02 18:21:15" checksum = "2803853001"/>
+		<file name = "JUMPER_T.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-06-02 18:19:20" checksum = "2389537979"/>
+		<file name = "LDO_Regulator_LT1962.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-05-21 16:50:48" checksum = "656083650"/>
+		<file name = "LT1962EMS8_1_8.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-05-21 16:50:48" checksum = "3742043836"/>
+		<file name = "MASTER_SWITCH.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-07 23:38:01" checksum = "4203334185"/>
+		<file name = "MEC6_140_02_L_D_RA1.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-05-21 16:50:48" checksum = "4263629448"/>
+		<file name = "MEMS_MIC_ADMP621.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-06-02 21:05:42" checksum = "1721354761"/>
+		<file name = "MNT_112_4_40_PART.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-05-21 16:50:48" checksum = "206394515"/>
+		<file name = "MOUNTING_HOLES.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-08-01 20:59:37" checksum = "210584950"/>
+		<file name = "MOUNT_HOLE.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-08-01 21:07:24" checksum = "1060258615"/>
+		<file name = "MRAM_MR20H40CDF_8DFN_SMALLFLAG_PART.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-23 18:44:45" checksum = "4027467237"/>
+		<file name = "Octal_Buffer_SN74LVC244A.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-28 22:37:58" checksum = "2326004228"/>
+		<file name = "Oscillation_Crystal.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-08-13 18:39:37" checksum = "3257430399"/>
+		<file name = "PUSH_BUTTON.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-10 20:23:13" checksum = "2373682328"/>
+		<file name = "RTC_DS1371.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-08-13 18:31:59" checksum = "3036924379"/>
+		<file name = "SC_BYPASS.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-16 21:18:51" checksum = "3936463714"/>
+		<file name = "SDRAM.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-05-27 22:34:22" checksum = "3417011381"/>
+		<file name = "SDRAM_MT48H16M32LFB4.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-06-16 21:53:24" checksum = "862613668"/>
+		<file name = "SDRAM_MT48H32M16LFB4.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-11 20:18:15" checksum = "580743934"/>
+		<file name = "SMA_RIGHT_ANGLE_EMERSON_J988_ND_PART.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-05-21 16:50:48" checksum = "2120928725"/>
+		<file name = "Solar_Ctl_LTC3105.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-11 20:21:35" checksum = "1216490783"/>
+		<file name = "Solar_Pannel_Header.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-14 21:22:53" checksum = "3902970554"/>
+		<file name = "SOT23_6L.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-05-21 16:50:48" checksum = "3312899449"/>
+		<file name = "SWITCH_ADP191.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-05-23 22:22:53" checksum = "1123977597"/>
+		<file name = "SWITCH_DUAL_SiP32413.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-06-18 20:33:51" checksum = "2500195277"/>
+		<file name = "SWITCH_DUAL_SiP32414.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-01 23:03:23" checksum = "2298211360"/>
+		<file name = "SWITCH_DUAL_SiP32416.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-01 23:03:53" checksum = "3209030700"/>
+		<file name = "SWITCH_MAGNASPHERE-S.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-09 21:25:46" checksum = "113562168"/>
+		<file name = "SWITCH_SINGLE_TPS22912C.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-24 20:30:20" checksum = "674074012"/>
+		<file name = "TPS22960_DCN_8.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-05-21 16:50:48" checksum = "2913472820"/>
+		<file name = "TPS22966_DPU_14.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-05-21 16:50:48" checksum = "2326712676"/>
+		<file name = "TP_CONFIG.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-08-07 20:44:54" checksum = "2189807471"/>
+		<file name = "TP_FLASHR.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-29 17:24:45" checksum = "2431935927"/>
+		<file name = "TP_FLASH_L.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-24 21:47:59" checksum = "3869403415"/>
+		<file name = "TP_GPS.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-24 23:04:09" checksum = "1597273038"/>
+		<file name = "TP_IM_L.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-25 17:57:49" checksum = "2983810457"/>
+		<file name = "TP_IM_R.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-25 18:00:12" checksum = "2744739355"/>
+		<file name = "TP_MRAM_L.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-24 23:11:56" checksum = "711878718"/>
+		<file name = "TP_MRAM_R.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-24 23:22:36" checksum = "1691047273"/>
+		<file name = "TRI_BUCK_CONVERTER.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-05-23 18:17:46" checksum = "1626265124"/>
+		<file name = "Tri_Buck_LTC3545.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-06-17 18:06:44" checksum = "2039382691"/>
+		<file name = "USB_B1HSB6.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-05-21 16:50:48" checksum = "1521474845"/>
+		<file name = "uSD_CARD_HOUSING_4UCON.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-23 17:29:56" checksum = "4192222535"/>
+		<file name = "VOLTAGE-LEVEL_TRANSLATOR_TXB0106.1" path = "Libs\DxDesigner Library\SYM" modified = "2014-07-23 17:30:44" checksum = "3964923416"/>
+		<file name = "S1.oat" path = "sch" modified = "2014-08-13 17:18:29" checksum = "996794414"/>
+		<file name = "icdb2wir.dat" path = "wir" modified = "2014-08-13 17:18:29" checksum = "53348258"/>
+		<file name = "S1.10" path = "wir" modified = "2014-08-13 17:18:29" checksum = "1096786948"/>
+		<file name = "S1.11" path = "wir" modified = "2014-08-13 17:18:29" checksum = "1277375745"/>
+		<file name = "S1.12" path = "wir" modified = "2014-08-13 17:18:29" checksum = "623749694"/>
+		<file name = "S1.13" path = "wir" modified = "2014-08-13 17:18:29" checksum = "2991174079"/>
+		<file name = "S1.14" path = "wir" modified = "2014-08-13 17:18:29" checksum = "3347040447"/>
+		<file name = "S1.15" path = "wir" modified = "2014-08-13 17:18:29" checksum = "562438171"/>
+		<file name = "S1.16" path = "wir" modified = "2014-08-13 17:18:29" checksum = "502128626"/>
+		<file name = "S1.17" path = "wir" modified = "2014-08-13 17:18:29" checksum = "3788495154"/>
+		<file name = "S1.2" path = "wir" modified = "2014-08-13 17:18:29" checksum = "3803119853"/>
+		<file name = "S1.3" path = "wir" modified = "2014-08-13 17:18:29" checksum = "1858361095"/>
+		<file name = "S1.4" path = "wir" modified = "2014-08-13 17:18:29" checksum = "1388686644"/>
+		<file name = "S1.5" path = "wir" modified = "2014-08-13 17:18:29" checksum = "1723364193"/>
+		<file name = "S1.6" path = "wir" modified = "2014-08-13 17:18:29" checksum = "2564664449"/>
+		<file name = "S1.7" path = "wir" modified = "2014-08-13 17:18:29" checksum = "1137023919"/>
+		<file name = "S1.8" path = "wir" modified = "2014-08-13 17:18:29" checksum = "1393512575"/>
+		<file name = "S1.9" path = "wir" modified = "2014-08-13 17:18:29" checksum = "1344785848"/>
+		<file name = "borders.ini" path = "." modified = "2014-07-29 18:16:23" checksum = "2756073706"/>
+		<file name = "busconts.ini" path = "." modified = "2014-07-29 18:16:23" checksum = "1"/>
+		<file name = "DxArchiver.xml" path = "." modified = "2014-08-13 21:16:20" checksum = "725718281"/>
+		<file name = "marmoset_schematic.prj" path = "." modified = "2014-08-13 21:16:20" checksum = "3642362975"/>
+		<file name = "speccomp.ini" path = "." modified = "2014-07-11 03:02:38" checksum = "1000278545"/>
+	</fileset>
+</manifest>

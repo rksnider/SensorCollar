@@ -1,0 +1,460 @@
+| Wirelist created using version 5.4.
+| Sch_Warning - Component $1I14, Symbol=Analog:idc at (430, 900), is not connected.
+| Sch_Warning - Component $1I8, Symbol=Analog:isin at (430, 760), is not connected.
+| Sch_Warning - Component $1I9, Symbol=Analog:ipulse at (430, 620), is not connected.
+| Sch_Warning - Component $1I10 (VIN), Symbol=Analog:isffm at (430, 500), is not connected.
+| Sch_Warning - Component $1I11, Symbol=Analog:iexp at (430, 360), is not connected.
+| Sch_Warning - Component $1I12 (IIN), Symbol=Analog:ipwl at (430, 220), is not connected.
+| Sch_Warning - Component $1I13, Symbol=Analog:iac at (430, 100), is not connected.
+| Sch_Warning - Component $1I6, Symbol=Analog:dc at (190, 900), is not connected.
+| Sch_Warning - Component $1I5 (VIN), Symbol=Analog:sin at (190, 760), is not connected.
+| Sch_Warning - Component $1I4 (VIN), Symbol=Analog:pulse at (190, 620), is not connected.
+| Sch_Warning - Component $1I3 (VIN), Symbol=Analog:sffm at (190, 500), is not connected.
+| Sch_Warning - Component $1I2 (VIN), Symbol=Analog:exp at (190, 360), is not connected.
+| Sch_Warning - Component $1I1 (VIN), Symbol=Analog:pwl at (190, 220), is not connected.
+| Sch_Warning - Component $1I7 (VIN), Symbol=Analog:ac at (190, 100), is not connected.
+| Sch_Warning - Component $1I48, Symbol=Analog:fourier at (1170, 820), is not connected.
+| Sch_Warning - Component $1I24, Symbol=Analog:senstvty at (1170, 220), is not connected.
+| Sch_Warning - Component $1I26, Symbol=Analog:xferfunc at (1170, 700), is not connected.
+| Sch_Warning - Component $1I51, Symbol=Analog:wcase at (680, 100), is not connected.
+| Sch_Warning - Component $1I28, Symbol=Analog:mc at (1170, 460), is not connected.
+| Sch_Warning - Component $1I22, Symbol=Analog:noise at (680, 220), is not connected.
+V 5.4
+K 314727527400 generate
+DW generate
+Q Case
+SA @DATETIME=5-7-1991_18:36 
+|Q Analog:idc 1
+AS Analog:idc CURRENT=1MA
+AS Analog:idc TYPE=DC
+AS Analog:idc ORDER=TYPE$ CURRENT$
+AS Analog:idc PREFIX=I
+AS Analog:idc CLASS=LAB
+AS Analog:idc PINORDER=N2 N1
+AP Analog:idc 1 PINTYPE=IN
+AP Analog:idc 2 PINTYPE=IN
+|Q Analog:isin 1
+AS Analog:isin OFFSET=0AMPS
+AS Analog:isin ORDER=TYPE$ P1$ OFFSET$ AMPLITUDE$ FREQUENCY$ TDELAY$ DAMPING$ PHASE$ P2$
+AS Analog:isin LABEL=IIN
+AS Analog:isin P1=(
+AS Analog:isin P2=)
+AS Analog:isin FREQUENCY=100KHZ
+AS Analog:isin AMPLITUDE=100UAMPS
+AS Analog:isin PREFIX=I
+AS Analog:isin TYPE=SIN
+AS Analog:isin PHASE=0
+AS Analog:isin TDELAY=0
+AS Analog:isin DAMPING=0
+AS Analog:isin PINORDER=N2 N1
+AS Analog:isin CLASS=LAB
+AP Analog:isin 1 PINTYPE=IN
+AP Analog:isin 2 PINTYPE=IN
+|Q Analog:ipulse 1
+AS Analog:ipulse TYPE=PULSE
+AS Analog:ipulse TPERIOD=200US
+AS Analog:ipulse TFALL=0
+AS Analog:ipulse TPULWIDTH=100US
+AS Analog:ipulse TRISE=0
+AS Analog:ipulse TDELAY=0NS
+AS Analog:ipulse PULSED=100UA
+AS Analog:ipulse INITIAL=1UAMP
+AS Analog:ipulse ORDER=TYPE$ P1$ INITIAL$ PULSED$ TDELAY$ TRISE$ TFALL$ TPULWIDTH$ TPERIOD$ P2$
+AS Analog:ipulse P1=(
+AS Analog:ipulse P2=)
+AS Analog:ipulse PREFIX=I
+AS Analog:ipulse LABEL=IIN
+AS Analog:ipulse CLASS=LAB
+AS Analog:ipulse PINORDER=N2 N1
+AP Analog:ipulse 1 PINTYPE=IN
+AP Analog:ipulse 2 PINTYPE=IN
+|Q Analog:isffm 1
+AS Analog:isffm LABEL=IIN
+AS Analog:isffm P1=(
+AS Analog:isffm P2=)
+AS Analog:isffm ORDER=TYPE$ P1$ OFFSET$ AMPLITUDE$ FREQ_CARRIER$ MOD_INDEX$ FREQ_SIGNAL$ P2$
+AS Analog:isffm FREQ_SIGNAL=15KHZ
+AS Analog:isffm MOD_INDEX=0
+AS Analog:isffm FREQ_CARRIER=104.1MEGHZ
+AS Analog:isffm AMPLITUDE=1MA
+AS Analog:isffm OFFSET=0
+AS Analog:isffm PREFIX=I
+AS Analog:isffm TYPE=SFFM
+AS Analog:isffm PINORDER=N2 N1
+AS Analog:isffm CLASS=LAB
+AP Analog:isffm 1 PINTYPE=IN
+AP Analog:isffm 2 PINTYPE=IN
+|Q Analog:iexp 1
+AS Analog:iexp LABEL=IIN
+AS Analog:iexp TFALL_CONST=50US
+AS Analog:iexp OFFSET=1UA
+AS Analog:iexp PREFIX=I
+AS Analog:iexp PEAK=100UA
+AS Analog:iexp TYPE=EXP
+AS Analog:iexp ORDER=TYPE$ P1$ OFFSET$ PEAK$ TRISE_DEL$ TRISE_CONST$ TFALL_DEL$ TFALL_CONST$ P2$
+AS Analog:iexp TRISE_CONST=200US
+AS Analog:iexp TRISE_DEL=0NS
+AS Analog:iexp TFALL_DEL=0NS
+AS Analog:iexp PINORDER=N2 N1
+AS Analog:iexp CLASS=LAB
+AP Analog:iexp 1 PINTYPE=IN
+AP Analog:iexp 2 PINTYPE=IN
+|Q Analog:ipwl 1
+AS Analog:ipwl ORDER=TYPE$ P1$ T1$ I1$ T2$ I2$ T3$ I3$ T4$ I4$ T5$ I5$ T6$ I6$ T7$ I7$ T8$ I8$ T9$ I9$ FILE$ P2$
+AS Analog:ipwl I9=
+AS Analog:ipwl I8=
+AS Analog:ipwl I7=
+AS Analog:ipwl I6=
+AS Analog:ipwl I5=
+AS Analog:ipwl I4=
+AS Analog:ipwl I3=
+AS Analog:ipwl I2=
+AS Analog:ipwl I1=
+AS Analog:ipwl T9=
+AS Analog:ipwl T8=
+AS Analog:ipwl T7=
+AS Analog:ipwl T6=
+AS Analog:ipwl T5=
+AS Analog:ipwl T4=
+AS Analog:ipwl T3=
+AS Analog:ipwl P2=)
+AS Analog:ipwl LABEL=IIN
+AS Analog:ipwl P1=(
+AS Analog:ipwl PREFIX=I
+AS Analog:ipwl TYPE=PWL
+AS Analog:ipwl T2=
+AS Analog:ipwl T1=
+AS Analog:ipwl CLASS=LAB
+AS Analog:ipwl PINORDER=N2 N1
+|Q Analog:iac 1
+AS Analog:iac PHASE=0
+AS Analog:iac ORDER=TYPE$ VALUE$ PHASE$
+AS Analog:iac PREFIX=I
+AS Analog:iac TYPE=AC
+AS Analog:iac LABEL=IIN
+AS Analog:iac VALUE=1
+AS Analog:iac CLASS=LAB
+AS Analog:iac PINORDER=N2 N1
+AP Analog:iac 1 PINTYPE=IN
+AP Analog:iac 2 PINTYPE=IN
+|Q Analog:dc 1
+AS Analog:dc PKG_TYPE=BATTERY
+AS Analog:dc ORDER=TYPE$ VOLTAGE$
+AS Analog:dc PREFIX=V
+AS Analog:dc PARTS=1
+AS Analog:dc PINOFF
+AS Analog:dc TYPE=DC
+AS Analog:dc VOLTAGE=15V
+AS Analog:dc CLASS=LAB
+AS Analog:dc PINORDER=N2 N1
+AP Analog:dc 1 #=2
+AP Analog:dc 1 PINTYPE=OUT
+AP Analog:dc 2 #=1
+AP Analog:dc 2 PINTYPE=IN
+|Q Analog:sin 1
+AS Analog:sin TDELAY=0
+AS Analog:sin DAMPING=0
+AS Analog:sin PHASE=0
+AS Analog:sin LABEL=VIN
+AS Analog:sin P1=(
+AS Analog:sin P2=)
+AS Analog:sin PREFIX=V
+AS Analog:sin TYPE=SIN
+AS Analog:sin ORDER=TYPE$ P1$ VOFFSET$ VAMPLITUDE$ FREQUENCY$ TDELAY$ DAMPING$ PHASE$ P2$
+AS Analog:sin VOFFSET=0V
+AS Analog:sin FREQUENCY=100KHZ
+AS Analog:sin VAMPLITUDE=100MV
+AS Analog:sin CLASS=LAB
+AS Analog:sin PINORDER=N2 N1
+AP Analog:sin 1 PINTYPE=IN
+AP Analog:sin 2 PINTYPE=IN
+|Q Analog:pulse 1
+AS Analog:pulse TPERIOD=200US
+AS Analog:pulse TPULWIDTH=100US
+AS Analog:pulse TFALL=0
+AS Analog:pulse TRISE=0
+AS Analog:pulse TDELAY=0NS
+AS Analog:pulse VPULSED=100MV
+AS Analog:pulse VINITIAL=0V
+AS Analog:pulse P2=)
+AS Analog:pulse P1=(
+AS Analog:pulse LABEL=VIN
+AS Analog:pulse ORDER=TYPE$ P1$ VINITIAL$ VPULSED$ TDELAY$ TRISE$ TFALL$ TPULWIDTH$ TPERIOD$ P2$
+AS Analog:pulse TYPE=PULSE
+AS Analog:pulse PREFIX=V
+AS Analog:pulse CLASS=LAB
+AS Analog:pulse PINORDER=N2 N1
+AP Analog:pulse 1 PINTYPE=IN
+AP Analog:pulse 2 PINTYPE=IN
+|Q Analog:sffm 1
+AS Analog:sffm P2=)
+AS Analog:sffm P1=(
+AS Analog:sffm LABEL=VIN
+AS Analog:sffm ORDER=TYPE$ P1$ OFFSET$ AMPLITUDE$ FREQ_CARRIER$ MOD_INDEX$ FREQ_SIGNAL$ P2$
+AS Analog:sffm FREQ_SIGNAL=15KHZ
+AS Analog:sffm MOD_INDEX=0
+AS Analog:sffm FREQ_CARRIER=104.1MEGHZ
+AS Analog:sffm AMPLITUDE=1MV
+AS Analog:sffm OFFSET=0
+AS Analog:sffm PREFIX=V
+AS Analog:sffm TYPE=SFFM
+AS Analog:sffm CLASS=LAB
+AS Analog:sffm PINORDER=N2 N1
+AP Analog:sffm 1 PINTYPE=IN
+AP Analog:sffm 2 PINTYPE=IN
+|Q Analog:exp 1
+AS Analog:exp LABEL=VIN
+AS Analog:exp TYPE=EXP
+AS Analog:exp PREFIX=V
+AS Analog:exp OFFSET=0V
+AS Analog:exp TFALL_CONST=50US
+AS Analog:exp TRISE_CONST=200US
+AS Analog:exp PEAK=100MV
+AS Analog:exp TFALL_DEL=0NS
+AS Analog:exp TRISE_DEL=0NS
+AS Analog:exp ORDER=TYPE$ P1$ OFFSET$ PEAK$ TRISE_DEL$ TRISE_CONST$ TFALL_DEL$ TFALL_CONST$ P2$
+AS Analog:exp CLASS=LAB
+AS Analog:exp PINORDER=N2 N1
+AP Analog:exp 1 PINTYPE=IN
+AP Analog:exp 2 PINTYPE=IN
+|Q Analog:pwl 1
+AS Analog:pwl V5=
+AS Analog:pwl V6=
+AS Analog:pwl V7=
+AS Analog:pwl V8=
+AS Analog:pwl T2=
+AS Analog:pwl P2=)
+AS Analog:pwl TYPE=PWL
+AS Analog:pwl PREFIX=V
+AS Analog:pwl ORDER=TYPE$ P1$ T1$ V1$ T2$ V2$ T3$ V3$ T4$ V4$ T5$ V5$ T6$ V6$ T7$ V7$ T8$ V8$ T9$ V9$ FILE$ P2$
+AS Analog:pwl LABEL=VIN
+AS Analog:pwl P1=(
+AS Analog:pwl T3=
+AS Analog:pwl T4=
+AS Analog:pwl T5=
+AS Analog:pwl T6=
+AS Analog:pwl T7=
+AS Analog:pwl T8=
+AS Analog:pwl T9=
+AS Analog:pwl V2=
+AS Analog:pwl V4=
+AS Analog:pwl V3=
+AS Analog:pwl V9=
+AS Analog:pwl T1=
+AS Analog:pwl V1=
+AS Analog:pwl CLASS=LAB
+AS Analog:pwl PINORDER=N2 N1
+AP Analog:pwl 1 PINTYPE=IN
+AP Analog:pwl 2 PINTYPE=IN
+|Q Analog:ac 1
+AS Analog:ac PHASE=0
+AS Analog:ac LABEL=VIN
+AS Analog:ac ORDER=TYPE$ VALUE$ PHASE$
+AS Analog:ac PREFIX=V
+AS Analog:ac TYPE=AC
+AS Analog:ac VALUE=1
+AS Analog:ac CLASS=LAB
+AS Analog:ac PINORDER=N2 N1
+AP Analog:ac 1 PINTYPE=IN
+AP Analog:ac 2 PINTYPE=IN
+|Q Analog:fourier 1
+AS Analog:fourier NO_PINS=TRUE
+AS Analog:fourier PREFIX=*
+AS Analog:fourier FREQUENCY=2KHZ
+AS Analog:fourier GENERATOR=.FOUR
+AS Analog:fourier ORDER=FREQUENCY$ NODE1[ NODE2[ NODE3[
+AS Analog:fourier CLASS=LAB
+AS Analog:fourier PINORDER=NODE3 NODE2 NODE1
+AP Analog:fourier 1 PINTYPE=IN
+AP Analog:fourier 2 PINTYPE=IN
+AP Analog:fourier 3 PINTYPE=IN
+|Q Analog:sweep 1
+AS Analog:sweep INCREMENT=0.1V
+AS Analog:sweep ENDVAL=5V
+AS Analog:sweep STARTVAL=0V
+AS Analog:sweep SOURCENAME=VIN
+AS Analog:sweep ORDER=SOURCENAME$ STARTVAL$ ENDVAL$ INCREMENT$ SOURCE2$ START2$ END2$ INCR2$
+AS Analog:sweep GENERATOR=.DC
+AS Analog:sweep PREFIX=*
+AS Analog:sweep CLASS=LAB
+|Q Analog:senstvty 1
+AS Analog:senstvty PREFIX=*
+AS Analog:senstvty GENERATOR=.SENS
+AS Analog:senstvty CLASS=LAB
+AS Analog:senstvty PINORDER=NODE3 NODE2 NODE1
+AP Analog:senstvty 1 PINTYPE=IN
+AP Analog:senstvty 2 PINTYPE=IN
+AP Analog:senstvty 3 PINTYPE=IN
+|Q Analog:options 1
+AS Analog:options NUMDGT=6
+AS Analog:options ITL5=0
+AS Analog:options LIMPTS=2000
+AS Analog:options ORDER=NOPAGE NODE LIST ACCT LIMPTS= ITL5= ABSTOL= CHGTOL= CPTIME= DEFAD= DEFAS= DEFL= DEFW= GMIN= RELTOL= NUMDGT= VNTOL=
+AS Analog:options ABSTOL=1P
+AS Analog:options RELTOL=.001
+AS Analog:options PREFIX=*
+AS Analog:options GENERATOR=.OPTIONS
+AS Analog:options VNTOL=1U
+|Q Analog:xferfunc 1
+AS Analog:xferfunc PREFIX=*
+AS Analog:xferfunc INPUTSOURCE=VIN
+AS Analog:xferfunc ORDER=INPUTSOURCE$
+AS Analog:xferfunc GENERATOR=.TF
+AS Analog:xferfunc CLASS=LAB
+AS Analog:xferfunc PINORDER=OUTPUTNODE
+AP Analog:xferfunc 1 PINTYPE=IN
+|Q Analog:bodeplot 1
+AS Analog:bodeplot LIN/OCT/DEC=DEC
+AS Analog:bodeplot PREFIX=*
+AS Analog:bodeplot GENERATOR=.AC
+AS Analog:bodeplot ORDER=LIN/OCT/DEC$ NUMPOINTS$ STARTFREQ$ ENDFREQ$
+AS Analog:bodeplot ENDFREQ=10MEGHZ
+AS Analog:bodeplot STARTFREQ=1KHZ
+AS Analog:bodeplot NUMPOINTS=10
+AS Analog:bodeplot CLASS=LAB
+|Q Analog:op 1
+AS Analog:op ORDER=
+AS Analog:op GENERATOR=.OP
+AS Analog:op PREFIX=*
+AS Analog:op CLASS=LAB
+|Q Analog:trans 1
+AS Analog:trans TMAX
+AS Analog:trans TSTART=0
+AS Analog:trans ORDER=TSTEP$ TFINAL$ TSTART$ TMAX$ INIT$
+AS Analog:trans CLASS=LAB
+AS Analog:trans GENERATOR=.TRAN
+AS Analog:trans PREFIX=*
+AS Analog:trans TSTEP=1US
+AS Analog:trans TFINAL=100US
+AS Analog:trans INIT=
+|Q Analog:step 1
+AS Analog:step GENERATOR=.STEP
+AS Analog:step PREFIX=*
+AS Analog:step ORDER=LIN/OCT/DEC$ SOURCENAME$ STARTVAL$ ENDVAL$ INCREMENT$
+AS Analog:step SOURCENAME=VIN
+AS Analog:step INCREMENT=1
+AS Analog:step ENDVAL=10
+AS Analog:step STARTVAL=0
+AS Analog:step LIN/OCT/DEC=LIN
+AS Analog:step CLASS=LAB
+|Q Analog:wcase 1
+AS Analog:wcase AC/DC/TRAN=TRAN
+AS Analog:wcase AC/DC/TRAN$=TRAN
+AS Analog:wcase NO_PINS=1
+AS Analog:wcase PREFIX=*
+AS Analog:wcase GENERATOR=.WCASE
+AS Analog:wcase FUNCTION=YMAX
+AS Analog:wcase OPTION=OUTPUT ALL
+AS Analog:wcase ORDER=AC/DC/TRAN$ NODE[ FUNCTION$ OPTION$
+AS Analog:wcase CLASS=LAB
+AS Analog:wcase PINORDER=NODE
+AP Analog:wcase 1 PINTYPE=IN
+|Q Analog:temp 1
+AS Analog:temp TEMP2=
+AS Analog:temp PREFIX=*
+AS Analog:temp GENERATOR=.TEMP
+AS Analog:temp TEMP1=27
+AS Analog:temp ORDER=TEMP1$ TEMP2$ TEMP3$ TEMP4$ FILE$
+AS Analog:temp TEMP3=
+AS Analog:temp TEMP4=
+AS Analog:temp CLASS=LAB
+|Q Analog:mc 1
+AS Analog:mc SEED=9321
+AS Analog:mc GENERATOR=.MC
+AS Analog:mc OUTPUT=ALL
+AS Analog:mc AC/DC/TRAN=TRAN
+AS Analog:mc LIST
+AS Analog:mc NUMRUN=10
+AS Analog:mc YMAX
+AS Analog:mc PREFIX=*
+AS Analog:mc NO_PINS=TRUE
+AS Analog:mc ORDER=NUMRUN$ AC/DC/TRAN$ A[ YMAX LIST OUTPUT SEED=
+AS Analog:mc CLASS=LAB
+AS Analog:mc PINORDER=A
+AP Analog:mc 1 PINTYPE=IN
+|Q Analog:noise 1
+AS Analog:noise INTERVAL
+AS Analog:noise ORDER=NOISESOURCE$ INTERVAL$
+AS Analog:noise NOISESOURCE=VIN
+AS Analog:noise GENERATOR=.NOISE
+AS Analog:noise PREFIX=*
+AS Analog:noise CLASS=LAB
+AS Analog:noise PINORDER=OUTPUTNODE
+AP Analog:noise 1 PINTYPE=IN
+|Q Analog:param 1
+AS Analog:param PREFIX=*
+AS Analog:param CLASS=LAB
+AS Analog:param ORDER=P1= P2= P3= P4= P5= P6= P7= P8= P9=\
+AS Analog:param GENERATOR=.PARAM
+|Q Analog:lib 1
+AS Analog:lib LIBRARY
+AS Analog:lib ORDER=LIBRARY$
+AS Analog:lib GENERATOR=.LIB
+AS Analog:lib PREFIX=*
+|Q Analog:inc 1
+AS Analog:inc FILE=
+AS Analog:inc PREFIX=*
+AS Analog:inc CLASS=LAB
+AS Analog:inc GENERATOR=.INC
+AS Analog:inc ORDER=FILE$
+M Analog:idc $1I14
+I $1I14 Analog:idc ? ? 
+M Analog:isin $1I8
+I $1I8 Analog:isin ? ? 
+M Analog:ipulse $1I9
+I $1I9 Analog:ipulse ? ? 
+M Analog:isffm $1I10
+I $1I10 Analog:isffm ? ? REFDES=VIN`
+M Analog:iexp $1I11
+I $1I11 Analog:iexp ? ? 
+M Analog:ipwl $1I12
+I $1I12 Analog:ipwl ? ? REFDES=IIN`
+M Analog:iac $1I13
+I $1I13 Analog:iac ? ? 
+M Analog:dc $1I6
+I $1I6 Analog:dc ? ? 
+M Analog:sin $1I5
+I $1I5 Analog:sin ? ? REFDES=VIN`
+M Analog:pulse $1I4
+I $1I4 Analog:pulse ? ? REFDES=VIN`
+M Analog:sffm $1I3
+I $1I3 Analog:sffm ? ? REFDES=VIN`
+M Analog:exp $1I2
+I $1I2 Analog:exp ? ? REFDES=VIN`
+M Analog:pwl $1I1
+I $1I1 Analog:pwl ? ? REFDES=VIN`
+M Analog:ac $1I7
+I $1I7 Analog:ac ? ? REFDES=VIN`
+M Analog:fourier $1I48
+I $1I48 Analog:fourier ? ? ? 
+M Analog:sweep $1I19
+I $1I19 Analog:sweep 
+M Analog:senstvty $1I24
+I $1I24 Analog:senstvty ? ? ? 
+M Analog:options $1I34
+I $1I34 Analog:options 
+M Analog:xferfunc $1I26
+I $1I26 Analog:xferfunc ? 
+M Analog:bodeplot $1I20
+I $1I20 Analog:bodeplot 
+M Analog:op $1I16
+I $1I16 Analog:op 
+M Analog:trans $1I15
+I $1I15 Analog:trans 
+M Analog:step $1I29
+I $1I29 Analog:step 
+M Analog:wcase $1I51
+I $1I51 Analog:wcase ? 
+M Analog:temp $1I25
+I $1I25 Analog:temp 
+M Analog:mc $1I28
+I $1I28 Analog:mc ? 
+M Analog:noise $1I22
+I $1I22 Analog:noise ? 
+M Analog:param $1I50
+I $1I50 Analog:param 
+M Analog:lib $1I52
+I $1I52 Analog:lib 
+M Analog:inc $1I53
+I $1I53 Analog:inc 
+EW

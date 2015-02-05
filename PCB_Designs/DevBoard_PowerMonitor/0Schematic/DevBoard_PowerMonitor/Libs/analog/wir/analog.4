@@ -1,0 +1,128 @@
+| Wirelist created using version 5.4.
+| Sch_Warning - Component $4I25, Symbol=Analog:cccs at (540, 600), is not connected.
+| Sch_Warning - Component $4I26, Symbol=Analog:ccvs at (200, 600), is not connected.
+| Sch_Warning - Component $4I13, Symbol=Analog:tf at (1370, 250), is not connected.
+| Sch_Warning - Component $4I12, Symbol=Analog:sens at (1180, 250), is not connected.
+| Sch_Warning - Component $4I17, Symbol=Analog:vcsw at (480, 360), is not connected.
+| Sch_Warning - Component $4I16, Symbol=Analog:ccsw at (140, 360), is not connected.
+| Sch_Warning - Component $4I23, Symbol=Analog:vcvs at (180, 860), is not connected.
+| Sch_Warning - Component $4I24, Symbol=Analog:vccs at (520, 860), is not connected.
+| Sch_Warning - Component $4I28, Symbol=Analog:vccs2 at (1240, 500), is not connected.
+| Sch_Warning - Component $4I29, Symbol=Analog:vccs2 at (900, 500), is not connected.
+| Sch_Warning - Component $4I15, Symbol=Analog:four at (970, 250), is not connected.
+V 5.4
+K 264627654100 analog
+DW analog
+Q Case
+|Q Analog:cccs 1
+AS Analog:cccs PREFIX=F
+AS Analog:cccs SOURCENAME=VSENSE
+AS Analog:cccs ORDER=SOURCENAME$ GAIN$
+AS Analog:cccs PINORDER=P N
+AS Analog:cccs GAIN=1
+AP Analog:cccs 1 PINTYPE=IN
+AP Analog:cccs 2 PINTYPE=OUT
+|Q Analog:ccvs 1
+AS Analog:ccvs PREFIX=H
+AS Analog:ccvs PINORDER=P N
+AS Analog:ccvs ORDER=SOURCENAME$ GAIN$
+AS Analog:ccvs SOURCENAME=VSENSE
+AS Analog:ccvs GAIN=1
+AP Analog:ccvs 1 PINTYPE=IN
+AP Analog:ccvs 2 PINTYPE=OUT
+|Q Analog:tf 1
+AS Analog:tf GENERATOR=.TF
+AS Analog:tf ORDER=INPUTSOURCE$
+AS Analog:tf INPUTSOURCE=VIN
+AS Analog:tf PREFIX=*
+AS Analog:tf PINORDER=OUTPUT
+AP Analog:tf 1 PINTYPE=IN
+|Q Analog:sens 1
+AS Analog:sens PREFIX=*
+AS Analog:sens GENERATOR=.SENS
+AS Analog:sens PINORDER=NODE
+AP Analog:sens 1 PINTYPE=IN
+|Q Analog:vcsw 1
+AS Analog:vcsw PINORDER=SW1 SW2 C1 C2
+AS Analog:vcsw ORDER=MODEL$
+AS Analog:vcsw PREFIX=S
+AS Analog:vcsw MODEL=VCSW
+|Q Analog:ccsw 1
+AS Analog:ccsw SOURCENAME=VSENSE
+AS Analog:ccsw PREFIX=W
+AS Analog:ccsw ORDER=SOURCENAME$ MODEL$
+AS Analog:ccsw MODEL=CCSW
+AS Analog:ccsw PINORDER=SW1 SW2
+|Q Analog:csdf 1
+AS Analog:csdf SIG8=
+AS Analog:csdf SIG7=
+AS Analog:csdf SIG6=
+AS Analog:csdf SIG5=
+AS Analog:csdf SIG4=
+AS Analog:csdf SIG3=
+AS Analog:csdf SIG2=
+AS Analog:csdf SIG1=
+AS Analog:csdf ORDER=SIG1$ SIG2$ SIG3$ SIG4$ SIG5$ SIG6$ SIG7$ SIG8$
+AS Analog:csdf PREFIX=*
+AS Analog:csdf GENERATOR=.PROBE/CSDF
+|Q Analog:vcvs 1
+AS Analog:vcvs PINORDER=P N CP CN
+AS Analog:vcvs ORDER=GAIN$
+AS Analog:vcvs PREFIX=E
+AS Analog:vcvs GAIN=1
+AP Analog:vcvs 1 PINTYPE=IN
+AP Analog:vcvs 2 PINTYPE=IN
+AP Analog:vcvs 3 PINTYPE=IN
+AP Analog:vcvs 4 PINTYPE=IN
+|Q Analog:vccs 1
+AS Analog:vccs PREFIX=G
+AS Analog:vccs ORDER=GAIN$
+AS Analog:vccs PINORDER=P N CP CN
+AS Analog:vccs GAIN=1
+AP Analog:vccs 1 PINTYPE=IN
+AP Analog:vccs 2 PINTYPE=OUT
+AP Analog:vccs 3 PINTYPE=IN
+AP Analog:vccs 4 PINTYPE=IN
+|Q Analog:vccs2 1
+AS Analog:vccs2 LABEL=POLY
+AS Analog:vccs2 PREFIX=G
+AS Analog:vccs2 POLY=POLY(2)
+AS Analog:vccs2 NO_PINS=TRUE
+AS Analog:vccs2 ORDER=OUTN[ OUTP[ POLY$ V1A[ V1B[ V2A[ V2B[ P0$ P1$ P2$ P3$ P4$ P5$ P6$ P7$ P8$ P9$
+AS Analog:vccs2 P0=0.0
+AS Analog:vccs2 P2=1.0
+AS Analog:vccs2 P1=1.0
+AS Analog:vccs2 PINORDER=V2B V2A V1B V1A OUTP OUTN
+|Q Analog:four 1
+AS Analog:four NO_PINS=TRUE
+AS Analog:four ORDER=FREQUENCY$ NODE[
+AS Analog:four PREFIX=*
+AS Analog:four FREQUENCY=2KHZ
+AS Analog:four GENERATOR=.FOUR
+AS Analog:four PINORDER=NODE
+AP Analog:four 1 PINTYPE=IN
+M Analog:cccs $4I25
+I $4I25 Analog:cccs ? ? 
+M Analog:ccvs $4I26
+I $4I26 Analog:ccvs ? ? 
+M Analog:tf $4I13
+I $4I13 Analog:tf ? 
+M Analog:sens $4I12
+I $4I12 Analog:sens ? 
+M Analog:vcsw $4I17
+I $4I17 Analog:vcsw ? ? ? ? 
+M Analog:ccsw $4I16
+I $4I16 Analog:ccsw ? ? 
+M Analog:csdf $4I18
+I $4I18 Analog:csdf 
+M Analog:vcvs $4I23
+I $4I23 Analog:vcvs ? ? ? ? 
+M Analog:vccs $4I24
+I $4I24 Analog:vccs ? ? ? ? 
+M Analog:vccs2 $4I28
+I $4I28 Analog:vccs2 ? ? ? ? ? ? 
+M Analog:vccs2 $4I29
+I $4I29 Analog:vccs2 ? ? ? ? ? ? 
+M Analog:four $4I15
+I $4I15 Analog:four ? 
+EW

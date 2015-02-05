@@ -1,0 +1,51 @@
+| Wirelist created using version 5.4.
+V 5.4
+K 362374948800 p4
+DW p4
+Q Case
+|Q Analog:npn 1
+AS Analog:npn MODEL=Q2N2222
+AS Analog:npn REFDES=Q?
+AS Analog:npn PARTS=1
+AS Analog:npn PINOFF
+AS Analog:npn ORDER=BULK$ MODEL$ AREA$
+AS Analog:npn PREFIX=Q
+AS Analog:npn PINORDER=C B E
+AS Analog:npn PKG_TYPE=TO-18
+AP Analog:npn 1 #=2
+AP Analog:npn 1 PINTYPE=BI
+AP Analog:npn 2 #=1
+AP Analog:npn 2 PINTYPE=IN
+AP Analog:npn 3 #=3
+AP Analog:npn 3 PINTYPE=BI
+|Q discretes:res 1
+AS discretes:res PINOFF
+AS discretes:res REFDES=R?
+AS discretes:res VALUE
+AS discretes:res PKG_TYPE
+AS discretes:res PREFIX=R
+AS discretes:res DEVICE
+AS discretes:res PINORDER=N2 N1
+AS discretes:res INOV_VER_REC=20:32_8-26-04
+AP discretes:res 1 PINTYPE=BI
+AP discretes:res 1 #
+AP discretes:res 2 PINTYPE=BI
+AP discretes:res 2 #
+M Analog:npn $1I1
+I $1I1 Analog:npn C B E REFDES=QP4`MODEL=@MODEL`
+API $1I1 Analog:npn 1 #=2
+API $1I1 Analog:npn 2 #=1
+API $1I1 Analog:npn 3 #=3
+M discretes:res $1I5
+I $1I5 discretes:res B B1 REFDES=RBB1`VALUE=0.001`
+API $1I5 discretes:res 1 #=2
+API $1I5 discretes:res 2 #=1
+P ? B
+I B ? B
+P ? B1
+I B1 ? B1
+P ? E
+I E ? E
+P ? C
+I C ? C
+EW

@@ -1,0 +1,1 @@
+.MODEL CMOD CAP (C=1 DEV 20%)

@@ -1,0 +1,2 @@
+.MODEL R10 RES (R=1 DEV 10%)
+

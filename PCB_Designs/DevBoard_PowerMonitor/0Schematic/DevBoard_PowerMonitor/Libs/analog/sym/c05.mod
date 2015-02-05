@@ -1,0 +1,1 @@
+.MODEL C05 CAP (C=1 DEV 5%)

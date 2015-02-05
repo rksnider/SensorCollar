@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DxArchiverProject version="1">
+	<DxProject Path="C:\Users\kyler.callahan\Documents\work\marmoset_board\0Schematic\marmoset_schematic\marmoset_schematic.prj"/>
+	<TargetDirectory Path="C:\Users\kyler.callahan\Documents\work\marmoset_board\0Schematic\DevBoard_PowerMonitor"/>
+	<Compression Type="None"/>
+	<PDF Type="0"/>
+	<AdditionalFiles>
+	</AdditionalFiles>
+</DxArchiverProject>

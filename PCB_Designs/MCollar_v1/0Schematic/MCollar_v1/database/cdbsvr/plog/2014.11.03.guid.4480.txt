@@ -1,0 +1,30 @@
+[2014.11.03 10:17:01] [0000m.25s.884ms] [0] WELCOME
+[2014.11.03 10:17:01] [0000m.25s.884ms] [1] iCDB Database ver.1.094, vt40T8RtWJOG2cE2Nlvc5A, build:535943 created 2013-01-08 09:09:26, sources stamp:vt40T8RtWJOG2cE2Nlvc5A
+[2014.11.03 10:17:01] [0000m.25s.884ms] [1] Copyright 2013 Mentor Graphics Corporation. All Rights Reserved.
+[2014.11.03 10:17:01] [0000m.25s.884ms] [1] Base flow version [7.9.4]
+[2014.11.03 10:17:01] [0000m.25s.884ms] [1] GBS Install Id [27413], Flow Id [PADS 9.5], Full Flow Name [PADS 9.5], Exact Access Date [Jun 1 2012]
+[2014.11.03 10:17:01] [0000m.25s.884ms] [1] UPDATE Install Info, GBS Install Id [29618], UPDATE Name [PADS 9.5 Update 1]
+[2014.11.03 10:17:01] [0000m.25s.884ms] [1] Machine [ECEROSSLAB01]  User [j82t579]  PID [4480]
+[2014.11.03 10:17:01] [0000m.25s.884ms] [1] Operating system [Microsoft Windows 7 Enterprise Edition, 32-bit Service Pack 1 (build 7601)]
+[2014.11.03 10:17:01] [0000m.25s.884ms] [1] Current working dir [C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1]
+[2014.11.03 10:17:01] [0000m.25s.884ms] [1] PATH [C:\MentorGraphics\9.5PADS\SDD_HOME\wv\win32\bin;C:\MentorGraphics\9.5PADS\SDD_HOME\common\win32\bin;C:\MentorGraphics\9.5PADS\SDD_HOME\common\win32\lib;C:\MentorGraphics\9.5PADS\MGC_HOME.ixn\bin;C:\MentorGraphics\9.5PADS\MGC_HOME.ixn\lib;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\MATLAB\R2013a\runtime\win32;C:\MATLAB\R2013a\bin;C:\Program Files\ATI Technologies\ATI.ACE\Core-Static;C:\altera\13.1\modelsim_ae\win32aloem;C:\MentorGraphics\9.5PADS\SDD_HOME\common\win32\lib]
+[2014.11.03 10:17:01] [0000m.25s.884ms] [1] SDD_HOME [C:\MentorGraphics\9.5PADS\SDD_HOME] on file system [NTFS]
+[2014.11.03 10:17:01] [0000m.25s.884ms] [1] SDD_PLATFORM [win32]
+[2014.11.03 10:17:01] [0000m.25s.884ms] [1] WDIR [C:\PADS Projects;C:\MentorGraphics\9.5PADS\SDD_HOME\standard]
+[2014.11.03 10:17:01] [0000m.25s.884ms] [1] Local iCDB working dir [C:\PADS Projects\iCDB] on file system [NTFS]
+[2014.11.03 10:17:01] [0000m.25s.884ms] [3] WARNING: Database [C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1\database\icdb.dat] was manually copied
+[2014.11.03 10:17:01] [0000m.25s.884ms] [3] File change time:        [2014-11-03 10.11.38]
+[2014.11.03 10:17:01] [0000m.25s.884ms] [3] File modification time:  [2014-11-03 10.11.47]
+[2014.11.03 10:17:01] [0000m.25s.884ms] [3] Last change time:        [2014-11-03 10.11.38]
+[2014.11.03 10:17:01] [0000m.25s.884ms] [3] Last database open information:
+[2014.11.03 10:17:01] [0000m.25s.884ms] [3] Time:             [2014-11-03 10.11.41]
+[2014.11.03 10:17:01] [0000m.25s.884ms] [3] Location:         [C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1\database\icdb.dat]
+[2014.11.03 10:17:01] [0000m.25s.884ms] [3] Machine:          [ECEROSSLAB01]
+[2014.11.03 10:17:01] [0000m.25s.884ms] [3] User:             [j82t579]
+[2014.11.03 10:17:01] [0000m.25s.884ms] [3] PID:              [3056]
+[2014.11.03 10:17:01] [0000m.25s.884ms] [3] Application:      [iCDB Server]
+[2014.11.03 10:17:01] [0000m.25s.884ms] [3] Operating system: [Microsoft Windows 7 Enterprise Edition, 32-bit Service Pack 1 (build 7601)]
+[2014.11.03 10:17:01] [0000m.25s.884ms] [3] WARNING: Regenerating database GUID
+[2014.11.03 10:17:01] [0000m.25s.884ms] [3] Previous database GUID [490b-58b5-7ccc-c7b4-a47b-754f-47b7-5450-b707-e263-212d-1dbc]
+[2014.11.03 10:17:01] [0000m.25s.884ms] [3] Current database GUID  [0724-1979-e883-f5db-d88b-7542-98b7-5450-f007-e263-212d-1dbc]
+[2014.11.03 10:17:01] [0000m.25s.884ms] [0] .

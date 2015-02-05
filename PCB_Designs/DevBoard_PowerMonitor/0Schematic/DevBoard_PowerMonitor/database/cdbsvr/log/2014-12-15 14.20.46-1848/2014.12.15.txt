@@ -1,0 +1,166 @@
+[2014.12.15 14:20:46] [0000m.00s.046ms] [0] WELCOME
+[2014.12.15 14:20:46] [0000m.00s.046ms] [1] iCDB Server ver.1.094, vt40T8RtWJOG2cE2Nlvc5A, build:535943 created 2013-01-08 09:09:26, sources stamp:vt40T8RtWJOG2cE2Nlvc5A
+[2014.12.15 14:20:46] [0000m.00s.046ms] [1] Copyright 2013 Mentor Graphics Corporation. All Rights Reserved.
+[2014.12.15 14:20:46] [0000m.00s.046ms] [1] Base flow version [7.9.4]
+[2014.12.15 14:20:46] [0000m.00s.046ms] [1] GBS Install Id [27413], Flow Id [PADS 9.5], Full Flow Name [PADS 9.5], Exact Access Date [Jun 1 2012]
+[2014.12.15 14:20:46] [0000m.00s.046ms] [1] UPDATE Install Info, GBS Install Id [29618], UPDATE Name [PADS 9.5 Update 1]
+[2014.12.15 14:20:46] [0000m.00s.046ms] [1] Machine [ECEROSSLAB01]  User [j82t579]  PID [1848]
+[2014.12.15 14:20:46] [0000m.00s.046ms] [1] Operating system [Microsoft Windows 7 Enterprise Edition, 32-bit Service Pack 1 (build 7601)]
+[2014.12.15 14:20:46] [0000m.00s.046ms] [1] Current working dir [C:\Users\kyler.callahan\Documents\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor]
+[2014.12.15 14:20:46] [0000m.00s.046ms] [1] PATH [C:\MentorGraphics\9.5PADS\SDD_HOME\wv\win32\bin;C:\MentorGraphics\9.5PADS\SDD_HOME\common\win32\bin;C:\MentorGraphics\9.5PADS\SDD_HOME\common\win32\lib;C:\MentorGraphics\9.5PADS\MGC_HOME.ixn\bin;C:\MentorGraphics\9.5PADS\MGC_HOME.ixn\lib;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\MATLAB\R2013a\runtime\win32;C:\MATLAB\R2013a\bin;C:\Program Files\ATI Technologies\ATI.ACE\Core-Static;C:\altera\13.1\modelsim_ae\win32aloem;C:\MentorGraphics\9.5PADS\SDD_HOME\common\win32\lib]
+[2014.12.15 14:20:46] [0000m.00s.046ms] [1] SDD_HOME [C:\MentorGraphics\9.5PADS\SDD_HOME] on file system [NTFS]
+[2014.12.15 14:20:46] [0000m.00s.046ms] [1] SDD_PLATFORM [win32]
+[2014.12.15 14:20:46] [0000m.00s.046ms] [1] WDIR [C:\PADS Projects;C:\MentorGraphics\9.5PADS\SDD_HOME\standard]
+[2014.12.15 14:20:46] [0000m.00s.046ms] [1] Local iCDB working dir [C:\PADS Projects\iCDB] on file system [NTFS]
+[2014.12.15 14:20:46] [0000m.00s.046ms] [2] S: Loading config files
+[2014.12.15 14:20:46] [0000m.00s.062ms] [1] Config file [C:\Users\kyler.callahan\Documents\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\cdbsvr\Server.cfg] not found
+[2014.12.15 14:20:46] [0000m.00s.062ms] [3] S: Config loaded
+[2014.12.15 14:20:46] [0000m.00s.078ms] [0] S: Project path [C:\Users\kyler.callahan\Documents\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database] on file system [NTFS]
+[2014.12.15 14:20:46] [0000m.00s.078ms] [0] S: Project file (.prj) path [C:\Users\kyler.callahan\Documents\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\DevBoard_PowerMonitor.prj] on file system [NTFS]
+[2014.12.15 14:20:46] [0000m.00s.078ms] [1] S: WARNING: Database auto-repair support DISABLED
+[2014.12.15 14:20:46] [0000m.00s.078ms] [0] S: Single-user mode (auto)
+[2014.12.15 14:20:46] [0000m.00s.078ms] [0] S: Event polling mode autodetection
+[2014.12.15 14:20:46] [0000m.00s.078ms] [0] S: Started up automatically by iCDB Client: ECEROSSLAB01:j82t579:2816
+[2014.12.15 14:20:46] [0000m.00s.078ms] [0] S: Auto close mode
+[2014.12.15 14:20:46] [0000m.00s.078ms] [0] S: Database ID [1864-463e-4202-c2ed-62b0-a84b-2b0a-8450-fdf6-e263-212d-1dbc]
+[2014.12.15 14:20:46] [0000m.00s.078ms] [0] PathTranslator: BEGIN dumping
+[2014.12.15 14:20:46] [0000m.00s.078ms] [0] PathTranslator: Local -> global path prefix list
+[2014.12.15 14:20:46] [0000m.00s.078ms] [0] PathTranslator: [Z:\] -> [\\opal.msu.montana.edu\j\j82t579\]
+[2014.12.15 14:20:46] [0000m.00s.078ms] [0] PathTranslator: Global -> local path prefix list
+[2014.12.15 14:20:46] [0000m.00s.078ms] [0] PathTranslator: [\\opal.msu.montana.edu\j\j82t579\] -> [Z:\]
+[2014.12.15 14:20:46] [0000m.00s.078ms] [0] PathTranslator: END dumping
+[2014.12.15 14:20:46] [0000m.00s.078ms] [0] S: START
+[2014.12.15 14:20:46] [0000m.00s.078ms] [0] S: Server startup lock file created
+[2014.12.15 14:20:46] [0000m.00s.078ms] [0] S: Listening for client connections on port [10000]
+[2014.12.15 14:20:46] [0000m.00s.078ms] [0] S: Server network ID [ecerosslab01:153.90.121.69,ecerosslab01,ecerosslab01.coe.montana.edu:10000]
+[2014.12.15 14:20:46] [0000m.00s.078ms] [0] S: Server GUID [4258-3760-4159-3a0e-ea05-f843-b05f-8450-7357-e263-212d-1dbc]
+[2014.12.15 14:20:46] [0000m.00s.078ms] [0] S: Project GUID [1864-463e-4202-c2ed-62b0-a84b-2b0a-8450-fdf6-e263-212d-1dbc]
+[2014.12.15 14:20:46] [0000m.00s.078ms] [0] S: Wrote data to server address file
+[2014.12.15 14:20:46] [0000m.00s.078ms] [0] S: Server startup lock file removed
+[2014.12.15 14:20:46] [0000m.00s.078ms] [1] ProjectBackupManager: Setting project file (.prj) path: [C:\Users\kyler.callahan\Documents\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\DevBoard_PowerMonitor.prj]
+[2014.12.15 14:20:47] [0000m.00s.280ms] [0] PrjBackupMgr: Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2014.12.15 14:20:47] [0000m.00s.280ms] [0] PrjBackupMgr: WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2014.12.15 14:20:47] [0000m.00s.686ms] [0] S: Plugins loaded: [PIM] [ENetGen70] 
+[2014.12.15 14:20:47] [0000m.00s.686ms] [0] S: Local disc access time: 99 us
+[2014.12.15 14:20:47] [0000m.00s.686ms] [0] S: File server access time: 105 us
+[2014.12.15 14:20:47] [0000m.00s.686ms] [0] Single file [C:\Users\kyler.callahan\Documents\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\icdb.dat] size [2122432 (2.0 MB)]
+[2014.12.15 14:20:47] [0000m.00s.686ms] [1] Single file [C:\Users\kyler.callahan\Documents\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\icdb.dat] opened in read-write mode
+[2014.12.15 14:20:47] [0000m.00s.686ms] [0] SingleFile: [0000-0000-0000-0000] SFI header version check [1009] [1009]
+[2014.12.15 14:20:47] [0000m.00s.686ms] [0] Database GUARD OK: [2122432]
+[2014.12.15 14:20:47] [0000m.00s.686ms] [0] SingleFile: [0000-0000-0000-0000] SFI header version check [1009] [1009]
+[2014.12.15 14:20:47] [0000m.00s.686ms] [0] Database GUARD OK: [2122432]
+[2014.12.15 14:20:47] [0000m.00s.686ms] [0] SingleFile: [681c-c1ec-9e29-64fa] SFI version check [1009] [1009]
+[2014.12.15 14:20:47] [0000m.00s.873ms] [0] SingleFile: [681c-c1ec-9e29-64fa] Database SFI header has been read in [175ms 961us]
+[2014.12.15 14:20:47] [0000m.00s.873ms] [0] iCDB Server PI: Server & plugin session [2151]
+[2014.12.15 14:20:47] [0000m.00s.873ms] [0] iCDB Server PI: Opening database [C:\Users\kyler.callahan\Documents\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database]
+[2014.12.15 14:20:47] [0000m.00s.873ms] [0] iCDB Server PI: Database [C:\Users\kyler.callahan\Documents\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database] opened
+[2014.12.15 14:20:47] [0000m.00s.967ms] [0] iCDB Database: Checking existence of constraint definitions
+[2014.12.15 14:20:47] [0000m.00s.967ms] [0] iCDB Database: Checking constraint definitions version
+[2014.12.15 14:20:47] [0000m.01s.076ms] [1] iCDB Database: Constraint definitions version [ce_ee.cns=7.10.24;user.cns=6511-058a-3b8d-3fc9-52d0-853a-2d08-5350-b506-e263-212d-1dbc] up to date
+[2014.12.15 14:20:48] [0000m.01s.310ms] [0] iCDB Server PI: Initializing plugins
+[2014.12.15 14:20:48] [0000m.01s.310ms] [0] iCDB Server PI: Plugins initialized
+[2014.12.15 14:20:48] [0000m.01s.310ms] [0] S: iCDB database loaded
+[2014.12.15 14:20:48] [0000m.01s.310ms] [0] S: Starting threads
+[2014.12.15 14:20:48] [0000m.01s.310ms] [1] CMT: There are no clients - waiting [10 seconds]
+[2014.12.15 14:20:48] [0000m.01s.310ms] [0] BT: Listening for broadcast messages on port [10000]
+[2014.12.15 14:20:48] [0000m.01s.310ms] [0] IT: Session [2152] for host [ecerosslab01] user [j82t579] with process ID [2816] created
+[2014.12.15 14:20:48] [0000m.01s.310ms] [1] SC[2152]: Registered sub-client [DxD] with ID [1] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:48] [0000m.01s.357ms] [1] SC[2152]: Registered sub-client [TransactionRollbackSubClient] with ID [2] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:48] [0000m.01s.357ms] [1] SC[2152]: Registered sub-client [xprob] with ID [3] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:48] [0000m.01s.419ms] [1] CMT: There are [1] clients now: 2152
+[2014.12.15 14:20:49] [0000m.03s.042ms] [1] SC[2152]: Registered sub-client [SelectionHolder] with ID [4] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:49] [0000m.03s.088ms] [1] SC[2152]: Registered sub-client [SymbolEditor] with ID [5] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:50] [0000m.03s.619ms] [1] SC[2152]: Registered sub-client [HdlProject] with ID [6] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:50] [0000m.03s.634ms] [1] SC[2152]: Registered sub-client [Navigator] with ID [7] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:50] [0000m.03s.634ms] [1] SC[2152]: Registered sub-client [OutputWindow] with ID [8] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:50] [0000m.03s.650ms] [1] SC[2152]: Registered sub-client [PlaceDevice] with ID [9] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:50] [0000m.03s.666ms] [1] SC[2152]: Registered sub-client [SAE] with ID [10] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:50] [0000m.03s.681ms] [1] SC[2152]: Registered sub-client [DxConstraints] with ID [11] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:50] [0000m.03s.681ms] [1] SC[2152]: Registered sub-client [CCZAddin] with ID [12] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:50] [0000m.03s.697ms] [1] SC[2152]: Registered sub-client [DxThumbnails] with ID [13] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:50] [0000m.03s.759ms] [1] SC[2152]: Registered sub-client [SheetConnectorsCacheDxD:1418678450] with ID [14] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:50] [0000m.03s.790ms] [1] SC[2152]: Registered sub-client [NetsNamesCollectorDxD:1418678450] with ID [15] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:50] [0000m.03s.884ms] [1] SC[2152]: Registered sub-client [ObjectHolder_314668952] with ID [16] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:50] [0000m.03s.884ms] [1] SC[2152]: Registered sub-client [BlockCacheDxD:318555528] with ID [17] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:50] [0000m.03s.884ms] [1] SC[2152]: Registered sub-client [GlobalNetAliasUpdater_314669128] with ID [18] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:50] [0000m.03s.884ms] [1] SC[2152]: Registered sub-client [IcdbNetProcessorSubClientDxD:314594784] with ID [19] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:50] [0000m.04s.180ms] [1] SC[2152]: Registered sub-client [DxDbSearch] with ID [20] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:50] [0000m.04s.227ms] [1] SC[2152]: Registered sub-client [LDD_ECO_IMPORT] with ID [21] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:50] [0000m.04s.227ms] [1] SC[2152]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [21] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:50] [0000m.04s.227ms] [1] SC[2152]: Registered sub-client [LDD_ECO_IMPORT] with ID [22] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:50] [0000m.04s.227ms] [1] SC[2152]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [22] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:51] [0000m.05s.241ms] [1] SC[2152]: Registered sub-client [LDD_ECO_IMPORT] with ID [23] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:51] [0000m.05s.241ms] [1] SC[2152]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [23] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:53] [0000m.06s.255ms] [1] SC[2152]: Registered sub-client [LDD_ECO_IMPORT] with ID [24] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:53] [0000m.06s.255ms] [1] SC[2152]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [24] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:54] [0000m.07s.269ms] [1] SC[2152]: Registered sub-client [LDD_ECO_IMPORT] with ID [25] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:54] [0000m.07s.269ms] [1] SC[2152]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [25] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:55] [0000m.08s.283ms] [1] SC[2152]: Registered sub-client [LDD_ECO_IMPORT] with ID [26] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:55] [0000m.08s.283ms] [1] SC[2152]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [26] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:56] [0000m.09s.297ms] [1] SC[2152]: Registered sub-client [LDD_ECO_IMPORT] with ID [27] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:56] [0000m.09s.297ms] [1] SC[2152]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [27] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:57] [0000m.10s.311ms] [1] SC[2152]: Registered sub-client [LDD_ECO_IMPORT] with ID [28] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:57] [0000m.10s.311ms] [1] SC[2152]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [28] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:58] [0000m.11s.325ms] [1] SC[2152]: Registered sub-client [LDD_ECO_IMPORT] with ID [29] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:58] [0000m.11s.325ms] [1] SC[2152]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [29] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:59] [0000m.12s.339ms] [1] SC[2152]: Registered sub-client [LDD_ECO_IMPORT] with ID [30] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:20:59] [0000m.12s.339ms] [1] SC[2152]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [30] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:00] [0000m.13s.353ms] [1] SC[2152]: Registered sub-client [LDD_ECO_IMPORT] with ID [31] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:00] [0000m.13s.353ms] [1] SC[2152]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [31] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:02] [0000m.15s.803ms] [1] SC[2152]: Registered sub-client [LDD_ECO_IMPORT] with ID [32] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:02] [0000m.15s.803ms] [1] SC[2152]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [32] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:03] [0000m.16s.396ms] [1] SC[2152]: Registered sub-client [LDD_ECO_IMPORT] with ID [33] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:03] [0000m.16s.396ms] [1] SC[2152]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [33] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:04] [0000m.17s.410ms] [1] SC[2152]: Registered sub-client [LDD_ECO_IMPORT] with ID [34] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:04] [0000m.17s.410ms] [1] SC[2152]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [34] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:05] [0000m.18s.253ms] [1] SC[2152]: UnRegistered sub-client [GlobalNetAliasUpdater_314669128] with ID [18] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:05] [0000m.18s.253ms] [1] SC[2152]: UnRegistered sub-client [BlockCacheDxD:318555528] with ID [17] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:05] [0000m.18s.253ms] [1] SC[2152]: UnRegistered sub-client [ObjectHolder_314668952] with ID [16] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:05] [0000m.18s.253ms] [1] SC[2152]: UnRegistered sub-client [IcdbNetProcessorSubClientDxD:314594784] with ID [19] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:05] [0000m.18s.253ms] [1] SC[2152]: UnRegistered sub-client [SelectionHolder] with ID [4] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:05] [0000m.18s.253ms] [1] SC[2152]: UnRegistered sub-client [SheetConnectorsCacheDxD:1418678450] with ID [14] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:05] [0000m.18s.253ms] [1] SC[2152]: UnRegistered sub-client [NetsNamesCollectorDxD:1418678450] with ID [15] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:05] [0000m.18s.253ms] [1] SC[2152]: UnRegistered sub-client [TransactionRollbackSubClient] with ID [2] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:05] [0000m.18s.253ms] [1] SC[2152]: UnRegistered sub-client [DxD] with ID [1] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:05] [0000m.18s.284ms] [1] SC[2152]: UnRegistered sub-client [xprob] with ID [3] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:05] [0000m.18s.284ms] [1] SC[2152]: UnRegistered sub-client [SymbolEditor] with ID [5] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:05] [0000m.18s.300ms] [1] SC[2152]: UnRegistered sub-client [Navigator] with ID [7] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:05] [0000m.18s.315ms] [1] SC[2152]: UnRegistered sub-client [OutputWindow] with ID [8] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:05] [0000m.18s.315ms] [1] SC[2152]: UnRegistered sub-client [DxDbSearch] with ID [20] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:05] [0000m.18s.331ms] [1] SC[2152]: UnRegistered sub-client [SAE] with ID [10] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:05] [0000m.18s.346ms] [1] SC[2152]: UnRegistered sub-client [CCZAddin] with ID [12] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:05] [0000m.18s.362ms] [1] SC[2152]: UnRegistered sub-client [DxThumbnails] with ID [13] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:05] [0000m.18s.471ms] [1] SC[2152]: UnRegistered sub-client [DxConstraints] with ID [11] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:07] [0000m.20s.998ms] [1] SC[2152]: UnRegistered sub-client [PlaceDevice] with ID [9] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:07] [0000m.21s.014ms] [1] SC[2152]: UnRegistered sub-client [HdlProject] with ID [6] for session ID [2152] host [ecerosslab01] user [j82t579] process ID [2816]
+[2014.12.15 14:21:07] [0000m.21s.232ms] [1] CMT: Removed client [2152]
+[2014.12.15 14:21:07] [0000m.21s.232ms] [1] CMT: There are no clients left - waiting [1 seconds]
+[2014.12.15 14:21:09] [0000m.22s.324ms] [0] CMT: Starting server auto-close
+[2014.12.15 14:21:09] [0000m.22s.434ms] [0] S: Closing server
+[2014.12.15 14:21:09] [0000m.22s.590ms] [0] iCDB Server PI: Closing plugins
+[2014.12.15 14:21:09] [0000m.22s.590ms] [0] iCDB Server PI: Plugins closed
+[2014.12.15 14:21:09] [0000m.22s.590ms] [0] iCDB Server PI: Unloading database
+[2014.12.15 14:21:09] [0000m.22s.590ms] [0] iCDB Server PI: Saving storage
+[2014.12.15 14:21:09] [0000m.22s.590ms] [0] iCDB Server PI: Closing database
+[2014.12.15 14:21:09] [0000m.22s.590ms] [1] Hole: zero line at 2122364 of size 8 bytes.
+[2014.12.15 14:21:09] [0000m.22s.621ms] [1] iCDB Server PI: Stats: Database defragmentation: max[2] avg[1] holes[16%] data[95%]
+[2014.12.15 14:21:09] [0000m.22s.621ms] [1] iCDB Server PI: Stats: Database file size [2122432 (2.0 MB)]
+[2014.12.15 14:21:09] [0000m.22s.621ms] [1] Hole: zero line at 2122364 of size 8 bytes.
+[2014.12.15 14:21:09] [0000m.22s.668ms] [1] iCDB Server PI: WARNING: Database needs defragmentation!
+[2014.12.15 14:21:09] [0000m.22s.683ms] [0] iCDB Server PI: Database closed
+[2014.12.15 14:21:09] [0000m.22s.683ms] [0] iCDB Server PI: Defragmenting database
+[2014.12.15 14:21:09] [0000m.22s.683ms] [0] iCDB Server PI: Creating database [C:\Users\kyler.callahan\Documents\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database] backup to file [C:\Users\kyler.callahan\Documents\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\cdbback\2014-12-15 14.21.09-1848-d.zip]
+[2014.12.15 14:21:12] [0000m.25s.257ms] [0] iCDB Server PI: Database backup: DONE
+[2014.12.15 14:21:12] [0000m.26s.178ms] [0] SingleFile: [0000-0000-0000-0000] SFI header version check [1009] [1009]
+[2014.12.15 14:21:12] [0000m.26s.178ms] [0] Database GUARD OK: [2122432]
+[2014.12.15 14:21:12] [0000m.26s.178ms] [0] SingleFile: [681c-c1ec-9e29-64fa] SFI version check [1009] [1009]
+[2014.12.15 14:21:13] [0000m.26s.349ms] [0] SingleFile: [681c-c1ec-9e29-64fa] Database SFI header has been read in [179ms 423us]
+[2014.12.15 14:21:14] [0000m.27s.316ms] [1] iCDB Server PI: Stats: Database file sizes: before[2122432 (2.0 MB)], after[1841088 (1.8 MB)], gain[281344 (274.8 kB)]
+[2014.12.15 14:21:14] [0000m.27s.363ms] [0] Single file [C:\Users\kyler.callahan\Documents\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\icdb.dat] closed with size [1841088 (1.8 MB)]
+[2014.12.15 14:21:14] [0000m.27s.363ms] [0] iCDB Server PI: Database defragmentation completed successfully
+[2014.12.15 14:21:14] [0000m.27s.363ms] [1] BackupTransaction: Removing database backup [C:\Users\kyler.callahan\Documents\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\cdbback\2014-12-15 14.21.09-1848-d.zip]
+[2014.12.15 14:21:14] [0000m.27s.379ms] [1] iCDB Server PI: Stats: Total iCDB execution time: [112419] ticks
+[2014.12.15 14:21:14] [0000m.27s.379ms] [1] iCDB Server PI: Stats: Total iCDB execution time: [34621] microseconds
+[2014.12.15 14:21:14] [0000m.27s.379ms] [1] iCDB Server PI: Stats: Total iCDB commands count: [84]
+[2014.12.15 14:21:14] [0000m.27s.379ms] [1] iCDB Server PI: Stats: Average iCDB speed:        [2426] commands per second
+[2014.12.15 14:21:14] [0000m.27s.519ms] [0] S: STOP

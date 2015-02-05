@@ -1,0 +1,230 @@
+| Wirelist created using version 6.0 
+V 6.0
+DW S1
+|Q DxDesigner_Library:Solar_Ctl_LTC3105 1
+AS DxDesigner_Library:Solar_Ctl_LTC3105 INOV_VER_REC=14:21:35_7-11-14
+AS DxDesigner_Library:Solar_Ctl_LTC3105 DEVICE=Solar_Ctl_LTC3105
+AS DxDesigner_Library:Solar_Ctl_LTC3105 REFDES=U?
+AS DxDesigner_Library:Solar_Ctl_LTC3105 PKG_TYPE=Solar_Ctl_LTC3105_MS
+AS DxDesigner_Library:Solar_Ctl_LTC3105 PART_NUMBER=LTC3105EMS
+AS DxDesigner_Library:Solar_Ctl_LTC3105 PINORDER=AUX FB FBLDO GND_6 GND_7 LDO MPPC PGOOD SHDN_N SW VIN VOUT
+AP DxDesigner_Library:Solar_Ctl_LTC3105 1 #=12
+AP DxDesigner_Library:Solar_Ctl_LTC3105 1 PINTYPE=IN
+AP DxDesigner_Library:Solar_Ctl_LTC3105 2 #=1
+AP DxDesigner_Library:Solar_Ctl_LTC3105 2 PINTYPE=IN
+AP DxDesigner_Library:Solar_Ctl_LTC3105 3 #=3
+AP DxDesigner_Library:Solar_Ctl_LTC3105 3 PINTYPE=IN
+AP DxDesigner_Library:Solar_Ctl_LTC3105 4 #=6
+AP DxDesigner_Library:Solar_Ctl_LTC3105 4 PINTYPE=IN
+AP DxDesigner_Library:Solar_Ctl_LTC3105 5 #=7
+AP DxDesigner_Library:Solar_Ctl_LTC3105 5 PINTYPE=IN
+AP DxDesigner_Library:Solar_Ctl_LTC3105 6 #=2
+AP DxDesigner_Library:Solar_Ctl_LTC3105 6 PINTYPE=IN
+AP DxDesigner_Library:Solar_Ctl_LTC3105 7 #=5
+AP DxDesigner_Library:Solar_Ctl_LTC3105 7 PINTYPE=IN
+AP DxDesigner_Library:Solar_Ctl_LTC3105 8 #=10
+AP DxDesigner_Library:Solar_Ctl_LTC3105 8 PINTYPE=IN
+AP DxDesigner_Library:Solar_Ctl_LTC3105 9 #=4
+AP DxDesigner_Library:Solar_Ctl_LTC3105 9 PINTYPE=IN
+AP DxDesigner_Library:Solar_Ctl_LTC3105 10 #=9
+AP DxDesigner_Library:Solar_Ctl_LTC3105 10 PINTYPE=IN
+AP DxDesigner_Library:Solar_Ctl_LTC3105 11 #=8
+AP DxDesigner_Library:Solar_Ctl_LTC3105 11 PINTYPE=IN
+AP DxDesigner_Library:Solar_Ctl_LTC3105 12 #=11
+AP DxDesigner_Library:Solar_Ctl_LTC3105 12 PINTYPE=IN
+|Q DxDesigner_Common_Parts:10uF_cap_0603 1
+AS DxDesigner_Common_Parts:10uF_cap_0603 INOV_VER_REC=10:59:19_6-26-14
+AS DxDesigner_Common_Parts:10uF_cap_0603 PINSWAP=(1,2)
+AS DxDesigner_Common_Parts:10uF_cap_0603 REFDES=C?
+AS DxDesigner_Common_Parts:10uF_cap_0603 DEVICE=10uF_cap_0603
+AS DxDesigner_Common_Parts:10uF_cap_0603 VALUE=10uF
+AS DxDesigner_Common_Parts:10uF_cap_0603 PKG_TYPE=0603_MY
+AS DxDesigner_Common_Parts:10uF_cap_0603 TOLERANCE
+AS DxDesigner_Common_Parts:10uF_cap_0603 PINORDER=1 2
+AP DxDesigner_Common_Parts:10uF_cap_0603 1 #=1
+AP DxDesigner_Common_Parts:10uF_cap_0603 1 PINTYPE=ANALOG
+AP DxDesigner_Common_Parts:10uF_cap_0603 2 #=2
+AP DxDesigner_Common_Parts:10uF_cap_0603 2 PINTYPE=ANALOG
+|Q DxDesigner_Common_Parts:cap_0603 1
+AS DxDesigner_Common_Parts:cap_0603 INOV_VER_REC=13:47:58_7-25-14
+AS DxDesigner_Common_Parts:cap_0603 PINSWAP=(1,2)
+AS DxDesigner_Common_Parts:cap_0603 REFDES=C?
+AS DxDesigner_Common_Parts:cap_0603 DEVICE=cap_0603
+AS DxDesigner_Common_Parts:cap_0603 VALUE
+AS DxDesigner_Common_Parts:cap_0603 PKG_TYPE=0603_MY
+AS DxDesigner_Common_Parts:cap_0603 TOLERANCE
+AS DxDesigner_Common_Parts:cap_0603 PART_NUMBER
+AS DxDesigner_Common_Parts:cap_0603 PINORDER=1 2
+AP DxDesigner_Common_Parts:cap_0603 1 #=1
+AP DxDesigner_Common_Parts:cap_0603 1 PINTYPE=ANALOG
+AP DxDesigner_Common_Parts:cap_0603 2 #=2
+AP DxDesigner_Common_Parts:cap_0603 2 PINTYPE=ANALOG
+|Q DxDesigner_Common_Parts:Res_0603 1
+AS DxDesigner_Common_Parts:Res_0603 INOV_VER_REC=12:22:1_7-1-14
+AS DxDesigner_Common_Parts:Res_0603 PINSWAP=(1,2)
+AS DxDesigner_Common_Parts:Res_0603 REFDES=R?
+AS DxDesigner_Common_Parts:Res_0603 DEVICE=Res_0603
+AS DxDesigner_Common_Parts:Res_0603 VALUE
+AS DxDesigner_Common_Parts:Res_0603 TOLERANCE
+AS DxDesigner_Common_Parts:Res_0603 PKG_TYPE=0603_MY
+AS DxDesigner_Common_Parts:Res_0603 PART_NUMBER
+AS DxDesigner_Common_Parts:Res_0603 PINORDER=1 2
+AP DxDesigner_Common_Parts:Res_0603 1 #=1
+AP DxDesigner_Common_Parts:Res_0603 1 PINTYPE=ANALOG
+AP DxDesigner_Common_Parts:Res_0603 2 #=2
+AP DxDesigner_Common_Parts:Res_0603 2 PINTYPE=ANALOG
+|Q DxDesigner_Common_Parts:4p7uF_cap_0603 1
+AS DxDesigner_Common_Parts:4p7uF_cap_0603 PINSWAP=(1,2)
+AS DxDesigner_Common_Parts:4p7uF_cap_0603 REFDES=C?
+AS DxDesigner_Common_Parts:4p7uF_cap_0603 DEVICE=4p7uF_cap_0603
+AS DxDesigner_Common_Parts:4p7uF_cap_0603 VALUE=4.7uF
+AS DxDesigner_Common_Parts:4p7uF_cap_0603 PKG_TYPE=0603_MY
+AS DxDesigner_Common_Parts:4p7uF_cap_0603 TOLERANCE
+AS DxDesigner_Common_Parts:4p7uF_cap_0603 INOV_VER_REC=12:00:20_5-29-14
+AS DxDesigner_Common_Parts:4p7uF_cap_0603 PINORDER=1 2
+AP DxDesigner_Common_Parts:4p7uF_cap_0603 1 #=1
+AP DxDesigner_Common_Parts:4p7uF_cap_0603 1 PINTYPE=ANALOG
+AP DxDesigner_Common_Parts:4p7uF_cap_0603 2 #=2
+AP DxDesigner_Common_Parts:4p7uF_cap_0603 2 PINTYPE=ANALOG
+|Q DxDesigner_Common_Parts:Inductor_Sumida 1
+AS DxDesigner_Common_Parts:Inductor_Sumida VALUE
+AS DxDesigner_Common_Parts:Inductor_Sumida REFDES=L?
+AS DxDesigner_Common_Parts:Inductor_Sumida PKG_TYPE=INDUCTOR_252012CDMCD
+AS DxDesigner_Common_Parts:Inductor_Sumida PART_NUMBER=252012CDMCD
+AS DxDesigner_Common_Parts:Inductor_Sumida DEVICE=Inductor
+AS DxDesigner_Common_Parts:Inductor_Sumida INOV_VER_REC=15:42:38_6-26-14
+AS DxDesigner_Common_Parts:Inductor_Sumida PINORDER=N1 N2
+AP DxDesigner_Common_Parts:Inductor_Sumida 1 #=1
+AP DxDesigner_Common_Parts:Inductor_Sumida 1 PINTYPE=BI
+AP DxDesigner_Common_Parts:Inductor_Sumida 2 #=2
+AP DxDesigner_Common_Parts:Inductor_Sumida 2 PINTYPE=BI
+|Q DxDesigner_Library:Solar_Pannel_Header 1
+AS DxDesigner_Library:Solar_Pannel_Header INOV_VER_REC=15:22:53_7-14-14
+AS DxDesigner_Library:Solar_Pannel_Header DEVICE=Solar_Pannel_Header
+AS DxDesigner_Library:Solar_Pannel_Header REFDES=J?
+AS DxDesigner_Library:Solar_Pannel_Header PKG_TYPE=Solar_Pannel_Header
+AS DxDesigner_Library:Solar_Pannel_Header PINORDER=GND3 GND4 GND6 VCC1 VCC5
+AP DxDesigner_Library:Solar_Pannel_Header 1 #=3
+AP DxDesigner_Library:Solar_Pannel_Header 1 PINTYPE=IN
+AP DxDesigner_Library:Solar_Pannel_Header 2 #=4
+AP DxDesigner_Library:Solar_Pannel_Header 2 PINTYPE=IN
+AP DxDesigner_Library:Solar_Pannel_Header 3 #=6
+AP DxDesigner_Library:Solar_Pannel_Header 3 PINTYPE=IN
+AP DxDesigner_Library:Solar_Pannel_Header 4 #=1
+AP DxDesigner_Library:Solar_Pannel_Header 4 PINTYPE=IN
+AP DxDesigner_Library:Solar_Pannel_Header 5 #=5
+AP DxDesigner_Library:Solar_Pannel_Header 5 PINTYPE=IN
+|Q DxDesigner_Library:SC_BYPASS 1
+AS DxDesigner_Library:SC_BYPASS INOV_VER_REC=15:18:51_7-16-14
+AS DxDesigner_Library:SC_BYPASS DEVICE=SC_BYPASS
+AS DxDesigner_Library:SC_BYPASS REFDES=J?
+AS DxDesigner_Library:SC_BYPASS PKG_TYPE=SC_BYPASS
+AS DxDesigner_Library:SC_BYPASS PINORDER=PIN1 PIN2 PIN3 PIN4 PIN5 PIN6
+AP DxDesigner_Library:SC_BYPASS 1 #=1
+AP DxDesigner_Library:SC_BYPASS 1 PINTYPE=IN
+AP DxDesigner_Library:SC_BYPASS 2 #=2
+AP DxDesigner_Library:SC_BYPASS 2 PINTYPE=IN
+AP DxDesigner_Library:SC_BYPASS 3 #=3
+AP DxDesigner_Library:SC_BYPASS 3 PINTYPE=IN
+AP DxDesigner_Library:SC_BYPASS 4 #=4
+AP DxDesigner_Library:SC_BYPASS 4 PINTYPE=IN
+AP DxDesigner_Library:SC_BYPASS 5 #=5
+AP DxDesigner_Library:SC_BYPASS 5 PINTYPE=IN
+AP DxDesigner_Library:SC_BYPASS 6 #=6
+AP DxDesigner_Library:SC_BYPASS 6 PINTYPE=IN
+|Q DxDesigner_Common_Parts:SCHOTTKY_DIODE 1
+AS DxDesigner_Common_Parts:SCHOTTKY_DIODE INOV_VER_REC=10:33:7_7-24-14
+AS DxDesigner_Common_Parts:SCHOTTKY_DIODE REFDES=D?
+AS DxDesigner_Common_Parts:SCHOTTKY_DIODE Model=D1N914
+AS DxDesigner_Common_Parts:SCHOTTKY_DIODE PKG_TYPE=SCHOTTKY_DIODE
+AS DxDesigner_Common_Parts:SCHOTTKY_DIODE PART_NUMBER=SSA23L
+AS DxDesigner_Common_Parts:SCHOTTKY_DIODE DEVICE=SCHOTTKY_DIODE
+AS DxDesigner_Common_Parts:SCHOTTKY_DIODE PINORDER=A C
+AP DxDesigner_Common_Parts:SCHOTTKY_DIODE 1 #=1
+AP DxDesigner_Common_Parts:SCHOTTKY_DIODE 1 PINTYPE=BI
+AP DxDesigner_Common_Parts:SCHOTTKY_DIODE 2 #=2
+AP DxDesigner_Common_Parts:SCHOTTKY_DIODE 2 PINTYPE=OUT
+G GND
+M DxDesigner_Library:Solar_Ctl_LTC3105 $14I15
+I $14I15 DxDesigner_Library:Solar_Ctl_LTC3105 $14N54 $14N101 GND GND GND $14N220 $14N63 SOLAR_PGOOD_TO_CPLD SOLAR_CTRL_SHDN_N $14N122 SOLAR_CELL_POWER SOLAR_CTRL_VOUT PART_NUMBER=LTC3105EMS`REFDES=U?`
+|R 14:21:35_7-11-14
+API $14I15 DxDesigner_Library:Solar_Ctl_LTC3105 1 #=12
+API $14I15 DxDesigner_Library:Solar_Ctl_LTC3105 2 #=1
+API $14I15 DxDesigner_Library:Solar_Ctl_LTC3105 3 #=3
+API $14I15 DxDesigner_Library:Solar_Ctl_LTC3105 4 #=6
+API $14I15 DxDesigner_Library:Solar_Ctl_LTC3105 5 #=7
+API $14I15 DxDesigner_Library:Solar_Ctl_LTC3105 6 #=2
+API $14I15 DxDesigner_Library:Solar_Ctl_LTC3105 7 #=5
+API $14I15 DxDesigner_Library:Solar_Ctl_LTC3105 8 #=10
+API $14I15 DxDesigner_Library:Solar_Ctl_LTC3105 9 #=4
+API $14I15 DxDesigner_Library:Solar_Ctl_LTC3105 10 #=9
+API $14I15 DxDesigner_Library:Solar_Ctl_LTC3105 11 #=8
+API $14I15 DxDesigner_Library:Solar_Ctl_LTC3105 12 #=11
+M DxDesigner_Common_Parts:10uF_cap_0603 $14I46
+I $14I46 DxDesigner_Common_Parts:10uF_cap_0603 SOLAR_CELL_POWER GND REFDES=C?`
+|R 10:59:19_6-26-14
+API $14I46 DxDesigner_Common_Parts:10uF_cap_0603 1 #=1
+API $14I46 DxDesigner_Common_Parts:10uF_cap_0603 2 #=2
+M DxDesigner_Common_Parts:cap_0603 $14I50
+I $14I50 DxDesigner_Common_Parts:cap_0603 $14N54 GND VALUE=1uF`REFDES=C?`
+|R 13:47:58_7-25-14
+API $14I50 DxDesigner_Common_Parts:cap_0603 1 #=1
+API $14I50 DxDesigner_Common_Parts:cap_0603 2 #=2
+M DxDesigner_Common_Parts:Res_0603 $14I65
+I $14I65 DxDesigner_Common_Parts:Res_0603 GND $14N63 VALUE=40.2k`REFDES=R?`
+|R 12:22:1_7-1-14
+API $14I65 DxDesigner_Common_Parts:Res_0603 1 #=1
+API $14I65 DxDesigner_Common_Parts:Res_0603 2 #=2
+M DxDesigner_Common_Parts:4p7uF_cap_0603 $14I87
+I $14I87 DxDesigner_Common_Parts:4p7uF_cap_0603 $14N220 GND REFDES=C?`
+|R 12:00:20_5-29-14
+API $14I87 DxDesigner_Common_Parts:4p7uF_cap_0603 1 #=1
+API $14I87 DxDesigner_Common_Parts:4p7uF_cap_0603 2 #=2
+M DxDesigner_Common_Parts:Res_0603 $14I93
+I $14I93 DxDesigner_Common_Parts:Res_0603 GND $14N101 TOLERANCE=1%`VALUE=332k`REFDES=R?`
+|R 12:22:1_7-1-14
+API $14I93 DxDesigner_Common_Parts:Res_0603 1 #=1
+API $14I93 DxDesigner_Common_Parts:Res_0603 2 #=2
+M DxDesigner_Common_Parts:Res_0603 $14I97
+I $14I97 DxDesigner_Common_Parts:Res_0603 $14N101 SOLAR_CTRL_VOUT TOLERANCE=1%`VALUE=1020k`REFDES=R?`
+|R 12:22:1_7-1-14
+API $14I97 DxDesigner_Common_Parts:Res_0603 1 #=1
+API $14I97 DxDesigner_Common_Parts:Res_0603 2 #=2
+M DxDesigner_Common_Parts:cap_0603 $14I105
+I $14I105 DxDesigner_Common_Parts:cap_0603 SOLAR_CTRL_VOUT GND VALUE=10uF`REFDES=C?`
+|R 13:47:58_7-25-14
+API $14I105 DxDesigner_Common_Parts:cap_0603 1 #=1
+API $14I105 DxDesigner_Common_Parts:cap_0603 2 #=2
+M DxDesigner_Common_Parts:Inductor_Sumida $14I125
+I $14I125 DxDesigner_Common_Parts:Inductor_Sumida SOLAR_CELL_POWER $14N122 VALUE=10uH`REFDES=L?`
+|R 15:42:38_6-26-14
+API $14I125 DxDesigner_Common_Parts:Inductor_Sumida 1 #=1
+API $14I125 DxDesigner_Common_Parts:Inductor_Sumida 2 #=2
+M DxDesigner_Library:Solar_Pannel_Header $14I174
+I $14I174 DxDesigner_Library:Solar_Pannel_Header GND GND GND SOLAR_CELLS SOLAR_CELLS REFDES=J?`
+|R 15:22:53_7-14-14
+API $14I174 DxDesigner_Library:Solar_Pannel_Header 1 #=3
+API $14I174 DxDesigner_Library:Solar_Pannel_Header 2 #=4
+API $14I174 DxDesigner_Library:Solar_Pannel_Header 3 #=6
+API $14I174 DxDesigner_Library:Solar_Pannel_Header 4 #=1
+API $14I174 DxDesigner_Library:Solar_Pannel_Header 5 #=5
+M DxDesigner_Library:SC_BYPASS $14I193
+I $14I193 DxDesigner_Library:SC_BYPASS SOLAR_CELL_POWER SOLAR_CELLS $14N205 SOLAR_CTRL_VOUT BATTERY_PACK+ $14N205 REFDES=J?`
+|R 15:18:51_7-16-14
+API $14I193 DxDesigner_Library:SC_BYPASS 1 #=1
+API $14I193 DxDesigner_Library:SC_BYPASS 2 #=2
+API $14I193 DxDesigner_Library:SC_BYPASS 3 #=3
+API $14I193 DxDesigner_Library:SC_BYPASS 4 #=4
+API $14I193 DxDesigner_Library:SC_BYPASS 5 #=5
+API $14I193 DxDesigner_Library:SC_BYPASS 6 #=6
+M DxDesigner_Common_Parts:SCHOTTKY_DIODE $14I211
+I $14I211 DxDesigner_Common_Parts:SCHOTTKY_DIODE AUX_VCC SOLAR_CELL_POWER REFDES=D?`
+|R 10:33:7_7-24-14
+API $14I211 DxDesigner_Common_Parts:SCHOTTKY_DIODE 1 #=1
+API $14I211 DxDesigner_Common_Parts:SCHOTTKY_DIODE 2 #=2
+M DxDesigner_Common_Parts:Res_0603 $14I222
+I $14I222 DxDesigner_Common_Parts:Res_0603 $14N220 SOLAR_CTRL_ON_TO_CPLD VALUE=25k`REFDES=R?`
+|R 12:22:1_7-1-14
+API $14I222 DxDesigner_Common_Parts:Res_0603 1 #=1
+API $14I222 DxDesigner_Common_Parts:Res_0603 2 #=2
+EW
