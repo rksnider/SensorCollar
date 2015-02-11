@@ -132,3 +132,5 @@
 [2014-12-16 14.57.25] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
 [2014-12-30 12.24.42] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
 [2014-12-30 12.24.42] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2015-02-09 11.01.32] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2015-02-09 11.01.32] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
