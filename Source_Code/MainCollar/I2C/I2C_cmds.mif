@@ -46,7 +46,7 @@
 --
 ----------------------------------------------------------------------------
 
-DEPTH =         512 ;
+DEPTH =        1024 ;
 WIDTH =           8 ;
 ADDRESS_RADIX = DEC ;
 DATA_RADIX =    HEX ;
@@ -188,13 +188,87 @@ BEGIN
         10  --  Place to put the data.
         20  --  Read all data at once.
 
+
+      --    Real Time Clock Maxim DS1371 commands.
+      --    Initialize Clock.
+
+        00  --  No time is needed between subcommands.
+        00  --  No time is needed between commands.
+        00
+        00
+        68  --  I2C Address.
+        02  --  Address of Control register then its value.
+        0F  --  Place to get bytes to write.
+        02  --  No subcommands are needed.
+        00  --  Nothing to read.
+        30
+        00
+
+      --    Set the Time.
+
+        00  --  No time is needed between subcommands.
+        00  --  No time is needed betwee commands.
+        00
+        00
+        68  --  I2C Address.
+        05  --  Address of Time of Day Counter then Counter's value.
+        11  --  Place to get bytes to write.
+        05  --  No subcommands are needed.
+        00  --  Nothing to read.
+        30
+        00
+
+      --    Set the Alarm.
+
+        00  --  No time is needed between subcommands.
+        00  --  No time is needed betwee commands.
+        00
+        00
+        68  --  I2C Address.
+        04  --  Address of Alarm Counter then Counter's value.
+        16  --  Place to get bytes to write.
+        04  --  No subcommands are needed.
+        00  --  Nothing to read.
+        30
+        00
+
+      --    Get the Time.
+
+        00  --  No time is needed between subcommands.
+        00  --  No time is needed betwee commands.
+        00
+        00
+        68  --  I2C Address.
+        01  --  Address of Time of Day Counter.
+        1A  --  Place to get bytes to write.
+        01  --  No subcommands are needed.
+        04  --  Time of Day Counter.
+        30  --  Place to put the Time of Day Counter.
+        04  --  No subcommands are needed.
+
+      --    Get the Alarm.
+
+        00  --  No time is needed between subcommands.
+        00  --  No time is needed betwee commands.
+        00
+        00
+        68  --  I2C Address.
+        01  --  Address of Alarm Counter.
+        1B  --  Place to get bytes to write.
+        01  --  No subcommands are needed.
+        03  --  Alarm Counter.
+        34  --  Place to put the Alarm Counter.
+        03  --  No subcommands are needed.
+
+
+
 ;
 
 --  Write Data Section.
       --    Battery Monitor Data.
       --    Get Status command.
 
-192 :
+256 :
         00  --  Control Command first byte.
         00  --  Status Subcommand first byte.
         01  --  Control Command second byte.
@@ -235,6 +309,37 @@ BEGIN
         01  --  Manufacturer Info Block.
         40  --  Start of the block.
 
+      --    Real Time Clock Data.
+      --    Initialize.
+
+        07  --  Address of the Control register.
+        49  --  Enable Oscillator, Enable Counter, Select Alarm,
+            --  Enable Interrupt, Clear Rate Select, Enable Alarm
+
+      --    Write the clock.
+
+        00  --  Address of the time-of-day counter.
+        00  --  Value to write to the time-of-day counter.
+        00
+        00
+        00
+
+      --    Write the Alarm Counter.
+
+        04  --  Address of the alarm counter.
+        00  --  Value to write to the alarm counter.
+        00
+        00
+
+      --    Read the clock.
+
+        00  --  Address of the time-of-day counter.
+
+      --  Read the Alarm Counter.
+
+        04  --  Address of the alarm counter.
+
+
 
 ;
 
@@ -242,7 +347,7 @@ BEGIN
       --    Battery Monitor Data.
       --    Get Status command.
 
-256 :
+512 :
         00  --  Status bytes
         00
 
@@ -281,12 +386,27 @@ BEGIN
         00  --  Internal Temperature bytes.
         00
 
-      --  Manufacturer Info Block.
+      --    Manufacturer Info Block.
 
         00 00 00 00 00 00 00 00
         00 00 00 00 00 00 00 00
         00 00 00 00 00 00 00 00
         00 00 00 00 00 00 00 00
+
+      --    Real Time Clock.
+      --    Read Time of Day.
+
+        00  --  Time of day bytes.
+        00
+        00
+        00
+
+      --    Read Alarm.
+
+        00  --  Alarm bytes.
+        00
+        00
+
 
 ;
 
