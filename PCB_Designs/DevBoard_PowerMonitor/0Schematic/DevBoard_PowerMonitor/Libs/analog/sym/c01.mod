@@ -1,0 +1,1 @@
+.MODEL C01 CAP (C=1 DEV 1%)

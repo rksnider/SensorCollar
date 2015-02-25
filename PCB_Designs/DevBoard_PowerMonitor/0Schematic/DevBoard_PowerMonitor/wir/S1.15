@@ -1,0 +1,236 @@
+| Wirelist created using version 6.0 
+V 6.0
+DW S1
+|Q DxDesigner_Library:Battery_Monitor_BQ27520-G3 1
+AS DxDesigner_Library:Battery_Monitor_BQ27520-G3 INOV_VER_REC=14:22:0_7-11-14
+AS DxDesigner_Library:Battery_Monitor_BQ27520-G3 DEVICE=Battery_Monitor_BQ27520-G3
+AS DxDesigner_Library:Battery_Monitor_BQ27520-G3 REFDES=U?
+AS DxDesigner_Library:Battery_Monitor_BQ27520-G3 PKG_TYPE=Battery_Monitor_BQ27520-G3
+AS DxDesigner_Library:Battery_Monitor_BQ27520-G3 PART_NUMBER=BQ27520-G3
+AS DxDesigner_Library:Battery_Monitor_BQ27520-G3 PINORDER=BAT BAT_GD_N BAT_LOW BI/TOUT CE REGIN SCL SDA SOC_INT SRN SRP TS VCC VSS_7 VSS_8
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 1 #=E2
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 1 PINTYPE=IN
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 2 #=B2
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 2 PINTYPE=IN
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 3 #=C3
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 3 PINTYPE=IN
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 4 #=E3
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 4 PINTYPE=IN
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 5 #=D2
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 5 PINTYPE=IN
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 6 #=E1
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 6 PINTYPE=IN
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 7 #=A3
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 7 PINTYPE=IN
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 8 #=B3
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 8 PINTYPE=IN
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 9 #=A2
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 9 PINTYPE=IN
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 10 #=B1
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 10 PINTYPE=IN
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 11 #=A1
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 11 PINTYPE=IN
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 12 #=D3
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 12 PINTYPE=IN
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 13 #=D1
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 13 PINTYPE=IN
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 14 #=C2
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 14 PINTYPE=IN
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 15 #=C1
+AP DxDesigner_Library:Battery_Monitor_BQ27520-G3 15 PINTYPE=IN
+|Q DxDesigner_Common_Parts:cap_0603 1
+AS DxDesigner_Common_Parts:cap_0603 INOV_VER_REC=13:47:58_7-25-14
+AS DxDesigner_Common_Parts:cap_0603 PINSWAP=(1,2)
+AS DxDesigner_Common_Parts:cap_0603 REFDES=C?
+AS DxDesigner_Common_Parts:cap_0603 DEVICE=cap_0603
+AS DxDesigner_Common_Parts:cap_0603 VALUE
+AS DxDesigner_Common_Parts:cap_0603 PKG_TYPE=0603_MY
+AS DxDesigner_Common_Parts:cap_0603 TOLERANCE
+AS DxDesigner_Common_Parts:cap_0603 PART_NUMBER
+AS DxDesigner_Common_Parts:cap_0603 PINORDER=1 2
+AP DxDesigner_Common_Parts:cap_0603 1 #=1
+AP DxDesigner_Common_Parts:cap_0603 1 PINTYPE=ANALOG
+AP DxDesigner_Common_Parts:cap_0603 2 #=2
+AP DxDesigner_Common_Parts:cap_0603 2 PINTYPE=ANALOG
+|Q DxDesigner_Common_Parts:Res_0603 1
+AS DxDesigner_Common_Parts:Res_0603 INOV_VER_REC=12:22:1_7-1-14
+AS DxDesigner_Common_Parts:Res_0603 PINSWAP=(1,2)
+AS DxDesigner_Common_Parts:Res_0603 REFDES=R?
+AS DxDesigner_Common_Parts:Res_0603 DEVICE=Res_0603
+AS DxDesigner_Common_Parts:Res_0603 VALUE
+AS DxDesigner_Common_Parts:Res_0603 TOLERANCE
+AS DxDesigner_Common_Parts:Res_0603 PKG_TYPE=0603_MY
+AS DxDesigner_Common_Parts:Res_0603 PART_NUMBER
+AS DxDesigner_Common_Parts:Res_0603 PINORDER=1 2
+AP DxDesigner_Common_Parts:Res_0603 1 #=1
+AP DxDesigner_Common_Parts:Res_0603 1 PINTYPE=ANALOG
+AP DxDesigner_Common_Parts:Res_0603 2 #=2
+AP DxDesigner_Common_Parts:Res_0603 2 PINTYPE=ANALOG
+|Q DxDesigner_Library:PUSH_BUTTON 1
+AS DxDesigner_Library:PUSH_BUTTON INOV_VER_REC=14:23:13_7-10-14
+AS DxDesigner_Library:PUSH_BUTTON Model=CCSW
+AS DxDesigner_Library:PUSH_BUTTON PART_NUMBER=KS12R22CQD
+AS DxDesigner_Library:PUSH_BUTTON DEVICE=PUSH_BUTTON
+AS DxDesigner_Library:PUSH_BUTTON REFDES=PB?
+AS DxDesigner_Library:PUSH_BUTTON PKG_TYPE=PUSH_BUTTON
+AS DxDesigner_Library:PUSH_BUTTON PINORDER=SW1 SW2 SW3
+AP DxDesigner_Library:PUSH_BUTTON 1 #=1
+AP DxDesigner_Library:PUSH_BUTTON 1 PINTYPE=IN
+AP DxDesigner_Library:PUSH_BUTTON 2 #=4
+AP DxDesigner_Library:PUSH_BUTTON 2 PINTYPE=OUT
+AP DxDesigner_Library:PUSH_BUTTON 3 #=3
+AP DxDesigner_Library:PUSH_BUTTON 3 PINTYPE=IN
+|Q DxDesigner_Common_Parts:Res_v_0603 1
+AS DxDesigner_Common_Parts:Res_v_0603 PINSWAP=(1,2)
+AS DxDesigner_Common_Parts:Res_v_0603 REFDES=R?
+AS DxDesigner_Common_Parts:Res_v_0603 DEVICE=Res_v_0603
+AS DxDesigner_Common_Parts:Res_v_0603 VALUE
+AS DxDesigner_Common_Parts:Res_v_0603 TOLERANCE
+AS DxDesigner_Common_Parts:Res_v_0603 PKG_TYPE=0603_MY
+AS DxDesigner_Common_Parts:Res_v_0603 PART_NUMBER
+AS DxDesigner_Common_Parts:Res_v_0603 INOV_VER_REC=13:53:4_7-3-14
+AS DxDesigner_Common_Parts:Res_v_0603 PINORDER=1 2
+AP DxDesigner_Common_Parts:Res_v_0603 1 #=1
+AP DxDesigner_Common_Parts:Res_v_0603 1 PINTYPE=ANALOG
+AP DxDesigner_Common_Parts:Res_v_0603 2 #=2
+AP DxDesigner_Common_Parts:Res_v_0603 2 PINTYPE=ANALOG
+|Q DxDesigner_Common_Parts:THERMISTOR_103AT 1
+AS DxDesigner_Common_Parts:THERMISTOR_103AT PINSWAP=(1,2)
+AS DxDesigner_Common_Parts:THERMISTOR_103AT REFDES=R?
+AS DxDesigner_Common_Parts:THERMISTOR_103AT DEVICE=THERMISTOR_103AT
+AS DxDesigner_Common_Parts:THERMISTOR_103AT VALUE
+AS DxDesigner_Common_Parts:THERMISTOR_103AT TOLERANCE
+AS DxDesigner_Common_Parts:THERMISTOR_103AT PKG_TYPE=THERMISTOR_103AT
+AS DxDesigner_Common_Parts:THERMISTOR_103AT PART_NUMBER
+AS DxDesigner_Common_Parts:THERMISTOR_103AT INOV_VER_REC=16:34:1_8-6-14
+AS DxDesigner_Common_Parts:THERMISTOR_103AT PINORDER=1 2
+AP DxDesigner_Common_Parts:THERMISTOR_103AT 1 #=1
+AP DxDesigner_Common_Parts:THERMISTOR_103AT 1 PINTYPE=ANALOG
+AP DxDesigner_Common_Parts:THERMISTOR_103AT 2 #=2
+AP DxDesigner_Common_Parts:THERMISTOR_103AT 2 PINTYPE=ANALOG
+G GND
+M DxDesigner_Library:Battery_Monitor_BQ27520-G3 $15I1
+I $15I1 DxDesigner_Library:Battery_Monitor_BQ27520-G3 BATTERY+ $15N250 BAT_LOW $15N74 BATTERY+ BATTERY+ SCL_TO_FPGA_CPLD SDA_TO_FPGA_CPLD BAT_HIGH_TO_CPLD $15N96 $15N95 $15N71 $15N30 GND GND PART_NUMBER=BQ27520-G3`REFDES=U?`
+|R 14:22:0_7-11-14
+API $15I1 DxDesigner_Library:Battery_Monitor_BQ27520-G3 1 #=E2
+API $15I1 DxDesigner_Library:Battery_Monitor_BQ27520-G3 2 #=B2
+API $15I1 DxDesigner_Library:Battery_Monitor_BQ27520-G3 3 #=C3
+API $15I1 DxDesigner_Library:Battery_Monitor_BQ27520-G3 4 #=E3
+API $15I1 DxDesigner_Library:Battery_Monitor_BQ27520-G3 5 #=D2
+API $15I1 DxDesigner_Library:Battery_Monitor_BQ27520-G3 6 #=E1
+API $15I1 DxDesigner_Library:Battery_Monitor_BQ27520-G3 7 #=A3
+API $15I1 DxDesigner_Library:Battery_Monitor_BQ27520-G3 8 #=B3
+API $15I1 DxDesigner_Library:Battery_Monitor_BQ27520-G3 9 #=A2
+API $15I1 DxDesigner_Library:Battery_Monitor_BQ27520-G3 10 #=B1
+API $15I1 DxDesigner_Library:Battery_Monitor_BQ27520-G3 11 #=A1
+API $15I1 DxDesigner_Library:Battery_Monitor_BQ27520-G3 12 #=D3
+API $15I1 DxDesigner_Library:Battery_Monitor_BQ27520-G3 13 #=D1
+API $15I1 DxDesigner_Library:Battery_Monitor_BQ27520-G3 14 #=C2
+API $15I1 DxDesigner_Library:Battery_Monitor_BQ27520-G3 15 #=C1
+M DxDesigner_Common_Parts:cap_0603 $15I26
+I $15I26 DxDesigner_Common_Parts:cap_0603 $15N30 GND VALUE=1.0uF`REFDES=C?`
+|R 13:47:58_7-25-14
+API $15I26 DxDesigner_Common_Parts:cap_0603 1 #=1
+API $15I26 DxDesigner_Common_Parts:cap_0603 2 #=2
+M DxDesigner_Common_Parts:cap_0603 $15I34
+I $15I34 DxDesigner_Common_Parts:cap_0603 BATTERY+ GND VALUE=0.1uF`REFDES=C?`
+|R 13:47:58_7-25-14
+API $15I34 DxDesigner_Common_Parts:cap_0603 1 #=1
+API $15I34 DxDesigner_Common_Parts:cap_0603 2 #=2
+M DxDesigner_Common_Parts:cap_0603 $15I48
+I $15I48 DxDesigner_Common_Parts:cap_0603 BATTERY+ GND VALUE=0.1uF`REFDES=C?`
+|R 13:47:58_7-25-14
+API $15I48 DxDesigner_Common_Parts:cap_0603 1 #=1
+API $15I48 DxDesigner_Common_Parts:cap_0603 2 #=2
+M DxDesigner_Common_Parts:cap_0603 $15I57
+I $15I57 DxDesigner_Common_Parts:cap_0603 $15N74 GND VALUE=33nF`REFDES=C?`
+|R 13:47:58_7-25-14
+API $15I57 DxDesigner_Common_Parts:cap_0603 1 #=1
+API $15I57 DxDesigner_Common_Parts:cap_0603 2 #=2
+M DxDesigner_Common_Parts:cap_0603 $15I61
+I $15I61 DxDesigner_Common_Parts:cap_0603 $15N71 GND VALUE=0.1uF`REFDES=C?`
+|R 13:47:58_7-25-14
+API $15I61 DxDesigner_Common_Parts:cap_0603 1 #=1
+API $15I61 DxDesigner_Common_Parts:cap_0603 2 #=2
+M DxDesigner_Common_Parts:Res_0603 $15I67
+I $15I67 DxDesigner_Common_Parts:Res_0603 THERMISTOR+ $15N71 VALUE=1k`REFDES=R?`
+|R 12:22:1_7-1-14
+API $15I67 DxDesigner_Common_Parts:Res_0603 1 #=1
+API $15I67 DxDesigner_Common_Parts:Res_0603 2 #=2
+M DxDesigner_Common_Parts:Res_0603 $15I78
+I $15I78 DxDesigner_Common_Parts:Res_0603 $15N74 THERMISTOR+ VALUE=18.2k`REFDES=R?`
+|R 12:22:1_7-1-14
+API $15I78 DxDesigner_Common_Parts:Res_0603 1 #=1
+API $15I78 DxDesigner_Common_Parts:Res_0603 2 #=2
+M DxDesigner_Common_Parts:Res_0603 $15I86
+I $15I86 DxDesigner_Common_Parts:Res_0603 $15N74 $15N30 VALUE=1.8M`REFDES=R?`
+|R 12:22:1_7-1-14
+API $15I86 DxDesigner_Common_Parts:Res_0603 1 #=1
+API $15I86 DxDesigner_Common_Parts:Res_0603 2 #=2
+M DxDesigner_Common_Parts:cap_0603 $15I97
+I $15I97 DxDesigner_Common_Parts:cap_0603 $15N95 $15N96 VALUE=0.1uF`REFDES=C?`
+|R 13:47:58_7-25-14
+API $15I97 DxDesigner_Common_Parts:cap_0603 1 #=1
+API $15I97 DxDesigner_Common_Parts:cap_0603 2 #=2
+M DxDesigner_Common_Parts:cap_0603 $15I102
+I $15I102 DxDesigner_Common_Parts:cap_0603 $15N95 GND VALUE=0.1uF`REFDES=C?`
+|R 13:47:58_7-25-14
+API $15I102 DxDesigner_Common_Parts:cap_0603 1 #=1
+API $15I102 DxDesigner_Common_Parts:cap_0603 2 #=2
+M DxDesigner_Common_Parts:cap_0603 $15I106
+I $15I106 DxDesigner_Common_Parts:cap_0603 GND $15N96 VALUE=0.1uF`REFDES=C?`
+|R 13:47:58_7-25-14
+API $15I106 DxDesigner_Common_Parts:cap_0603 1 #=1
+API $15I106 DxDesigner_Common_Parts:cap_0603 2 #=2
+M DxDesigner_Common_Parts:Res_0603 $15I121
+I $15I121 DxDesigner_Common_Parts:Res_0603 $15N95 BATTERY_PACK- VALUE=100`REFDES=R?`
+|R 12:22:1_7-1-14
+API $15I121 DxDesigner_Common_Parts:Res_0603 1 #=1
+API $15I121 DxDesigner_Common_Parts:Res_0603 2 #=2
+M DxDesigner_Common_Parts:Res_0603 $15I125
+I $15I125 DxDesigner_Common_Parts:Res_0603 $15N96 GND VALUE=100`REFDES=R?`
+|R 12:22:1_7-1-14
+API $15I125 DxDesigner_Common_Parts:Res_0603 1 #=1
+API $15I125 DxDesigner_Common_Parts:Res_0603 2 #=2
+M DxDesigner_Common_Parts:Res_0603 $15I142
+I $15I142 DxDesigner_Common_Parts:Res_0603 GND BATTERY_PACK- VALUE=0.01`TOLERANCE=1%`PART_NUMBER=ERJ-M03NF10MV`REFDES=R?`
+|R 12:22:1_7-1-14
+API $15I142 DxDesigner_Common_Parts:Res_0603 1 #=1
+API $15I142 DxDesigner_Common_Parts:Res_0603 2 #=2
+M DxDesigner_Common_Parts:Res_0603 $15I175
+I $15I175 DxDesigner_Common_Parts:Res_0603 SCL_TO_FPGA_CPLD VCC1P8 VALUE=10k`REFDES=R?`
+|R 12:22:1_7-1-14
+API $15I175 DxDesigner_Common_Parts:Res_0603 1 #=1
+API $15I175 DxDesigner_Common_Parts:Res_0603 2 #=2
+M DxDesigner_Common_Parts:Res_0603 $15I179
+I $15I179 DxDesigner_Common_Parts:Res_0603 SDA_TO_FPGA_CPLD VCC1P8 VALUE=10k`REFDES=R?`
+|R 12:22:1_7-1-14
+API $15I179 DxDesigner_Common_Parts:Res_0603 1 #=1
+API $15I179 DxDesigner_Common_Parts:Res_0603 2 #=2
+M DxDesigner_Library:PUSH_BUTTON $15I236
+I $15I236 DxDesigner_Library:PUSH_BUTTON BAT_HIGH_TO_CPLD ? GND PKG_TYPE=PUSH_BUTTON`REFDES=PB?`
+|R 14:23:13_7-10-14
+API $15I236 DxDesigner_Library:PUSH_BUTTON 1 #=1
+API $15I236 DxDesigner_Library:PUSH_BUTTON 2 #=4
+API $15I236 DxDesigner_Library:PUSH_BUTTON 3 #=3
+M DxDesigner_Common_Parts:Res_0603 $15I246
+I $15I246 DxDesigner_Common_Parts:Res_0603 $15N250 RECHARGE_EN VALUE=25k`REFDES=R?`
+|R 12:22:1_7-1-14
+API $15I246 DxDesigner_Common_Parts:Res_0603 1 #=1
+API $15I246 DxDesigner_Common_Parts:Res_0603 2 #=2
+M DxDesigner_Common_Parts:Res_v_0603 $15I254
+I $15I254 DxDesigner_Common_Parts:Res_v_0603 $15N250 BATT_GD_N_TO_CPLD VALUE=25k`REFDES=R?`
+|R 13:53:4_7-3-14
+API $15I254 DxDesigner_Common_Parts:Res_v_0603 1 #=1
+API $15I254 DxDesigner_Common_Parts:Res_v_0603 2 #=2
+M DxDesigner_Common_Parts:Res_v_0603 $15I261
+I $15I261 DxDesigner_Common_Parts:Res_v_0603 BAT_LOW_TO_CPLD BAT_LOW VALUE=25k`REFDES=R?`
+|R 13:53:4_7-3-14
+API $15I261 DxDesigner_Common_Parts:Res_v_0603 1 #=1
+API $15I261 DxDesigner_Common_Parts:Res_v_0603 2 #=2
+M DxDesigner_Common_Parts:THERMISTOR_103AT $15I285
+I $15I285 DxDesigner_Common_Parts:THERMISTOR_103AT BATTERY_PACK- INTERNAL_THERM PART_NUMBER=103AT-4`VALUE=10K`TOLERANCE=1%`REFDES=R?`
+|R 16:34:1_8-6-14
+API $15I285 DxDesigner_Common_Parts:THERMISTOR_103AT 1 #=1
+API $15I285 DxDesigner_Common_Parts:THERMISTOR_103AT 2 #=2
+EW

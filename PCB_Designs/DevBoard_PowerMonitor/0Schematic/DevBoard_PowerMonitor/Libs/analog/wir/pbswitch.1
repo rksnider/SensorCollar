@@ -1,0 +1,49 @@
+| Wirelist created using version 5.4.
+V 5.4
+K 175043131300 pbswitch
+DW pbswitch
+Q Case
+|Q Analog:res1 1
+AS Analog:res1 PARTS=1
+AS Analog:res1 VALUE=
+AS Analog:res1 REFDES=R?
+AS Analog:res1 ORDER=MODEL$ VALUE$ TC1= TC2=
+AS Analog:res1 PINOFF
+AS Analog:res1 PREFIX=R
+AS Analog:res1 PKG_TYPE=RES
+AS Analog:res1 PINORDER=N2 N1
+AP Analog:res1 1 PINTYPE=BI
+AP Analog:res1 1 #=2
+AP Analog:res1 2 PINTYPE=BI
+AP Analog:res1 2 #=1
+|Q Analog:res1 2
+AS Analog:res1 PKG_TYPE=RES
+AS Analog:res1 PREFIX=R
+AS Analog:res1 PINOFF
+AS Analog:res1 ORDER=MODEL$ VALUE$ TC1= TC2=
+AS Analog:res1 PARTS=1
+AS Analog:res1 REFDES=R?
+AS Analog:res1 VALUE=
+AS Analog:res1 PINORDER=N2 N1
+AP Analog:res1 1 #=2
+AP Analog:res1 1 PINTYPE=BI
+AP Analog:res1 2 #=1
+AP Analog:res1 2 PINTYPE=BI
+G GND
+M Analog:res1 $1I1
+I $1I1 Analog:res1 N2 N1 REFDES=RON`VALUE=1*((@ON-1)*(-99E6)+.001)`
+|N 2
+M Analog:res1 $1I40
+I $1I40 Analog:res1 N1 GND REFDES=RN1`VALUE=10MEG`
+API $1I40 Analog:res1 1 #=2
+API $1I40 Analog:res1 2 #=1
+|N 2
+M Analog:res1 $1I41
+I $1I41 Analog:res1 N2 GND REFDES=RN2`VALUE=10MEG`
+API $1I41 Analog:res1 1 #=2
+API $1I41 Analog:res1 2 #=1
+P ? N1
+I N1 ? N1
+P ? N2
+I N2 ? N2
+EW

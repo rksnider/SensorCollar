@@ -1,0 +1,89 @@
+| Wirelist created using version 5.4.
+V 5.4
+K 289853188900 nand
+DW nand
+Q Case
+|Q Analog:dc 1
+AS Analog:dc PKG_TYPE=BATTERY
+AS Analog:dc ORDER=TYPE$ VOLTAGE$
+AS Analog:dc PREFIX=V
+AS Analog:dc PARTS=1
+AS Analog:dc PINOFF
+AS Analog:dc TYPE=DC
+AS Analog:dc VOLTAGE=15V
+AS Analog:dc CLASS=LAB
+AS Analog:dc PINORDER=N2 N1
+AP Analog:dc 1 #=2
+AP Analog:dc 1 PINTYPE=OUT
+AP Analog:dc 2 #=1
+AP Analog:dc 2 PINTYPE=IN
+|Q Analog:pmos 1
+AS Analog:pmos PINORDER=D G S VBB
+AS Analog:pmos PINOFF
+AS Analog:pmos PREFIX=M
+AS Analog:pmos ORDER=MODEL$ L= W= AD= AS= PD= PS= NRD= NRS=
+AS Analog:pmos REFDES=M?
+AS Analog:pmos MODEL=PSS
+AS Analog:pmos PARTS=1
+AS Analog:pmos PKG_TYPE=TO-5
+AP Analog:pmos 1 #=4
+AP Analog:pmos 1 PINTYPE=BI
+AP Analog:pmos 2 #=1
+AP Analog:pmos 2 PINTYPE=IN
+AP Analog:pmos 3 #=3
+AP Analog:pmos 3 PINTYPE=BI
+AP Analog:pmos 4 PINTYPE=IN
+AP Analog:pmos 4 #=2
+|Q Analog:nmos 1
+AS Analog:nmos MODEL=NSS
+AS Analog:nmos PARTS=1
+AS Analog:nmos PINOFF
+AS Analog:nmos PINORDER=D G S VBB
+AS Analog:nmos ORDER=MODEL$ L= W= AD= AS= PD= PS= NRD= NRS=
+AS Analog:nmos REFDES=M?
+AS Analog:nmos PREFIX=M
+AS Analog:nmos PKG_TYPE=TO-5
+AP Analog:nmos 1 #=4
+AP Analog:nmos 1 PINTYPE=BI
+AP Analog:nmos 2 #=1
+AP Analog:nmos 2 PINTYPE=IN
+AP Analog:nmos 3 #=3
+AP Analog:nmos 3 PINTYPE=BI
+AP Analog:nmos 4 #=2
+AP Analog:nmos 4 PINTYPE=IN
+G GND
+M Analog:dc $1I28
+I $1I28 Analog:dc GND $1N38 VOLTAGE=@VOLTAGE`
+API $1I28 Analog:dc 1 #=2
+API $1I28 Analog:dc 2 #=1
+M Analog:pmos $1I14
+I $1I14 Analog:pmos Y A $1N38 $1N38 REFDES=M4`
+API $1I14 Analog:pmos 1 #=4
+API $1I14 Analog:pmos 2 #=1
+API $1I14 Analog:pmos 3 #=3
+API $1I14 Analog:pmos 4 #=2
+M Analog:pmos $1I2
+I $1I2 Analog:pmos Y B $1N38 $1N38 REFDES=M3`
+API $1I2 Analog:pmos 1 #=4
+API $1I2 Analog:pmos 2 #=1
+API $1I2 Analog:pmos 3 #=3
+API $1I2 Analog:pmos 4 #=2
+M Analog:nmos $1I13
+I $1I13 Analog:nmos Y A $1N15 GND REFDES=M1`
+API $1I13 Analog:nmos 1 #=4
+API $1I13 Analog:nmos 2 #=1
+API $1I13 Analog:nmos 3 #=3
+API $1I13 Analog:nmos 4 #=2
+M Analog:nmos $1I1
+I $1I1 Analog:nmos $1N15 B GND GND REFDES=M2`
+API $1I1 Analog:nmos 1 #=4
+API $1I1 Analog:nmos 2 #=1
+API $1I1 Analog:nmos 3 #=3
+API $1I1 Analog:nmos 4 #=2
+P ? Y
+I Y ? Y
+P ? B
+I B ? B
+P ? A
+I A ? A
+EW

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<PartListerConfiguration version="2">
+  <Entry name="outputVersion" value="1"/>
+  <Entry name="outputFormat" value="HTML"/>
+  <Entry name="pagination" value="NO"/>
+  <Entry name="pagelength" value="65535"/>
+  <Entry name="delimiter" value=" "/>
+  <Entry name="delimiterbefore" value="NO"/>
+  <Entry name="delimiterafter" value="NO"/>
+  <Entry name="addTitleRow" value="YES"/>
+  <Entry name="ignoreColumnWidths" value="NO"/>
+  <Header>
+    <Line text="Part Lister output for $(NAME)"/>
+    <Line text="Generated on $(DATE)"/>
+  </Header>
+  <Columns>
+    <Column type="NUMBER" label="#" width="3"/>
+    <Column type="PROPERTY" property="DEVICE" label="DEVICE" width="10" sort="ASCENDING" priority="3" key="PRIMARY" display="Compress"/>
+    <Column type="PROPERTY" property="PART_NUMBER" label="PART_NUMBER" width="10" sort="ASCENDING" priority="2" key="PRIMARY" display="Full"/>
+    <Column type="PROPERTY" property="VALUE" label="VALUE" width="10" sort="ASCENDING" priority="1" key="PRIMARY" display="Compress"/>
+    <Column type="PROPERTY" property="TOLERANCE" label="TOLERANCE" width="5" display="Full"/>
+    <Column type="PROPERTY" property="REFDES" label="REFDES" width="10" sort="ASCENDING" key="SECONDARY" display="Compress"/>
+    <Column type="QUANTITY" label="QTY" width="5"/>
+  </Columns>
+</PartListerConfiguration>

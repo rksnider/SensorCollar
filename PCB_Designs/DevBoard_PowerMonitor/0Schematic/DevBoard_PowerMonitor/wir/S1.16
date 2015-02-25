@@ -1,0 +1,134 @@
+| Wirelist created using version 6.0 
+V 6.0
+DW S1
+|Q DxDesigner_Library:Octal_Buffer_SN74LVC244A 1
+AS DxDesigner_Library:Octal_Buffer_SN74LVC244A INOV_VER_REC=16:37:58_7-28-14
+AS DxDesigner_Library:Octal_Buffer_SN74LVC244A DEVICE=Octal_Buffer_SN74LVC244A
+AS DxDesigner_Library:Octal_Buffer_SN74LVC244A REFDES=U?
+AS DxDesigner_Library:Octal_Buffer_SN74LVC244A PKG_TYPE=Octal_Buffer_PW
+AS DxDesigner_Library:Octal_Buffer_SN74LVC244A PART_NUMBER=SN74LVC244APWR
+AS DxDesigner_Library:Octal_Buffer_SN74LVC244A PINORDER=1A1 1A2 1A3 1A4 1OE_N 1Y1 1Y2 1Y3 1Y4 2A1 2A2 2A3 2A4 2OE_N 2Y1 2Y2 2Y3 2Y4 GND_10 VCC
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 1 #=2
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 1 PINTYPE=IN
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 2 #=4
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 2 PINTYPE=IN
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 3 #=6
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 3 PINTYPE=IN
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 4 #=8
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 4 PINTYPE=IN
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 5 #=1
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 5 PINTYPE=IN
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 6 #=18
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 6 PINTYPE=IN
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 7 #=16
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 7 PINTYPE=IN
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 8 #=14
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 8 PINTYPE=IN
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 9 #=12
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 9 PINTYPE=IN
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 10 #=11
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 10 PINTYPE=IN
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 11 #=13
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 11 PINTYPE=IN
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 12 #=15
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 12 PINTYPE=IN
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 13 #=17
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 13 PINTYPE=IN
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 14 #=19
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 14 PINTYPE=IN
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 15 #=9
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 15 PINTYPE=IN
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 16 #=7
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 16 PINTYPE=IN
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 17 #=5
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 17 PINTYPE=IN
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 18 #=3
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 18 PINTYPE=IN
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 19 #=10
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 19 PINTYPE=IN
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 20 #=20
+AP DxDesigner_Library:Octal_Buffer_SN74LVC244A 20 PINTYPE=IN
+|Q DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 1
+AS DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV INOV_VER_REC=17:22:37_6-30-14
+AS DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV DEVICE=Resistor_Pack_EXB-2HV105JV
+AS DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV REFDES=R?
+AS DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV PKG_TYPE=Resistor_Pack_EXB-2HV105JV
+AS DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV PART_NUMBER=EXB-2HV105JV
+AS DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV VALUE=1M
+AS DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV PINORDER=1R1 1R2 1R3 1R4 1R5 1R6 1R7 1R8 2R1 2R2 2R3 2R4 2R5 2R6 2R7 2R8
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 1 #=1
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 1 PINTYPE=IN
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 2 #=2
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 2 PINTYPE=IN
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 3 #=3
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 3 PINTYPE=IN
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 4 #=4
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 4 PINTYPE=IN
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 5 #=5
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 5 PINTYPE=IN
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 6 #=6
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 6 PINTYPE=IN
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 7 #=7
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 7 PINTYPE=IN
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 8 #=8
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 8 PINTYPE=IN
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 9 #=16
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 9 PINTYPE=IN
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 10 #=15
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 10 PINTYPE=IN
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 11 #=14
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 11 PINTYPE=IN
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 12 #=13
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 12 PINTYPE=IN
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 13 #=12
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 13 PINTYPE=IN
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 14 #=11
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 14 PINTYPE=IN
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 15 #=10
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 15 PINTYPE=IN
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 16 #=9
+AP DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 16 PINTYPE=IN
+G GND
+M DxDesigner_Library:Octal_Buffer_SN74LVC244A $16I1
+I $16I1 DxDesigner_Library:Octal_Buffer_SN74LVC244A CLOCK_CNTRL_TO_CPLD SOLAR_CTRL_SHDN_N_TO_CPLD VCC1P1_RUN_TO_CPLD VCC2P5_RUN_TO_CPLD OBUFFER_ENABLE_OUT_TO_CPLD CLOCK_CNTRL SOLAR_CTRL_SHDN_N VCC1P1_RUN VCC2P5_RUN FPGA_ON_TO_CPLD VCC3P3_RUN_TO_CPLD MAIN_ON_TO_CPLD RECHARGE_EN_TO_CPLD OBUFFER_ENABLE_OUT_TO_CPLD FPGA_ON VCC3P3_RUN MAIN_ON RECHARGE_EN GND VCC1P8 PKG_TYPE=Octal_Buffer_PW`PART_NUMBER=SN74LVC244APWR`REFDES=U?`DEVICE=Octal_Buffer_SN74LVC244A`
+|R 16:37:58_7-28-14
+API $16I1 DxDesigner_Library:Octal_Buffer_SN74LVC244A 1 #=2
+API $16I1 DxDesigner_Library:Octal_Buffer_SN74LVC244A 2 #=4
+API $16I1 DxDesigner_Library:Octal_Buffer_SN74LVC244A 3 #=6
+API $16I1 DxDesigner_Library:Octal_Buffer_SN74LVC244A 4 #=8
+API $16I1 DxDesigner_Library:Octal_Buffer_SN74LVC244A 5 #=1
+API $16I1 DxDesigner_Library:Octal_Buffer_SN74LVC244A 6 #=18
+API $16I1 DxDesigner_Library:Octal_Buffer_SN74LVC244A 7 #=16
+API $16I1 DxDesigner_Library:Octal_Buffer_SN74LVC244A 8 #=14
+API $16I1 DxDesigner_Library:Octal_Buffer_SN74LVC244A 9 #=12
+API $16I1 DxDesigner_Library:Octal_Buffer_SN74LVC244A 10 #=11
+API $16I1 DxDesigner_Library:Octal_Buffer_SN74LVC244A 11 #=13
+API $16I1 DxDesigner_Library:Octal_Buffer_SN74LVC244A 12 #=15
+API $16I1 DxDesigner_Library:Octal_Buffer_SN74LVC244A 13 #=17
+API $16I1 DxDesigner_Library:Octal_Buffer_SN74LVC244A 14 #=19
+API $16I1 DxDesigner_Library:Octal_Buffer_SN74LVC244A 15 #=9
+API $16I1 DxDesigner_Library:Octal_Buffer_SN74LVC244A 16 #=7
+API $16I1 DxDesigner_Library:Octal_Buffer_SN74LVC244A 17 #=5
+API $16I1 DxDesigner_Library:Octal_Buffer_SN74LVC244A 18 #=3
+API $16I1 DxDesigner_Library:Octal_Buffer_SN74LVC244A 19 #=10
+API $16I1 DxDesigner_Library:Octal_Buffer_SN74LVC244A 20 #=20
+M DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV $16I63
+I $16I63 DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV FPGA_ON VCC3P3_RUN ? RECHARGE_EN CLOCK_CNTRL ? VCC1P1_RUN VCC2P5_RUN GND GND GND GND GND GND GND GND PART_NUMBER=EXB-2HV105JV`REFDES=R?`VALUE=1M Ohm`DEVICE=Resistor_Pack_EXB-2HV105JV`
+|R 17:22:37_6-30-14
+API $16I63 DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 1 #=1
+API $16I63 DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 2 #=2
+API $16I63 DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 3 #=3
+API $16I63 DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 4 #=4
+API $16I63 DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 5 #=5
+API $16I63 DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 6 #=6
+API $16I63 DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 7 #=7
+API $16I63 DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 8 #=8
+API $16I63 DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 9 #=16
+API $16I63 DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 10 #=15
+API $16I63 DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 11 #=14
+API $16I63 DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 12 #=13
+API $16I63 DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 13 #=12
+API $16I63 DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 14 #=11
+API $16I63 DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 15 #=10
+API $16I63 DxDesigner_Common_Parts:Resistor_Pack_EXB-2HV105JV 16 #=9
+EW

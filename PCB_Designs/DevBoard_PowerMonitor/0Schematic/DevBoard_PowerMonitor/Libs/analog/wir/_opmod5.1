@@ -1,0 +1,65 @@
+| Wirelist created using version 5.4.
+| Sch_Warning - Component $1I37 (RB), Symbol=discretes:res at (410, 260), is not connected.
+| Sch_Warning - Component $1I39 (RC), Symbol=discretes:res at (640, 260), is not connected.
+| Sch_Warning - Component $1I55 (RA), Symbol=discretes:res at (200, 250), is not connected.
+V 5.4
+K 314945886600 _opmod5
+DW _opmod5
+Q Case
+|Q Analog:_op5pin 1
+AS Analog:_op5pin ORDER=MODEL$
+AS Analog:_op5pin PREFIX=X
+AS Analog:_op5pin PINORDER=VI+ VI- VP+ VP- VO
+AS Analog:_op5pin MODEL=MODNAME
+AP Analog:_op5pin 1 PINTYPE=IN
+AP Analog:_op5pin 2 PINTYPE=IN
+AP Analog:_op5pin 3 PINTYPE=IN
+AP Analog:_op5pin 4 PINTYPE=IN
+AP Analog:_op5pin 5 PINTYPE=IN
+|Q discretes:res 2
+AS discretes:res PREFIX=R
+AS discretes:res PINOFF
+AS discretes:res REFDES=R?
+AS discretes:res DEVICE
+AS discretes:res PKG_TYPE
+AS discretes:res VALUE
+AS discretes:res PINORDER=N2 N1
+AS discretes:res INOV_VER_REC=20:33_8-26-04
+AP discretes:res 1 PINTYPE=BI
+AP discretes:res 1 #
+AP discretes:res 2 PINTYPE=BI
+AP discretes:res 2 #
+|Q discretes:res 1
+AS discretes:res PINOFF
+AS discretes:res REFDES=R?
+AS discretes:res VALUE
+AS discretes:res PKG_TYPE
+AS discretes:res PREFIX=R
+AS discretes:res DEVICE
+AS discretes:res PINORDER=N2 N1
+AS discretes:res INOV_VER_REC=20:32_8-26-04
+AP discretes:res 1 PINTYPE=BI
+AP discretes:res 1 #
+AP discretes:res 2 PINTYPE=BI
+AP discretes:res 2 #
+G GND
+M Analog:_op5pin $1I1
+I $1I1 Analog:_op5pin VI+ VI- VP+ VP- VO MODEL=`
+|N 2
+M discretes:res $1I37
+I $1I37 discretes:res ? ? REFDES=RB`VALUE=10MEG`
+|N 2
+M discretes:res $1I39
+I $1I39 discretes:res ? ? REFDES=RC`VALUE=10MEG`
+M discretes:res $1I36
+I $1I36 discretes:res N3 N2 REFDES=RBC`VALUE=10MEG`
+API $1I36 discretes:res 1 #=2
+API $1I36 discretes:res 2 #=1
+|N 2
+M discretes:res $1I55
+I $1I55 discretes:res ? ? VALUE=10MEG`REFDES=RA`
+M discretes:res $1I58
+I $1I58 discretes:res N2 N1 VALUE=10MEG`REFDES=RAB`
+API $1I58 discretes:res 1 #=2
+API $1I58 discretes:res 2 #=1
+EW

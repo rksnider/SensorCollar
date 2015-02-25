@@ -1,0 +1,42 @@
+| Wirelist created using version 5.4.
+| Sch_Warning - Component $1I64 (RB), Symbol=discretes:res at (400, 260), is not connected.
+| Sch_Warning - Component $1I39 (RC), Symbol=discretes:res at (640, 260), is not connected.
+V 5.4
+K 36761378790 _opmod7
+DW _opmod7
+Q Case
+|Q Analog:_op7pin 1
+AS Analog:_op7pin PINORDER=VI+ VI- VP+ VP- VO N1 N2
+AS Analog:_op7pin MODEL MODNAME
+AS Analog:_op7pin PREFIX=X
+AS Analog:_op7pin ORDER=MODEL$
+AP Analog:_op7pin 1 PINTYPE=IN
+AP Analog:_op7pin 2 PINTYPE=IN
+AP Analog:_op7pin 3 PINTYPE=IN
+AP Analog:_op7pin 4 PINTYPE=IN
+AP Analog:_op7pin 5 PINTYPE=OUT
+AP Analog:_op7pin 6 PINTYPE=IN
+AP Analog:_op7pin 7 PINTYPE=IN
+|Q discretes:res 2
+AS discretes:res PREFIX=R
+AS discretes:res PINOFF
+AS discretes:res REFDES=R?
+AS discretes:res DEVICE
+AS discretes:res PKG_TYPE
+AS discretes:res VALUE
+AS discretes:res PINORDER=N2 N1
+AS discretes:res INOV_VER_REC=20:33_8-26-04
+AP discretes:res 1 PINTYPE=BI
+AP discretes:res 1 #
+AP discretes:res 2 PINTYPE=BI
+AP discretes:res 2 #
+G GND
+M Analog:_op7pin $1I1
+I $1I1 Analog:_op7pin VI+ VI- VP+ VP- VO N1 N2 MODEL=`
+|N 2
+M discretes:res $1I64
+I $1I64 discretes:res ? ? REFDES=RB`VALUE=10MEG`
+|N 2
+M discretes:res $1I39
+I $1I39 discretes:res ? ? VALUE=10MEG`REFDES=RC`
+EW

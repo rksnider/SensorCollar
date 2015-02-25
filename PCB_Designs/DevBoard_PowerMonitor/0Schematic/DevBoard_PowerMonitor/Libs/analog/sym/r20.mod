@@ -1,0 +1,2 @@
+.MODEL R20 RES (R=1 DEV 20%)
+

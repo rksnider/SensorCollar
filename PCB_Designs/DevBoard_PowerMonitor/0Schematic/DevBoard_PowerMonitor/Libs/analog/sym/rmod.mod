@@ -1,0 +1,1 @@
+.MODEL RMOD RES (R=1 DEV 10%)

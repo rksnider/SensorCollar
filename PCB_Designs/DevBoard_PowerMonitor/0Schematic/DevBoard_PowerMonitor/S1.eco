@@ -1,0 +1,35 @@
+*PADS-ECO-V9.5-MILS*
+*REMARK*  old file: C:\Users\kyler.callahan\Documents\work\DevBoard_PowerMonitor\1Working Version\DevBoard_PowerMonitor_worki01.asc
+*REMARK*  new file: C:\Users\kyler.callahan\Documents\work\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\S1.asc
+*REMARK*  created by ECOGEN (Version 6.4v) on 9/23/2014 2:47:35 PM
+*DELPIN*
+R1.6  SOLAR_CTRL_SHDN_N
+*DEL_ATTRIBUTE*	PCB	DEFAULT
+"CAM.Apply Oversize To All Pads"
+*DEL_ATTRIBUTE*	PART	U12
+"Geometry.Height"
+*DEL_ATTRIBUTE*	PART	U3
+"Geometry.Height"
+*DEL_ATTRIBUTE*	PART	U10
+"Geometry.Height"
+*DEL_ATTRIBUTE*	PART	U17
+"Geometry.Height"
+*DEL_ATTRIBUTE*	PART	U11
+"Geometry.Height"
+*DEL_ATTRIBUTE*	PART	U14
+"Geometry.Height"
+*DEL_ATTRIBUTE*	PART	U13
+"Geometry.Height"
+*DEL_ATTRIBUTE*	PART	U26
+"Geometry.Height"
+*DEL_ATTRIBUTE*	PART	U9
+"Geometry.Height"
+*DEL_ATTRIBUTE*	PART	U1
+"Geometry.Height"
+*DEL_ATTRIBUTE*	PART	S1
+"Geometry.Height"
+*DEL_ATTRIBUTE*	PART	S2
+"Geometry.Height"
+
+*REMARK*  Deleted pins: 1,  Added pins: 0
+*END*

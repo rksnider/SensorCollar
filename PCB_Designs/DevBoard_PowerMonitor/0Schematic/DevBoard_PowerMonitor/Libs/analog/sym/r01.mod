@@ -1,0 +1,2 @@
+.MODEL R01 RES (R=1 DEV 1%)
+

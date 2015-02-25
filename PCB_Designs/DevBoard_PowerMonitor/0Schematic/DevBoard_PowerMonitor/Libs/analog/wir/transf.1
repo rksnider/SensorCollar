@@ -1,0 +1,44 @@
+| Wirelist created using version 5.4.
+| Sch_Warning - Component $1I3 (L?), Symbol=discretes:ind at (570, 510), is not connected.
+| Sch_Warning - Component $1I4 (L?), Symbol=discretes:ind at (770, 510), is not connected.
+V 5.4
+K 294898552200 transf
+DW transf
+Q Case
+|Q discretes:ind 2
+AS discretes:ind PREFIX=L
+AS discretes:ind PINOFF
+AS discretes:ind REFDES=L?
+AS discretes:ind PKG_TYPE
+AS discretes:ind DEVICE
+AS discretes:ind VALUE
+AS discretes:ind PINORDER=N2 N1
+AS discretes:ind INOV_VER_REC=20:34_8-26-04
+AP discretes:ind 1 PINTYPE=BI
+AP discretes:ind 1 #=2
+AP discretes:ind 2 PINTYPE=BI
+AP discretes:ind 2 #=1
+|Q Analog:tcore 1
+AS Analog:tcore LABEL=K1
+AS Analog:tcore PREFIX=K
+AS Analog:tcore COEFFICIENT=0.999
+AS Analog:tcore ORDER=L1$ L2$ COEFFICIENT$ MODEL$
+AS Analog:tcore L2=L2
+AS Analog:tcore L1=L1
+|N 2
+M discretes:ind $1I3
+I $1I3 discretes:ind ? ? REFDES=L?`VALUE=@LP`LABEL=@PRIM`
+|N 2
+M discretes:ind $1I4
+I $1I4 discretes:ind ? ? REFDES=L?`VALUE=@LS`LABEL=@SEC`
+M Analog:tcore $1I7
+I $1I7 Analog:tcore COEFFICIENT=@COEFF`L1=@PRIM`L2=@SEC`
+P ? N4
+I N4 ? N4
+P ? N3
+I N3 ? N3
+P ? N1
+I N1 ? N1
+P ? N2
+I N2 ? N2
+EW

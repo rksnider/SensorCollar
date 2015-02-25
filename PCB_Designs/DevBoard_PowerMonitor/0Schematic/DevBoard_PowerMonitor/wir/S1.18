@@ -1,0 +1,73 @@
+| Wirelist created using version 6.0 
+V 6.0
+DW S1
+|Q DxDesigner_Library:RTC_DS1371 1
+AS DxDesigner_Library:RTC_DS1371 DEVICE=RTC_DS1371
+AS DxDesigner_Library:RTC_DS1371 REFDES=U?
+AS DxDesigner_Library:RTC_DS1371 PKG_TYPE=RTC_DS1371
+AS DxDesigner_Library:RTC_DS1371 PART_NUMBER=DS1371
+AS DxDesigner_Library:RTC_DS1371 INOV_VER_REC=12:31:59_8-13-14
+AS DxDesigner_Library:RTC_DS1371 PINORDER=GND SCL SDA SQW/INT_N VCC WDS X1 X2
+AP DxDesigner_Library:RTC_DS1371 1 #=4
+AP DxDesigner_Library:RTC_DS1371 1 PINTYPE=IN
+AP DxDesigner_Library:RTC_DS1371 2 #=6
+AP DxDesigner_Library:RTC_DS1371 2 PINTYPE=IN
+AP DxDesigner_Library:RTC_DS1371 3 #=5
+AP DxDesigner_Library:RTC_DS1371 3 PINTYPE=IN
+AP DxDesigner_Library:RTC_DS1371 4 #=7
+AP DxDesigner_Library:RTC_DS1371 4 PINTYPE=IN
+AP DxDesigner_Library:RTC_DS1371 5 #=8
+AP DxDesigner_Library:RTC_DS1371 5 PINTYPE=IN
+AP DxDesigner_Library:RTC_DS1371 6 #=3
+AP DxDesigner_Library:RTC_DS1371 6 PINTYPE=IN
+AP DxDesigner_Library:RTC_DS1371 7 #=1
+AP DxDesigner_Library:RTC_DS1371 7 PINTYPE=IN
+AP DxDesigner_Library:RTC_DS1371 8 #=2
+AP DxDesigner_Library:RTC_DS1371 8 PINTYPE=IN
+|Q DxDesigner_Library:Oscillation_Crystal 1
+AS DxDesigner_Library:Oscillation_Crystal DEVICE=Oscillation_Crystal
+AS DxDesigner_Library:Oscillation_Crystal REFDES=U?
+AS DxDesigner_Library:Oscillation_Crystal PKG_TYPE=Oscillation_Crystal
+AS DxDesigner_Library:Oscillation_Crystal PART_NUMBER=ABS07-120-32.768kHz-T
+AS DxDesigner_Library:Oscillation_Crystal INOV_VER_REC=12:39:37_8-13-14
+AS DxDesigner_Library:Oscillation_Crystal PINORDER=PIN0 PIN1
+AP DxDesigner_Library:Oscillation_Crystal 1 #=1
+AP DxDesigner_Library:Oscillation_Crystal 1 PINTYPE=IN
+AP DxDesigner_Library:Oscillation_Crystal 2 #=2
+AP DxDesigner_Library:Oscillation_Crystal 2 PINTYPE=IN
+|Q DxDesigner_Library:JUMPER_L 1
+AS DxDesigner_Library:JUMPER_L DEVICE=JUMPER_L
+AS DxDesigner_Library:JUMPER_L REFDES=J?
+AS DxDesigner_Library:JUMPER_L PKG_TYPE=JUMPER_L
+AS DxDesigner_Library:JUMPER_L INOV_VER_REC=12:21:15_6-2-14
+AS DxDesigner_Library:JUMPER_L PINORDER=IN1 IN2 OUT
+AP DxDesigner_Library:JUMPER_L 1 #=1
+AP DxDesigner_Library:JUMPER_L 1 PINTYPE=IN
+AP DxDesigner_Library:JUMPER_L 2 #=2
+AP DxDesigner_Library:JUMPER_L 2 PINTYPE=IN
+AP DxDesigner_Library:JUMPER_L 3 #=3
+AP DxDesigner_Library:JUMPER_L 3 PINTYPE=IN
+G GND
+M DxDesigner_Library:RTC_DS1371 $18I6
+I $18I6 DxDesigner_Library:RTC_DS1371 GND SCL_TO_FPGA_CPLD SDA_TO_FPGA_CPLD RTC_ALARM_TO_CPLD $18N47 GND $18N34 $18N36 PART_NUMBER=DS1371`REFDES=U?`
+|R 12:31:59_8-13-14
+API $18I6 DxDesigner_Library:RTC_DS1371 1 #=4
+API $18I6 DxDesigner_Library:RTC_DS1371 2 #=6
+API $18I6 DxDesigner_Library:RTC_DS1371 3 #=5
+API $18I6 DxDesigner_Library:RTC_DS1371 4 #=7
+API $18I6 DxDesigner_Library:RTC_DS1371 5 #=8
+API $18I6 DxDesigner_Library:RTC_DS1371 6 #=3
+API $18I6 DxDesigner_Library:RTC_DS1371 7 #=1
+API $18I6 DxDesigner_Library:RTC_DS1371 8 #=2
+M DxDesigner_Library:Oscillation_Crystal $18I16
+I $18I16 DxDesigner_Library:Oscillation_Crystal $18N36 $18N34 REFDES=U?`
+|R 12:39:37_8-13-14
+API $18I16 DxDesigner_Library:Oscillation_Crystal 1 #=1
+API $18I16 DxDesigner_Library:Oscillation_Crystal 2 #=2
+M DxDesigner_Library:JUMPER_L $18I38
+I $18I38 DxDesigner_Library:JUMPER_L $18N47 $18N47 BATTERY+ REFDES=J?`
+|R 12:21:15_6-2-14
+API $18I38 DxDesigner_Library:JUMPER_L 1 #=1
+API $18I38 DxDesigner_Library:JUMPER_L 2 #=2
+API $18I38 DxDesigner_Library:JUMPER_L 3 #=3
+EW

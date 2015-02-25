@@ -1,0 +1,59 @@
+** ECO In Report **
+
+Thu Feb 05 16:12:02 2015
+
+Input  File : C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1\D.eco
+Current Job : MCollar_DAUGHTER_working.pcb
+
+
+* Warning: deleting single-pin signal AUX_VCC
+* Warning: deleting single-pin signal BATT_GD_N_TO_CPLD
+* Warning: deleting single-pin signal BAT_HIGH_TO_CPLD
+* Warning: deleting single-pin signal BAT_LOW_TO_CPLD
+* Warning: deleting single-pin signal DATA_TX_CNTRL_TO_CPLD
+* Warning: deleting single-pin signal EXTINT_GPS_TO_FPGA
+* Warning: deleting single-pin signal GPS_CNTRL_TO_CPLD
+* Warning: deleting single-pin signal IM_1P8V_TO_CPLD
+* Warning: deleting single-pin signal IM_2P5V_TO_CPLD
+* Warning: deleting single-pin signal IM_CS_A_G_TO_FPGA
+* Warning: deleting single-pin signal IM_CS_M_TO_FPGA
+* Warning: deleting single-pin signal IM_DRDY_M_TO_FPGA
+* Warning: deleting single-pin signal IM_INT1_A_G_TO_FPGA
+* Warning: deleting single-pin signal IM_INT2_A_G_TO_FPGA
+* Warning: deleting single-pin signal IM_INT_M_TO_FPGA
+* Warning: deleting single-pin signal IM_SDO_A_G_TO_FPGA
+* Warning: deleting single-pin signal IM_SDO_M_TO_FPGA
+* Warning: deleting single-pin signal IM_SPI_SCLK_TO_FPGA
+* Warning: deleting single-pin signal IM_SPI_SDI_TO_FPGA
+* Warning: deleting single-pin signal INTERNAL_THERM
+* Warning: deleting single-pin signal LS_1P8V_CNTRL_TO_CPLD
+* Warning: deleting single-pin signal LS_3P3V_CNTRL_TO_CPLD
+* Warning: deleting single-pin signal MIC_DATA_L
+* Warning: deleting single-pin signal MIC_DATA_R
+* Warning: deleting single-pin signal MIC_L_CNTRL_TO_CPLD
+* Warning: deleting single-pin signal MIC_R_CNTRL_TO_CPLD
+* Warning: deleting single-pin signal MRAM_CNTRL_TO_CPLD
+* Warning: deleting single-pin signal MRAM_CS_N_TO_FPGA
+* Warning: deleting single-pin signal MRAM_SCK_TO_FPGA
+* Warning: deleting single-pin signal MRAM_SI_TO_FPGA
+* Warning: deleting single-pin signal MRAM_SO_TO_FPGA
+* Warning: deleting single-pin signal MRAM_WP_N_TO_FPGA
+* Warning: deleting single-pin signal RTC_ALARM_TO_CPLD
+* Warning: deleting single-pin signal RXD_GPS_TO_FPGA
+* Warning: deleting single-pin signal SDCARD_CD_DAT3_TO_FPGA
+* Warning: deleting single-pin signal SDCARD_CLK_TO_FPGA
+* Warning: deleting single-pin signal SDCARD_CMD_TO_FPGA
+* Warning: deleting single-pin signal SDCARD_DAT0_TO_FPGA
+* Warning: deleting single-pin signal SDCARD_DAT1_TO_FPGA
+* Warning: deleting single-pin signal SDCARD_DAT2_TO_FPGA
+* Warning: deleting single-pin signal SDCARD_DI_CD_DAT3_TO_FPGA
+* Warning: deleting single-pin signal SDCARD_DI_CLK_TO_FPGA
+* Warning: deleting single-pin signal SDCARD_DI_CMD_TO_FPGA
+* Warning: deleting single-pin signal SDCARD_DI_DAT0_TO_FPGA
+* Warning: deleting single-pin signal SDCARD_DI_DAT1_TO_FPGA
+* Warning: deleting single-pin signal SDCARD_DI_DAT2_TO_FPGA
+* Warning: deleting single-pin signal SOLAR_CTRL_ON_TO_CPLD
+* Warning: deleting single-pin signal SOLAR_CTRL_SHDN_N
+* Warning: deleting single-pin signal SOLAR_PGOOD_TO_CPLD
+* Warning: deleting single-pin signal TIMEPULSE_GPS_TO_FPGA
+* Warning: deleting single-pin signal TXD_GPS_TO_FPGA

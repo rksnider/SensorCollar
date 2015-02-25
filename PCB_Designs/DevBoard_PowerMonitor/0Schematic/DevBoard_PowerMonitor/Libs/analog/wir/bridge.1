@@ -1,0 +1,43 @@
+| Wirelist created using version 5.4.
+V 5.4
+K 324847370500 bridge
+DW bridge
+Q Case
+|Q Analog:dio1 1
+AS Analog:dio1 PKG_TYPE=59-03
+AS Analog:dio1 MODEL=D1N914
+AS Analog:dio1 REFDES=D?
+AS Analog:dio1 PREFIX=D
+AS Analog:dio1 PINOFF
+AS Analog:dio1 ORDER=MODEL$ AREA$
+AS Analog:dio1 PINORDER=P N
+AS Analog:dio1 PARTS=1
+AP Analog:dio1 1 #=2
+AP Analog:dio1 1 PINTYPE=IN
+AP Analog:dio1 2 #=1
+AP Analog:dio1 2 PINTYPE=OUT
+M Analog:dio1 $1I5
+I $1I5 Analog:dio1 DC- AC1 REFDES=D2`MODEL=@MODEL`
+API $1I5 Analog:dio1 1 #=2
+API $1I5 Analog:dio1 2 #=1
+M Analog:dio1 $1I6
+I $1I6 Analog:dio1 AC1 DC+ REFDES=D1`MODEL=@MODEL`
+API $1I6 Analog:dio1 1 #=2
+API $1I6 Analog:dio1 2 #=1
+M Analog:dio1 $1I4
+I $1I4 Analog:dio1 AC2 DC+ REFDES=D4`MODEL=@MODEL`
+API $1I4 Analog:dio1 1 #=2
+API $1I4 Analog:dio1 2 #=1
+M Analog:dio1 $1I1
+I $1I1 Analog:dio1 DC- AC2 REFDES=D3`MODEL=@MODEL`
+API $1I1 Analog:dio1 1 #=2
+API $1I1 Analog:dio1 2 #=1
+P ? DC+
+I DC+ ? DC+
+P ? DC-
+I DC- ? DC-
+P ? AC2
+I AC2 ? AC2
+P ? AC1
+I AC1 ? AC1
+EW
