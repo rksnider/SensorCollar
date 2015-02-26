@@ -54,14 +54,12 @@ use WORK.PC_STATUSCONTROL_PKG.All ;
 --!                               everything else.
 --! @param      master_clk_out    Output of the master clock to the FPGA.
 --!
---! @param      flash_clk_out         Flash clock.
---! @param      flash_cs_out          Flash chip select.
+--! @param      pfl_flash_clk_io      Parallel Flash Loader Flash clock.
+--! @param      pfl_flash_cs_io       Parallel Flash Loader Flash chip sel.
 --! @param      pfl_flash_data_io     Parallel Flash Loader Flash data bus.
---! @param      fpga_flash_data_io    FPGA Flash data bus.
---! @param      fpga_toflash_clk_in   FPGA to Flash clock.
---! @param      fpga_toflash_cs_in    FPGA to Flash chip select.
---! @param      fpga_toflash_data_io  FPGA to Flash data bus.
---! @param      fpga_toflash_dir_in   FPGA to Flash data direction.
+--! @param      ext_flash_clk_io      Extra Flash clock line.
+--! @param      ext_flash_cs_io       Extra Flash chip select line.
+--! @param      ext_flash_data_io     Extra Flash data bus.
 --!
 --! @param      fpga_cnf_dclk_out     FPGA Configuration data clock.
 --! @param      fpga_cnf_data_out     FPGA Configuration data to FPGA.  Must
@@ -138,14 +136,12 @@ entity PowerController is
     master_clk            : in    std_logic ;
     master_clk_out        : out   std_logic ;
 
-    flash_clk_out         : out   std_logic ;
-    flash_cs_out          : out   std_logic ;
+    pfl_flash_clk_io      : inout std_logic ;
+    pfl_flash_cs_io       : inout std_logic ;
     pfl_flash_data_io     : inout std_logic_vector (3 downto 0) ;
-    fpga_flash_data_io    : inout std_logic_vector (3 downto 0) ;
-    fpga_toflash_clk_in   : inout std_logic ;
-    fpga_toflash_cs_in    : inout std_logic ;
-    fpga_toflash_data_io  : inout std_logic_vector (3 downto 0) ;
-    fpga_toflash_dir_in   : inout std_logic ;
+    ext_flash_clk_io      : inout std_logic ;
+    ext_flash_cs_io       : inout std_logic ;
+    ext_flash_data_io     : inout std_logic_vector (3 downto 0) ;
 
     fpga_cnf_dclk_out     : out   std_logic ;
     fpga_cnf_data_out     : out   std_logic ;
@@ -234,6 +230,7 @@ architecture rtl of PowerController is
   signal PC_ControlUse            : std_logic := '0' ;
 
   signal pwr_fpga_shutdown        : std_logic ;
+  signal flash_access_granted     : std_logic ;
 
   --  SPI lines.
 
@@ -246,13 +243,13 @@ architecture rtl of PowerController is
 
   --  Parallel Flash Loader signals.
 
-  signal pfl_flash_cs             : std_logic_vector (0 downto 0) ;
-  signal pfl_flash_clk            : std_logic_vector (0 downto 0) ;
   signal pfl_data                 : std_logic_vector (0 downto 0) ;
   signal pfl_dclk                 : std_logic ;
   signal pfl_nconfig              : std_logic ;
   signal pfl_flash_req            : std_logic ;
 
+  signal pfl_flash_cs             : std_logic_vector (0 downto 0) ;
+  signal pfl_flash_clk            : std_logic_vector (0 downto 0) ;
   alias  pfl_flash_io0            : std_logic_vector (0 downto 0) is
                                     pfl_flash_data_io (0 downto 0) ;
   alias  pfl_flash_io1            : std_logic_vector (0 downto 0) is
@@ -326,21 +323,14 @@ begin
 
   master_clk_out        <= '0' when (fpga_running = '0') else master_clk ;
 
-  flash_clk_out         <= pfl_flash_clk (0) when (fpga_running = '0') else
-                           fpga_toflash_clk_in ;
-  flash_cs_out          <= pfl_flash_cs  (0) when (fpga_running = '0') else
-                           fpga_toflash_cs_in ;
-  fpga_flash_data_io    <= "0000" when (fpga_powered = '0') else
-                           "ZZZZ" when (fpga_running = '0') else
-                           "ZZZZ" when (fpga_toflash_dir_in = '0') else
-                           fpga_toflash_data_io ;
-  fpga_toflash_data_io  <= "0000" when (fpga_powered = '0') else
-                           "ZZZZ" when (fpga_running = '0') else
-                           "ZZZZ" when (fpga_toflash_dir_in = '1') else
-                           fpga_flash_data_io ;
-  fpga_toflash_clk_in   <= '0' when (fpga_powered = '0') else 'Z' ;
-  fpga_toflash_cs_in    <= '0' when (fpga_powered = '0') else 'Z' ;
-  fpga_toflash_dir_in   <= '0' when (fpga_powered = '0') else 'Z' ;
+  pfl_flash_clk_io      <= pfl_flash_clk (0) when (fpga_powered = '1')
+                                             else '0' ;
+  pfl_flash_cs_io       <= pfl_flash_cs  (0) when (fpga_powered = '1')
+                                             else '0' ;
+  ext_flash_data_io     <= "0000" when (fpga_powered = '0') else
+                           "ZZZZ" ;
+  ext_flash_clk_io      <= '0' when (fpga_powered = '0') else 'Z' ;
+  ext_flash_cs_io       <= '0' when (fpga_powered = '0') else 'Z' ;
 
   fpga_cnf_dclk_out     <= '0' when (fpga_powered = '0') else
                            pfl_dclk ;
@@ -473,6 +463,10 @@ begin
   pwr_fpga_shutdown     <=
         PC_ControlReg (ControlSignals'pos(Ctl_FPGA_Shutdown_e))
         when (PC_ControlUse = '1') else '0' ;
+  flash_access_granted  <=
+        '0' when (fpga_activated = '0') else
+        PC_ControlReg (ControlSignals'pos(Ctl_FLASH_Granted_e))
+        when (PC_ControlUse = '1') else '1' ;
 
   --  Parallel Flash Loader.
   --  When pfl_flash_access_granted is low all flash_* lines are
@@ -488,7 +482,7 @@ begin
       fpga_nstatus              => fpga_cnf_nstatus_in,
       fpga_pgm                  => "000",
       pfl_clk                   => master_clk,
-      pfl_flash_access_granted  => '1',
+      pfl_flash_access_granted  => flash_access_granted,
       pfl_nreset                => (fpga_activated and not fpga_running),
       flash_io0                 => pfl_flash_io0,
       flash_io1                 => pfl_flash_io1,

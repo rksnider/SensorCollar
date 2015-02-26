@@ -147,7 +147,7 @@ BEGIN
 		safe_mode_retry => 1,
 		safe_mode_revert => 0,
 		safe_mode_revert_addr => 0,
-		tristate_checkbox => 0,
+		tristate_checkbox => 1,
 		lpm_type => "altparallel_flash_loader"
 	)
 	PORT MAP (
@@ -195,7 +195,7 @@ END SYN;
 -- Retrieval info: PRIVATE: RSU_WATCHHDOG_CHECKBOX STRING "0"
 -- Retrieval info: PRIVATE: RSU_WATCHHDOG_COUNTER_EDIT STRING "100"
 -- Retrieval info: PRIVATE: SAFE_MODE_REVERT_EDIT STRING ""
--- Retrieval info: PRIVATE: TRISTATE_CHECKBOX STRING "0"
+-- Retrieval info: PRIVATE: TRISTATE_CHECKBOX STRING "1"
 -- Retrieval info: CONSTANT: ADDR_WIDTH NUMERIC "24"
 -- Retrieval info: CONSTANT: CONF_DATA_WIDTH NUMERIC "1"
 -- Retrieval info: CONSTANT: CONF_WAIT_TIMER_WIDTH NUMERIC "19"
@@ -217,7 +217,7 @@ END SYN;
 -- Retrieval info: CONSTANT: SAFE_MODE_RETRY NUMERIC "1"
 -- Retrieval info: CONSTANT: SAFE_MODE_REVERT NUMERIC "0"
 -- Retrieval info: CONSTANT: SAFE_MODE_REVERT_ADDR NUMERIC "0"
--- Retrieval info: CONSTANT: TRISTATE_CHECKBOX NUMERIC "0"
+-- Retrieval info: CONSTANT: TRISTATE_CHECKBOX NUMERIC "1"
 -- Retrieval info: USED_PORT: flash_io0 0 0 1 0 BIDIR NODEFVAL "flash_io0[0..0]"
 -- Retrieval info: USED_PORT: flash_io1 0 0 1 0 BIDIR NODEFVAL "flash_io1[0..0]"
 -- Retrieval info: USED_PORT: flash_io2 0 0 1 0 BIDIR NODEFVAL "flash_io2[0..0]"

@@ -39,10 +39,10 @@ entity DevBoard_PowerMonitorCPLD_TopLevel is
 
     --  Flash Connections
 
-    FLASH_C                     : out   std_logic ;
+    FLASH_C                     : inout std_logic ;
     FLASH_PFL                   : inout std_logic_vector (3 downto 0) ;
     FLASH_FPGA                  : inout std_logic_vector (3 downto 0) ;
-    FLASH_S_N                   : out   std_logic ;
+    FLASH_S_N                   : inout std_logic ;
 
     --  Clocks
 
@@ -62,8 +62,8 @@ entity DevBoard_PowerMonitorCPLD_TopLevel is
 
     PC_FLASH_CLK                : inout std_logic ;
     PC_FLASH_CS_N               : inout std_logic ;
-    PC_FLASH_DATA               : inout std_logic_vector (3 downto 0) ;
-    PC_FLASH_DIR                : inout std_logic ;
+--    PC_FLASH_DATA               : inout std_logic_vector (3 downto 0) ;
+--    PC_FLASH_DIR                : inout std_logic ;
 
     --  FPGA Status and SPI Connections
 
@@ -154,14 +154,12 @@ architecture structural of DevBoard_PowerMonitorCPLD_TopLevel is
       master_clk            : in    std_logic ;
       master_clk_out        : out   std_logic ;
 
-      flash_clk_out         : out   std_logic ;
-      flash_cs_out          : out   std_logic ;
+      pfl_flash_clk_io      : inout std_logic ;
+      pfl_flash_cs_io       : inout std_logic ;
       pfl_flash_data_io     : inout std_logic_vector (3 downto 0) ;
-      fpga_flash_data_io    : inout std_logic_vector (3 downto 0) ;
-      fpga_toflash_clk_in   : inout std_logic ;
-      fpga_toflash_cs_in    : inout std_logic ;
-      fpga_toflash_data_io  : inout std_logic_vector (3 downto 0) ;
-      fpga_toflash_dir_in   : inout std_logic ;
+      ext_flash_clk_io      : inout std_logic ;
+      ext_flash_cs_io       : inout std_logic ;
+      ext_flash_data_io     : inout std_logic_vector (3 downto 0) ;
 
       fpga_cnf_dclk_out     : out   std_logic ;
       fpga_cnf_data_out     : out   std_logic ;
@@ -253,14 +251,14 @@ begin
       master_clk            => CLK_50MHZ,
       master_clk_out        => CLK_50MHZ_TO_FPGA,
 
-      flash_clk_out         => FLASH_C,
-      flash_cs_out          => FLASH_S_N,
+      pfl_flash_clk_io      => FLASH_C,
+      pfl_flash_cs_io       => FLASH_S_N,
       pfl_flash_data_io     => FLASH_PFL,
-      fpga_flash_data_io    => FLASH_FPGA,
-      fpga_toflash_clk_in   => PC_FLASH_CLK,
-      fpga_toflash_cs_in    => PC_FLASH_CS_N,
-      fpga_toflash_data_io  => PC_FLASH_DATA,
-      fpga_toflash_dir_in   => PC_FLASH_DIR,
+      ext_flash_data_io     => FLASH_FPGA,
+      ext_flash_clk_io      => PC_FLASH_CLK,
+      ext_flash_cs_io       => PC_FLASH_CS_N,
+--      fpga_toflash_data_io  => PC_FLASH_DATA,
+--      fpga_toflash_dir_in   => PC_FLASH_DIR,
 
       fpga_cnf_dclk_out     => DCLK_FPGA,
       fpga_cnf_data_out     => DATA0_FPGA,

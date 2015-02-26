@@ -86,7 +86,8 @@ package PC_StatusControl_pkg is
     Ctl_MagMemOn_e,
     Ctl_GPS_On_e,
     Ctl_DataTX_On_e,
-    Ctl_FPGA_Shutdown_e
+    Ctl_FPGA_Shutdown_e,
+    Ctl_FLASH_Granted_e
   ) ;
 
   constant ControlSignalsCnt_c    : natural :=
