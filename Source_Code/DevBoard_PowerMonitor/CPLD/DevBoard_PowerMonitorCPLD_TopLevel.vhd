@@ -135,7 +135,7 @@ entity DevBoard_PowerMonitorCPLD_TopLevel is
     CPLD_GPIO2                  : out    std_logic ;
     CPLD_GPIO3                  : out    std_logic ;
     CPLD_GPIO4                  : out    std_logic ;
-    CPLD_GPIO5                  : out    std_logic ;
+    CPLD_GPIO5                  : in    std_logic ;
     CPLD_GPIO6                  : out    std_logic ;
     CPLD_GPIO7                  : out    std_logic ;
     CPLD_GPIO8                  : out    std_logic
@@ -214,7 +214,7 @@ architecture structural of DevBoard_PowerMonitorCPLD_TopLevel is
 		gpio_2				    : out   std_logic ;
 		gpio_3				    : out   std_logic ;
 		gpio_4				    : out   std_logic ;
-		gpio_5				    : out   std_logic ;
+		gpio_5				    : in   std_logic ;
 		gpio_6				    : out   std_logic ;
 		gpio_7				    : out   std_logic ;
 		gpio_8				    : out   std_logic ;
@@ -231,8 +231,14 @@ architecture structural of DevBoard_PowerMonitorCPLD_TopLevel is
 
   signal pwr_drive_not    : std_logic ;
   signal solar_run_not    : std_logic ;
+  
+--Logic of the CNTRL1/SW1 of the SiP32413 is inverted.
+  signal ls_1p8v_cntrl_to_cpld_not : std_logic;
 
 begin
+
+--Logic of the CNTRL1/SW1 of the SiP32413 is inverted.  
+  LS_1P8V_CNTRL_TO_CPLD			<= not ls_1p8v_cntrl_to_cpld_not ;
 
   --  Invert output signals between the power controller and the outside
   --  world.
@@ -302,7 +308,8 @@ begin
       pwr_micR_out          => MIC_R_CNTRL_TO_CPLD,
       pwr_micL_out          => MIC_L_CNTRL_TO_CPLD,
       pwr_sdcard_out        => SDCARD_CNTRL_TO_CPLD,
-      pwr_ls_1p8_out        => LS_1P8V_CNTRL_TO_CPLD,
+	--Logic of the CNTRL1/SW1 of the SiP32413 is inverted.
+      pwr_ls_1p8_out        => ls_1p8v_cntrl_to_cpld_not,
       pwr_ls_3p3_out        => LS_3P3V_CNTRL_TO_CPLD,
 
       solar_max_in          => SOLAR_PGOOD_TO_CPLD,
