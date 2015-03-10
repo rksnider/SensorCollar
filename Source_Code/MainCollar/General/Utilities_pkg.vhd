@@ -94,72 +94,72 @@ package body UTILITIES_PKG is
 
   function reverse_any_vector (a : in std_logic_vector)
   return std_logic_vector is
-    variable  result_v  : std_logic_vector (a'RANGE) ;
-    alias     aa        : std_logic_vector (a'REVERSE_RANGE) is a ;
+    variable  result  : std_logic_vector (a'RANGE) ;
+    alias     aa      : std_logic_vector (a'REVERSE_RANGE) is a ;
   begin
     for i in aa'RANGE loop
-      result_v (i) := aa (i) ;
+      result (i) := aa (i) ;
     end loop ;
-    return result_v ;
+    return result ;
   end ;
 
   --  Find the least significant set bit in an unsigned.
 
   function lsb_find (a : in unsigned) return unsigned is
-    variable result_v   : unsigned (a'range) ;
+    variable result   : unsigned (a'range) ;
   begin
-    result_v := a and ((not a) + 1) ;
-    return result_v ;
+    result := a and ((not a) + 1) ;
+    return result ;
   end ;
 
   --  Convert a bit vector with a single bit set to a binary number.
 
   function bit_to_number (a : in std_logic_vector ; len : in natural)
   return unsigned is
-    variable result_v     : unsigned (len-1 downto 0) ;
-    variable incr_v       : natural ;
-    variable set_v        : natural ;
-    variable group_cnt_v  : natural ;
-    variable pos_v        : natural ;
-    variable set_len_v    : natural ;
+    variable result     : unsigned (len-1 downto 0) ;
+    variable incr       : natural ;
+    variable set        : natural ;
+    variable group_cnt  : natural ;
+    variable pos        : natural ;
+    variable set_len    : natural ;
   begin
-    result_v  := (others => '0') ;
+    result  := (others => '0') ;
 
     --  Go through each bit in the result number and set them by or'ing
     --  the bits from the input together correctly.
 
-    for i in result_v'RANGE loop
-      incr_v    := 2 ** (i + 1) ;
-      set_v     := incr_v / 2 ;
+    for i in result'RANGE loop
+      incr    := 2 ** (i + 1) ;
+      set     := incr / 2 ;
 
       --  Or groupings together.
 
-      if (a'length >= incr_v) then
-        group_cnt_v := a'length / incr_v - 1 ;
+      if (a'length >= incr) then
+        group_cnt := a'length / incr - 1 ;
       else
-        group_cnt_v := 0 ;
+        group_cnt := 0 ;
       end if ;
 
-      for j in 0 to group_cnt_v loop
-        pos_v   := j * incr_v + set_v ;
+      for j in 0 to group_cnt loop
+        pos   := j * incr + set ;
 
         --  Or each set of contiguous bits together with the result.
 
-        if (pos_v + set_v > a'length) then
-          set_len_v   := a'length ;
+        if (pos + set > a'length) then
+          set_len   := a'length ;
         else
-          set_len_v   := pos_v + set_v ;
+          set_len   := pos + set ;
         end if ;
 
-        if (set_len_v > pos_v) then
-          for k in pos_v to set_len_v-1 loop
-            result_v (i) := result_v (i) or a (k) ;
+        if (set_len > pos) then
+          for k in pos to set_len-1 loop
+            result (i) := result (i) or a (k) ;
           end loop ;
         end if ;
       end loop ;
     end loop ;
 
-   return result_v ;
+   return result ;
   end ;
 
 
@@ -178,30 +178,30 @@ package body UTILITIES_PKG is
   --  This function essentially provides the 'max' function for the array.
 
   function max_integer (tbl : integer_vector) return integer is
-    variable max_value_v : integer ;
+    variable max_value : integer ;
   begin
-    max_value_v := tbl (tbl'low) ;
+    max_value := tbl (tbl'low) ;
     for index in tbl'range loop
-      if (max_value_v < tbl (index)) then
-        max_value_v := tbl (index) ;
+      if (max_value < tbl (index)) then
+        max_value := tbl (index) ;
       end if ;
     end loop ;
-    return max_value_v ;
+    return max_value ;
   end max_integer ;
 
   --  Determine the minimum value from a (constant) array of integers.
   --  This function essentially provides the 'min' function for the array.
 
   function min_integer (tbl : integer_vector) return integer is
-    variable min_value_v : integer ;
+    variable min_value : integer ;
   begin
-    min_value_v := tbl (tbl'low) ;
+    min_value := tbl (tbl'low) ;
     for index in tbl'range loop
-      if (min_value_v > tbl (index)) then
-        min_value_v := tbl (index) ;
+      if (min_value > tbl (index)) then
+        min_value := tbl (index) ;
       end if ;
     end loop ;
-    return min_value_v ;
+    return min_value ;
   end min_integer ;
 
   --  Return the destination value if the test bit is set, zero otherwise.
@@ -217,24 +217,25 @@ package body UTILITIES_PKG is
 
   function if_set (t : in std_logic ; value : in unsigned)
   return unsigned is
-    constant zero_c     : unsigned (value'length-1 downto 0) :=
+    constant zero     : unsigned (value'length-1 downto 0) :=
                             (others => '0') ;
   begin
     if (t = '1') then
       return value ;
     else
-      return zero_c ;
+      return zero ;
     end if ;
   end if_set ;
 
-  --  Determine the number of bits needed to hold a constant.
+  --  Determine the number of bits needed to hold a constant.  A small
+  --  bias is added to the constant to deal with truncation problems.
 
   function const_bits (const : natural) return natural is
   begin
     if (const = 0) then
       return 1 ;
     else
-      return natural (trunc (log2 (real (const)))) + 1 ;
+      return natural (trunc (log2 (real (const) + 0.001))) + 1 ;
     end if ;
   end const_bits ;
 
@@ -244,9 +245,9 @@ package body UTILITIES_PKG is
 
   function const_unsigned (const : in natural ; extra : in natural := 0)
   return unsigned is
-    constant bits_c     : natural := const_bits (const) + extra ;
+    constant bits     : natural := const_bits (const) + extra ;
   begin
-    return TO_UNSIGNED (const, bits_c) ;
+    return TO_UNSIGNED (const, bits) ;
   end const_unsigned ;
 
   --  Result subtype: UNSIGNED(ARG'LENGTH+COUNT-1 downto 0)
