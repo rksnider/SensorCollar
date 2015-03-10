@@ -1,199 +1,316 @@
 pcb: Note 5996: Using Config File C:\MentorGraphics\9.5PADS\SDD_HOME\standard\pads95.cfg
-pcb: Warning 6083: D pin $1I1.TXD: Single pin net: TXD_GPS_TO_FPGA
-pcb: Warning 6083: D pin $1I1.TIMEPULSE: Single pin net: TIMEPULSE_GPS_TO_FPGA
-pcb: Warning 6083: D pin $7I242.PGOOD: Single pin net: SOLAR_PGOOD_TO_CPLD
-pcb: Warning 6083: D pin $7I242.SHDN_N: Single pin net: SOLAR_CTRL_SHDN_N
-pcb: Warning 6083: D pin $7I295.2: Single pin net: SOLAR_CTRL_ON_TO_CPLD
-pcb: Warning 6083: D pin $4I437.DAT2: Single pin net: SDCARD_DI_DAT2_TO_FPGA
-pcb: Warning 6083: D pin $4I437.DAT1: Single pin net: SDCARD_DI_DAT1_TO_FPGA
-pcb: Warning 6083: D pin $4I437.DAT0: Single pin net: SDCARD_DI_DAT0_TO_FPGA
-pcb: Warning 6083: D pin $4I437.CMD: Single pin net: SDCARD_DI_CMD_TO_FPGA
-pcb: Warning 6083: D pin $4I437.CLK: Single pin net: SDCARD_DI_CLK_TO_FPGA
-pcb: Warning 6083: D pin $4I437.CD_DAT3: Single pin net: SDCARD_DI_CD_DAT3_TO_FPGA
-pcb: Warning 6083: D pin $4I1.A1: Single pin net: SDCARD_DAT2_TO_FPGA
-pcb: Warning 6083: D pin $4I1.A6: Single pin net: SDCARD_DAT1_TO_FPGA
-pcb: Warning 6083: D pin $4I1.A5: Single pin net: SDCARD_DAT0_TO_FPGA
-pcb: Warning 6083: D pin $4I1.A3: Single pin net: SDCARD_CMD_TO_FPGA
-pcb: Warning 6083: D pin $4I1.A4: Single pin net: SDCARD_CLK_TO_FPGA
-pcb: Warning 6083: D pin $4I1.A2: Single pin net: SDCARD_CD_DAT3_TO_FPGA
-pcb: Warning 6083: D pin $1I1.RXD: Single pin net: RXD_GPS_TO_FPGA
-pcb: Warning 6083: D pin $10I6.SQW_INT_N: Single pin net: RTC_ALARM_TO_CPLD
-pcb: Warning 6083: D pin $9I1.WP_N: Single pin net: MRAM_WP_N_TO_FPGA
-pcb: Warning 6083: D pin $9I1.SO: Single pin net: MRAM_SO_TO_FPGA
-pcb: Warning 6083: D pin $9I1.SI: Single pin net: MRAM_SI_TO_FPGA
-pcb: Warning 6083: D pin $9I1.SCK: Single pin net: MRAM_SCK_TO_FPGA
-pcb: Warning 6083: D pin $9I1.CS_N: Single pin net: MRAM_CS_N_TO_FPGA
-pcb: Warning 6083: D pin $9I83.CNTRL2: Single pin net: MRAM_CNTRL_TO_CPLD
-pcb: Warning 6083: D pin $3I258.EN: Single pin net: MIC_R_CNTRL_TO_CPLD
-pcb: Warning 6083: D pin $3I264.VIN: Single pin net: MIC_L_CNTRL_TO_CPLD
-pcb: Warning 6083: D pin $3I175.DATA: Single pin net: MIC_DATA_R
-pcb: Warning 6083: D pin $3I182.DATA: Single pin net: MIC_DATA_L
-pcb: Warning 6083: D pin $4I286.CNTRL2: Single pin net: LS_3P3V_CNTRL_TO_CPLD
-pcb: Warning 6083: D pin $4I286.CNTRL1: Single pin net: LS_1P8V_CNTRL_TO_CPLD
-pcb: Warning 6083: D pin $6I285.2: Single pin net: INTERNAL_THERM
-pcb: Warning 6083: D pin $2I594.SDA_SDI_SDO: Single pin net: IM_SPI_SDI_TO_FPGA
-pcb: Warning 6083: D pin $2I594.SCL_SPC: Single pin net: IM_SPI_SCLK_TO_FPGA
-pcb: Warning 6083: D pin $2I594.SDO_M: Single pin net: IM_SDO_M_TO_FPGA
-pcb: Warning 6083: D pin $2I594.SDO_A_G: Single pin net: IM_SDO_A_G_TO_FPGA
-pcb: Warning 6083: D pin $2I594.INT_M: Single pin net: IM_INT_M_TO_FPGA
-pcb: Warning 6083: D pin $2I594.INT2_A_G: Single pin net: IM_INT2_A_G_TO_FPGA
-pcb: Warning 6083: D pin $2I594.INT1_A_G: Single pin net: IM_INT1_A_G_TO_FPGA
-pcb: Warning 6083: D pin $2I594.DRDY_M: Single pin net: IM_DRDY_M_TO_FPGA
-pcb: Warning 6083: D pin $2I594.CS_M: Single pin net: IM_CS_M_TO_FPGA
-pcb: Warning 6083: D pin $2I594.CS_A_G: Single pin net: IM_CS_A_G_TO_FPGA
-pcb: Warning 6083: D pin $2I438.CNTRL1: Single pin net: IM_2P5V_TO_CPLD
-pcb: Warning 6083: D pin $2I438.CNTRL2: Single pin net: IM_1P8V_TO_CPLD
-pcb: Warning 6083: D pin $4I312.CNTRL2: Single pin net: GPS_CNTRL_TO_CPLD
-pcb: Warning 6083: D pin $1I1.EXTINT: Single pin net: EXTINT_GPS_TO_FPGA
-pcb: Warning 6083: D pin $4I312.CNTRL1: Single pin net: DATA_TX_CNTRL_TO_CPLD
-pcb: Warning 6083: D pin $6I600.1: Single pin net: BAT_LOW_TO_CPLD
-pcb: Warning 6083: D pin $6I1.SOC_INT: Single pin net: BAT_HIGH_TO_CPLD
-pcb: Warning 6083: D pin $6I585.2: Single pin net: BATT_GD_N_TO_CPLD
-pcb: Warning 6083: D pin $7I211.A: Single pin net: AUX_VCC
-pcb: Warning 6094: D pin $9I83.CNTRL1: Pin not connected
-pcb: Warning 6094: D pin $9I83.IN1: Pin not connected
-pcb: Warning 6094: D pin $9I83.OUT1: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_1: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_10: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_11: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_12: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_13: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_14: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_15: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_16: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_17: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_18: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_19: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_2: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_20: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_21: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_22: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_23: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_24: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_25: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_26: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_27: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_28: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_29: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_3: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_30: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_31: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_32: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_33: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_34: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_35: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_36: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_37: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_38: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_39: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_4: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_40: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_41: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_42: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_43: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_44: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_45: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_46: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_47: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_48: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_49: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_5: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_50: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_6: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_7: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_8: Pin not connected
-pcb: Warning 6094: D pin $8I67.PIN_9: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_1: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_10: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_11: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_12: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_13: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_14: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_15: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_16: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_17: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_18: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_19: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_2: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_20: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_21: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_22: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_23: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_24: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_25: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_26: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_27: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_28: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_29: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_3: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_30: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_31: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_32: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_33: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_34: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_35: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_36: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_37: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_38: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_39: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_4: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_40: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_41: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_42: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_43: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_44: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_45: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_46: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_47: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_48: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_49: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_5: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_50: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_6: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_7: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_8: Pin not connected
-pcb: Warning 6094: D pin $8I15.PIN_9: Pin not connected
-pcb: Warning 6094: D pin $5I51.AVDD_IF: Pin not connected
-pcb: Warning 6094: D pin $5I51.AVDD_PFD_CHP: Pin not connected
-pcb: Warning 6094: D pin $5I51.AVDD_RF: Pin not connected
-pcb: Warning 6094: D pin $5I51.AVDD_SYNTH1: Pin not connected
-pcb: Warning 6094: D pin $5I51.AVDD_SYNTH2: Pin not connected
-pcb: Warning 6094: D pin $5I51.AVDD_XOSC: Pin not connected
-pcb: Warning 6094: D pin $5I51.CS_N: Pin not connected
-pcb: Warning 6094: D pin $5I51.DCPL: Pin not connected
-pcb: Warning 6094: D pin $5I51.DCPL_PFD_CHP: Pin not connected
-pcb: Warning 6094: D pin $5I51.DCPL_VCO: Pin not connected
-pcb: Warning 6094: D pin $5I51.DCPL_XOSC: Pin not connected
-pcb: Warning 6094: D pin $5I51.DVDD_12: Pin not connected
-pcb: Warning 6094: D pin $5I51.DVDD_5: Pin not connected
-pcb: Warning 6094: D pin $5I51.EXT_XOSC: Pin not connected
-pcb: Warning 6094: D pin $5I51.GPIO0: Pin not connected
-pcb: Warning 6094: D pin $5I51.GPIO3: Pin not connected
-pcb: Warning 6094: D pin $5I51.GPOI2: Pin not connected
-pcb: Warning 6094: D pin $5I51.LNA_N: Pin not connected
-pcb: Warning 6094: D pin $5I51.LNA_P: Pin not connected
-pcb: Warning 6094: D pin $5I51.LPF0: Pin not connected
-pcb: Warning 6094: D pin $5I51.LPF1: Pin not connected
-pcb: Warning 6094: D pin $5I51.NC_16: Pin not connected
-pcb: Warning 6094: D pin $5I51.PA: Pin not connected
-pcb: Warning 6094: D pin $5I51.RBIAS: Pin not connected
-pcb: Warning 6094: D pin $5I51.REST_N: Pin not connected
-pcb: Warning 6094: D pin $5I51.SCLK: Pin not connected
-pcb: Warning 6094: D pin $5I51.SI: Pin not connected
-pcb: Warning 6094: D pin $5I51.SO_GPIO1: Pin not connected
-pcb: Warning 6094: D pin $5I51.TRX_SW: Pin not connected
-pcb: Warning 6094: D pin $5I51.VDD_GUARD: Pin not connected
-pcb: Warning 6094: D pin $5I51.XOSC_Q1: Pin not connected
-pcb: Warning 6094: D pin $5I51.XOSC_Q2: Pin not connected
-pcb: Warning 6094: D pin $1I59.NC: Pin not connected
-pcb: Warning 6094: D pin $1I1.ANT_ON: Pin not connected
-pcb: Warning 6094: D pin $1I1.RESERVED: Pin not connected
-pcb: Warning 6094: D pin $1I1.RESVD: Pin not connected
-pcb: Warning 6094: D pin $1I1.SCL: Pin not connected
-pcb: Warning 6094: D pin $1I1.SDA: Pin not connected
-pcb: Warning 6094: D pin $1I1.VCC_RF: Pin not connected
-pcb: Note 5854: Instance value (REFDES=J1) was added to instance ($8I15) on (D).
-pcb: Note 5854: Instance value (REFDES=J3) was added to instance ($8I67) on (D).
+pcb: Warning 6083: M pin $2I93.WE_N: Single pin net: WE_N
+pcb: Warning 6083: M pin $2I93.CLK: Single pin net: SDRAM_CLK
+pcb: Warning 6083: M pin $2I93.CKE: Single pin net: SDRAM_CKE
+pcb: Warning 6083: M pin $2I93.RAS_N: Single pin net: RAS_N
+pcb: Warning 6083: M pin $8I1050.IO_9: Single pin net: M_FPGA_5A_08
+pcb: Warning 6083: M pin $8I1050.IO_8: Single pin net: M_FPGA_5A_07
+pcb: Warning 6083: M pin $2I93.LDQM: Single pin net: LDQM
+pcb: Warning 6083: M pin $2I93.DQ9: Single pin net: DQ9
+pcb: Warning 6083: M pin $2I93.DQ8: Single pin net: DQ8
+pcb: Warning 6083: M pin $2I93.DQ7: Single pin net: DQ7
+pcb: Warning 6083: M pin $2I93.DQ6: Single pin net: DQ6
+pcb: Warning 6083: M pin $2I93.DQ5: Single pin net: DQ5
+pcb: Warning 6083: M pin $2I93.DQ4: Single pin net: DQ4
+pcb: Warning 6083: M pin $2I93.DQ3: Single pin net: DQ3
+pcb: Warning 6083: M pin $2I93.DQ2: Single pin net: DQ2
+pcb: Warning 6083: M pin $2I93.DQ15: Single pin net: DQ15
+pcb: Warning 6083: M pin $2I93.DQ14: Single pin net: DQ14
+pcb: Warning 6083: M pin $2I93.DQ13: Single pin net: DQ13
+pcb: Warning 6083: M pin $2I93.DQ12: Single pin net: DQ12
+pcb: Warning 6083: M pin $2I93.DQ11: Single pin net: DQ11
+pcb: Warning 6083: M pin $2I93.DQ10: Single pin net: DQ10
+pcb: Warning 6083: M pin $2I93.DQ1: Single pin net: DQ1
+pcb: Warning 6083: M pin $2I93.DQ0: Single pin net: DQ0
+pcb: Warning 6083: M pin $2I93.CS_N: Single pin net: CS_N
+pcb: Warning 6083: M pin $2I93.CAS_N: Single pin net: CAS_N
+pcb: Warning 6083: M pin $2I93.BA1: Single pin net: BA1
+pcb: Warning 6083: M pin $2I93.BA0: Single pin net: BA0
+pcb: Warning 6083: M pin $2I93.A9: Single pin net: A9
+pcb: Warning 6083: M pin $2I93.A7: Single pin net: A7
+pcb: Warning 6083: M pin $2I93.A6: Single pin net: A6
+pcb: Warning 6083: M pin $2I93.A5: Single pin net: A5
+pcb: Warning 6083: M pin $2I93.A4: Single pin net: A4
+pcb: Warning 6083: M pin $2I93.A3: Single pin net: A3
+pcb: Warning 6083: M pin $2I93.A2: Single pin net: A2
+pcb: Warning 6083: M pin $2I93.A11: Single pin net: A11
+pcb: Warning 6083: M pin $2I93.A10: Single pin net: A10
+pcb: Warning 6083: M pin $2I93.A1: Single pin net: A1
+pcb: Warning 6083: M pin $2I93.A0: Single pin net: A0
+pcb: Warning 6094: M pin $8I940.CONF_DONE: Pin not connected
+pcb: Warning 6094: M pin $8I940.DATA0: Pin not connected
+pcb: Warning 6094: M pin $8I940.DATA1: Pin not connected
+pcb: Warning 6094: M pin $8I940.DATA2: Pin not connected
+pcb: Warning 6094: M pin $8I940.DATA3: Pin not connected
+pcb: Warning 6094: M pin $8I940.DATA4: Pin not connected
+pcb: Warning 6094: M pin $8I940.DCLK: Pin not connected
+pcb: Warning 6094: M pin $8I940.MSEL0: Pin not connected
+pcb: Warning 6094: M pin $8I940.MSEL1: Pin not connected
+pcb: Warning 6094: M pin $8I940.MSEL2: Pin not connected
+pcb: Warning 6094: M pin $8I940.MSEL3: Pin not connected
+pcb: Warning 6094: M pin $8I940.MSEL4: Pin not connected
+pcb: Warning 6094: M pin $8I940.TCK: Pin not connected
+pcb: Warning 6094: M pin $8I940.TDI: Pin not connected
+pcb: Warning 6094: M pin $8I940.TDO: Pin not connected
+pcb: Warning 6094: M pin $8I940.TMS: Pin not connected
+pcb: Warning 6094: M pin $8I940.NCE: Pin not connected
+pcb: Warning 6094: M pin $8I940.NCONFIG: Pin not connected
+pcb: Warning 6094: M pin $8I940.NSTATUS: Pin not connected
+pcb: Warning 6094: M pin $8I900.IO_10: Pin not connected
+pcb: Warning 6094: M pin $8I900.IO_11: Pin not connected
+pcb: Warning 6094: M pin $8I900.IO_12: Pin not connected
+pcb: Warning 6094: M pin $8I900.IO_13: Pin not connected
+pcb: Warning 6094: M pin $8I900.IO_14: Pin not connected
+pcb: Warning 6094: M pin $8I900.IO_15: Pin not connected
+pcb: Warning 6094: M pin $8I900.IO_16: Pin not connected
+pcb: Warning 6094: M pin $8I900.IO_6: Pin not connected
+pcb: Warning 6094: M pin $8I900.IO_7: Pin not connected
+pcb: Warning 6094: M pin $8I900.IO_8: Pin not connected
+pcb: Warning 6094: M pin $8I900.IO_9: Pin not connected
+pcb: Warning 6094: M pin $8I853.IO_PR_DONE: Pin not connected
+pcb: Warning 6094: M pin $8I853.IO_PR_ERROR: Pin not connected
+pcb: Warning 6094: M pin $8I853.IO_PR_READY: Pin not connected
+pcb: Warning 6094: M pin $8I1352.IO_31: Pin not connected
+pcb: Warning 6094: M pin $8I1352.IO_32: Pin not connected
+pcb: Warning 6094: M pin $8I1050.IO_CRC_ERROR: Pin not connected
+pcb: Warning 6094: M pin $8I1050.IO_CVP_CONFDONE: Pin not connected
+pcb: Warning 6094: M pin $8I1050.IO_DEV_CLRN: Pin not connected
+pcb: Warning 6094: M pin $8I1050.IO_DEV_OE: Pin not connected
+pcb: Warning 6094: M pin $8I1050.IO_INIT_DONE: Pin not connected
+pcb: Warning 6094: M pin $8I1050.IO_NCEO: Pin not connected
+pcb: Warning 6094: M pin $8I1050.IO_PR_REQUEST: Pin not connected
+pcb: Warning 6094: M pin $6I372.VCC_AUX1: Pin not connected
+pcb: Warning 6094: M pin $6I372.VCC_AUX2: Pin not connected
+pcb: Warning 6094: M pin $6I372.VCC_AUX3: Pin not connected
+pcb: Warning 6094: M pin $6I372.VCC_AUX4: Pin not connected
+pcb: Warning 6094: M pin $6I372.VCC_AUX5: Pin not connected
+pcb: Warning 6094: M pin $6I372.VCC_AUX6: Pin not connected
+pcb: Warning 6094: M pin $6I366.VCCBAT: Pin not connected
+pcb: Warning 6094: M pin $6I366.VCCPGM1: Pin not connected
+pcb: Warning 6094: M pin $6I366.VCCPGM2: Pin not connected
+pcb: Warning 6094: M pin $6I366.VCCPGM3: Pin not connected
+pcb: Warning 6094: M pin $6I355.VCCPD1A2A_1: Pin not connected
+pcb: Warning 6094: M pin $6I355.VCCPD1A2A_2: Pin not connected
+pcb: Warning 6094: M pin $6I355.VCCPD3A: Pin not connected
+pcb: Warning 6094: M pin $6I355.VCCPD3B4A_1: Pin not connected
+pcb: Warning 6094: M pin $6I355.VCCPD3B4A_2: Pin not connected
+pcb: Warning 6094: M pin $6I355.VCCPD5A: Pin not connected
+pcb: Warning 6094: M pin $6I355.VCCPD5B: Pin not connected
+pcb: Warning 6094: M pin $6I355.VCCPD7A8A_1: Pin not connected
+pcb: Warning 6094: M pin $6I355.VCCPD7A8A_2: Pin not connected
+pcb: Warning 6094: M pin $6I331.VCCIO2A_1: Pin not connected
+pcb: Warning 6094: M pin $6I331.VCCIO2A_2: Pin not connected
+pcb: Warning 6094: M pin $6I331.VCCIO2A_3: Pin not connected
+pcb: Warning 6094: M pin $6I331.VCCIO2A_4: Pin not connected
+pcb: Warning 6094: M pin $6I331.VCCIO3A_1: Pin not connected
+pcb: Warning 6094: M pin $6I331.VCCIO3A_2: Pin not connected
+pcb: Warning 6094: M pin $6I331.VCCIO3B_1: Pin not connected
+pcb: Warning 6094: M pin $6I331.VCCIO3B_2: Pin not connected
+pcb: Warning 6094: M pin $6I331.VCCIO4A_1: Pin not connected
+pcb: Warning 6094: M pin $6I331.VCCIO4A_2: Pin not connected
+pcb: Warning 6094: M pin $6I331.VCCIO4A_3: Pin not connected
+pcb: Warning 6094: M pin $6I331.VCCIO4A_4: Pin not connected
+pcb: Warning 6094: M pin $6I331.VCCIO5A_1: Pin not connected
+pcb: Warning 6094: M pin $6I331.VCCIO5A_2: Pin not connected
+pcb: Warning 6094: M pin $6I331.VCCIO5B_1: Pin not connected
+pcb: Warning 6094: M pin $6I331.VCCIO5B_2: Pin not connected
+pcb: Warning 6094: M pin $6I331.VCCIO7A_1: Pin not connected
+pcb: Warning 6094: M pin $6I331.VCCIO7A_2: Pin not connected
+pcb: Warning 6094: M pin $6I331.VCCIO7A_3: Pin not connected
+pcb: Warning 6094: M pin $6I331.VCCIO7A_4: Pin not connected
+pcb: Warning 6094: M pin $6I331.VCCIO8A_1: Pin not connected
+pcb: Warning 6094: M pin $6I331.VCCIO8A_2: Pin not connected
+pcb: Warning 6094: M pin $6I324.VCCA_FPLL1: Pin not connected
+pcb: Warning 6094: M pin $6I324.VCCA_FPLL2: Pin not connected
+pcb: Warning 6094: M pin $6I324.VCCA_FPLL3: Pin not connected
+pcb: Warning 6094: M pin $6I324.VCCA_FPLL4: Pin not connected
+pcb: Warning 6094: M pin $6I324.VCCA_FPLL5: Pin not connected
+pcb: Warning 6094: M pin $6I306.VCC1: Pin not connected
+pcb: Warning 6094: M pin $6I306.VCC10: Pin not connected
+pcb: Warning 6094: M pin $6I306.VCC11: Pin not connected
+pcb: Warning 6094: M pin $6I306.VCC12: Pin not connected
+pcb: Warning 6094: M pin $6I306.VCC13: Pin not connected
+pcb: Warning 6094: M pin $6I306.VCC14: Pin not connected
+pcb: Warning 6094: M pin $6I306.VCC15: Pin not connected
+pcb: Warning 6094: M pin $6I306.VCC16: Pin not connected
+pcb: Warning 6094: M pin $6I306.VCC2: Pin not connected
+pcb: Warning 6094: M pin $6I306.VCC3: Pin not connected
+pcb: Warning 6094: M pin $6I306.VCC4: Pin not connected
+pcb: Warning 6094: M pin $6I306.VCC5: Pin not connected
+pcb: Warning 6094: M pin $6I306.VCC6: Pin not connected
+pcb: Warning 6094: M pin $6I306.VCC7: Pin not connected
+pcb: Warning 6094: M pin $6I306.VCC8: Pin not connected
+pcb: Warning 6094: M pin $6I306.VCC9: Pin not connected
+pcb: Warning 6094: M pin $6I303.RREF_TL: Pin not connected
+pcb: Warning 6094: M pin $6I297.DNU1: Pin not connected
+pcb: Warning 6094: M pin $6I297.DNU2: Pin not connected
+pcb: Warning 6094: M pin $6I297.DNU3: Pin not connected
+pcb: Warning 6094: M pin $6I297.DNU4: Pin not connected
+pcb: Warning 6094: M pin $15I37.2A3: Pin not connected
+pcb: Warning 6094: M pin $15I37.2A4: Pin not connected
+pcb: Warning 6094: M pin $15I37.2Y3: Pin not connected
+pcb: Warning 6094: M pin $15I37.2Y4: Pin not connected
+pcb: Warning 6094: M pin $15I276.R1: Pin not connected
+pcb: Warning 6094: M pin $15I276.R2: Pin not connected
+pcb: Warning 6094: M pin $15I276.R5: Pin not connected
+pcb: Warning 6094: M pin $15I276.R6: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_1: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_10: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_11: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_12: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_13: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_14: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_15: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_16: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_17: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_18: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_19: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_2: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_20: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_21: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_22: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_23: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_24: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_25: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_26: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_27: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_28: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_29: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_3: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_30: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_31: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_32: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_33: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_34: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_35: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_36: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_37: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_38: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_39: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_4: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_40: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_41: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_42: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_43: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_44: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_45: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_46: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_47: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_48: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_49: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_5: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_50: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_6: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_7: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_8: Pin not connected
+pcb: Warning 6094: M pin $14I659.PIN_9: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_1: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_10: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_11: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_12: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_13: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_14: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_15: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_16: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_17: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_18: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_19: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_2: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_20: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_21: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_22: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_23: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_24: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_25: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_26: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_27: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_28: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_29: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_3: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_30: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_31: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_32: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_33: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_34: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_35: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_36: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_37: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_38: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_39: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_4: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_40: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_41: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_42: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_43: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_44: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_45: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_47: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_49: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_5: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_6: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_7: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_8: Pin not connected
+pcb: Warning 6094: M pin $14I607.PIN_9: Pin not connected
+pcb: Warning 6094: M pin $10I979.PGOOD3: Pin not connected
+pcb: Warning 6094: M pin $10I569.CNTRL2: Pin not connected
+pcb: Warning 6094: M pin $10I569.IN2: Pin not connected
+pcb: Warning 6094: M pin $10I569.OUT2: Pin not connected
+pcb: Warning 6094: M pin $7I349.R3: Pin not connected
+pcb: Warning 6094: M pin $7I349.R4: Pin not connected
+pcb: Warning 6094: M pin $7I349.R8: Pin not connected
+pcb: Warning 6094: M pin $5I940.DATA1: Pin not connected
+pcb: Warning 6094: M pin $5I940.DATA2: Pin not connected
+pcb: Warning 6094: M pin $5I940.DATA3: Pin not connected
+pcb: Warning 6094: M pin $5I940.DATA4: Pin not connected
+pcb: Warning 6094: M pin $5I853.IO_PR_DONE: Pin not connected
+pcb: Warning 6094: M pin $5I853.IO_PR_ERROR: Pin not connected
+pcb: Warning 6094: M pin $5I853.IO_PR_READY: Pin not connected
+pcb: Warning 6094: M pin $5I1050.IO_CRC_ERROR: Pin not connected
+pcb: Warning 6094: M pin $5I1050.IO_CVP_CONFDONE: Pin not connected
+pcb: Warning 6094: M pin $5I1050.IO_DEV_CLRN: Pin not connected
+pcb: Warning 6094: M pin $5I1050.IO_DEV_OE: Pin not connected
+pcb: Warning 6094: M pin $5I1050.IO_NCEO: Pin not connected
+pcb: Warning 6094: M pin $5I1050.IO_PR_REQUEST: Pin not connected
+pcb: Warning 6094: M pin $4I297.DNU1: Pin not connected
+pcb: Warning 6094: M pin $4I297.DNU2: Pin not connected
+pcb: Warning 6094: M pin $4I297.DNU3: Pin not connected
+pcb: Warning 6094: M pin $4I297.DNU4: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_1: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_11: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_12: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_13: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_14: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_15: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_16: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_17: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_18: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_19: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_2: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_20: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_21: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_22: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_3: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_4: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_5: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_57: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_59: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_6: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_61: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_62: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_63: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_64: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_65: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_66: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_67: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_68: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_69: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_7: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_70: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_71: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_72: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_73: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_74: Pin not connected
+pcb: Warning 6094: M pin $1I866.IO_8: Pin not connected
 pcb: Note 5626: Summary of Log Files/pcb.err
-Status 0, Notes 3, Warnings 193
+Status 0, Notes 1, Warnings 312
 Errors 0, Failures 0, Fatals 0, Internals 0

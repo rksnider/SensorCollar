@@ -196,7 +196,7 @@ entity PowerController is
     gpio_2                : out   std_logic ;
     gpio_3                : out   std_logic ;
     gpio_4                : out   std_logic ;
-    gpio_5                : out   std_logic ;
+    gpio_5                : in   std_logic ;
     gpio_6                : out   std_logic ;
     gpio_7                : out   std_logic ;
     gpio_8                : out   std_logic ;
@@ -323,10 +323,12 @@ begin
 
   master_clk_out        <= '0' when (fpga_running = '0') else master_clk ;
 
-  pfl_flash_clk_io      <= pfl_flash_clk (0) when (fpga_powered = '1')
-                                             else '0' ;
-  pfl_flash_cs_io       <= pfl_flash_cs  (0) when (fpga_powered = '1')
-                                             else '0' ;
+  pfl_flash_clk_io      <= pfl_flash_clk (0) when (flash_access_granted = '1') else
+                           '0' when (fpga_powered = '0') else 'Z';
+  pfl_flash_cs_io       <= pfl_flash_cs (0) when (flash_access_granted = '1') else
+                           '0' when (fpga_powered = '0') else 'Z';
+                                             
+                            
   ext_flash_data_io     <= "0000" when (fpga_powered = '0') else
                            "ZZZZ" ;
   ext_flash_clk_io      <= '0' when (fpga_powered = '0') else 'Z' ;
@@ -339,12 +341,12 @@ begin
 
 
 
-  --Debug--
-  --This is the sequence of FPGA turn on events as conducted by the CPLD.
-  gpio_1                <=  fpga_activated;
-  gpio_2                <=  fpga_powered;
-  gpio_3                <=  fpga_running;
-  --Debug--
+  -- --Debug--
+  -- --This is the sequence of FPGA turn on events as conducted by the CPLD.
+  -- gpio_1                <=  fpga_activated;
+  -- gpio_2                <=  fpga_powered;
+  -- gpio_3                <=  fpga_running;
+  -- --Debug--
 
   fpga_cnf_nconfig_out  <= '1' when (fpga_activated = '0') else
                            pfl_nconfig ;
@@ -418,6 +420,15 @@ begin
 
   --  Control Register Bit Mappings and default values.
 
+    gpio_1		<=		 pwr_1p1_good_in;
+		gpio_2		<=		 pwr_3p3_good_in; 
+		gpio_3    <=     pwr_2p5_good_in;
+    --gpio_3    <=     gpio_5;
+		gpio_4		<=     master_clk;
+		-- gpio_5		<=      pwr_ls_1p8_out; 
+		-- gpio_6		<=      pwr_im_out;
+		-- gpio_7		<=	    pwr_micL_out;
+		-- gpio_8		<=	    pwr_micR_out;  
   bat_recharge_out      <=
         '0' when (bat_good_in = '0') else
         PC_ControlReg (ControlSignals'pos(Ctl_RechargeSwitch_e))
@@ -464,9 +475,9 @@ begin
         PC_ControlReg (ControlSignals'pos(Ctl_FPGA_Shutdown_e))
         when (PC_ControlUse = '1') else '0' ;
   flash_access_granted  <=
-        '0' when (fpga_activated = '0') else
-        PC_ControlReg (ControlSignals'pos(Ctl_FLASH_Granted_e))
-        when (PC_ControlUse = '1') else '1' ;
+        '0' when (fpga_activated = '0') else 
+		  PC_ControlReg (ControlSignals'pos(Ctl_FLASH_Granted_e))
+        when (PC_ControlUse = '1') else '1';
 
   --  Parallel Flash Loader.
   --  When pfl_flash_access_granted is low all flash_* lines are
@@ -510,7 +521,7 @@ begin
       status_chg_out          => statreg_changed,
       control_out             => PC_ControlReg,
       control_set_out         => PC_ControlSet,
-      enable_in               => not spi_cs,
+      enable_in               => spi_cs,
       data_in                 => spi_mosi_in,
       data_out                => spi_miso
     ) ;

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <PartListerConfiguration version="2">
   <Entry name="outputVersion" value="1"/>
-  <Entry name="outputFormat" value="HTML"/>
+  <Entry name="outputFormat" value="EXCEL"/>
   <Entry name="pagination" value="NO"/>
   <Entry name="pagelength" value="65535"/>
   <Entry name="delimiter" value=" "/>
@@ -15,10 +15,12 @@
   </Header>
   <Columns>
     <Column type="NUMBER" label="#" width="3"/>
-    <Column type="QUANTITY" label="QTY" width="5"/>
     <Column type="PROPERTY" property="DEVICE" label="DEVICE" width="10" sort="ASCENDING" key="PRIMARY" display="Compress"/>
     <Column type="PROPERTY" property="REFDES" label="REFDES" width="10" key="SECONDARY" display="Compress"/>
-    <Column type="PROPERTY" property="PKG_TYPE" label="PKG_TYPE" width="10" display="Full"/>
-    <Column type="PROPERTY" property="VALUE" label="VALUE" width="10" display="Full"/>
+    <Column type="PROPERTY" property="P/D_NUM" label="P/D_NUM" width="10" key="SECONDARY" display="Compress"/>
+    <Column type="PROPERTY" property="PART_NUMBER" label="PART_NUMBER" width="10" key="SECONDARY" display="Compress"/>
+    <Column type="QUANTITY" label="QTY" width="5"/>
+    <Column type="PROPERTY" property="VALUE" label="VALUE" width="10" display="Compress"/>
+    <Column type="PROPERTY" property="TOLERANCE" label="TOLERANCE" width="10" display="Compress"/>
   </Columns>
 </PartListerConfiguration>

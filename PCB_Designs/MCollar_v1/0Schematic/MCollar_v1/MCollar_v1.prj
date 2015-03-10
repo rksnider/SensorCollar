@@ -4,6 +4,7 @@ VALUE "DIR [W] . (MCollar_v1)"
 VALUE "DIR [W] C:\Users\kyler.callahan\Documents\work\MCollar_v1\4Librarys\DxDesigner Common Parts (DxDesigner_Common_Parts)"
 VALUE "DIR [W] C:\Users\kyler.callahan\Documents\work\MCollar_v1\4Librarys\DxDesigner Library (DxDesigner_Library)"
 VALUE "DIR [R] C:\MentorGraphics\9.5PADS\SDD_HOME\Libraries\analog (analog)"
+VALUE "DIR [R] C:\MentorGraphics\9.5PADS\SDD_HOME\Libraries\common (common)"
 ENDLIST
 LIST HdlSearchPaths
 ENDLIST
@@ -64,5 +65,5 @@ KEY SchematicConflict "FE"
 KEY SchematicDesignBackAnno "0"
 KEY SchematicDesignStatus "0"
 KEY SearchPathScheme "(Default)"
-KEY RootBlock "D"
+KEY RootBlock "S"
 ENDSECTION
