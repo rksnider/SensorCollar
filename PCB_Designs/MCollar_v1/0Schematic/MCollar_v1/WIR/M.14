@@ -2,7 +2,7 @@
 V 6.0
 DW M
 |Q DxDesigner_Library:Board_to_Board_50pos_Plug 1
-AS DxDesigner_Library:Board_to_Board_50pos_Plug INOV_VER_REC=15:13:15_3-4-15
+AS DxDesigner_Library:Board_to_Board_50pos_Plug INOV_VER_REC=11:13:24_3-12-15
 AS DxDesigner_Library:Board_to_Board_50pos_Plug DEVICE=Board_to_Board_50pos_Plug
 AS DxDesigner_Library:Board_to_Board_50pos_Plug REFDES=J?
 AS DxDesigner_Library:Board_to_Board_50pos_Plug PKG_TYPE=Board_to_Board_50pos_Plug
@@ -109,9 +109,25 @@ AP DxDesigner_Library:Board_to_Board_50pos_Plug 49 #=8
 AP DxDesigner_Library:Board_to_Board_50pos_Plug 49 PINTYPE=IN
 AP DxDesigner_Library:Board_to_Board_50pos_Plug 50 #=9
 AP DxDesigner_Library:Board_to_Board_50pos_Plug 50 PINTYPE=IN
+|Q DxDesigner_Common_Parts:Res_10k1_0402 1
+AS DxDesigner_Common_Parts:Res_10k1_0402 PINSWAP=(1,2)
+AS DxDesigner_Common_Parts:Res_10k1_0402 REFDES=R?
+AS DxDesigner_Common_Parts:Res_10k1_0402 DEVICE=Res_10k1_0402
+AS DxDesigner_Common_Parts:Res_10k1_0402 VALUE=10k
+AS DxDesigner_Common_Parts:Res_10k1_0402 TOLERANCE=1%
+AS DxDesigner_Common_Parts:Res_10k1_0402 PKG_TYPE=0402_MY
+AS DxDesigner_Common_Parts:Res_10k1_0402 PART_NUMBER=ERJ-2RKF1002X
+AS DxDesigner_Common_Parts:Res_10k1_0402 P/D_NUM=P10.0KLCT-ND
+AS DxDesigner_Common_Parts:Res_10k1_0402 INOV_VER_REC=11:38:43_1-7-15
+AS DxDesigner_Common_Parts:Res_10k1_0402 PINORDER=1 2
+AP DxDesigner_Common_Parts:Res_10k1_0402 1 #=1
+AP DxDesigner_Common_Parts:Res_10k1_0402 1 PINTYPE=ANALOG
+AP DxDesigner_Common_Parts:Res_10k1_0402 2 #=2
+AP DxDesigner_Common_Parts:Res_10k1_0402 2 PINTYPE=ANALOG
+G GND
 M DxDesigner_Library:Board_to_Board_50pos_Plug $14I607
-I $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? CPLDON_00 ? CPLDON_01 ? ? CPLDON_02 ? ? ? ? REFDES=J?`
-|R 15:13:15_3-4-15
+I $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug M_FPGA_7A_11 GND M_FPGA_7A_04 CPLDON_00 GND CPLDON_01 M_FPGA_7A_08 CPLDON_02 M_FPGA_7A_03 M_CPLD_00 M_FPGA_7A_02 FPGA_3P3V M_CPLD_01 M_FPGA_7A_07 M_CPLD_02 M_FPGA_7A_01 M_CPLD_03 GND M_CPLD_04 M_FPGA_7A_00 M_CPLD_05 M_FPGA_7A_06 M_FPGA_7A_12 M_CPLD_06 M_FPGA_8A_02 M_CPLD_07 M_FPGA_8A_00 M_CPLD_08 M_FPGA_8A_01 M_CPLD_09 GND M_CPLD_10 VCC1P8_AUX FPGA_3P3V M_CPLD_11 PWR_MAIN M_CPLD_12 PWR_MAIN M_CPLD_13 GND M_CPLD_14 I2C_SDA M_CPLD_15 I2C_SCL M_FPGA_7A_10 GND VCC1P8 M_FPGA_7A_05 VCC1P8 M_FPGA_7A_09 REFDES=J?`
+|R 11:13:24_3-12-15
 API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 1 #=1
 API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 2 #=10
 API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 3 #=11
@@ -137,35 +153,15 @@ API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 22 #=29
 API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 23 #=3
 API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 24 #=30
 API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 25 #=31
-API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 26 #=32
-API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 27 #=33
-API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 28 #=34
-API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 29 #=35
-API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 30 #=36
-API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 31 #=37
-API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 32 #=38
-API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 33 #=39
 API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 34 #=4
-API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 35 #=40
-API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 36 #=41
-API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 37 #=42
-API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 38 #=43
-API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 39 #=44
-API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 40 #=45
-API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 41 #=46
-API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 42 #=47
-API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 43 #=48
-API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 44 #=49
 API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 45 #=5
-API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 46 #=50
 API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 47 #=6
 API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 48 #=7
 API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 49 #=8
 API $14I607 DxDesigner_Library:Board_to_Board_50pos_Plug 50 #=9
 M DxDesigner_Library:Board_to_Board_50pos_Plug $14I659
-I $14I659 DxDesigner_Library:Board_to_Board_50pos_Plug ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? REFDES=J?`
-|R 15:13:15_3-4-15
-API $14I659 DxDesigner_Library:Board_to_Board_50pos_Plug 1 #=1
+I $14I659 DxDesigner_Library:Board_to_Board_50pos_Plug VCC3P3 M_FPGA_4A_07 FPGA_1P8V M_FPGA_4A_03 VCC2P5 M_FPGA_4A_02 VCC2P5 FPGA_2P5V GND M_FPGA_4A_01 M_FPGA_4A_00 M_FPGA_4A_05 M_FPGA_4A_06 M_FPGA_3B_04 M_FPGA_3B_00 M_FPGA_3B_02 M_FPGA_3B_11 M_FPGA_3B_06 M_FPGA_3B_01 M_FPGA_3B_03 M_FPGA_3B_10 ESH_JTAG_TDO_SPI_MISO VCC3P3 M_FPGA_3B_13 ESH_JTAG_TDI_SPI_MOSI M_FPGA_3B_09 ESH_JTAG_TMS_SPI_CS M_FPGA_3B_12 ESH_JTAG_TCK ESH_FPGA_USB_DMINUS ESH_FPGA_SPI_CLK ESH_FPGA_USB_DPLUS ESH_FORCE_STARTUP M_FPGA_4A_09 M_FPGA_3B_05 GND M_FPGA_3B_08 VCC1P1 M_FPGA_3B_07 VCC1P1 GND ESH_AUX_VCC ESH_AUX_VCC ESH_AUX_VCC PWR_MAIN ESH_AUX_VCC M_FPGA_4A_08 PWR_MAIN M_FPGA_4A_04 FPGA_1P8V REFDES=J?`
+|R 11:13:24_3-12-15
 API $14I659 DxDesigner_Library:Board_to_Board_50pos_Plug 2 #=10
 API $14I659 DxDesigner_Library:Board_to_Board_50pos_Plug 3 #=11
 API $14I659 DxDesigner_Library:Board_to_Board_50pos_Plug 4 #=12
@@ -187,7 +183,6 @@ API $14I659 DxDesigner_Library:Board_to_Board_50pos_Plug 19 #=26
 API $14I659 DxDesigner_Library:Board_to_Board_50pos_Plug 20 #=27
 API $14I659 DxDesigner_Library:Board_to_Board_50pos_Plug 21 #=28
 API $14I659 DxDesigner_Library:Board_to_Board_50pos_Plug 22 #=29
-API $14I659 DxDesigner_Library:Board_to_Board_50pos_Plug 23 #=3
 API $14I659 DxDesigner_Library:Board_to_Board_50pos_Plug 24 #=30
 API $14I659 DxDesigner_Library:Board_to_Board_50pos_Plug 25 #=31
 API $14I659 DxDesigner_Library:Board_to_Board_50pos_Plug 26 #=32
@@ -215,4 +210,14 @@ API $14I659 DxDesigner_Library:Board_to_Board_50pos_Plug 47 #=6
 API $14I659 DxDesigner_Library:Board_to_Board_50pos_Plug 48 #=7
 API $14I659 DxDesigner_Library:Board_to_Board_50pos_Plug 49 #=8
 API $14I659 DxDesigner_Library:Board_to_Board_50pos_Plug 50 #=9
+M DxDesigner_Common_Parts:Res_10k1_0402 $14I1033
+I $14I1033 DxDesigner_Common_Parts:Res_10k1_0402 I2C_SCL VCC1P8_AUX VALUE=10k`REFDES=R?`
+|R 11:38:43_1-7-15
+API $14I1033 DxDesigner_Common_Parts:Res_10k1_0402 1 #=1
+API $14I1033 DxDesigner_Common_Parts:Res_10k1_0402 2 #=2
+M DxDesigner_Common_Parts:Res_10k1_0402 $14I1037
+I $14I1037 DxDesigner_Common_Parts:Res_10k1_0402 I2C_SDA VCC1P8_AUX VALUE=10k`REFDES=R?`
+|R 11:38:43_1-7-15
+API $14I1037 DxDesigner_Common_Parts:Res_10k1_0402 1 #=1
+API $14I1037 DxDesigner_Common_Parts:Res_10k1_0402 2 #=2
 EW

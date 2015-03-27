@@ -1,0 +1,14 @@
+Assembly Variant Service has detected improper attribute values
+
+Mon Mar 23 10:51:50 2015
+
+Current Job : MCollar_MAIN_working.pcb
+
+
+Format:
+OBJ_NAME
+OLD_VALUE{EMPTY;TOO_LONG}
+NEW_VALUE{DELETED;TOO_LONG}
+RESUME
+
+
