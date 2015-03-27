@@ -1,46 +1,9 @@
 ** ECO In Report **
 
-Fri Mar 06 13:58:54 2015
+Mon Mar 23 17:58:24 2015
 
 Input  File : C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1\M.eco
 Current Job : MCollar_MAIN_working.pcb
 
 
-* Warning: deleting single-pin signal A0
-* Warning: deleting single-pin signal A1
-* Warning: deleting single-pin signal A10
-* Warning: deleting single-pin signal A11
-* Warning: deleting single-pin signal A2
-* Warning: deleting single-pin signal A3
-* Warning: deleting single-pin signal A4
-* Warning: deleting single-pin signal A5
-* Warning: deleting single-pin signal A6
-* Warning: deleting single-pin signal A7
-* Warning: deleting single-pin signal A9
-* Warning: deleting single-pin signal BA0
-* Warning: deleting single-pin signal BA1
-* Warning: deleting single-pin signal CAS_N
-* Warning: deleting single-pin signal CS_N
-* Warning: deleting single-pin signal DQ0
-* Warning: deleting single-pin signal DQ1
-* Warning: deleting single-pin signal DQ10
-* Warning: deleting single-pin signal DQ11
-* Warning: deleting single-pin signal DQ12
-* Warning: deleting single-pin signal DQ13
-* Warning: deleting single-pin signal DQ14
-* Warning: deleting single-pin signal DQ15
-* Warning: deleting single-pin signal DQ2
-* Warning: deleting single-pin signal DQ3
-* Warning: deleting single-pin signal DQ4
-* Warning: deleting single-pin signal DQ5
-* Warning: deleting single-pin signal DQ6
-* Warning: deleting single-pin signal DQ7
-* Warning: deleting single-pin signal DQ8
-* Warning: deleting single-pin signal DQ9
-* Warning: deleting single-pin signal LDQM
-* Warning: deleting single-pin signal M_FPGA_5A_07
-* Warning: deleting single-pin signal M_FPGA_5A_08
-* Warning: deleting single-pin signal RAS_N
-* Warning: deleting single-pin signal SDRAM_CKE
-* Warning: deleting single-pin signal SDRAM_CLK
-* Warning: deleting single-pin signal WE_N
+No errors found

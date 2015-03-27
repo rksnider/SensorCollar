@@ -353,7 +353,7 @@ I $10I1282 DxDesigner_Common_Parts:Res_1M1_0402 GND BUCK_PWM_TO_CPLD TOLERANCE=1
 API $10I1282 DxDesigner_Common_Parts:Res_1M1_0402 1 #=1
 API $10I1282 DxDesigner_Common_Parts:Res_1M1_0402 2 #=2
 M DxDesigner_Common_Parts:cap_4p7uF_0402 $10I1291
-I $10I1291 DxDesigner_Common_Parts:cap_4p7uF_0402 VCC3P3 GND REFDES=C104`
+I $10I1291 DxDesigner_Common_Parts:cap_4p7uF_0402 VCC3P3 GND VALUE=4.7uF`REFDES=C104`
 |R 11:57:37_1-7-15
 API $10I1291 DxDesigner_Common_Parts:cap_4p7uF_0402 1 #=1
 API $10I1291 DxDesigner_Common_Parts:cap_4p7uF_0402 2 #=2
@@ -468,7 +468,7 @@ API $10I558 DxDesigner_Library:SWITCH_DUAL_SiP32416 7 #=8
 API $10I558 DxDesigner_Library:SWITCH_DUAL_SiP32416 8 #=5
 API $10I558 DxDesigner_Library:SWITCH_DUAL_SiP32416 9 #=9
 M DxDesigner_Library:SWITCH_DUAL_SiP32416 $10I569
-I $10I569 DxDesigner_Library:SWITCH_DUAL_SiP32416 FPGA_ON ? GND GND VCC3P3 ? FPGA_3P3V ? GND PART_NUMBER=Sip32416`REFDES=S?`
+I $10I569 DxDesigner_Library:SWITCH_DUAL_SiP32416 FPGA_ON VCC1P8_AUX_CTRL GND GND VCC3P3 VCC1P8 FPGA_3P3V VCC1P8_AUX GND PART_NUMBER=Sip32416`REFDES=S?`
 |R 12:13:50_1-9-15
 API $10I569 DxDesigner_Library:SWITCH_DUAL_SiP32416 1 #=2
 API $10I569 DxDesigner_Library:SWITCH_DUAL_SiP32416 2 #=3
@@ -489,4 +489,14 @@ I $10I1378 DxDesigner_Common_Parts:cap_22uF_0603 VCC3P3 GND REFDES=C42`
 |R 13:51:52_3-4-15
 API $10I1378 DxDesigner_Common_Parts:cap_22uF_0603 1 #=1
 API $10I1378 DxDesigner_Common_Parts:cap_22uF_0603 2 #=2
+M DxDesigner_Common_Parts:cap_4p7uF_0402 $10I1391
+I $10I1391 DxDesigner_Common_Parts:cap_4p7uF_0402 VCC1P8 GND REFDES=C?`
+|R 11:57:37_1-7-15
+API $10I1391 DxDesigner_Common_Parts:cap_4p7uF_0402 1 #=1
+API $10I1391 DxDesigner_Common_Parts:cap_4p7uF_0402 2 #=2
+M DxDesigner_Common_Parts:cap_0p1uF_0402 $10I1395
+I $10I1395 DxDesigner_Common_Parts:cap_0p1uF_0402 VCC1P8_AUX GND VALUE=0.1uF`REFDES=C?`
+|R 14:43:56_1-7-15
+API $10I1395 DxDesigner_Common_Parts:cap_0p1uF_0402 1 #=1
+API $10I1395 DxDesigner_Common_Parts:cap_0p1uF_0402 2 #=2
 EW

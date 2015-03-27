@@ -265,7 +265,7 @@
 			(pin 1  5 "RES_64P9K0P1_0603__RES_64P9K0P1_0603_1" 0 "1" 0))
 		(part "RES_24K5_0402")
 		(logical_part_mapping "RES_24K5_0402"
-			(comp "R17"))
+			(comp "R21" "R17" "R16"))
 		(logical_part "RES_24K5_0402"
 			(slots
 				(slot "RES_24K5_0402__RES_24K5_0402_1"
@@ -276,12 +276,12 @@
 						(attval "PKG_TYPE" "0402_MY")
 						(attval "REFDES" "R?")
 						(attval "Tolerance" "5%")
-						(attval "Value" ""))))
+						(attval "Value" "24K"))))
 			(pin 2  5 "RES_24K5_0402__RES_24K5_0402_1" 0 "2" 0)
 			(pin 1  5 "RES_24K5_0402__RES_24K5_0402_1" 0 "1" 0))
 		(part "RES_10K1_0402")
 		(logical_part_mapping "RES_10K1_0402"
-			(comp "R20" "R14" "R13" "R10" "R9"))
+			(comp "R23" "R22" "R20" "R14" "R10" "R9"))
 		(logical_part "RES_10K1_0402"
 			(slots
 				(slot "RES_10K1_0402__RES_10K1_0402_1"
@@ -834,7 +834,7 @@
 			(pin 1  5 "CAP_4P7UF_0603__CAP_4P7UF_0603_1" 0 "1" 0))
 		(part "CAP_4P7UF_0402")
 		(logical_part_mapping "CAP_4P7UF_0402"
-			(comp "C109" "C104" "C103" "C102" "C101" "C52" "C51"))
+			(comp "C109" "C104" "C103" "C102" "C101" "C52" "C51" "C4"))
 		(logical_part "CAP_4P7UF_0402"
 			(slots
 				(slot "CAP_4P7UF_0402__CAP_4P7UF_0402_1"
@@ -947,7 +947,7 @@
 		(part "CAP_0P1UF_0402")
 		(logical_part_mapping "CAP_0P1UF_0402"
 			(comp "C95" "C94" "C91" "C90" "C87" "C86" "C83" "C82" "C81" "C80" "C78" "C74" "C68" "C67" "C66" "C65" "C49" "C46" "C43" "C21"
- "C16" "C15" "C14" "C13"))
+ "C16" "C15" "C14" "C13" "C2"))
 		(logical_part "CAP_0P1UF_0402"
 			(slots
 				(slot "CAP_0P1UF_0402__CAP_0P1UF_0402_1"
@@ -979,7 +979,7 @@
 			(pin 1  5 "CAP_0P1UF_0201__CAP_0P1UF_0201_1" 0 "1" 0))
 		(part "C5_U324")
 		(logical_part_mapping "C5_U324"
-			(comp "U209" "U3"))
+			(comp "U3"))
 		(logical_part "C5_U324"
 			(slots
 				(slot "C5U324_GND__C5_U324_1"
@@ -1062,7 +1062,7 @@
 						(attval "Part Number" "5CEBA4U15C7N")
 						(attval "PKG_TYPE" "C5_U324")
 						(attval "REFDES" "U?")))
-				(slot "C5U324_B2A__C5_U324_11"
+				(slot "C5U324_B4A__C5_U324_11"
 					(attributes
 						(attval "DEVICE" "C5_U324")
 						(attval "HETERO"
@@ -1070,7 +1070,7 @@
 						(attval "Part Number" "5CEBA4U15C7N")
 						(attval "PKG_TYPE" "C5_U324")
 						(attval "REFDES" "U?")))
-				(slot "C5U324_B4A__C5_U324_12"
+				(slot "C5U324_B2A__C5_U324_12"
 					(attributes
 						(attval "DEVICE" "C5_U324")
 						(attval "HETERO"
@@ -1264,72 +1264,72 @@
 			(pin H13  5 "C5U324_B5A__C5_U324_10" 0 "IO_3" 0)
 			(pin G13  5 "C5U324_B5A__C5_U324_10" 0 "IO_2" 0)
 			(pin L16  5 "C5U324_B5A__C5_U324_10" 0 "IO_1" 0)
-			(pin N1  3 "C5U324_B2A__C5_U324_11" 0 "VREFB2AN0" 0)
-			(pin G3  5 "C5U324_B2A__C5_U324_11" 0 "IO_9" 0)
-			(pin G2  5 "C5U324_B2A__C5_U324_11" 0 "IO_8" 0)
-			(pin F4  5 "C5U324_B2A__C5_U324_11" 0 "IO_7" 0)
-			(pin F2  5 "C5U324_B2A__C5_U324_11" 0 "IO_6" 0)
-			(pin F1  5 "C5U324_B2A__C5_U324_11" 0 "IO_5" 0)
-			(pin E3  5 "C5U324_B2A__C5_U324_11" 0 "IO_4" 0)
-			(pin T2  5 "C5U324_B2A__C5_U324_11" 0 "IO_32" 0)
-			(pin T1  5 "C5U324_B2A__C5_U324_11" 0 "IO_31" 0)
-			(pin R3  5 "C5U324_B2A__C5_U324_11" 0 "IO_30" 0)
-			(pin E2  5 "C5U324_B2A__C5_U324_11" 0 "IO_3" 0)
-			(pin R2  5 "C5U324_B2A__C5_U324_11" 0 "IO_29" 0)
-			(pin R1  5 "C5U324_B2A__C5_U324_11" 0 "IO_28" 0)
-			(pin P1  5 "C5U324_B2A__C5_U324_11" 0 "IO_27" 0)
-			(pin N3  5 "C5U324_B2A__C5_U324_11" 0 "IO_26" 0)
-			(pin N2  5 "C5U324_B2A__C5_U324_11" 0 "IO_25" 0)
-			(pin M4  5 "C5U324_B2A__C5_U324_11" 0 "IO_24" 0)
-			(pin M3  5 "C5U324_B2A__C5_U324_11" 0 "IO_23" 0)
-			(pin M2  5 "C5U324_B2A__C5_U324_11" 0 "IO_22" 0)
-			(pin L5  5 "C5U324_B2A__C5_U324_11" 0 "IO_21" 0)
-			(pin L4  5 "C5U324_B2A__C5_U324_11" 0 "IO_20" 0)
-			(pin E1  5 "C5U324_B2A__C5_U324_11" 0 "IO_2" 0)
-			(pin L2  5 "C5U324_B2A__C5_U324_11" 0 "IO_19" 0)
-			(pin L1  5 "C5U324_B2A__C5_U324_11" 0 "IO_18" 0)
-			(pin K3  5 "C5U324_B2A__C5_U324_11" 0 "IO_17" 0)
-			(pin K2  5 "C5U324_B2A__C5_U324_11" 0 "IO_16" 0)
-			(pin K1  5 "C5U324_B2A__C5_U324_11" 0 "IO_15" 0)
-			(pin J4  5 "C5U324_B2A__C5_U324_11" 0 "IO_14" 0)
-			(pin J3  5 "C5U324_B2A__C5_U324_11" 0 "IO_13" 0)
-			(pin J1  5 "C5U324_B2A__C5_U324_11" 0 "IO_12" 0)
-			(pin H2  5 "C5U324_B2A__C5_U324_11" 0 "IO_11" 0)
-			(pin H1  5 "C5U324_B2A__C5_U324_11" 0 "IO_10" 0)
-			(pin D1  5 "C5U324_B2A__C5_U324_11" 0 "IO_1" 0)
-			(pin V11  3 "C5U324_B4A__C5_U324_12" 0 "VREFB4AN0" 0)
-			(pin P14  5 "C5U324_B4A__C5_U324_12" 0 "IO_9" 0)
-			(pin P13  5 "C5U324_B4A__C5_U324_12" 0 "IO_8" 0)
-			(pin N17  5 "C5U324_B4A__C5_U324_12" 0 "IO_7" 0)
-			(pin N16  5 "C5U324_B4A__C5_U324_12" 0 "IO_6" 0)
-			(pin N13  5 "C5U324_B4A__C5_U324_12" 0 "IO_5" 0)
-			(pin N12  5 "C5U324_B4A__C5_U324_12" 0 "IO_4" 0)
-			(pin V17  5 "C5U324_B4A__C5_U324_12" 0 "IO_32" 0)
-			(pin V16  5 "C5U324_B4A__C5_U324_12" 0 "IO_31" 0)
-			(pin V15  5 "C5U324_B4A__C5_U324_12" 0 "IO_30" 0)
-			(pin M14  5 "C5U324_B4A__C5_U324_12" 0 "IO_3" 0)
-			(pin V13  5 "C5U324_B4A__C5_U324_12" 0 "IO_29" 0)
-			(pin V12  5 "C5U324_B4A__C5_U324_12" 0 "IO_28" 0)
-			(pin U18  5 "C5U324_B4A__C5_U324_12" 0 "IO_27" 0)
-			(pin U17  5 "C5U324_B4A__C5_U324_12" 0 "IO_26" 0)
-			(pin U15  5 "C5U324_B4A__C5_U324_12" 0 "IO_25" 0)
-			(pin U14  5 "C5U324_B4A__C5_U324_12" 0 "IO_24" 0)
-			(pin U13  5 "C5U324_B4A__C5_U324_12" 0 "IO_23" 0)
-			(pin U12  5 "C5U324_B4A__C5_U324_12" 0 "IO_22" 0)
-			(pin T17  5 "C5U324_B4A__C5_U324_12" 0 "IO_21" 0)
-			(pin T16  5 "C5U324_B4A__C5_U324_12" 0 "IO_20" 0)
-			(pin M13  5 "C5U324_B4A__C5_U324_12" 0 "IO_2" 0)
-			(pin T15  5 "C5U324_B4A__C5_U324_12" 0 "IO_19" 0)
-			(pin T14  5 "C5U324_B4A__C5_U324_12" 0 "IO_18" 0)
-			(pin T12  5 "C5U324_B4A__C5_U324_12" 0 "IO_17" 0)
-			(pin R18  5 "C5U324_B4A__C5_U324_12" 0 "IO_16" 0)
-			(pin R17  5 "C5U324_B4A__C5_U324_12" 0 "IO_15" 0)
-			(pin R16  5 "C5U324_B4A__C5_U324_12" 0 "IO_14" 0)
-			(pin R13  5 "C5U324_B4A__C5_U324_12" 0 "IO_13" 0)
-			(pin P18  5 "C5U324_B4A__C5_U324_12" 0 "IO_12" 0)
-			(pin P16  5 "C5U324_B4A__C5_U324_12" 0 "IO_11" 0)
-			(pin P15  5 "C5U324_B4A__C5_U324_12" 0 "IO_10" 0)
-			(pin L13  5 "C5U324_B4A__C5_U324_12" 0 "IO_1" 0)
+			(pin V11  3 "C5U324_B4A__C5_U324_11" 0 "VREFB4AN0" 0)
+			(pin P14  5 "C5U324_B4A__C5_U324_11" 0 "IO_9" 0)
+			(pin P13  5 "C5U324_B4A__C5_U324_11" 0 "IO_8" 0)
+			(pin N17  5 "C5U324_B4A__C5_U324_11" 0 "IO_7" 0)
+			(pin N16  5 "C5U324_B4A__C5_U324_11" 0 "IO_6" 0)
+			(pin N13  5 "C5U324_B4A__C5_U324_11" 0 "IO_5" 0)
+			(pin N12  5 "C5U324_B4A__C5_U324_11" 0 "IO_4" 0)
+			(pin V17  5 "C5U324_B4A__C5_U324_11" 0 "IO_32" 0)
+			(pin V16  5 "C5U324_B4A__C5_U324_11" 0 "IO_31" 0)
+			(pin V15  5 "C5U324_B4A__C5_U324_11" 0 "IO_30" 0)
+			(pin M14  5 "C5U324_B4A__C5_U324_11" 0 "IO_3" 0)
+			(pin V13  5 "C5U324_B4A__C5_U324_11" 0 "IO_29" 0)
+			(pin V12  5 "C5U324_B4A__C5_U324_11" 0 "IO_28" 0)
+			(pin U18  5 "C5U324_B4A__C5_U324_11" 0 "IO_27" 0)
+			(pin U17  5 "C5U324_B4A__C5_U324_11" 0 "IO_26" 0)
+			(pin U15  5 "C5U324_B4A__C5_U324_11" 0 "IO_25" 0)
+			(pin U14  5 "C5U324_B4A__C5_U324_11" 0 "IO_24" 0)
+			(pin U13  5 "C5U324_B4A__C5_U324_11" 0 "IO_23" 0)
+			(pin U12  5 "C5U324_B4A__C5_U324_11" 0 "IO_22" 0)
+			(pin T17  5 "C5U324_B4A__C5_U324_11" 0 "IO_21" 0)
+			(pin T16  5 "C5U324_B4A__C5_U324_11" 0 "IO_20" 0)
+			(pin M13  5 "C5U324_B4A__C5_U324_11" 0 "IO_2" 0)
+			(pin T15  5 "C5U324_B4A__C5_U324_11" 0 "IO_19" 0)
+			(pin T14  5 "C5U324_B4A__C5_U324_11" 0 "IO_18" 0)
+			(pin T12  5 "C5U324_B4A__C5_U324_11" 0 "IO_17" 0)
+			(pin R18  5 "C5U324_B4A__C5_U324_11" 0 "IO_16" 0)
+			(pin R17  5 "C5U324_B4A__C5_U324_11" 0 "IO_15" 0)
+			(pin R16  5 "C5U324_B4A__C5_U324_11" 0 "IO_14" 0)
+			(pin R13  5 "C5U324_B4A__C5_U324_11" 0 "IO_13" 0)
+			(pin P18  5 "C5U324_B4A__C5_U324_11" 0 "IO_12" 0)
+			(pin P16  5 "C5U324_B4A__C5_U324_11" 0 "IO_11" 0)
+			(pin P15  5 "C5U324_B4A__C5_U324_11" 0 "IO_10" 0)
+			(pin L13  5 "C5U324_B4A__C5_U324_11" 0 "IO_1" 0)
+			(pin N1  3 "C5U324_B2A__C5_U324_12" 0 "VREFB2AN0" 0)
+			(pin G3  5 "C5U324_B2A__C5_U324_12" 0 "IO_9" 0)
+			(pin G2  5 "C5U324_B2A__C5_U324_12" 0 "IO_8" 0)
+			(pin F4  5 "C5U324_B2A__C5_U324_12" 0 "IO_7" 0)
+			(pin F2  5 "C5U324_B2A__C5_U324_12" 0 "IO_6" 0)
+			(pin F1  5 "C5U324_B2A__C5_U324_12" 0 "IO_5" 0)
+			(pin E3  5 "C5U324_B2A__C5_U324_12" 0 "IO_4" 0)
+			(pin T2  5 "C5U324_B2A__C5_U324_12" 0 "IO_32" 0)
+			(pin T1  5 "C5U324_B2A__C5_U324_12" 0 "IO_31" 0)
+			(pin R3  5 "C5U324_B2A__C5_U324_12" 0 "IO_30" 0)
+			(pin E2  5 "C5U324_B2A__C5_U324_12" 0 "IO_3" 0)
+			(pin R2  5 "C5U324_B2A__C5_U324_12" 0 "IO_29" 0)
+			(pin R1  5 "C5U324_B2A__C5_U324_12" 0 "IO_28" 0)
+			(pin P1  5 "C5U324_B2A__C5_U324_12" 0 "IO_27" 0)
+			(pin N3  5 "C5U324_B2A__C5_U324_12" 0 "IO_26" 0)
+			(pin N2  5 "C5U324_B2A__C5_U324_12" 0 "IO_25" 0)
+			(pin M4  5 "C5U324_B2A__C5_U324_12" 0 "IO_24" 0)
+			(pin M3  5 "C5U324_B2A__C5_U324_12" 0 "IO_23" 0)
+			(pin M2  5 "C5U324_B2A__C5_U324_12" 0 "IO_22" 0)
+			(pin L5  5 "C5U324_B2A__C5_U324_12" 0 "IO_21" 0)
+			(pin L4  5 "C5U324_B2A__C5_U324_12" 0 "IO_20" 0)
+			(pin E1  5 "C5U324_B2A__C5_U324_12" 0 "IO_2" 0)
+			(pin L2  5 "C5U324_B2A__C5_U324_12" 0 "IO_19" 0)
+			(pin L1  5 "C5U324_B2A__C5_U324_12" 0 "IO_18" 0)
+			(pin K3  5 "C5U324_B2A__C5_U324_12" 0 "IO_17" 0)
+			(pin K2  5 "C5U324_B2A__C5_U324_12" 0 "IO_16" 0)
+			(pin K1  5 "C5U324_B2A__C5_U324_12" 0 "IO_15" 0)
+			(pin J4  5 "C5U324_B2A__C5_U324_12" 0 "IO_14" 0)
+			(pin J3  5 "C5U324_B2A__C5_U324_12" 0 "IO_13" 0)
+			(pin J1  5 "C5U324_B2A__C5_U324_12" 0 "IO_12" 0)
+			(pin H2  5 "C5U324_B2A__C5_U324_12" 0 "IO_11" 0)
+			(pin H1  5 "C5U324_B2A__C5_U324_12" 0 "IO_10" 0)
+			(pin D1  5 "C5U324_B2A__C5_U324_12" 0 "IO_1" 0)
 			(pin U10  3 "C5U324_B3B__C5_U324_13" 0 "VREFB3BN0" 0)
 			(pin U4  5 "C5U324_B3B__C5_U324_13" 0 "IO_9" 0)
 			(pin T9  5 "C5U324_B3B__C5_U324_13" 0 "IO_8" 0)
@@ -1580,336 +1580,6 @@
 			(pin 3  3 "1P1V_CONVERTER_TPS6085__1P1V_CONVERTER_TPS6085_1" 0 "FB" 0)
 			(pin 1  3 "1P1V_CONVERTER_TPS6085__1P1V_CONVERTER_TPS6085_1" 0 "EN" 0)))
 	(placement
-		(component "C5_U324"
-			(place "U209" 0.0 0.0 top 0.0
-				(comp_pin "D6" 0.0 0.0 "BI")
-				(comp_pin "D4" 0.0 0.0 "BI")
-				(comp_pin "E4" 0.0 0.0 "BI")
-				(comp_pin "P6" 0.0 0.0 "BI")
-				(comp_pin "P5" 0.0 0.0 "BI")
-				(comp_pin "N6" 0.0 0.0 "BI")
-				(comp_pin "L6" 0.0 0.0 "BI")
-				(comp_pin "G4" 0.0 0.0 "IN")
-				(comp_pin "G5" 0.0 0.0 "IN")
-				(comp_pin "D3" 0.0 0.0 "IN")
-				(comp_pin "H5" 0.0 0.0 "IN")
-				(comp_pin "J6" 0.0 0.0 "IN")
-				(comp_pin "K6" 0.0 0.0 "IN")
-				(comp_pin "P3" 0.0 0.0 "BI")
-				(comp_pin "M5" 0.0 0.0 "BI")
-				(comp_pin "U3" 0.0 0.0 "BI")
-				(comp_pin "U2" 0.0 0.0 "BI")
-				(comp_pin "V1" 0.0 0.0 "BI")
-				(comp_pin "C6" 0.0 0.0 "IN")
-				(comp_pin "C7" 0.0 0.0 "IN")
-				(comp_pin "B8" 0.0 0.0 "BI")
-				(comp_pin "B7" 0.0 0.0 "BI")
-				(comp_pin "B5" 0.0 0.0 "BI")
-				(comp_pin "B4" 0.0 0.0 "BI")
-				(comp_pin "B3" 0.0 0.0 "BI")
-				(comp_pin "A7" 0.0 0.0 "BI")
-				(comp_pin "A6" 0.0 0.0 "BI")
-				(comp_pin "A5" 0.0 0.0 "BI")
-				(comp_pin "G6" 0.0 0.0 "BI")
-				(comp_pin "F7" 0.0 0.0 "BI")
-				(comp_pin "F6" 0.0 0.0 "BI")
-				(comp_pin "E8" 0.0 0.0 "BI")
-				(comp_pin "C3" 0.0 0.0 "BI")
-				(comp_pin "C2" 0.0 0.0 "BI")
-				(comp_pin "C1" 0.0 0.0 "BI")
-				(comp_pin "A4" 0.0 0.0 "BI")
-				(comp_pin "V5" 0.0 0.0 "IN")
-				(comp_pin "P8" 0.0 0.0 "BI")
-				(comp_pin "P11" 0.0 0.0 "BI")
-				(comp_pin "N11" 0.0 0.0 "BI")
-				(comp_pin "U7" 0.0 0.0 "BI")
-				(comp_pin "N7" 0.0 0.0 "BI")
-				(comp_pin "V3" 0.0 0.0 "BI")
-				(comp_pin "M7" 0.0 0.0 "BI")
-				(comp_pin "V2" 0.0 0.0 "BI")
-				(comp_pin "R4" 0.0 0.0 "BI")
-				(comp_pin "M8" 0.0 0.0 "BI")
-				(comp_pin "P4" 0.0 0.0 "BI")
-				(comp_pin "N10" 0.0 0.0 "BI")
-				(comp_pin "T7" 0.0 0.0 "BI")
-				(comp_pin "M10" 0.0 0.0 "BI")
-				(comp_pin "M9" 0.0 0.0 "BI")
-				(comp_pin "N8" 0.0 0.0 "BI")
-				(comp_pin "B13" 0.0 0.0 "IN")
-				(comp_pin "B9" 0.0 0.0 "BI")
-				(comp_pin "A17" 0.0 0.0 "BI")
-				(comp_pin "A16" 0.0 0.0 "BI")
-				(comp_pin "A15" 0.0 0.0 "BI")
-				(comp_pin "A14" 0.0 0.0 "BI")
-				(comp_pin "A12" 0.0 0.0 "BI")
-				(comp_pin "F12" 0.0 0.0 "BI")
-				(comp_pin "F11" 0.0 0.0 "BI")
-				(comp_pin "F10" 0.0 0.0 "BI")
-				(comp_pin "A11" 0.0 0.0 "BI")
-				(comp_pin "F9" 0.0 0.0 "BI")
-				(comp_pin "E14" 0.0 0.0 "BI")
-				(comp_pin "E12" 0.0 0.0 "BI")
-				(comp_pin "E11" 0.0 0.0 "BI")
-				(comp_pin "E9" 0.0 0.0 "BI")
-				(comp_pin "D16" 0.0 0.0 "BI")
-				(comp_pin "D13" 0.0 0.0 "BI")
-				(comp_pin "D11" 0.0 0.0 "BI")
-				(comp_pin "D10" 0.0 0.0 "BI")
-				(comp_pin "D9" 0.0 0.0 "BI")
-				(comp_pin "A10" 0.0 0.0 "BI")
-				(comp_pin "C16" 0.0 0.0 "BI")
-				(comp_pin "C13" 0.0 0.0 "BI")
-				(comp_pin "C12" 0.0 0.0 "BI")
-				(comp_pin "C11" 0.0 0.0 "BI")
-				(comp_pin "B18" 0.0 0.0 "BI")
-				(comp_pin "B17" 0.0 0.0 "BI")
-				(comp_pin "B15" 0.0 0.0 "BI")
-				(comp_pin "B14" 0.0 0.0 "BI")
-				(comp_pin "B12" 0.0 0.0 "BI")
-				(comp_pin "B10" 0.0 0.0 "BI")
-				(comp_pin "A9" 0.0 0.0 "BI")
-				(comp_pin "E17" 0.0 0.0 "IN")
-				(comp_pin "G14" 0.0 0.0 "BI")
-				(comp_pin "F17" 0.0 0.0 "BI")
-				(comp_pin "F16" 0.0 0.0 "BI")
-				(comp_pin "F14" 0.0 0.0 "BI")
-				(comp_pin "E18" 0.0 0.0 "BI")
-				(comp_pin "E16" 0.0 0.0 "BI")
-				(comp_pin "D18" 0.0 0.0 "BI")
-				(comp_pin "C18" 0.0 0.0 "BI")
-				(comp_pin "J18" 0.0 0.0 "BI")
-				(comp_pin "H18" 0.0 0.0 "BI")
-				(comp_pin "H17" 0.0 0.0 "BI")
-				(comp_pin "H16" 0.0 0.0 "BI")
-				(comp_pin "G18" 0.0 0.0 "BI")
-				(comp_pin "G17" 0.0 0.0 "BI")
-				(comp_pin "G15" 0.0 0.0 "BI")
-				(comp_pin "C17" 0.0 0.0 "BI")
-				(comp_pin "U10" 0.0 0.0 "IN")
-				(comp_pin "U4" 0.0 0.0 "BI")
-				(comp_pin "T9" 0.0 0.0 "BI")
-				(comp_pin "T5" 0.0 0.0 "BI")
-				(comp_pin "T4" 0.0 0.0 "BI")
-				(comp_pin "T11" 0.0 0.0 "BI")
-				(comp_pin "R9" 0.0 0.0 "BI")
-				(comp_pin "R11" 0.0 0.0 "BI")
-				(comp_pin "P9" 0.0 0.0 "BI")
-				(comp_pin "V8" 0.0 0.0 "BI")
-				(comp_pin "V7" 0.0 0.0 "BI")
-				(comp_pin "V6" 0.0 0.0 "BI")
-				(comp_pin "V10" 0.0 0.0 "BI")
-				(comp_pin "U9" 0.0 0.0 "BI")
-				(comp_pin "U8" 0.0 0.0 "BI")
-				(comp_pin "U5" 0.0 0.0 "BI")
-				(comp_pin "P10" 0.0 0.0 "BI")
-				(comp_pin "V11" 0.0 0.0 "IN")
-				(comp_pin "P14" 0.0 0.0 "BI")
-				(comp_pin "P13" 0.0 0.0 "BI")
-				(comp_pin "N17" 0.0 0.0 "BI")
-				(comp_pin "N16" 0.0 0.0 "BI")
-				(comp_pin "N13" 0.0 0.0 "BI")
-				(comp_pin "N12" 0.0 0.0 "BI")
-				(comp_pin "V17" 0.0 0.0 "BI")
-				(comp_pin "V16" 0.0 0.0 "BI")
-				(comp_pin "V15" 0.0 0.0 "BI")
-				(comp_pin "M14" 0.0 0.0 "BI")
-				(comp_pin "V13" 0.0 0.0 "BI")
-				(comp_pin "V12" 0.0 0.0 "BI")
-				(comp_pin "U18" 0.0 0.0 "BI")
-				(comp_pin "U17" 0.0 0.0 "BI")
-				(comp_pin "U15" 0.0 0.0 "BI")
-				(comp_pin "U14" 0.0 0.0 "BI")
-				(comp_pin "U13" 0.0 0.0 "BI")
-				(comp_pin "U12" 0.0 0.0 "BI")
-				(comp_pin "T17" 0.0 0.0 "BI")
-				(comp_pin "T16" 0.0 0.0 "BI")
-				(comp_pin "M13" 0.0 0.0 "BI")
-				(comp_pin "T15" 0.0 0.0 "BI")
-				(comp_pin "T14" 0.0 0.0 "BI")
-				(comp_pin "T12" 0.0 0.0 "BI")
-				(comp_pin "R18" 0.0 0.0 "BI")
-				(comp_pin "R17" 0.0 0.0 "BI")
-				(comp_pin "R16" 0.0 0.0 "BI")
-				(comp_pin "R13" 0.0 0.0 "BI")
-				(comp_pin "P18" 0.0 0.0 "BI")
-				(comp_pin "P16" 0.0 0.0 "BI")
-				(comp_pin "P15" 0.0 0.0 "BI")
-				(comp_pin "L13" 0.0 0.0 "BI")
-				(comp_pin "N1" 0.0 0.0 "IN")
-				(comp_pin "G3" 0.0 0.0 "BI")
-				(comp_pin "G2" 0.0 0.0 "BI")
-				(comp_pin "F4" 0.0 0.0 "BI")
-				(comp_pin "F2" 0.0 0.0 "BI")
-				(comp_pin "F1" 0.0 0.0 "BI")
-				(comp_pin "E3" 0.0 0.0 "BI")
-				(comp_pin "T2" 0.0 0.0 "BI")
-				(comp_pin "T1" 0.0 0.0 "BI")
-				(comp_pin "R3" 0.0 0.0 "BI")
-				(comp_pin "E2" 0.0 0.0 "BI")
-				(comp_pin "R2" 0.0 0.0 "BI")
-				(comp_pin "R1" 0.0 0.0 "BI")
-				(comp_pin "P1" 0.0 0.0 "BI")
-				(comp_pin "N3" 0.0 0.0 "BI")
-				(comp_pin "N2" 0.0 0.0 "BI")
-				(comp_pin "M4" 0.0 0.0 "BI")
-				(comp_pin "M3" 0.0 0.0 "BI")
-				(comp_pin "M2" 0.0 0.0 "BI")
-				(comp_pin "L5" 0.0 0.0 "BI")
-				(comp_pin "L4" 0.0 0.0 "BI")
-				(comp_pin "E1" 0.0 0.0 "BI")
-				(comp_pin "L2" 0.0 0.0 "BI")
-				(comp_pin "L1" 0.0 0.0 "BI")
-				(comp_pin "K3" 0.0 0.0 "BI")
-				(comp_pin "K2" 0.0 0.0 "BI")
-				(comp_pin "K1" 0.0 0.0 "BI")
-				(comp_pin "J4" 0.0 0.0 "BI")
-				(comp_pin "J3" 0.0 0.0 "BI")
-				(comp_pin "J1" 0.0 0.0 "BI")
-				(comp_pin "H2" 0.0 0.0 "BI")
-				(comp_pin "H1" 0.0 0.0 "BI")
-				(comp_pin "D1" 0.0 0.0 "BI")
-				(comp_pin "M17" 0.0 0.0 "IN")
-				(comp_pin "L15" 0.0 0.0 "BI")
-				(comp_pin "M18" 0.0 0.0 "BI")
-				(comp_pin "L14" 0.0 0.0 "BI")
-				(comp_pin "K17" 0.0 0.0 "BI")
-				(comp_pin "K16" 0.0 0.0 "BI")
-				(comp_pin "N18" 0.0 0.0 "BI")
-				(comp_pin "K13" 0.0 0.0 "BI")
-				(comp_pin "L17" 0.0 0.0 "BI")
-				(comp_pin "K18" 0.0 0.0 "BI")
-				(comp_pin "J16" 0.0 0.0 "BI")
-				(comp_pin "J15" 0.0 0.0 "BI")
-				(comp_pin "J14" 0.0 0.0 "BI")
-				(comp_pin "J13" 0.0 0.0 "BI")
-				(comp_pin "H13" 0.0 0.0 "BI")
-				(comp_pin "G13" 0.0 0.0 "BI")
-				(comp_pin "L16" 0.0 0.0 "BI")
-				(comp_pin "R6" 0.0 0.0 "POWER")
-				(comp_pin "T10" 0.0 0.0 "POWER")
-				(comp_pin "R14" 0.0 0.0 "POWER")
-				(comp_pin "D14" 0.0 0.0 "POWER")
-				(comp_pin "C10" 0.0 0.0 "POWER")
-				(comp_pin "E6" 0.0 0.0 "POWER")
-				(comp_pin "E7" 0.0 0.0 "POWER")
-				(comp_pin "M15" 0.0 0.0 "POWER")
-				(comp_pin "T6" 0.0 0.0 "POWER")
-				(comp_pin "C5" 0.0 0.0 "POWER")
-				(comp_pin "E13" 0.0 0.0 "POWER")
-				(comp_pin "D8" 0.0 0.0 "POWER")
-				(comp_pin "H15" 0.0 0.0 "POWER")
-				(comp_pin "K14" 0.0 0.0 "POWER")
-				(comp_pin "R8" 0.0 0.0 "POWER")
-				(comp_pin "R12" 0.0 0.0 "POWER")
-				(comp_pin "R7" 0.0 0.0 "POWER")
-				(comp_pin "J5" 0.0 0.0 "POWER")
-				(comp_pin "K4" 0.0 0.0 "POWER")
-				(comp_pin "B6" 0.0 0.0 "POWER")
-				(comp_pin "C9" 0.0 0.0 "POWER")
-				(comp_pin "A13" 0.0 0.0 "POWER")
-				(comp_pin "C14" 0.0 0.0 "POWER")
-				(comp_pin "E15" 0.0 0.0 "POWER")
-				(comp_pin "B16" 0.0 0.0 "POWER")
-				(comp_pin "G16" 0.0 0.0 "POWER")
-				(comp_pin "F18" 0.0 0.0 "POWER")
-				(comp_pin "M16" 0.0 0.0 "POWER")
-				(comp_pin "K15" 0.0 0.0 "POWER")
-				(comp_pin "R15" 0.0 0.0 "POWER")
-				(comp_pin "U11" 0.0 0.0 "POWER")
-				(comp_pin "U16" 0.0 0.0 "POWER")
-				(comp_pin "T18" 0.0 0.0 "POWER")
-				(comp_pin "V9" 0.0 0.0 "POWER")
-				(comp_pin "T8" 0.0 0.0 "POWER")
-				(comp_pin "U6" 0.0 0.0 "POWER")
-				(comp_pin "R5" 0.0 0.0 "POWER")
-				(comp_pin "J2" 0.0 0.0 "POWER")
-				(comp_pin "L3" 0.0 0.0 "POWER")
-				(comp_pin "P2" 0.0 0.0 "POWER")
-				(comp_pin "H4" 0.0 0.0 "POWER")
-				(comp_pin "F15" 0.0 0.0 "POWER")
-				(comp_pin "N15" 0.0 0.0 "POWER")
-				(comp_pin "F5" 0.0 0.0 "POWER")
-				(comp_pin "N5" 0.0 0.0 "POWER")
-				(comp_pin "H3" 0.0 0.0 "POWER")
-				(comp_pin "J10" 0.0 0.0 "POWER")
-				(comp_pin "J12" 0.0 0.0 "POWER")
-				(comp_pin "K7" 0.0 0.0 "POWER")
-				(comp_pin "K9" 0.0 0.0 "POWER")
-				(comp_pin "K11" 0.0 0.0 "POWER")
-				(comp_pin "L8" 0.0 0.0 "POWER")
-				(comp_pin "L10" 0.0 0.0 "POWER")
-				(comp_pin "L12" 0.0 0.0 "POWER")
-				(comp_pin "G8" 0.0 0.0 "POWER")
-				(comp_pin "G10" 0.0 0.0 "POWER")
-				(comp_pin "G12" 0.0 0.0 "POWER")
-				(comp_pin "H7" 0.0 0.0 "POWER")
-				(comp_pin "H9" 0.0 0.0 "POWER")
-				(comp_pin "H11" 0.0 0.0 "POWER")
-				(comp_pin "J8" 0.0 0.0 "POWER")
-				(comp_pin "M11" 0.0 0.0 "POWER")
-				(comp_pin "A1" 0.0 0.0 "IN")
-				(comp_pin "C8" 0.0 0.0 "IN")
-				(comp_pin "C15" 0.0 0.0 "IN")
-				(comp_pin "B2" 0.0 0.0 "IN")
-				(comp_pin "A2" 0.0 0.0 "IN")
-				(comp_pin "T3" 0.0 0.0)
-				(comp_pin "T13" 0.0 0.0)
-				(comp_pin "U1" 0.0 0.0)
-				(comp_pin "V4" 0.0 0.0)
-				(comp_pin "A3" 0.0 0.0)
-				(comp_pin "A8" 0.0 0.0)
-				(comp_pin "A18" 0.0 0.0)
-				(comp_pin "B1" 0.0 0.0)
-				(comp_pin "B11" 0.0 0.0)
-				(comp_pin "V14" 0.0 0.0)
-				(comp_pin "C4" 0.0 0.0)
-				(comp_pin "D2" 0.0 0.0)
-				(comp_pin "D7" 0.0 0.0)
-				(comp_pin "D17" 0.0 0.0)
-				(comp_pin "E5" 0.0 0.0)
-				(comp_pin "E10" 0.0 0.0)
-				(comp_pin "F3" 0.0 0.0)
-				(comp_pin "F8" 0.0 0.0)
-				(comp_pin "F13" 0.0 0.0)
-				(comp_pin "G1" 0.0 0.0)
-				(comp_pin "V18" 0.0 0.0)
-				(comp_pin "G7" 0.0 0.0)
-				(comp_pin "G9" 0.0 0.0)
-				(comp_pin "G11" 0.0 0.0)
-				(comp_pin "H6" 0.0 0.0)
-				(comp_pin "H8" 0.0 0.0)
-				(comp_pin "H10" 0.0 0.0)
-				(comp_pin "H12" 0.0 0.0)
-				(comp_pin "H14" 0.0 0.0)
-				(comp_pin "J7" 0.0 0.0)
-				(comp_pin "J9" 0.0 0.0)
-				(comp_pin "D12" 0.0 0.0)
-				(comp_pin "J11" 0.0 0.0)
-				(comp_pin "J17" 0.0 0.0)
-				(comp_pin "K5" 0.0 0.0)
-				(comp_pin "K8" 0.0 0.0)
-				(comp_pin "K10" 0.0 0.0)
-				(comp_pin "K12" 0.0 0.0)
-				(comp_pin "L7" 0.0 0.0)
-				(comp_pin "L9" 0.0 0.0)
-				(comp_pin "L11" 0.0 0.0)
-				(comp_pin "L18" 0.0 0.0)
-				(comp_pin "D5" 0.0 0.0)
-				(comp_pin "M1" 0.0 0.0)
-				(comp_pin "M6" 0.0 0.0)
-				(comp_pin "M12" 0.0 0.0)
-				(comp_pin "N4" 0.0 0.0)
-				(comp_pin "N9" 0.0 0.0)
-				(comp_pin "N14" 0.0 0.0)
-				(comp_pin "P7" 0.0 0.0)
-				(comp_pin "P12" 0.0 0.0)
-				(comp_pin "P17" 0.0 0.0)
-				(comp_pin "R10" 0.0 0.0)
-				(comp_pin "D15" 0.0 0.0))
-			(attributes
-				(attval "Part Number" "5CEBA4U15C7N")
-				(attval "DEVICE" "C5_U324")
-				(attval "REFDES" "U209")))
 		(component "FLASH_MICRON_N25Q128A"
 			(place "U17" 0.0 0.0 top 0.0
 				(comp_pin "3" 0.0 0.0 "IN")
@@ -2186,39 +1856,6 @@
 				(comp_pin "U8" 0.0 0.0 "BI")
 				(comp_pin "U5" 0.0 0.0 "BI")
 				(comp_pin "P10" 0.0 0.0 "BI")
-				(comp_pin "V11" 0.0 0.0 "IN")
-				(comp_pin "P14" 0.0 0.0 "BI")
-				(comp_pin "P13" 0.0 0.0 "BI")
-				(comp_pin "N17" 0.0 0.0 "BI")
-				(comp_pin "N16" 0.0 0.0 "BI")
-				(comp_pin "N13" 0.0 0.0 "BI")
-				(comp_pin "N12" 0.0 0.0 "BI")
-				(comp_pin "V17" 0.0 0.0 "BI")
-				(comp_pin "V16" 0.0 0.0 "BI")
-				(comp_pin "V15" 0.0 0.0 "BI")
-				(comp_pin "M14" 0.0 0.0 "BI")
-				(comp_pin "V13" 0.0 0.0 "BI")
-				(comp_pin "V12" 0.0 0.0 "BI")
-				(comp_pin "U18" 0.0 0.0 "BI")
-				(comp_pin "U17" 0.0 0.0 "BI")
-				(comp_pin "U15" 0.0 0.0 "BI")
-				(comp_pin "U14" 0.0 0.0 "BI")
-				(comp_pin "U13" 0.0 0.0 "BI")
-				(comp_pin "U12" 0.0 0.0 "BI")
-				(comp_pin "T17" 0.0 0.0 "BI")
-				(comp_pin "T16" 0.0 0.0 "BI")
-				(comp_pin "M13" 0.0 0.0 "BI")
-				(comp_pin "T15" 0.0 0.0 "BI")
-				(comp_pin "T14" 0.0 0.0 "BI")
-				(comp_pin "T12" 0.0 0.0 "BI")
-				(comp_pin "R18" 0.0 0.0 "BI")
-				(comp_pin "R17" 0.0 0.0 "BI")
-				(comp_pin "R16" 0.0 0.0 "BI")
-				(comp_pin "R13" 0.0 0.0 "BI")
-				(comp_pin "P18" 0.0 0.0 "BI")
-				(comp_pin "P16" 0.0 0.0 "BI")
-				(comp_pin "P15" 0.0 0.0 "BI")
-				(comp_pin "L13" 0.0 0.0 "BI")
 				(comp_pin "N1" 0.0 0.0 "IN")
 				(comp_pin "G3" 0.0 0.0 "BI")
 				(comp_pin "G2" 0.0 0.0 "BI")
@@ -2252,6 +1889,39 @@
 				(comp_pin "H2" 0.0 0.0 "BI")
 				(comp_pin "H1" 0.0 0.0 "BI")
 				(comp_pin "D1" 0.0 0.0 "BI")
+				(comp_pin "V11" 0.0 0.0 "IN")
+				(comp_pin "P14" 0.0 0.0 "BI")
+				(comp_pin "P13" 0.0 0.0 "BI")
+				(comp_pin "N17" 0.0 0.0 "BI")
+				(comp_pin "N16" 0.0 0.0 "BI")
+				(comp_pin "N13" 0.0 0.0 "BI")
+				(comp_pin "N12" 0.0 0.0 "BI")
+				(comp_pin "V17" 0.0 0.0 "BI")
+				(comp_pin "V16" 0.0 0.0 "BI")
+				(comp_pin "V15" 0.0 0.0 "BI")
+				(comp_pin "M14" 0.0 0.0 "BI")
+				(comp_pin "V13" 0.0 0.0 "BI")
+				(comp_pin "V12" 0.0 0.0 "BI")
+				(comp_pin "U18" 0.0 0.0 "BI")
+				(comp_pin "U17" 0.0 0.0 "BI")
+				(comp_pin "U15" 0.0 0.0 "BI")
+				(comp_pin "U14" 0.0 0.0 "BI")
+				(comp_pin "U13" 0.0 0.0 "BI")
+				(comp_pin "U12" 0.0 0.0 "BI")
+				(comp_pin "T17" 0.0 0.0 "BI")
+				(comp_pin "T16" 0.0 0.0 "BI")
+				(comp_pin "M13" 0.0 0.0 "BI")
+				(comp_pin "T15" 0.0 0.0 "BI")
+				(comp_pin "T14" 0.0 0.0 "BI")
+				(comp_pin "T12" 0.0 0.0 "BI")
+				(comp_pin "R18" 0.0 0.0 "BI")
+				(comp_pin "R17" 0.0 0.0 "BI")
+				(comp_pin "R16" 0.0 0.0 "BI")
+				(comp_pin "R13" 0.0 0.0 "BI")
+				(comp_pin "P18" 0.0 0.0 "BI")
+				(comp_pin "P16" 0.0 0.0 "BI")
+				(comp_pin "P15" 0.0 0.0 "BI")
+				(comp_pin "L13" 0.0 0.0 "BI")
 				(comp_pin "M17" 0.0 0.0 "IN")
 				(comp_pin "L15" 0.0 0.0 "BI")
 				(comp_pin "M18" 0.0 0.0 "BI")
@@ -2577,6 +2247,36 @@
 				(attval "DEVICE" "SWITCH_DUAL_SIP32414")
 				(attval "REFDES" "S9")))
 		(component "0402_MY"
+			(place "R23" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "ERJ-2RKF1002X")
+				(attval "Tolerance" "1%")
+				(attval "Value" "10K")
+				(attval "DEVICE" "RES_10K1_0402")
+				(attval "REFDES" "R23")))
+		(component "0402_MY"
+			(place "R22" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "ERJ-2RKF1002X")
+				(attval "Tolerance" "1%")
+				(attval "Value" "10K")
+				(attval "DEVICE" "RES_10K1_0402")
+				(attval "REFDES" "R22")))
+		(component "0402_MY"
+			(place "R21" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "ERJ-2GEJ243X")
+				(attval "Tolerance" "5%")
+				(attval "Value" "24K")
+				(attval "DEVICE" "RES_24K5_0402")
+				(attval "REFDES" "R21")))
+		(component "0402_MY"
 			(place "R20" 0.0 0.0 top 0.0
 				(comp_pin "2" 0.0 0.0 "BI")
 				(comp_pin "1" 0.0 0.0 "BI"))
@@ -2617,6 +2317,16 @@
 				(attval "DEVICE" "RES_24K5_0402")
 				(attval "REFDES" "R17")))
 		(component "0402_MY"
+			(place "R16" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "ERJ-2GEJ243X")
+				(attval "Tolerance" "5%")
+				(attval "Value" "24K")
+				(attval "DEVICE" "RES_24K5_0402")
+				(attval "REFDES" "R16")))
+		(component "0402_MY"
 			(place "R15" 0.0 0.0 top 0.0
 				(comp_pin "2" 0.0 0.0 "BI")
 				(comp_pin "1" 0.0 0.0 "BI"))
@@ -2636,16 +2346,6 @@
 				(attval "Value" "10K")
 				(attval "DEVICE" "RES_10K1_0402")
 				(attval "REFDES" "R14")))
-		(component "0402_MY"
-			(place "R13" 0.0 0.0 top 0.0
-				(comp_pin "2" 0.0 0.0 "BI")
-				(comp_pin "1" 0.0 0.0 "BI"))
-			(attributes
-				(attval "Part Number" "ERJ-2RKF1002X")
-				(attval "Tolerance" "1%")
-				(attval "Value" "10K")
-				(attval "DEVICE" "RES_10K1_0402")
-				(attval "REFDES" "R13")))
 		(component "RESISTOR_BUS_10PIN"
 			(place "R12" 0.0 0.0 top 0.0
 				(comp_pin "7" 0.0 0.0 "IN")
@@ -3684,6 +3384,16 @@
 				(attval "Value" "0.1UF")
 				(attval "DEVICE" "CAP_0P1UF_0402")
 				(attval "REFDES" "C13")))
+		(component "0402_MY"
+			(place "C4" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "CL05A475MP5NRNC")
+				(attval "Tolerance" "")
+				(attval "Value" "4.7UF")
+				(attval "DEVICE" "CAP_4P7UF_0402")
+				(attval "REFDES" "C4")))
 		(component "0603_MY"
 			(place "C3" 0.0 0.0 top 0.0
 				(comp_pin "2" 0.0 0.0 "BI")
@@ -3694,6 +3404,16 @@
 				(attval "Value" "22UF")
 				(attval "DEVICE" "CAP_22UF_0603")
 				(attval "REFDES" "C3")))
+		(component "0402_MY"
+			(place "C2" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "Tolerance" "")
+				(attval "Value" "0.1UF")
+				(attval "DEVICE" "CAP_0P1UF_0402")
+				(attval "REFDES" "C2")))
 		(component "0603_MY"
 			(place "C1" 0.0 0.0 top 0.0
 				(comp_pin "2" 0.0 0.0 "BI")
@@ -3705,24 +3425,6 @@
 				(attval "DEVICE" "CAP_10UF_0603")
 				(attval "REFDES" "C1"))))
 	(functions
-		(func "$6I220" "" "U209" 1)
-		(func "$6I297" "" "U209" 2)
-		(func "$6I303" "" "U209" 3)
-		(func "$6I306" "" "U209" 4)
-		(func "$6I324" "" "U209" 5)
-		(func "$6I331" "" "U209" 6)
-		(func "$6I355" "" "U209" 7)
-		(func "$6I366" "" "U209" 8)
-		(func "$6I372" "" "U209" 9)
-		(func "$8I1050" "" "U209" 10)
-		(func "$8I1352" "" "U209" 11)
-		(func "$8I1665" "" "U209" 12)
-		(func "$8I262" "" "U209" 13)
-		(func "$8I335" "" "U209" 14)
-		(func "$8I354" "" "U209" 15)
-		(func "$8I853" "" "U209" 16)
-		(func "$8I900" "" "U209" 17)
-		(func "$8I940" "" "U209" 18)
 		(func "$1I167" "" "U17" 1)
 		(func "$2I93" "" "U9" 1)
 		(func "$15I85" "" "U7" 1)
@@ -3739,8 +3441,8 @@
 		(func "$4I366" "" "U3" 8)
 		(func "$4I372" "" "U3" 9)
 		(func "$5I1050" "" "U3" 10)
-		(func "$5I1352" "" "U3" 11)
-		(func "$5I1091" "" "U3" 12)
+		(func "$5I1091" "" "U3" 11)
+		(func "$5I1352" "" "U3" 12)
 		(func "$5I262" "" "U3" 13)
 		(func "$5I335" "" "U3" 14)
 		(func "$5I354" "" "U3" 15)
@@ -3752,13 +3454,16 @@
 		(func "$10I569" "" "S12" 1)
 		(func "$10I558" "" "S11" 1)
 		(func "$3I109" "" "S9" 1)
+		(func "$14I1037" "" "R23" 1)
+		(func "$14I1033" "" "R22" 1)
+		(func "$5I1728" "" "R21" 1)
 		(func "$11I152" "" "R20" 1)
 		(func "$11I156" "" "R19" 1)
 		(func "$11I162" "" "R18" 1)
 		(func "$5I1193" "" "R17" 1)
+		(func "$5I1721" "" "R16" 1)
 		(func "$15I172" "" "R15" 1)
 		(func "$15I197" "" "R14" 1)
-		(func "$15I103" "" "R13" 1)
 		(func "$15I276" "" "R12" 1)
 		(func "$10I1282" "" "R11" 1)
 		(func "$10I1252" "" "R10" 1)
@@ -3852,7 +3557,9 @@
 		(func "$10I1359" "" "C15" 1)
 		(func "$10I1355" "" "C14" 1)
 		(func "$3I196" "" "C13" 1)
+		(func "$10I1391" "" "C4" 1)
 		(func "$11I177" "" "C3" 1)
+		(func "$10I1395" "" "C2" 1)
 		(func "$11I143" "" "C1" 1))
 	(network
 		(net "$4N630"
@@ -3875,173 +3582,110 @@
 			(pins L4-1 PS1-6))
 		(net "$11N16"
 			(pins R19-2 R18-1 PS1-3))
-		(net "A0"
-			(pins U9-H7))
-		(net "A1"
-			(pins U9-H8))
-		(net "A2"
-			(pins U9-J8))
-		(net "A3"
-			(pins U9-J7))
-		(net "A4"
-			(pins U9-J3))
-		(net "A5"
-			(pins U9-J2))
-		(net "A6"
-			(pins U9-H3))
-		(net "A7"
-			(pins U9-H2))
-		(net "A8"
-			(pins U3-L16 U209-L16 U9-H1))
-		(net "A9"
-			(pins U9-G3))
-		(net "A10"
-			(pins U9-H9))
-		(net "A11"
-			(pins U9-G2))
-		(net "A12"
-			(pins U3-L17 U9-G1))
-		(net "BA0"
-			(pins U9-G7))
-		(net "BA1"
-			(pins U9-G8))
 		(net "BUCK_PWM_TO_CPLD"
-			(pins U2-7 U1-L6 R11-2))
-		(net "CAS_N"
-			(pins U9-F7))
+			(pins U2-7 U1-G2 R11-2))
 		(net "CLK_50MHZ"
-			(pins CLK1-3 U1-A10))
+			(pins CLK1-3 U1-G11))
 		(net "CLK_50MHZ_TO_FPGA"
-			(pins U3-C1 U1-A11))
+			(pins U3-G6 U1-K10))
 		(net "CLOCK_CNTRL"
-			(pins U4-18 S9-2 R1-8))
+			(pins U4-3 S9-2 R1-2))
 		(net "CLOCK_CNTRL_TO_CPLD"
-			(pins U4-2 U1-B1))
+			(pins U4-17 U1-L3))
 		(net "CLOCK_POWER_1P8V"
 			(pins C64-1 C21-1 CLK1-1 CLK1-4 S9-8))
 		(net "CPLDON_00"
-			(pins U4-5 J1-46))
+			(pins U4-9 J1-12))
 		(net "CPLDON_00_TO_CPLD"
-			(pins U4-15 U1-B4))
+			(pins U4-11 U1-L1))
 		(net "CPLDON_01"
-			(pins U4-3 J1-48))
+			(pins U4-7 J1-14))
 		(net "CPLDON_01_TO_CPLD"
-			(pins U4-17 U1-B6))
+			(pins U4-13 U1-L5))
 		(net "CPLDON_02"
-			(pins U4-16 J1-50))
+			(pins U4-5 J1-16))
 		(net "CPLDON_02_TO_CPLD"
-			(pins U4-4 U1-B8))
+			(pins U4-15 U1-L4))
 		(net "CPLD_MUX_TDO"
 			(pins U3-N6 U7-3 U6-18))
 		(net "CPLD_TDI"
 			(pins U6-12 U1-J2))
 		(net "CPLD_TDO"
-			(pins R12-4 U6-2 U1-K2))
+			(pins R12-8 U6-2 U1-K2))
 		(net "CPLD_TMS"
 			(pins U6-7 U1-J1))
-		(net "CS_N"
-			(pins U9-G9))
-		(net "DQ0"
-			(pins U9-A8))
-		(net "DQ1"
-			(pins U9-B9))
-		(net "DQ2"
-			(pins U9-B8))
-		(net "DQ3"
-			(pins U9-C9))
-		(net "DQ4"
-			(pins U9-C8))
-		(net "DQ5"
-			(pins U9-D9))
-		(net "DQ6"
-			(pins U9-D8))
-		(net "DQ7"
-			(pins U9-E9))
-		(net "DQ8"
-			(pins U9-E1))
-		(net "DQ9"
-			(pins U9-D2))
-		(net "DQ10"
-			(pins U9-D1))
-		(net "DQ11"
-			(pins U9-C2))
-		(net "DQ12"
-			(pins U9-C1))
-		(net "DQ13"
-			(pins U9-B2))
-		(net "DQ14"
-			(pins U9-B1))
-		(net "DQ15"
-			(pins U9-A2))
 		(net "ESH_AUX_VCC"
-			(pins J3-1 U5-1 J4-2))
+			(pins J3-1 U5-1 J2-47 J2-48 J2-49 J2-50 J4-2))
 		(net "ESH_FORCE_STARTUP"
-			(pins J3-4 R12-1 R12-6 R13-2 R14-2 U5-4 U7-5 U6-20 U1-L8))
+			(pins J3-4 R12-1 R12-6 R14-2 U5-2 U7-5 U6-20 J2-39 U1-K4))
 		(net "ESH_FPGA_SPI_CLK"
-			(pins J3-6 R12-5 U5-5 U6-4))
+			(pins J3-6 R12-4 U5-9 U6-4 J2-37))
 		(net "ESH_FPGA_USB_DMINUS"
-			(pins U3-T1 J3-2 U5-2))
+			(pins U3-V6 J3-2 U5-4 J2-36))
 		(net "ESH_FPGA_USB_DPLUS"
-			(pins U3-T2 J3-3 U5-3))
+			(pins U3-T5 J3-3 U5-3 J2-38))
 		(net "ESH_JTAG_TCK"
-			(pins U3-L6 J3-7 R15-2 U5-9 U1-K1))
+			(pins U3-L6 J3-7 R15-2 U5-8 J2-35 U1-K1))
 		(net "ESH_JTAG_TDI_SPI_MOSI"
-			(pins J3-9 R12-8 U5-7 U6-6 U6-8))
+			(pins J3-9 R12-5 U5-6 U6-6 U6-8 J2-31))
 		(net "ESH_JTAG_TDO_SPI_MISO"
-			(pins J3-10 U5-6 U7-4))
+			(pins J3-10 U5-5 U7-4 J2-29))
 		(net "ESH_JTAG_TMS_SPI_CS"
-			(pins J3-8 R12-7 U5-8 U6-11 U6-13))
+			(pins J3-8 R12-7 U5-7 U6-11 U6-13 J2-33))
 		(net "FILTERED_FPGA_2P5V"
 			(pins C77-1 C79-1 U3-H3 U3-N5 U3-F5 U3-N15 U3-F15 U3-E6 U3-C10 U3-D14 U3-R14
  U3-T10 U3-R6 C28-1 C31-1 C29-1 C32-1 FB1-2 C78-1 C80-1 C27-1 C30-1))
 		(net "FLASH_C"
-			(pins U17-6 U1-J10))
+			(pins U3-E3 U17-6 U1-B9))
 		(net "FLASH_DQ0"
-			(pins U17-5 U1-B10 U1-K10))
+			(pins U3-B3 U17-5 U1-E11 U1-E10))
 		(net "FLASH_DQ1"
-			(pins U17-2 U1-D10 U1-K8))
+			(pins U3-A4 U17-2 U1-C11 U1-C10))
 		(net "FLASH_DQ2"
-			(pins U17-3 U1-F10 U1-K6))
+			(pins U3-B4 U17-3 U1-D11 U1-D10))
 		(net "FLASH_DQ3"
-			(pins U17-7 U1-H10 U1-K4))
+			(pins U3-B5 U17-7 U1-B11 U1-B10))
 		(net "FLASH_S_N"
-			(pins U17-1 U1-K9))
+			(pins U3-C3 U17-1 U1-B8))
 		(net "FORCE_STARTUP_TO_FPGA"
-			(pins U3-C2 U1-L7))
+			(pins U3-F2 U1-L9))
 		(net "FPGA_1P8V"
-			(pins C88-1 C89-1 U3-R5 U3-U6 U3-K15 U3-M16 U3-F18 U3-G16 U3-B16 U3-E15
- U3-C14 U3-A13 U3-C9 U3-B6 U3-C5 U3-T6 U3-M15 U3-E7 U3-G4 C83-1 C82-1 C81-1
- C90-1 C91-1 C14-1 U7-6 C34-1 S9-4 R17-2 C101-1 U17-8 S11-5))
+			(pins C88-1 C89-1 U3-H4 U3-P2 U3-L3 U3-J2 U3-R5 U3-U6 U3-K15 U3-M16 U3-F18
+ U3-G16 U3-B16 U3-E15 U3-C14 U3-A13 U3-C9 U3-B6 U3-C5 U3-T6 U3-M15 U3-E7 U3-G4
+ C83-1 C82-1 C81-1 C90-1 C91-1 C14-1 U7-6 C34-1 J2-11 J2-9 S9-4 R17-2 R16-2
+ R21-2 C101-1 U17-8 S11-5))
 		(net "FPGA_2P5V"
-			(pins C92-1 C93-1 U3-R7 U3-K14 U3-H15 U3-D8 U3-E13 FB1-1 C94-1 C95-1 C15-1
- C35-1 S11-8))
+			(pins C92-1 C93-1 U3-K4 U3-J5 U3-R7 U3-K14 U3-H15 U3-D8 U3-E13 FB1-1 C94-1
+ C95-1 C15-1 C35-1 J2-16 S11-8))
 		(net "FPGA_3P3V"
-			(pins C84-1 C85-1 U3-H4 U3-P2 U3-L3 U3-J2 U3-T8 U3-V9 U3-T18 U3-U16 U3-U11
- U3-R15 U3-K4 U3-J5 U3-R12 U3-R8 C86-1 C87-1 C16-1 C33-1 S12-8))
+			(pins C84-1 C85-1 U3-T8 U3-V9 U3-T18 U3-U16 U3-U11 U3-R15 U3-R12 U3-R8 C86-1
+ C87-1 C16-1 C33-1 J1-2 J1-4 S12-8))
+		(net "FPGA_BATT_INT"
+			(pins U3-F1 U1-L8))
 		(net "FPGA_CONF_DONE"
-			(pins U3-C6 U1-L1))
+			(pins U3-C6 R21-1 U1-G10))
 		(net "FPGA_DATA0"
-			(pins U3-V1 U1-C1))
+			(pins U3-V1 U1-K3))
 		(net "FPGA_DCLK"
-			(pins U3-K6 U1-B2))
+			(pins U3-K6 U1-K9))
 		(net "FPGA_INIT_DONE"
-			(pins U3-L14 U1-E10))
+			(pins U3-L14 R16-1 U1-K8))
 		(net "FPGA_NCONFIG"
-			(pins U3-D4 U1-E1))
+			(pins U3-D4 U1-J10))
 		(net "FPGA_NSTATUS"
-			(pins U3-D6 R17-1 U1-G1))
+			(pins U3-D6 R17-1 U1-H10))
 		(net "FPGA_ON"
-			(pins U4-9 R1-2 S11-2 S11-3 S12-2))
+			(pins U4-16 R1-8 S11-2 S11-3 S12-2))
 		(net "FPGA_ON_TO_CPLD"
-			(pins U4-11 U1-B3))
+			(pins U4-4 U1-H1))
 		(net "FPGA_SPI_CLK"
-			(pins U3-B8 U6-16))
+			(pins U3-J3 U6-16))
 		(net "FPGA_SPI_MOSI"
-			(pins U3-B5 U6-14))
+			(pins U3-G3 U6-14))
 		(net "FPGA_TDO_SPI_MISO"
-			(pins U3-B7 U3-P5 R13-1 U7-1))
+			(pins U3-J4 U3-P5 R12-9 U7-1))
 		(net "FPGA_TMS_SPI_CS"
-			(pins U3-B4 U3-P6 U6-9))
+			(pins U3-L5 U3-P6 U6-9))
 		(net "GND"
 			(pins C64-2 C77-2 C79-2 C84-2 C85-2 C92-2 C93-2 C88-2 C89-2 U3-D15 U3-R10
  U3-P17 U3-P12 U3-P7 U3-N14 U3-N9 U3-N4 U3-M12 U3-M6 U3-M1 U3-D5 U3-L18 U3-L11
@@ -4049,390 +3693,268 @@
  U3-H14 U3-H12 U3-H10 U3-H8 U3-H6 U3-G11 U3-G9 U3-G7 U3-V18 U3-G1 U3-F13 U3-F8
  U3-F3 U3-E10 U3-E5 U3-D17 U3-D7 U3-D2 U3-C4 U3-V14 U3-B11 U3-B1 U3-A18 U3-A8
  U3-A3 U3-V4 U3-U1 U3-T13 U3-T3 U3-M17 U3-V11 U3-N1 U3-U10 U3-E17 U3-B13
- U3-M9 U3-V5 U3-C7 U3-J6 U3-H5 U3-D3 U3-G5 U3-E4 U209-D15 U209-R10 U209-P17
- U209-P12 U209-P7 U209-N14 U209-N9 U209-N4 U209-M12 U209-M6 U209-M1 U209-D5
- U209-L18 U209-L11 U209-L9 U209-L7 U209-K12 U209-K10 U209-K8 U209-K5 U209-J17
- U209-J11 U209-D12 U209-J9 U209-J7 U209-H14 U209-H12 U209-H10 U209-H8 U209-H6
- U209-G11 U209-G9 U209-G7 U209-V18 U209-G1 U209-F13 U209-F8 U209-F3 U209-E10
- U209-E5 U209-D17 U209-D7 U209-D2 U209-C4 U209-V14 U209-B11 U209-B1 U209-A18
- U209-A8 U209-A3 U209-V4 U209-U1 U209-T13 U209-T3 U209-M17 U209-N1 U209-V11
- U209-U10 U209-E17 U209-B13 U209-M9 U209-V5 U209-C7 C28-2 C31-2 C1-2 J3-5 C76-2
+ U3-M9 U3-V5 U3-C7 U3-J6 U3-H5 U3-D3 U3-G5 U3-E4 C28-2 C31-2 C1-2 J3-5 C76-2
  C29-2 C32-2 R14-1 U9-E2 U9-A3 U9-B7 U9-C3 U9-D7 U9-A1 U9-E3 U9-J1 C70-2 C71-2
  C72-2 C73-2 C26-2 R15-1 U5-10 C65-2 C66-2 C67-2 C68-2 C21-2 C13-2 C78-2 C80-2
  C83-2 C82-2 C81-2 C86-2 C87-2 C94-2 C95-2 C90-2 C91-2 C74-2 C43-2 C16-2 C46-2
- C14-2 C15-2 C49-2 U2-6 U2-13 U2-19 U2-21 U2-12 U2-18 U2-25 R19-1 R6-1 C75-2
- U7-2 C27-2 C30-2 C34-2 C35-2 C33-2 C25-2 U4-10 U6-1 U6-19 U6-10 CLK1-2 R2-1
- R8-1 R4-1 C69-2 PS1-5 S9-6 S9-7 S9-9 R1-1 R1-6 C109-2 C101-2 C52-2 C51-2
- C104-2 C103-2 C102-2 U17-4 C50-2 C44-2 C47-2 C42-2 C3-2 S11-6 S11-7 S11-9
- S12-6 S12-7 S12-9 U1-G4 U1-A4 U1-C5 U1-D5 U1-D7 U1-E2 U1-E4 U1-E8 U1-G8 U1-H5
- U1-H7 U1-J5 C36-2 C37-2 C38-2 C39-2 C40-2 C41-2 R11-1))
-		(net "LDQM"
-			(pins U9-E8))
+ C14-2 C15-2 C49-2 C2-2 U2-6 U2-13 U2-19 U2-21 U2-12 U2-18 U2-25 R19-1 R6-1
+ C75-2 U7-2 C27-2 C30-2 C34-2 C35-2 C33-2 C25-2 U4-10 U6-1 U6-19 U6-10 CLK1-2
+ R2-1 R8-1 J1-10 J1-13 J1-25 J1-37 J1-45 J1-50 J2-17 J2-41 J2-46 R4-1 C69-2
+ PS1-5 S9-6 S9-7 S9-9 R1-1 R1-6 C109-2 C101-2 C52-2 C51-2 C104-2 C103-2 C102-2
+ C4-2 U17-4 C50-2 C44-2 C47-2 C42-2 C3-2 S11-6 S11-7 S11-9 S12-6 S12-7 S12-9
+ U1-G4 U1-A4 U1-C5 U1-D5 U1-D7 U1-E2 U1-E4 U1-E8 U1-G8 U1-H5 U1-H7 U1-J5 C36-2
+ C37-2 C38-2 C39-2 C40-2 C41-2 R11-1))
+		(net "I2C_SCL"
+			(pins U3-E8 R22-1 J1-49 U1-B5))
+		(net "I2C_SDA"
+			(pins U3-D9 R23-1 J1-47 U1-B7))
+		(net "M_CPLD_00"
+			(pins J1-18 U1-C2))
+		(net "M_CPLD_01"
+			(pins J1-20 U1-E1))
+		(net "M_CPLD_02"
+			(pins J1-22 U1-D1))
+		(net "M_CPLD_03"
+			(pins J1-24 U1-C1))
+		(net "M_CPLD_04"
+			(pins J1-26 U1-B1))
+		(net "M_CPLD_05"
+			(pins J1-28 U1-B2))
+		(net "M_CPLD_06"
+			(pins J1-30 U1-B3))
+		(net "M_CPLD_07"
+			(pins J1-32 U1-A1))
+		(net "M_CPLD_08"
+			(pins J1-34 U1-A2))
+		(net "M_CPLD_09"
+			(pins J1-36 U1-A3))
+		(net "M_CPLD_10"
+			(pins J1-38 U1-A5))
+		(net "M_CPLD_11"
+			(pins J1-40 U1-A6))
+		(net "M_CPLD_12"
+			(pins J1-42 U1-A7))
+		(net "M_CPLD_13"
+			(pins J1-44 U1-A8))
+		(net "M_CPLD_14"
+			(pins J1-46 U1-A9))
+		(net "M_CPLD_15"
+			(pins J1-48 U1-A10))
 		(net "M_FPGA_2A_00"
-			(pins U3-D1 U209-D1))
-		(net "M_FPGA_2A_01"
-			(pins U3-E1 U209-E1))
-		(net "M_FPGA_2A_02"
-			(pins U3-E2 U209-E2))
-		(net "M_FPGA_2A_03"
-			(pins U3-E3 U209-E3))
-		(net "M_FPGA_2A_04"
-			(pins U3-F1 U209-F1))
-		(net "M_FPGA_2A_05"
-			(pins U3-F2 U209-F2))
-		(net "M_FPGA_2A_06"
-			(pins U3-F4 U209-F4))
-		(net "M_FPGA_2A_07"
-			(pins U3-G2 U209-G2))
-		(net "M_FPGA_2A_08"
-			(pins U3-G3 U209-G3))
-		(net "M_FPGA_2A_09"
-			(pins U3-H1 U209-H1))
-		(net "M_FPGA_2A_10"
-			(pins U3-H2 U209-H2))
-		(net "M_FPGA_2A_11"
-			(pins U3-J1 U209-J1))
-		(net "M_FPGA_2A_12"
-			(pins U3-J3 U209-J3))
-		(net "M_FPGA_2A_13"
-			(pins U3-J4 U209-J4))
-		(net "M_FPGA_2A_14"
-			(pins U3-K1 U209-K1))
-		(net "M_FPGA_2A_15"
-			(pins U3-K2 U209-K2))
-		(net "M_FPGA_2A_16"
-			(pins U3-K3 U209-K3))
-		(net "M_FPGA_2A_17"
-			(pins U3-L1 U209-L1))
-		(net "M_FPGA_2A_18"
-			(pins U3-L2 U209-L2))
-		(net "M_FPGA_2A_19"
-			(pins U3-L4 U209-L4))
-		(net "M_FPGA_2A_20"
-			(pins U3-L5 U209-L5))
-		(net "M_FPGA_2A_21"
-			(pins U3-M2 U209-M2))
-		(net "M_FPGA_2A_22"
-			(pins U3-M3 U209-M3))
-		(net "M_FPGA_2A_23"
-			(pins U3-M4 U209-M4))
-		(net "M_FPGA_2A_24"
-			(pins U3-N2 U209-N2))
-		(net "M_FPGA_2A_25"
-			(pins U3-N3 U209-N3))
-		(net "M_FPGA_2A_26"
-			(pins U3-P1 U209-P1))
-		(net "M_FPGA_2A_27"
-			(pins U3-R1 U209-R1))
-		(net "M_FPGA_2A_28"
-			(pins U3-R2 U209-R2))
-		(net "M_FPGA_2A_29"
-			(pins U3-R3 U209-R3))
-		(net "M_FPGA_3A_00"
-			(pins U3-N8 U209-N8))
-		(net "M_FPGA_3A_01"
-			(pins U3-V2 U209-V2))
-		(net "M_FPGA_3A_02"
-			(pins U3-M7 U209-M7))
-		(net "M_FPGA_3A_03"
-			(pins U3-V3 U209-V3))
-		(net "M_FPGA_3A_04"
-			(pins U3-N7 U209-N7))
-		(net "M_FPGA_3A_05"
-			(pins U3-U7 U209-U7))
-		(net "M_FPGA_3A_06"
-			(pins U3-M10 U209-M10))
-		(net "M_FPGA_3A_07"
-			(pins U3-T7 U209-T7))
-		(net "M_FPGA_3A_08"
-			(pins U3-N10 U209-N10))
-		(net "M_FPGA_3A_09"
-			(pins U3-P4 U209-P4))
-		(net "M_FPGA_3A_10"
-			(pins U3-M8 U209-M8))
-		(net "M_FPGA_3A_11"
-			(pins U3-R4 U209-R4))
+			(pins U3-G2 U1-L7))
 		(net "M_FPGA_3B_00"
-			(pins U3-P10 U209-P10))
+			(pins U3-P10 J2-22))
 		(net "M_FPGA_3B_01"
-			(pins U3-P9 U209-P9))
+			(pins U3-P9 J2-26))
 		(net "M_FPGA_3B_02"
-			(pins U3-R11 U209-R11))
+			(pins U3-R11 J2-23))
 		(net "M_FPGA_3B_03"
-			(pins U3-R9 U209-R9))
+			(pins U3-R9 J2-27))
 		(net "M_FPGA_3B_04"
-			(pins U3-T11 U209-T11))
+			(pins U3-T11 J2-21))
 		(net "M_FPGA_3B_05"
-			(pins U3-T4 U209-T4))
+			(pins U3-T4 J2-40))
 		(net "M_FPGA_3B_06"
-			(pins U3-T5 U209-T5))
+			(pins U3-T9 J2-25))
 		(net "M_FPGA_3B_07"
-			(pins U3-T9 U209-T9))
+			(pins U3-U4 J2-44))
 		(net "M_FPGA_3B_08"
-			(pins U3-U4 U209-U4))
+			(pins U3-U5 J2-42))
 		(net "M_FPGA_3B_09"
-			(pins U3-U5 U209-U5))
+			(pins U3-U8 J2-32))
 		(net "M_FPGA_3B_10"
-			(pins U3-U8 U209-U8))
+			(pins U3-U9 J2-28))
 		(net "M_FPGA_3B_11"
-			(pins U3-U9 U209-U9))
+			(pins U3-V10 J2-24))
 		(net "M_FPGA_3B_12"
-			(pins U3-V10 U209-V10))
+			(pins U3-V7 J2-34))
 		(net "M_FPGA_3B_13"
-			(pins U3-V6 U209-V6))
-		(net "M_FPGA_3B_14"
-			(pins U3-V7 U209-V7))
-		(net "M_FPGA_3B_15"
-			(pins U3-V8 U209-V8))
+			(pins U3-V8 J2-30))
 		(net "M_FPGA_4A_00"
-			(pins U3-L13 U209-L13))
+			(pins U3-T12 J2-19))
 		(net "M_FPGA_4A_01"
-			(pins U3-M13 U209-M13))
+			(pins U3-U12 J2-18))
 		(net "M_FPGA_4A_02"
-			(pins U3-M14 U209-M14))
+			(pins U3-U13 J2-14))
 		(net "M_FPGA_4A_03"
-			(pins U3-N12 U209-N12))
+			(pins U3-U14 J2-12))
 		(net "M_FPGA_4A_04"
-			(pins U3-N13 U209-N13))
+			(pins U3-U15 J2-8))
 		(net "M_FPGA_4A_05"
-			(pins U3-N16 U209-N16))
+			(pins U3-U17 J2-2))
 		(net "M_FPGA_4A_06"
-			(pins U3-N17 U209-N17))
+			(pins U3-V12 J2-20))
 		(net "M_FPGA_4A_07"
-			(pins U3-P13 U209-P13))
+			(pins U3-V15 J2-10))
 		(net "M_FPGA_4A_08"
-			(pins U3-P14 U209-P14))
+			(pins U3-V16 J2-6))
 		(net "M_FPGA_4A_09"
-			(pins U3-P15 U209-P15))
-		(net "M_FPGA_4A_10"
-			(pins U3-P16 U209-P16))
-		(net "M_FPGA_4A_11"
-			(pins U3-P18 U209-P18))
-		(net "M_FPGA_4A_12"
-			(pins U3-R13 U209-R13))
-		(net "M_FPGA_4A_13"
-			(pins U3-R16 U209-R16))
-		(net "M_FPGA_4A_14"
-			(pins U3-R17 U209-R17))
-		(net "M_FPGA_4A_15"
-			(pins U3-R18 U209-R18))
-		(net "M_FPGA_4A_16"
-			(pins U3-T12 U209-T12))
-		(net "M_FPGA_4A_17"
-			(pins U3-T14 U209-T14))
-		(net "M_FPGA_4A_18"
-			(pins U3-T15 U209-T15))
-		(net "M_FPGA_4A_19"
-			(pins U3-T16 U209-T16))
-		(net "M_FPGA_4A_20"
-			(pins U3-T17 U209-T17))
-		(net "M_FPGA_4A_21"
-			(pins U3-U12 U209-U12))
-		(net "M_FPGA_4A_22"
-			(pins U3-U13 U209-U13))
-		(net "M_FPGA_4A_23"
-			(pins U3-U14 U209-U14))
-		(net "M_FPGA_4A_24"
-			(pins U3-U15 U209-U15))
-		(net "M_FPGA_4A_25"
-			(pins U3-U17 U209-U17))
-		(net "M_FPGA_4A_26"
-			(pins U3-U18 U209-U18))
-		(net "M_FPGA_4A_27"
-			(pins U3-V12 U209-V12))
-		(net "M_FPGA_4A_28"
-			(pins U3-V13 U209-V13))
-		(net "M_FPGA_4A_29"
-			(pins U3-V15 U209-V15))
-		(net "M_FPGA_4A_30"
-			(pins U3-V16 U209-V16))
-		(net "M_FPGA_4A_31"
-			(pins U3-V17 U209-V17))
-		(net "M_FPGA_5A_01"
-			(pins U3-G13 U209-G13))
-		(net "M_FPGA_5A_02"
-			(pins U3-H13 U209-H13))
-		(net "M_FPGA_5A_03"
-			(pins U3-J13 U209-J13))
-		(net "M_FPGA_5A_04"
-			(pins U3-J14 U209-J14))
-		(net "M_FPGA_5A_05"
-			(pins U3-J15 U209-J15))
-		(net "M_FPGA_5A_06"
-			(pins U3-J16 U209-J16))
-		(net "M_FPGA_5A_07"
-			(pins U209-K18))
-		(net "M_FPGA_5A_08"
-			(pins U209-L17))
-		(net "M_FPGA_5B_00"
-			(pins U3-C17 U209-C17))
-		(net "M_FPGA_5B_01"
-			(pins U3-C18 U209-C18))
-		(net "M_FPGA_5B_02"
-			(pins U3-D18 U209-D18))
-		(net "M_FPGA_5B_03"
-			(pins U3-E16 U209-E16))
-		(net "M_FPGA_5B_04"
-			(pins U3-E18 U209-E18))
-		(net "M_FPGA_5B_05"
-			(pins U3-F14 U209-F14))
-		(net "M_FPGA_5B_06"
-			(pins U3-F16 U209-F16))
-		(net "M_FPGA_5B_07"
-			(pins U3-F17 U209-F17))
-		(net "M_FPGA_5B_08"
-			(pins U3-G14 U209-G14))
-		(net "M_FPGA_5B_09"
-			(pins U3-G15 U209-G15))
-		(net "M_FPGA_5B_10"
-			(pins U3-G17 U209-G17))
-		(net "M_FPGA_5B_11"
-			(pins U3-G18 U209-G18))
-		(net "M_FPGA_5B_12"
-			(pins U3-H16 U209-H16))
-		(net "M_FPGA_5B_13"
-			(pins U3-H17 U209-H17))
-		(net "M_FPGA_5B_14"
-			(pins U3-H18 U209-H18))
-		(net "M_FPGA_5B_15"
-			(pins U3-J18 U209-J18))
+			(pins U3-V17 J2-4))
 		(net "M_FPGA_7A_00"
-			(pins U3-A9 U209-A9))
+			(pins U3-A9 J1-27))
 		(net "M_FPGA_7A_01"
-			(pins U3-A10 U209-A10))
+			(pins U3-A10 J1-23))
 		(net "M_FPGA_7A_02"
-			(pins U3-A11 U209-A11))
+			(pins U3-A11 J1-19))
 		(net "M_FPGA_7A_03"
-			(pins U3-A12 U209-A12))
+			(pins U3-A12 J1-17))
 		(net "M_FPGA_7A_04"
-			(pins U3-A14 U209-A14))
+			(pins U3-A14 J1-11))
 		(net "M_FPGA_7A_05"
-			(pins U3-A15 U209-A15))
+			(pins U3-A15 J1-7))
 		(net "M_FPGA_7A_06"
-			(pins U3-A16 U209-A16))
+			(pins U3-B9 J1-29))
 		(net "M_FPGA_7A_07"
-			(pins U3-A17 U209-A17))
+			(pins U3-B10 J1-21))
 		(net "M_FPGA_7A_08"
-			(pins U3-B9 U209-B9))
+			(pins U3-B12 J1-15))
 		(net "M_FPGA_7A_09"
-			(pins U3-B10 U209-B10))
+			(pins U3-B14 J1-9))
 		(net "M_FPGA_7A_10"
-			(pins U3-B12 U209-B12))
+			(pins U3-B15 J1-5))
 		(net "M_FPGA_7A_11"
-			(pins U3-B14 U209-B14))
+			(pins U3-C12 J1-1))
 		(net "M_FPGA_7A_12"
-			(pins U3-B15 U209-B15))
-		(net "M_FPGA_7A_13"
-			(pins U3-B17 U209-B17))
-		(net "M_FPGA_7A_14"
-			(pins U3-B18 U209-B18))
-		(net "M_FPGA_7A_15"
-			(pins U3-C11 U209-C11))
-		(net "M_FPGA_7A_16"
-			(pins U3-C12 U209-C12))
-		(net "M_FPGA_7A_17"
-			(pins U3-C13 U209-C13))
-		(net "M_FPGA_7A_18"
-			(pins U3-C16 U209-C16))
-		(net "M_FPGA_7A_19"
-			(pins U3-D9 U209-D9))
-		(net "M_FPGA_7A_20"
-			(pins U3-D10 U209-D10))
-		(net "M_FPGA_7A_21"
-			(pins U3-D11 U209-D11))
-		(net "M_FPGA_7A_22"
-			(pins U3-D13 U209-D13))
-		(net "M_FPGA_7A_23"
-			(pins U3-D16 U209-D16))
-		(net "M_FPGA_7A_24"
-			(pins U3-E9 U209-E9))
-		(net "M_FPGA_7A_25"
-			(pins U3-E11 U209-E11))
-		(net "M_FPGA_7A_26"
-			(pins U3-E12 U209-E12))
-		(net "M_FPGA_7A_27"
-			(pins U3-E14 U209-E14))
-		(net "M_FPGA_7A_28"
-			(pins U3-F9 U209-F9))
-		(net "M_FPGA_7A_29"
-			(pins U3-F10 U209-F10))
-		(net "M_FPGA_7A_30"
-			(pins U3-F11 U209-F11))
-		(net "M_FPGA_7A_31"
-			(pins U3-F12 U209-F12))
+			(pins U3-D10 J1-3))
 		(net "M_FPGA_8A_00"
-			(pins U3-A4 U209-A4))
+			(pins U3-A7 J1-33))
 		(net "M_FPGA_8A_01"
-			(pins U3-A5 U209-A5))
+			(pins U3-B7 J1-35))
 		(net "M_FPGA_8A_02"
-			(pins U3-A6 U209-A6))
-		(net "M_FPGA_8A_03"
-			(pins U3-A7 U209-A7))
-		(net "M_FPGA_8A_04"
-			(pins U3-B3 U209-B3))
+			(pins U3-B8 J1-31))
 		(net "OBUFFER_ENABLE_OUT_TO_CPLD"
-			(pins U4-1 U4-19 U1-G10))
+			(pins U4-1 U4-19 U1-B4))
 		(net "PC_SPI_CLK"
-			(pins U3-F6 U1-C10))
+			(pins U3-D1 U1-K11))
 		(net "PC_SPI_DIN"
-			(pins U3-F7 U1-L5))
+			(pins U3-C1 U1-J11))
 		(net "PC_SPI_DOUT"
-			(pins U3-G6 U1-L3))
+			(pins U3-C2 U1-H11))
 		(net "PC_SPI_NCS"
-			(pins U3-E8 U1-B9))
+			(pins U3-E2 U1-L11))
 		(net "PC_STATUS_CHANGED"
-			(pins U3-C3 U1-B7))
+			(pins U3-E1 U1-L10))
 		(net "PWR_GOOD_1P1_TO_CPLD"
-			(pins R20-2 PS1-2 U1-F1))
+			(pins R20-2 PS1-2 U1-K5))
 		(net "PWR_GOOD_2P5_TO_CPLD"
-			(pins R9-1 U2-3))
+			(pins R9-1 U2-3 U1-A11))
 		(net "PWR_GOOD_3P3_TO_CPLD"
-			(pins R10-1 U2-4 U1-D1))
+			(pins R10-1 U2-4 U1-H2))
 		(net "PWR_MAIN"
-			(pins C1-1 U2-11 U2-22 U2-9 U2-5 PS1-7 C52-1 C51-1 C50-1 J4-1))
-		(net "RAS_N"
-			(pins U9-F8))
+			(pins C1-1 U2-11 U2-22 U2-9 U2-5 J1-41 J1-43 J2-5 J2-7 PS1-7 C52-1 C51-1 C50-1
+ J4-1))
+		(net "SDRAM_A0"
+			(pins U3-E14 U9-H7))
+		(net "SDRAM_A1"
+			(pins U3-D13 U9-H8))
+		(net "SDRAM_A2"
+			(pins U3-C13 U9-J8))
+		(net "SDRAM_A3"
+			(pins U3-F16 U9-J7))
+		(net "SDRAM_A4"
+			(pins U3-H13 U9-J3))
+		(net "SDRAM_A5"
+			(pins U3-J14 U9-J2))
+		(net "SDRAM_A6"
+			(pins U3-F14 U9-H3))
+		(net "SDRAM_A7"
+			(pins U3-G15 U9-H2))
+		(net "SDRAM_A8"
+			(pins U3-L16 U9-H1))
+		(net "SDRAM_A9"
+			(pins U3-H16 U9-G3))
+		(net "SDRAM_A10"
+			(pins U3-A16 U9-H9))
+		(net "SDRAM_A11"
+			(pins U3-J16 U9-G2))
+		(net "SDRAM_A12"
+			(pins U3-L17 U9-G1))
+		(net "SDRAM_BA0"
+			(pins U3-G14 U9-G7))
+		(net "SDRAM_BA1"
+			(pins U3-E11 U9-G8))
+		(net "SDRAM_CAS_N"
+			(pins U3-F12 U9-F7))
 		(net "SDRAM_CKE"
-			(pins U9-F3))
+			(pins U3-D18 U9-F3))
 		(net "SDRAM_CLK"
-			(pins U9-F2))
+			(pins U3-E18 U9-F2))
 		(net "SDRAM_CNTRL_TO_CPLD"
-			(pins S9-3 U1-B5))
+			(pins S9-3 U1-K7))
+		(net "SDRAM_CS_N"
+			(pins U3-A17 U9-G9))
+		(net "SDRAM_DQ0"
+			(pins U3-C17 U9-A8))
+		(net "SDRAM_DQ1"
+			(pins U3-B18 U9-B9))
+		(net "SDRAM_DQ2"
+			(pins U3-C18 U9-B8))
+		(net "SDRAM_DQ3"
+			(pins U3-B17 U9-C9))
+		(net "SDRAM_DQ4"
+			(pins U3-F11 U9-C8))
+		(net "SDRAM_DQ5"
+			(pins U3-E16 U9-D9))
+		(net "SDRAM_DQ6"
+			(pins U3-G13 U9-D8))
+		(net "SDRAM_DQ7"
+			(pins U3-C16 U9-E9))
+		(net "SDRAM_DQ8"
+			(pins U3-J18 U9-E1))
+		(net "SDRAM_DQ9"
+			(pins U3-F17 U9-D2))
+		(net "SDRAM_DQ10"
+			(pins U3-J15 U9-D1))
+		(net "SDRAM_DQ11"
+			(pins U3-G17 U9-C2))
+		(net "SDRAM_DQ12"
+			(pins U3-J13 U9-C1))
+		(net "SDRAM_DQ13"
+			(pins U3-G18 U9-B2))
+		(net "SDRAM_DQ14"
+			(pins U3-H18 U9-B1))
+		(net "SDRAM_DQ15"
+			(pins U3-H17 U9-A2))
+		(net "SDRAM_LDQM"
+			(pins U3-D16 U9-E8))
 		(net "SDRAM_POWER_1P8V"
 			(pins U9-A7 U9-B3 U9-C7 U9-D3 U9-A9 U9-E7 U9-J9 C65-1 C66-1 C67-1 C68-1 C13-1
  S9-5))
-		(net "UDQM"
+		(net "SDRAM_RAS_N"
+			(pins U3-E12 U9-F8))
+		(net "SDRAM_UDQM"
 			(pins U3-K18 U9-F1))
+		(net "SDRAM_WE_N"
+			(pins U3-F10 U9-F9))
 		(net "VCC1P1"
 			(pins U3-M11 U3-J8 U3-H11 U3-H9 U3-H7 U3-G12 U3-G10 U3-G8 U3-L12 U3-L10
  U3-L8 U3-K11 U3-K9 U3-K7 U3-J12 U3-J10 C76-1 C70-1 C71-1 C72-1 C73-1 C26-1
- L4-2 C74-1 R18-2 C75-1 C25-1 C69-1 PS1-4 C3-1))
+ L4-2 C74-1 R18-2 C75-1 C25-1 J2-43 J2-45 C69-1 PS1-4 C3-1))
 		(net "VCC1P1_RUN"
-			(pins R20-1 U4-14 PS1-1 R1-9))
+			(pins R20-1 U4-12 PS1-1 R1-10))
 		(net "VCC1P1_RUN_TO_CPLD"
-			(pins U4-6 U1-L4))
+			(pins U4-8 U1-F1))
 		(net "VCC1P8"
-			(pins L2-2 C46-1 C45-1 U4-20 R5-2 S9-1 C109-1 C102-1 C44-1 S11-4 U1-C7 U1-E9
- U1-G3 U1-J7 U1-E3 U1-J4 U1-J8 U1-C4 U1-C8 U1-G9 C36-1 C37-1 C38-1 C39-1 C40-1
- C41-1))
+			(pins L2-2 C46-1 C45-1 U4-20 R5-2 J1-6 J1-8 S9-1 C109-1 C102-1 C4-1 C44-1
+ S11-4 S12-4 U1-C7 U1-E9 U1-G3 U1-J7 U1-E3 U1-J4 U1-J8 U1-C4 U1-C8 U1-G9 C36-1
+ C37-1 C38-1 C39-1 C40-1 C41-1))
+		(net "VCC1P8_AUX"
+			(pins R22-2 R23-2 C2-1 J1-39 S12-5))
+		(net "VCC1P8_AUX_CTRL"
+			(pins S12-3 U1-L6))
 		(net "VCC2P5"
-			(pins C49-1 L3-2 R7-2 C103-1 C47-1 S11-1 C48-1))
+			(pins C49-1 L3-2 J2-13 J2-15 R7-2 C103-1 C47-1 S11-1 C48-1))
 		(net "VCC2P5_RUN"
-			(pins R9-2 U2-1 U4-12 R1-10))
+			(pins R9-2 U2-1 U4-14 R1-9))
 		(net "VCC2P5_RUN_TO_CPLD"
-			(pins U4-8 U1-L2))
+			(pins U4-6 U1-G1))
 		(net "VCC3P3"
-			(pins C43-1 U2-16 C104-1 C42-1 S12-1 R3-2))
+			(pins C43-1 U2-16 J2-1 J2-3 C104-1 C42-1 S12-1 R3-2))
 		(net "VCC3P3_RUN"
-			(pins R10-2 U2-10 U4-7 R1-3))
+			(pins R10-2 U2-10 U4-18 R1-7))
 		(net "VCC3P3_RUN_TO_CPLD"
-			(pins U4-13 U1-H1))
-		(net "WE_N"
-			(pins U9-F9)))
+			(pins U4-2 U1-D2)))
 	(network_electrical
-		(net_scalar "WE_N"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "VCC3P3_RUN_TO_CPLD"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
@@ -4451,6 +3973,12 @@
 		(net_scalar "VCC2P5"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "VCC1P8_AUX_CTRL"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "VCC1P8_AUX"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "VCC1P8"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
@@ -4463,10 +3991,70 @@
 		(net_scalar "VCC1P1"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "UDQM"
+		(net_scalar "SDRAM_WE_N"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_UDQM"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_RAS_N"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "SDRAM_POWER_1P8V"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_LDQM"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_DQ15"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_DQ14"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_DQ13"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_DQ12"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_DQ11"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_DQ10"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_DQ9"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_DQ8"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_DQ7"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_DQ6"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_DQ5"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_DQ4"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_DQ3"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_DQ2"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_DQ1"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_DQ0"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_CS_N"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "SDRAM_CNTRL_TO_CPLD"
@@ -4478,7 +4066,52 @@
 		(net_scalar "SDRAM_CKE"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "RAS_N"
+		(net_scalar "SDRAM_CAS_N"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_BA1"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_BA0"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_A12"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_A11"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_A10"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_A9"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_A8"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_A7"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_A6"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_A5"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_A4"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_A3"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_A2"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_A1"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDRAM_A0"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "PWR_MAIN"
@@ -4511,12 +4144,6 @@
 		(net_scalar "OBUFFER_ENABLE_OUT_TO_CPLD"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_8A_04"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_8A_03"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "M_FPGA_8A_02"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
@@ -4524,63 +4151,6 @@
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "M_FPGA_8A_00"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_7A_31"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_7A_30"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_7A_29"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_7A_28"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_7A_27"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_7A_26"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_7A_25"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_7A_24"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_7A_23"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_7A_22"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_7A_21"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_7A_20"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_7A_19"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_7A_18"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_7A_17"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_7A_16"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_7A_15"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_7A_14"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_7A_13"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "M_FPGA_7A_12"
@@ -4622,144 +4192,6 @@
 		(net_scalar "M_FPGA_7A_00"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5B_15"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5B_14"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5B_13"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5B_12"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5B_11"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5B_10"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5B_09"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5B_08"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5B_07"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5B_06"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5B_05"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5B_04"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5B_03"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5B_02"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5B_01"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5B_00"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5A_08"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5A_07"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5A_06"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5A_05"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5A_04"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5A_03"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5A_02"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_5A_01"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_4A_31"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_4A_30"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_4A_29"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_4A_28"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_4A_27"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_4A_26"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_4A_25"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_4A_24"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_4A_23"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_4A_22"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_4A_21"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_4A_20"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_4A_19"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_4A_18"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_4A_17"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_4A_16"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_4A_15"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_4A_14"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_4A_13"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_4A_12"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_4A_11"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_4A_10"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "M_FPGA_4A_09"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
@@ -4788,12 +4220,6 @@
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "M_FPGA_4A_00"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_3B_15"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_3B_14"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "M_FPGA_3B_13"
@@ -4838,133 +4264,61 @@
 		(net_scalar "M_FPGA_3B_00"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_3A_11"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_3A_10"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_3A_09"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_3A_08"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_3A_07"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_3A_06"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_3A_05"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_3A_04"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_3A_03"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_3A_02"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_3A_01"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_3A_00"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_29"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_28"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_27"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_26"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_25"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_24"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_23"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_22"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_21"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_20"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_19"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_18"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_17"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_16"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_15"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_14"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_13"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_12"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_11"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_10"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_09"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_08"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_07"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_06"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_05"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_04"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_03"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_02"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "M_FPGA_2A_01"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "M_FPGA_2A_00"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "LDQM"
+		(net_scalar "M_CPLD_15"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "M_CPLD_14"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "M_CPLD_13"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "M_CPLD_12"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "M_CPLD_11"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "M_CPLD_10"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "M_CPLD_09"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "M_CPLD_08"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "M_CPLD_07"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "M_CPLD_06"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "M_CPLD_05"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "M_CPLD_04"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "M_CPLD_03"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "M_CPLD_02"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "M_CPLD_01"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "M_CPLD_00"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "I2C_SDA"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "I2C_SCL"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "GND"
@@ -5004,6 +4358,9 @@
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "FPGA_CONF_DONE"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "FPGA_BATT_INT"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "FPGA_3P3V"
@@ -5066,57 +4423,6 @@
 		(net_scalar "ESH_AUX_VCC"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "DQ15"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "DQ14"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "DQ13"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "DQ12"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "DQ11"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "DQ10"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "DQ9"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "DQ8"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "DQ7"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "DQ6"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "DQ5"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "DQ4"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "DQ3"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "DQ2"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "DQ1"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "DQ0"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "CS_N"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "CPLD_TMS"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
@@ -5162,55 +4468,7 @@
 		(net_scalar "CLK_50MHZ"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "CAS_N"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "BUCK_PWM_TO_CPLD"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "BA1"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "BA0"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "A12"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "A11"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "A10"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "A9"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "A8"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "A7"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "A6"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "A5"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "A4"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "A3"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "A2"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "A1"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "A0"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "$11N16"

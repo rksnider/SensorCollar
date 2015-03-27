@@ -1,57 +1,19 @@
-PADS Layout ECO Generator (Version 6.4v) 3/6/2015 1:58:54 PM
+PADS Layout ECO Generator (Version 6.4v) 3/23/2015 5:58:23 PM
 Copyright (c) 2003 - 2008 Mentor Graphics Corp. - All rights reserved
 Command line arguments:  -e C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1\Log Files\ECOGEN.ERR -r p -a PCB,PART,NET,PIN
-5 msec
+4 msec
 1 msec
 Reading the OLD DESIGN
-There are 115 parts in the design
-There are 233 signals in the design
-There are 936 pins in the design
-10 msec
+There are 119 parts in the design
+There are 182 signals in the design
+There are 829 pins in the design
+9 msec
 Reading the NEW DESIGN
-WARNING: Signal WE_N has 1 pins
-WARNING: Signal SDRAM_CLK has 1 pins
-WARNING: Signal SDRAM_CKE has 1 pins
-WARNING: Signal RAS_N has 1 pins
-WARNING: Signal M_FPGA_5A_08 has 1 pins
-WARNING: Signal M_FPGA_5A_07 has 1 pins
-WARNING: Signal LDQM has 1 pins
-WARNING: Signal DQ9 has 1 pins
-WARNING: Signal DQ8 has 1 pins
-WARNING: Signal DQ7 has 1 pins
-WARNING: Signal DQ6 has 1 pins
-WARNING: Signal DQ5 has 1 pins
-WARNING: Signal DQ4 has 1 pins
-WARNING: Signal DQ3 has 1 pins
-WARNING: Signal DQ2 has 1 pins
-WARNING: Signal DQ15 has 1 pins
-WARNING: Signal DQ14 has 1 pins
-WARNING: Signal DQ13 has 1 pins
-WARNING: Signal DQ12 has 1 pins
-WARNING: Signal DQ11 has 1 pins
-WARNING: Signal DQ10 has 1 pins
-WARNING: Signal DQ1 has 1 pins
-WARNING: Signal DQ0 has 1 pins
-WARNING: Signal CS_N has 1 pins
-WARNING: Signal CAS_N has 1 pins
-WARNING: Signal BA1 has 1 pins
-WARNING: Signal BA0 has 1 pins
-WARNING: Signal A9 has 1 pins
-WARNING: Signal A7 has 1 pins
-WARNING: Signal A6 has 1 pins
-WARNING: Signal A5 has 1 pins
-WARNING: Signal A4 has 1 pins
-WARNING: Signal A3 has 1 pins
-WARNING: Signal A2 has 1 pins
-WARNING: Signal A11 has 1 pins
-WARNING: Signal A10 has 1 pins
-WARNING: Signal A1 has 1 pins
-WARNING: Signal A0 has 1 pins
-There are 115 parts in the design
-There are 271 signals in the design
-There are 975 pins in the design
-5 msec
-Final cost=753
+There are 119 parts in the design
+There are 182 signals in the design
+There are 830 pins in the design
+4 msec
+Final cost=16
 Partitioning - 2 msec
-Final Matching - 14 msec
-Deleted pins: 4,  Added pins: 43
+Final Matching - 61 msec
+Deleted pins: 0,  Added pins: 1
