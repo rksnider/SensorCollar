@@ -1,8 +1,8 @@
 ----------------------------------------------------------------------------
 --
---! @file       DevBoard_PowerMonitorCPLD_TopLevel.vhd
+--! @file       AudioRecordingCollarCPLD_TopLevel.vhd
 --! @brief      Mapping from CPLD pin names to Power Controller signals.
---! @details    Map CPLD pins to Power Controller SIgnals.
+--! @details    Map CPLD pins to Power Controller Signals.
 --! @author     Emery Newlon
 --! @date       October 2014
 --! @copyright  Copyright (C) 2014 Ross K. Snider and Emery L. Newlon
@@ -33,7 +33,7 @@ library IEEE ;                      --! Use standard library.
 use IEEE.STD_LOGIC_1164.ALL ;       --! Use standard logic elements.
 use IEEE.NUMERIC_STD.ALL ;          --! Use numeric standard.
 
-entity DevBoard_PowerMonitorCPLD_TopLevel is
+entity AudioRecordingCollarCPLD_TopLevel is
 
   Port (
 
@@ -135,15 +135,15 @@ entity DevBoard_PowerMonitorCPLD_TopLevel is
     CPLD_GPIO2                  : out    std_logic ;
     CPLD_GPIO3                  : out    std_logic ;
     CPLD_GPIO4                  : out    std_logic ;
-    CPLD_GPIO5                  : in    std_logic ;
+    CPLD_GPIO5                  : in     std_logic ;
     CPLD_GPIO6                  : out    std_logic ;
     CPLD_GPIO7                  : out    std_logic ;
     CPLD_GPIO8                  : out    std_logic
   ) ;
 
-  end entity DevBoard_PowerMonitorCPLD_TopLevel ;
+  end entity AudioRecordingCollarCPLD_TopLevel ;
 
-architecture structural of DevBoard_PowerMonitorCPLD_TopLevel is
+architecture structural of AudioRecordingCollarCPLD_TopLevel is
 
   component PowerController is
 
@@ -209,15 +209,15 @@ architecture structural of DevBoard_PowerMonitorCPLD_TopLevel is
       solar_max_in          : in    std_logic ;
       solar_on_in           : in    std_logic ;
       solar_run_out         : out   std_logic ;
-		
-		gpio_1				    : out   std_logic ;
-		gpio_2				    : out   std_logic ;
-		gpio_3				    : out   std_logic ;
-		gpio_4				    : out   std_logic ;
-		gpio_5				    : in   std_logic ;
-		gpio_6				    : out   std_logic ;
-		gpio_7				    : out   std_logic ;
-		gpio_8				    : out   std_logic ;
+
+      gpio_1                : out   std_logic ;
+      gpio_2                : out   std_logic ;
+      gpio_3                : out   std_logic ;
+      gpio_4                : out   std_logic ;
+      gpio_5                : in    std_logic ;
+      gpio_6                : out   std_logic ;
+      gpio_7                : out   std_logic ;
+      gpio_8                : out   std_logic ;
 
       forced_start_in       : in    std_logic ;
       fpga_fs_out           : inout std_logic ;
@@ -231,14 +231,16 @@ architecture structural of DevBoard_PowerMonitorCPLD_TopLevel is
 
   signal pwr_drive_not    : std_logic ;
   signal solar_run_not    : std_logic ;
-  
---Logic of the CNTRL1/SW1 of the SiP32413 is inverted.
+
+  --  Logic of the CNTRL1/SW1 of the SiP32413 is inverted.
+
   signal ls_1p8v_cntrl_to_cpld_not : std_logic;
 
 begin
 
---Logic of the CNTRL1/SW1 of the SiP32413 is inverted.  
-  LS_1P8V_CNTRL_TO_CPLD			<= not ls_1p8v_cntrl_to_cpld_not ;
+  --  Logic of the CNTRL1/SW1 of the SiP32413 is inverted.
+
+  LS_1P8V_CNTRL_TO_CPLD      <= not ls_1p8v_cntrl_to_cpld_not ;
 
   --  Invert output signals between the power controller and the outside
   --  world.
@@ -308,21 +310,21 @@ begin
       pwr_micR_out          => MIC_R_CNTRL_TO_CPLD,
       pwr_micL_out          => MIC_L_CNTRL_TO_CPLD,
       pwr_sdcard_out        => SDCARD_CNTRL_TO_CPLD,
-	--Logic of the CNTRL1/SW1 of the SiP32413 is inverted.
       pwr_ls_1p8_out        => ls_1p8v_cntrl_to_cpld_not,
       pwr_ls_3p3_out        => LS_3P3V_CNTRL_TO_CPLD,
 
       solar_max_in          => SOLAR_PGOOD_TO_CPLD,
       solar_on_in           => SOLAR_CTRL_ON_TO_CPLD,
       solar_run_out         => solar_run_not,
-		gpio_1				    => CPLD_GPIO1,
-		gpio_2				    => CPLD_GPIO2,
-		gpio_3				    => CPLD_GPIO3,
-		gpio_4				    => CPLD_GPIO4,
-		gpio_5				    => CPLD_GPIO5,
-		gpio_6				    => CPLD_GPIO6,
-		gpio_7				    => CPLD_GPIO7,
-		gpio_8				    => CPLD_GPIO8,
+
+      gpio_1                => CPLD_GPIO1,
+      gpio_2                => CPLD_GPIO2,
+      gpio_3                => CPLD_GPIO3,
+      gpio_4                => CPLD_GPIO4,
+      gpio_5                => CPLD_GPIO5,
+      gpio_6                => CPLD_GPIO6,
+      gpio_7                => CPLD_GPIO7,
+      gpio_8                => CPLD_GPIO8,
 
       forced_start_in       => not FORCED_START_N_TO_CPLD,
       fpga_fs_out           => FORCED_START_N_TO_FPGA,

@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------
 --
---! @file       DevBoard_PowerMonitorCPLDInit_TopLevel.vhd
+--! @file       AudioRecordingCollarCPLDInit_TopLevel.vhd
 --! @brief      Mapping from CPLD pin names to Flash Init signals.
 --! @details    Map CPLD pins to Flash Init Signals.
 --! @author     Emery Newlon
@@ -33,7 +33,7 @@ library IEEE ;                      --! Use standard library.
 use IEEE.STD_LOGIC_1164.ALL ;       --! Use standard logic elements.
 use IEEE.NUMERIC_STD.ALL ;          --! Use numeric standard.
 
-entity DevBoard_PowerMonitorCPLDInit_TopLevel is
+entity AudioRecordingCollarCPLDInit_TopLevel is
 
   Port (
 
@@ -89,9 +89,9 @@ entity DevBoard_PowerMonitorCPLDInit_TopLevel is
 
   ) ;
 
-  end entity DevBoard_PowerMonitorCPLDInit_TopLevel ;
+  end entity AudioRecordingCollarCPLDInit_TopLevel ;
 
-architecture structural of DevBoard_PowerMonitorCPLDInit_TopLevel is
+architecture structural of AudioRecordingCollarCPLDInit_TopLevel is
 
   component FlashInit is
 
@@ -99,7 +99,7 @@ architecture structural of DevBoard_PowerMonitorCPLDInit_TopLevel is
       master_clk_freq_g     : natural   := 10e6
     ) ;
     Port (
-      master_clk            : in    std_logic ;                   
+      master_clk            : in    std_logic ;
       flash_clk_out         : out   std_logic ;
       flash_cs_out          : out   std_logic ;
       pfl_flash_data_io     : inout std_logic_vector (3 downto 0) ;
