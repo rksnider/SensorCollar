@@ -57,14 +57,6 @@ set_global_assignment -name PRE_FLOW_SCRIPT_FILE "quartus_sh:at_compile_start.tc
 
 
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "NO HEAT SINK WITH STILL AIR"
-set_global_assignment -name VHDL_FILE ../../MainCollar/PowerController/PC_StatusControl_pkg.vhd
-set_global_assignment -name VHDL_FILE ../../MainCollar/General/Utilities_pkg.vhd
-set_global_assignment -name VHDL_FILE DevBoard_PowerMonitorCPLD_TopLevel.vhd
-set_global_assignment -name VHDL_FILE ../../MainCollar/PowerController/StatCtlSPI.vhd
-set_global_assignment -name VHDL_FILE ../../MainCollar/PowerController/PC_UFM.vhd
-set_global_assignment -name QIP_FILE ../../MainCollar/PowerController/PFL.qip
-set_global_assignment -name VHDL_FILE ../../MainCollar/PowerController/PowerController.vhd
-set_global_assignment -name QIP_FILE ../../MainCollar/PowerController/InternalFlash.qip
 set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "1.8 V"
 set_location_assignment PIN_1 -to FLASH_C
 set_location_assignment PIN_4 -to FLASH_PFL[0]
@@ -157,3 +149,12 @@ set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to FORCED_START_N_TO_CPL
 set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to CONF_DONE_FPGA
 set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to INIT_DONE_FPGA
 set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to NSTATUS_FPGA
+set_global_assignment -name SDC_FILE sdc.sdc
+set_global_assignment -name VHDL_FILE ../../MainCollar/PowerController/PC_StatusControl_pkg.vhd
+set_global_assignment -name VHDL_FILE ../../MainCollar/General/Utilities_pkg.vhd
+set_global_assignment -name VHDL_FILE DevBoard_PowerMonitorCPLD_TopLevel.vhd
+set_global_assignment -name VHDL_FILE ../../MainCollar/PowerController/StatCtlSPI.vhd
+set_global_assignment -name VHDL_FILE ../../MainCollar/PowerController/PC_UFM.vhd
+set_global_assignment -name QIP_FILE ../../MainCollar/PowerController/PFL.qip
+set_global_assignment -name VHDL_FILE ../../MainCollar/PowerController/PowerController.vhd
+set_global_assignment -name QIP_FILE ../../MainCollar/PowerController/InternalFlash.qip
