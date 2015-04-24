@@ -48,12 +48,12 @@ entity AudioRecordingCollarCPLDInit_TopLevel is
     CLK_50MHZ                   : in    std_logic ;
     --  FPGA Configuration Connections
 
-    DCLK_FPGA                   : out   std_logic ;
-    NSTATUS_FPGA                : in    std_logic ;
-    CONF_DONE_FPGA              : in    std_logic ;
-    INIT_DONE_FPGA              : in    std_logic ;
-    NCONFIG_FPGA                : out   std_logic ;
-    DATA0_FPGA                  : out   std_logic ;
+    FPGA_DCLK                   : out   std_logic ;
+    FPGA_NSTATUS                : in    std_logic ;
+    FPGA_CONF_DONE              : in    std_logic ;
+    FPGA_INIT_DONE              : in    std_logic ;
+    FPGA_NCONFIG                : out   std_logic ;
+    FPGA_DATA0                  : out   std_logic ;
 
     --  Device Power Control Connections
 
@@ -164,12 +164,12 @@ begin
       flash_cs_out          => FLASH_S_N,
       pfl_flash_data_io     => FLASH_PFL,
 
-      fpga_cnf_dclk_out     => DCLK_FPGA,
-      fpga_cnf_data_out     => DATA0_FPGA,
-      fpga_cnf_nstatus_in   => NSTATUS_FPGA,
-      fpga_cnf_conf_done_in => CONF_DONE_FPGA,
-      fpga_cnf_init_done_in => INIT_DONE_FPGA,
-      fpga_cnf_nconfig_out  => NCONFIG_FPGA,
+      fpga_cnf_dclk_out     => FPGA_DCLK,
+      fpga_cnf_data_out     => FPGA_DATA0,
+      fpga_cnf_nstatus_in   => FPGA_NSTATUS,
+      fpga_cnf_conf_done_in => FPGA_CONF_DONE,
+      fpga_cnf_init_done_in => FPGA_INIT_DONE,
+      fpga_cnf_nconfig_out  => FPGA_NCONFIG,
 
       bat_power_out         => MAIN_ON_TO_CPLD,
       bat_recharge_out      => RECHARGE_EN_TO_CPLD,

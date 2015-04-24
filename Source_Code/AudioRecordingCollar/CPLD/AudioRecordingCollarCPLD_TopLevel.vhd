@@ -51,12 +51,12 @@ entity AudioRecordingCollarCPLD_TopLevel is
 
     --  FPGA Configuration Connections
 
-    DCLK_FPGA                   : out   std_logic ;
-    NSTATUS_FPGA                : in    std_logic ;
-    CONF_DONE_FPGA              : in    std_logic ;
-    INIT_DONE_FPGA              : in    std_logic ;
-    NCONFIG_FPGA                : out   std_logic ;
-    DATA0_FPGA                  : out   std_logic ;
+    FPGA_DCLK                   : out   std_logic ;
+    FPGA_NSTATUS                : in    std_logic ;
+    FPGA_CONF_DONE              : in    std_logic ;
+    FPGA_INIT_DONE              : in    std_logic ;
+    FPGA_NCONFIG                : out   std_logic ;
+    FPGA_DATA0                  : out   std_logic ;
 
     --  FPGA Flash Connections
 
@@ -67,7 +67,7 @@ entity AudioRecordingCollarCPLD_TopLevel is
 
     --  FPGA Status and SPI Connections
 
-    PC_STATUS_CHG               : out   std_logic ;
+    PC_STATUS_CHANGED               : out   std_logic ;
     PC_SPI_CLK                  : inout std_logic ;
     PC_SPI_DIN                  : inout std_logic ;
     PC_SPI_DOUT                 : out   std_logic ;
@@ -75,8 +75,8 @@ entity AudioRecordingCollarCPLD_TopLevel is
 
     --  I2C Bus Connections
 
-    SDA_TO_FPGA_CPLD            : inout std_logic ;
-    SCL_TO_FPGA_CPLD            : inout std_logic ;
+    I2C_SDA            : inout std_logic ;
+    I2C_SCL            : inout std_logic ;
 
     --  Device Power Control Connections
 
@@ -268,21 +268,21 @@ begin
 --      fpga_toflash_data_io  => PC_FLASH_DATA,
 --      fpga_toflash_dir_in   => PC_FLASH_DIR,
 
-      fpga_cnf_dclk_out     => DCLK_FPGA,
-      fpga_cnf_data_out     => DATA0_FPGA,
-      fpga_cnf_nstatus_in   => NSTATUS_FPGA,
-      fpga_cnf_conf_done_in => CONF_DONE_FPGA,
-      fpga_cnf_init_done_in => INIT_DONE_FPGA,
-      fpga_cnf_nconfig_out  => NCONFIG_FPGA,
+      fpga_cnf_dclk_out     => FPGA_DCLK,
+      fpga_cnf_data_out     => FPGA_DATA0,
+      fpga_cnf_nstatus_in   => FPGA_NSTATUS,
+      fpga_cnf_conf_done_in => FPGA_CONF_DONE,
+      fpga_cnf_init_done_in => FPGA_INIT_DONE,
+      fpga_cnf_nconfig_out  => FPGA_NCONFIG,
 
-      statchg_out           => PC_STATUS_CHG,
+      statchg_out           => PC_STATUS_CHANGED,
       spi_clk_in            => PC_SPI_CLK,
       spi_cs_in             => PC_SPI_NCS,
       spi_mosi_in           => PC_SPI_DIN,
       spi_miso_out          => PC_SPI_DOUT,
 
-      i2c_clk_io            => SCL_TO_FPGA_CPLD,
-      i2c_data_io           => SDA_TO_FPGA_CPLD,
+      i2c_clk_io            => I2C_SCL,
+      i2c_data_io           => I2C_SDA,
 
       bat_power_out         => MAIN_ON_TO_CPLD,
       bat_recharge_out      => RECHARGE_EN_TO_CPLD,
@@ -326,7 +326,7 @@ begin
       gpio_7                => CPLD_GPIO7,
       gpio_8                => CPLD_GPIO8,
 
-      forced_start_in       => not FORCED_START_N_TO_CPLD,
+      forced_start_in       => FORCED_START_N_TO_CPLD,
       fpga_fs_out           => FORCED_START_N_TO_FPGA,
       rtc_alarm_in          => not RTC_ALARM_TO_CPLD
 

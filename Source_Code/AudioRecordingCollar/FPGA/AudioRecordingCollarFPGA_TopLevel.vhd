@@ -44,22 +44,22 @@ use IEEE.NUMERIC_STD.ALL ;          --! Use numeric standard.
 --!                               
 --! @param      BAT_HIGH_TO_FPGA        
 --!                              
---! @param      FORCED_START_N_TO_FPGA    
+--! @param      FORCE_STARTUP_TO_FPGA    
 --!
---! @param      PC_STATUS_CHG        
+--! @param      PC_STATUS_CHANGED        
 --! @param      PC_SPI_NCS         
 --! @param      PC_SPI_CLK     
---! @param      PC_SPI_DIN    
---! @param      PC_SPI_DOUT   
+--! @param      FPGA_TDO_SPI_MISO    
+--! @param      FPGA_SPI_MOSI   
 --! @param      PC_FLASH_CLK    
---! @param      PC_FLASH_CS_N  
+--! @param      FLASH_S_N  
 --! @param      PC_FLASH_DATA   
 --!
 --! @param      PC_FLASH_DIR     
---! @param      SDA_TO_FPGA_CPLD     
+--! @param      I2C_SDA     
 --!                                   
 --!                                  
---! @param      SCL_TO_FPGA_CPLD   
+--! @param      I2C_SCL   
 --!                                   
 --! @param      DATA_TX_DAT_TO_FPGA 
 --!                                  .
@@ -131,25 +131,25 @@ CLK_50MHZ_TO_FPGA    : in   std_logic;
 --  System Status
 
 BAT_HIGH_TO_FPGA : in std_logic;
-FORCED_START_N_TO_FPGA : in std_logic;
+FORCE_STARTUP_TO_FPGA : in std_logic;
 
 --Power Controller
 
-PC_STATUS_CHG : in std_logic;
+PC_STATUS_CHANGED : in std_logic;
 PC_SPI_NCS : out std_logic;
 PC_SPI_CLK : out std_logic;
-PC_SPI_DIN : out std_logic;
-PC_SPI_DOUT  : in std_logic;
+FPGA_TDO_SPI_MISO : out std_logic;
+FPGA_SPI_MOSI  : in std_logic;
 
-PC_FLASH_CLK :inout std_logic;
-PC_FLASH_CS_N :inout std_logic;
+FLASH_C :inout std_logic;
+FLASH_S_N :inout std_logic;
 PC_FLASH_DATA :inout std_logic_vector(3 downto 0);
 PC_FLASH_DIR :inout std_logic;
 
 --   I2C Bus
 
-SDA_TO_FPGA_CPLD : inout std_logic;
-SCL_TO_FPGA_CPLD : inout std_logic;
+I2C_SDA : inout std_logic;
+I2C_SCL : inout std_logic;
 
 -- Data Transmitter Connections
 
@@ -234,12 +234,17 @@ TXD_GPS_TO_FPGA       : in  std_logic;
 TIMEPULSE_GPS_TO_FPGA : in  std_logic;
 EXTINT_GPS_TO_FPGA    : out std_logic; 
 
--- Voltage Selectable GPIO
+-- ESH SPI
 
-GPIOSEL_0 : out std_logic;
-GPIOSEL_1 : out std_logic;
-GPIOSEL_2 : out std_logic;
-GPIOSEL_3 : out std_logic
+ FPGA_SPI_CLK       : out std_logic;
+-- FPGA_SPI_MOSI
+-- FPGA_TDO_SPI_MISO
+-- FPGA_TMS_SPI_CS
+
+-- USB
+
+ESH_FPGA_USB_DMINUS   : out std_logic;
+ESH_FPGA_USB_DPLUS    : out std_logic;
 
 
 --  1.8V GPIO
@@ -282,7 +287,7 @@ component Collar is
     pc_spi_mosi_out       : out   std_logic ;
     pc_spi_miso_in        : in    std_logic ;
 
-    pc_flash_clk          : out   std_logic ;
+    FLASH_C          : out   std_logic ;
     pc_flash_cs_out       : out   std_logic ;
     pc_flash_data_io      : inout std_logic_vector (3 downto 0) ;
     pc_flash_dir_out      : out   std_logic ;
@@ -345,10 +350,9 @@ begin
 
 
 
-GPIOSEL_0 <= count(7);
-GPIOSEL_1 <= count(6);
-GPIOSEL_2 <= CLK_50MHZ_TO_FPGA;
-GPIOSEL_3 <= '0';
+ESH_FPGA_USB_DMINUS <= count(7);
+ESH_FPGA_USB_DPLUS  <= count(6);
+FPGA_SPI_CLK <= CLK_50MHZ_TO_FPGA;
 
 
 
@@ -364,20 +368,20 @@ Port Map(
     buttons_in           => (others => '0'),
 
     batt_int_in          => BAT_HIGH_TO_FPGA,
-    forced_start_in      => FORCED_START_N_TO_FPGA,
+    forced_start_in      => FORCE_STARTUP_TO_FPGA,
 
-    i2c_clk_io           => SDA_TO_FPGA_CPLD,
-    i2c_data_io          => SCL_TO_FPGA_CPLD,
+    i2c_clk_io           => I2C_SDA,
+    i2c_data_io          => I2C_SCL,
     
     
-    pc_statchg_in         => PC_STATUS_CHG,
+    pc_statchg_in         => PC_STATUS_CHANGED,
     pc_spi_clk            => PC_SPI_CLK ,
     pc_spi_cs_out         => PC_SPI_NCS,
-    pc_spi_mosi_out       => PC_SPI_DIN,
-    pc_spi_miso_in        => PC_SPI_DOUT,
+    pc_spi_mosi_out       => FPGA_TDO_SPI_MISO,
+    pc_spi_miso_in        => FPGA_SPI_MOSI,
 
-    pc_flash_clk          => PC_FLASH_CLK,
-    pc_flash_cs_out       => PC_FLASH_CS_N,
+    pc_flash_clk          => FLASH_C,
+    pc_flash_cs_out       => FLASH_S_N,
     pc_flash_data_io      => PC_FLASH_DATA,
     pc_flash_dir_out      => PC_FLASH_DIR,
 
