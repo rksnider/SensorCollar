@@ -2,9 +2,9 @@
 --
 --! @file       $File$
 --! @brief      Initialize and Control the ST Microelectronics LSM9DS1 IMU
---! @details    
+--! @details    LSM9DS1 VHDL controller.
 --! @copyright  
---! @author     
+--! @author     Chris Casebeer
 --! @version    $Revision$
 
 --  This program is free software: you can redistribute it and/or modify
@@ -61,16 +61,16 @@
 --! @param      mag_data_rdy          Signal to flashblock that new mag data is ready.
 --! @param      temp_data_rdy         Signal to flashblock that new temp data is ready.
 --! 
---! @param      gyro_data_x           2 byte word for gyro X axis (2's complement)
---! @param      gyro_data_y           2 byte word for gyro Y axis (2's complement)
---! @param      gyro_data_z           2 byte word for gyro Z axis (2's complement)
---! @param      accel_data_x          2 byte word for accel X axis (2's complement)
---! @param      accel_data_y          2 byte word for accel Y axis (2's complement)
---! @param      accel_data_z          2 byte word for accel Z axis (2's complement)
---! @param      mag_data_x            2 byte word for mag X axis (2's complement)
---! @param      mag_data_y            2 byte word for mag Y axis (2's complement)
---! @param      mag_data_z            2 byte word for mag Z axis (2's complement)
---! @param      temp_data             2 byte word for temp X axis (2's complement)
+--! @param      gyro_data_x           2 byte word for gyro X axis (2's complement) (Big endian)
+--! @param      gyro_data_y           2 byte word for gyro Y axis (2's complement) (Big endian)
+--! @param      gyro_data_z           2 byte word for gyro Z axis (2's complement) (Big endian)
+--! @param      accel_data_x          2 byte word for accel X axis (2's complement) (Big endian)
+--! @param      accel_data_y          2 byte word for accel Y axis (2's complement) (Big endian)
+--! @param      accel_data_z          2 byte word for accel Z axis (2's complement) (Big endian)
+--! @param      mag_data_x            2 byte word for mag X axis (2's complement) (Big endian)
+--! @param      mag_data_y            2 byte word for mag Y axis (2's complement) (Big endian)
+--! @param      mag_data_z            2 byte word for mag Z axis (2's complement) (Big endian)
+--! @param      temp_data             2 byte word for temp X axis (2's complement) (Big endian)
 --!                                        
 --! @param      sclk                  SCLK of the SPI interface. Tie to SCL/SPC of LSM9DS1.
 --! @param      mosi                  MOSI. Tie to SDA/SDI/SDO of LSM9DS1.
@@ -128,6 +128,11 @@
 -- The interrupt pins on the IMU are programmable. The state machine has been programmed
 -- to recognize INT_1_A_G as gyroscope data ready and INT_2_A_G as accelerometer data rdy. 
 
+--The DRDY_M is negative logic by default. This requires an inversion on the
+--upper port map of this entity. INT1_A_G and INT2_A_G are positive logic
+--by default. They must be enabled on startup and may also be programmed to
+--negative logic, but are not currently. 
+
 
 library IEEE ;                  --! Use standard library.
 use IEEE.STD_LOGIC_1164.ALL ;   --! Use standard logic elements.
@@ -153,9 +158,9 @@ entity LSM9DS1_top is
     
    
   command_used_g              : std_logic := '1';
-  address_used_g              : std_logic := '1';
+  address_used_g              : std_logic := '0';
   command_width_bytes_g       : natural := 1;
-  address_width_bytes_g       : natural := 0;
+  address_width_bytes_g       : natural := 1;
   data_length_bit_width_g     : natural := 10
 
 
@@ -231,10 +236,12 @@ architecture behavior of LSM9DS1_top is
     
     IMU_STATE_INIT_FETCH_XL_G,
     IMU_STATE_INIT_WRITE_XL_G,
+    IMU_STATE_INIT_WAIT_XL_G,
+    
     
     IMU_STATE_INIT_FETCH_M,
     IMU_STATE_INIT_WRITE_M,
-    
+    IMU_STATE_INIT_WAIT_M,
         
     IMU_STATE_FETCH_XL_SETUP,
     IMU_STATE_FETCH_XL,
@@ -285,9 +292,15 @@ architecture behavior of LSM9DS1_top is
   constant RD_EN_BIT : std_logic := '1';
   constant WR_EN_BIT : std_logic := '0';
   
+  
+--Magnetometer multiple register read enable bit. 
+  constant MS_AUTOINCREMENT_BIT : std_logic := '1';
+
+  
   --These numbers are stored as 16 bit values in memory.
   signal  xl_g_init_number : unsigned (7 downto 0);
   signal  m_init_number     : unsigned (7 downto 0);
+  signal  spi_commands_complete : unsigned( 7 downto 0);
   
   
 --Signals for the one port init buffer.
@@ -337,7 +350,9 @@ architecture behavior of LSM9DS1_top is
   signal    master_slave_data_rdy_spi_signal :  std_logic;
   signal    master_slave_data_ack_spi_signal : std_logic;
   signal    master_slave_data_ack_spi_signal_follower : std_logic;
-  signal    command_busy_spi_signal:   std_logic;
+  signal    command_busy_spi_signal :   std_logic;
+  signal    command_done_spi_signal :   std_logic;
+  signal    command_done_spi_signal_follower :   std_logic;
   signal    slave_master_data_spi_signal :std_logic_vector(7 downto 0);
   signal    slave_master_data_ack_spi_signal :std_logic;
   
@@ -345,8 +360,12 @@ architecture behavior of LSM9DS1_top is
 signal startup_en : std_logic;
 signal startup_follower : std_logic;
   
+--Processed signals allow servicing the startup signal in.
 signal  startup_processed : std_logic;
 signal  startup_processed_follower : std_logic;
+--Startup complete indicate that main state machine can begin
+--looking for interrupts. 
+signal  startup_complete : std_logic;
   
   
   --These signals
@@ -366,7 +385,10 @@ signal  startup_processed_follower : std_logic;
   signal byte_read_count  : unsigned (data_length_bit_width_g-1 downto 0);
   signal byte_read_number : unsigned (data_length_bit_width_g-1 downto 0);
   
-
+  
+signal INT1_A_G_sync  : std_logic; 
+signal INT2_A_G_sync  : std_logic; 
+signal DRDY_M_sync  : std_logic; 
     
   component spi_commands is
   generic(
@@ -375,7 +397,8 @@ signal  startup_processed_follower : std_logic;
   address_used_g        : std_logic := '0';
   command_width_bytes_g : natural := 1;
   address_width_bytes_g : natural := 1;
-  data_length_bit_width_g : natural := 10
+  data_length_bit_width_g : natural := 10;
+  cpol_cpha             : std_logic_vector(1 downto 0) := "00"
   
 );
 	port(
@@ -390,6 +413,7 @@ signal  startup_processed_follower : std_logic;
     master_slave_data_rdy_in  : in  std_logic;
     master_slave_data_ack_out :out  std_logic;
     command_busy_out      : out std_logic;
+    command_done          : out std_logic;
     slave_master_data_out : out std_logic_vector(7 downto 0);
     slave_master_data_ack_out : out std_logic;
 
@@ -415,7 +439,8 @@ spi_commands_slave_XL_G : spi_commands
   address_used_g        => address_used_g,
   command_width_bytes_g => command_width_bytes_g,
   address_width_bytes_g => address_width_bytes_g,
-  data_length_bit_width_g => data_length_bit_width_g
+  data_length_bit_width_g => data_length_bit_width_g,
+  cpol_cpha            => "00"
   )
 	port map(
     clk	            => clk,
@@ -430,6 +455,7 @@ spi_commands_slave_XL_G : spi_commands
     master_slave_data_rdy_in  =>  master_slave_data_rdy_spi_signal,
     master_slave_data_ack_out =>  master_slave_data_ack_spi_signal,
     command_busy_out          =>  command_busy_spi_signal,
+    command_done              =>  command_done_spi_signal,
     slave_master_data_out     =>  slave_master_data_spi_signal,
     slave_master_data_ack_out =>  slave_master_data_ack_spi_signal,
 
@@ -528,12 +554,16 @@ byte_read_number <= to_unsigned(0,byte_number'length);
  
  
  
-INT_M_processed    <= '0';
+DRDY_M_processed    <= '0';
 accel_processed <= '0';
 gyro_processed <= '0';
 startup_processed <= '0';
   
 imu_initbuffer_address  <= (others => '0');
+startup_complete <= '0';
+
+
+command_done_spi_signal_follower <= '0';
  
  
  
@@ -555,25 +585,29 @@ master_slave_data_rdy_spi_signal <= '0';
     accel_processed <= '0';
   end if;
   
-  if (INT_M_processed = '1' and INT_M_processed_follower = '1') then
-    INT_M_processed <= '0';
+  if (DRDY_M_processed = '1' and DRDY_M_processed_follower = '1') then
+    DRDY_M_processed <= '0';
   end if;
+  
   
 
     case cur_imu_state is
 
       when IMU_STATE_WAIT          =>
 
-      --INT1_A_G has been set to G data ready. 
-      if  (gyro_req = '1') then
-        cur_imu_state  <=  IMU_STATE_FETCH_G_SETUP;
-      --INT2_A_G has been set to XL data ready. 
-      elsif (accel_req = '1') then
-        cur_imu_state  <=  IMU_STATE_FETCH_XL_SETUP;
-      elsif (INT_M_req = '1') then
-        cur_imu_state  <=  IMU_STATE_FETCH_M_SETUP;
-      elsif (startup_en = '1') then
+      
+      if (startup_en = '1') then
         cur_imu_state  <=  IMU_STATE_INIT_FETCH_XL_G_NUM_SETUP;
+      elsif (startup_complete = '1') then
+        --INT1_A_G has been set to G data ready. 
+        if  (gyro_req = '1') then
+          cur_imu_state  <=  IMU_STATE_FETCH_G_SETUP;
+        --INT2_A_G has been set to XL data ready. 
+        elsif (accel_req = '1') then
+          cur_imu_state  <=  IMU_STATE_FETCH_XL_SETUP;
+        elsif (DRDY_M_req = '1') then
+          cur_imu_state  <=  IMU_STATE_FETCH_M_SETUP;
+        end if;
       end if;
 
         
@@ -600,13 +634,14 @@ master_slave_data_rdy_spi_signal <= '0';
 
     when IMU_STATE_INIT_FETCH_XL_G =>
     
-      if(byte_count = byte_number) then
-        cur_imu_state <= IMU_STATE_INIT_FETCH_M_NUM_SETUP;
-      else
-      
-        cur_imu_state <= IMU_STATE_INIT_WRITE_XL_G;
 
-      end if;
+          if(byte_count = byte_number) then
+            cur_imu_state <= IMU_STATE_INIT_FETCH_M_NUM_SETUP;
+          else
+            cur_imu_state <= IMU_STATE_INIT_WRITE_XL_G;
+          end if;
+
+
     
     when IMU_STATE_INIT_WRITE_XL_G =>
     
@@ -617,12 +652,24 @@ master_slave_data_rdy_spi_signal <= '0';
           data_length_spi_signal <= std_logic_vector(to_unsigned(IMU_REGISTER_SIZE_BYTES,data_length_spi_signal'length));
           imu_initbuffer_address <= imu_initbuffer_address + 1;
           master_slave_data_rdy_spi_signal <= '1';
-          
+          cur_imu_state <= IMU_STATE_INIT_WAIT_XL_G;
           byte_count <= byte_count + 1;
-          cur_imu_state <= IMU_STATE_INIT_FETCH_XL_G;
+          
       end if;
-
       
+       when IMU_STATE_INIT_WAIT_XL_G =>
+      
+      --Wait for a register to complete going out before continuing. 
+      --This is necessary for cs_n multiplexing.
+      --This is necessary as no spi_command ack's come back for command only.
+      --if (command_done_spi_signal_follower /= command_done_spi_signal) then
+        --command_done_spi_signal_follower <= command_done_spi_signal;
+        if(command_done_spi_signal = '1') then
+          cur_imu_state <= IMU_STATE_INIT_FETCH_XL_G;
+        end if;
+     -- end if;
+      
+
     when IMU_STATE_INIT_FETCH_M_NUM_SETUP =>
     
       imu_initbuffer_address <= unsigned(imu_initbuffer_m_num_loc_c);
@@ -639,13 +686,15 @@ master_slave_data_rdy_spi_signal <= '0';
       
     when IMU_STATE_INIT_FETCH_M =>
     
-      if(byte_count = byte_number) then
-        cur_imu_state <= IMU_STATE_WAIT;
 
-      else
-        cur_imu_state <= IMU_STATE_INIT_WRITE_M;
+          if(byte_count = byte_number) then
+          --Don't service interrupts till we've set up the registers.
+            startup_complete <= '1';
+            cur_imu_state <= IMU_STATE_WAIT;
+          else
+            cur_imu_state <= IMU_STATE_INIT_WRITE_M;
+          end if;
 
-      end if;
     
     when IMU_STATE_INIT_WRITE_M =>
     
@@ -659,8 +708,21 @@ master_slave_data_rdy_spi_signal <= '0';
           master_slave_data_rdy_spi_signal <= '1';
           
           byte_count <= byte_count + 1;
-          cur_imu_state <= IMU_STATE_INIT_FETCH_M;
+          cur_imu_state <= IMU_STATE_INIT_WAIT_M;
       end if;
+      
+      
+      when IMU_STATE_INIT_WAIT_M =>
+      
+      --Wait for a register to complete going out before continuing. 
+      --This is necessary for cs_n multiplexing.
+      --This is necessary as no spi_command ack's come back for command only.
+     -- if (command_done_spi_signal_follower /= command_done_spi_signal) then
+       -- command_done_spi_signal_follower <= command_done_spi_signal;
+        if(command_done_spi_signal = '1') then
+          cur_imu_state <= IMU_STATE_INIT_FETCH_M;
+        end if;
+      --end if;
       
       
       
@@ -689,8 +751,6 @@ master_slave_data_rdy_spi_signal <= '0';
     --or address bytes sent out the SPI bus. We can thus just count 6 ack's and know that we grabbed the 6 XYZ bytes. 
     --This is what is happening here. 
     --This assumes that the address is auto incrementing. 
-    --The order in which the words come in and the oder in which they go out of this entity 
-    --must be accounted for. 
     
     
     when IMU_STATE_FETCH_XL =>
@@ -699,7 +759,11 @@ master_slave_data_rdy_spi_signal <= '0';
         cur_imu_state <= IMU_STATE_FETCH_XL_DONE;
         accel_processed <= '1';
       elsif (slave_master_data_ack_spi_signal = '1') then
-        accel_sample <= slave_master_data_spi_signal & accel_sample(3*IMU_AXIS_WORD_LENGTH_BYTES*8-1 downto 8) ;
+      --Big endian/Little Endian (Configurable with register 22h on the XL/G.
+      --Little endian.
+        accel_sample <= slave_master_data_spi_signal & accel_sample(3*IMU_AXIS_WORD_LENGTH_BYTES*8-1 downto 8);
+        --Big endian.
+        --accel_sample <= accel_sample(3*IMU_AXIS_WORD_LENGTH_BYTES*8-1-8 downto 0) & slave_master_data_spi_signal;
         byte_read_count <= byte_read_count + 1;
       end if;
       
@@ -715,7 +779,8 @@ master_slave_data_rdy_spi_signal <= '0';
       end if;
       
       
-      
+    --Assume little endian input for IMU_STATE_FETCH_XL. Generates Big endian words.
+    --Puts big endian on the xyz ports. 
     when IMU_STATE_FETCH_XL_DONE =>
     accel_data_z <=   accel_sample(3*IMU_AXIS_WORD_LENGTH_BYTES*8-1 downto 2*IMU_AXIS_WORD_LENGTH_BYTES*8);
     accel_data_y <=   accel_sample(2*IMU_AXIS_WORD_LENGTH_BYTES*8-1 downto 1*IMU_AXIS_WORD_LENGTH_BYTES*8);
@@ -747,7 +812,11 @@ master_slave_data_rdy_spi_signal <= '0';
         cur_imu_state <= IMU_STATE_FETCH_G_DONE;
         gyro_processed <= '1';
       elsif (slave_master_data_ack_spi_signal = '1') then
-        gyro_sample <= slave_master_data_spi_signal & gyro_sample(3*IMU_AXIS_WORD_LENGTH_BYTES*8-1 downto 8) ;
+       --Big endian/Little Endian (Configurable with register 22h on the XL/G.
+      --Little endian.
+       gyro_sample <= slave_master_data_spi_signal & gyro_sample(3*IMU_AXIS_WORD_LENGTH_BYTES*8-1 downto 8);
+       --Big endian.
+        --gyro_sample <= gyro_sample(3*IMU_AXIS_WORD_LENGTH_BYTES*8-1-8 downto 0) & slave_master_data_spi_signal;
         byte_read_count <= byte_read_count + 1;
       end if;
       
@@ -762,7 +831,7 @@ master_slave_data_rdy_spi_signal <= '0';
       master_slave_data_rdy_spi_signal <= '0';
       end if;
       
-      
+      --Assume little endian input for IMU_STATE_FETCH_G. Generates Big endian words.
     when IMU_STATE_FETCH_G_DONE =>
     gyro_data_z <=   gyro_sample(3*IMU_AXIS_WORD_LENGTH_BYTES*8-1 downto 2*IMU_AXIS_WORD_LENGTH_BYTES*8);
     gyro_data_y <=   gyro_sample(2*IMU_AXIS_WORD_LENGTH_BYTES*8-1 downto 1*IMU_AXIS_WORD_LENGTH_BYTES*8);
@@ -778,7 +847,7 @@ master_slave_data_rdy_spi_signal <= '0';
       byte_read_number <= to_unsigned(XL_G_M_register_count_c,byte_number'length);
       
         if (command_busy_spi_signal = '0') then
-          command_spi_signal <= RD_EN_BIT & std_logic_vector(to_unsigned(M_data_begin_addr,command_spi_signal'length - 1));
+          command_spi_signal <= RD_EN_BIT & MS_AUTOINCREMENT_BIT & std_logic_vector(to_unsigned(M_data_begin_addr,command_spi_signal'length - 2));
           address_en_spi_signal <= '0';
           data_length_spi_signal <= std_logic_vector(to_unsigned(XL_G_M_register_count_c,data_length_spi_signal'length));
           master_slave_data_spi_signal <= x"00";
@@ -792,9 +861,14 @@ master_slave_data_rdy_spi_signal <= '0';
     
        if(byte_read_count = byte_read_number) then
         cur_imu_state <= IMU_STATE_FETCH_M_DONE;
-        INT_M_processed <= '1';
+        DRDY_M_processed <= '1';
       elsif (slave_master_data_ack_spi_signal = '1') then
+      
+      --Big endian/Little Endian (Configurable with register 22h on the XL/G.
+      --Little endian.
         mag_sample <= slave_master_data_spi_signal & mag_sample(3*IMU_AXIS_WORD_LENGTH_BYTES*8-1 downto 8) ;
+       --Big endian.
+       --mag_sample <= mag_sample(3*IMU_AXIS_WORD_LENGTH_BYTES*8-1-8 downto 0) & slave_master_data_spi_signal;
         byte_read_count <= byte_read_count + 1;
       end if;
       
@@ -871,13 +945,21 @@ case cur_imu_state is
     imu_initbuffer_rd_en <= '1';
     when IMU_STATE_INIT_WRITE_XL_G  =>
     imu_initbuffer_rd_en <= '1';
+    SPI_SELECT_XL_G_M <= '0';
+    when IMU_STATE_INIT_WAIT_XL_G  =>
+    SPI_SELECT_XL_G_M <= '0';
     
     when IMU_STATE_INIT_FETCH_M  =>
     imu_initbuffer_rd_en <= '1';
     when IMU_STATE_INIT_WRITE_M  =>
     imu_initbuffer_rd_en <= '1';
+    SPI_SELECT_XL_G_M <= '1';
+    when IMU_STATE_INIT_WAIT_M  =>
+    SPI_SELECT_XL_G_M <= '1';   
+
+
+
     
-        
     when IMU_STATE_FETCH_XL_SETUP  =>
     SPI_SELECT_XL_G_M <= '0';
     when IMU_STATE_FETCH_XL  =>
@@ -930,24 +1012,44 @@ data_rdy_catch: process (clk, rst_n)
 begin
   if rst_n = '0' then
   
-INT_M_req <= '0';
+DRDY_M_req <= '0';
 gyro_req <= '0';
 accel_req <= '0';
 
 
 startup_processed_follower <= '0';
-INT_M_processed_follower   <= '0';
+
 INT1_A_G_follower <= '0';
 INT2_A_G_follower <= '0';
+DRDY_M_follower <= '0';
 
 startup_en <= '0';
 
 
 gyro_processed_follower <= '0';
 accel_processed_follower <= '0';
+DRDY_M_processed_follower   <= '0';
+
+command_done_spi_signal_follower  <= '0';
+
+INT1_A_G_sync   <= '0';
+INT2_A_G_sync   <= '0';
+DRDY_M_sync     <= '0';
+
+
+
 
 
   elsif clk'event and clk = '1' then
+  
+  
+  --Synchronize asynch interrupts.
+  
+  
+INT1_A_G_sync   <= INT1_A_G;
+INT2_A_G_sync   <= INT2_A_G;
+DRDY_M_sync     <= DRDY_M;
+  
 
     if (startup_follower /= startup) then
       startup_follower <= startup;
@@ -963,16 +1065,19 @@ accel_processed_follower <= '0';
       end if ;
     end if;
     
-    if (INT_M_follower /= INT_M) then
-      INT_M_follower <= INT_M;
-      if (INT_M = '1') then
+    
+    --DRDY_M is always associated with magnetometer data. 
+   
+    if (DRDY_M_follower /= DRDY_M_sync) then
+      DRDY_M_follower <= DRDY_M_sync;
+      if (DRDY_M_sync = '1') then
         mag_fpga_time <= current_fpga_time;
-        INT_M_req <= '1';
+        DRDY_M_req <= '1';
       end if;
-    elsif (INT_M_processed_follower /= INT_M_processed) then
-      INT_M_processed_follower <= INT_M_processed;
-        if (INT_M_processed = '1') then
-          INT_M_req <= '0';
+    elsif (DRDY_M_processed_follower /= DRDY_M_processed) then
+      DRDY_M_processed_follower <= DRDY_M_processed;
+        if (DRDY_M_processed = '1') then
+          DRDY_M_req <= '0';
         end if; 
     end if;
     
@@ -980,9 +1085,9 @@ accel_processed_follower <= '0';
     --to be gyro data rdy. Please check associated matlab startup register
     --definition scripts and the documentation.
     
-    if (INT1_A_G_follower /= INT1_A_G) then
-      INT1_A_G_follower <= INT1_A_G;
-      if (INT1_A_G = '1') then
+    if (INT1_A_G_follower /= INT1_A_G_sync) then
+      INT1_A_G_follower <= INT1_A_G_sync;
+      if (INT1_A_G_sync = '1') then
         gyro_fpga_time <= current_fpga_time;
         gyro_req <= '1';
       end if;
@@ -996,9 +1101,9 @@ accel_processed_follower <= '0';
     --This assumes that data_rdy on INT2_A_G_follower has been programmed 
     --to be accel data rdy. Please check associated matlab startup register
     --definition scripts and the documentation.
-    if (INT2_A_G_follower /= INT2_A_G) then
-      INT2_A_G_follower <= INT2_A_G;
-      if (INT2_A_G = '1') then
+    if (INT2_A_G_follower /= INT2_A_G_sync) then
+      INT2_A_G_follower <= INT2_A_G_sync;
+      if (INT2_A_G_sync = '1') then
         accel_fpga_time <= current_fpga_time;
         accel_req <= '1';
       end if;
@@ -1008,6 +1113,7 @@ accel_processed_follower <= '0';
           accel_req <= '0';
         end if; 
     end if;
+    
 
   end if ;
 end process data_rdy_catch ;

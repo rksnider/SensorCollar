@@ -16,6 +16,7 @@
 --!             and receives data on MISO. A somewhat fancy serializer. 
 --! @details     
 --!
+--! @param      cpol_cpha   Target a CPOL 00 or 11 configuration of the SPI bus.
 --! @param      clk         System clock which drives entity. 
 --!                         The inverse of this clock is conditionally
 --!                         put out on the sclk line. This allows SPI
@@ -40,7 +41,7 @@
 --Usage Instructions and Explanation.
 --Byte data to send to the slave device over MOSI is put into mosi_data_i. 
 --The data is marked valid with a '1' on mosi_data_valid_i.
---This data is sent out on the MOSI line. If another byte is to follower on the
+--This data is sent out on the MOSI line. If another byte is to follow on the
 --MOSI line (with cs_n remaining down), the mosi_data_ack_o should be read until it is '1'. At this point 
 --the next byte should be put into mosi_data_i and signalled with mosi_data_valid_i.
 --If another byte does not follow and mosi_data_valid_i is not pulsed, the state
@@ -57,7 +58,7 @@ use ieee.numeric_std.all;
 
 entity spi_abstract is
  generic (
-      cpol_cpha : std_logic_vector(1 downto 0) := "11"
+      cpol_cpha : std_logic_vector(1 downto 0) := "00"
  );
 	port(
       clk	  :in	std_logic;	
@@ -145,7 +146,7 @@ begin
 --! @details    State machine is comprised of wait, cs_n, shift and cs_n states.
 --!             The bulk of the state machine occurs in shift where new data
 --!             must be sensed, the shift register reloaded, and bit counts
---!             reset IF more data is to be sent. The state machine doesn't does
+--!             reset IF more data is to be sent. The state machine doesn't do
 --!             all this single handedly, but signals some other support processes. 
 --!              
 --!           
@@ -155,9 +156,9 @@ begin
 ----------------------------------------------------------------------------  
 
 
-	next_state : process(clk,rst_n)
+next_state : process(clk,rst_n)
 begin
-    if rst_n = '0' then
+  if rst_n = '0' then
     cur_spi_state <= SPI_WAIT;
     miso_data_valid_o <= '0';
     data_read <= '0';
@@ -166,15 +167,15 @@ begin
     miso_data_o <= (others => '0');
     bits_sent <= (others => '0');
 
-    elsif rising_edge(clk) then
-        --Default values. 
-          miso_data_valid_o <= '0';
+  elsif rising_edge(clk) then
+    --Default values. 
+    miso_data_valid_o <= '0';
 
-          if (data_read_follower = '1' and  data_read ='1') then
-            data_read <= '0';
-          end if;
+    if (data_read_follower = '1' and  data_read ='1') then
+      data_read <= '0';
+    end if;
 
-      case cur_spi_state is
+    case cur_spi_state is
 
 
         when SPI_WAIT =>
@@ -276,13 +277,14 @@ if rst_n = '0' then
       sclk_en <= '0'; 
       rd_en <= '0';
       wr_en <= '0';
+      mosi_signal <= '0';
       
       when SPI_CS =>
       sclk_en <= '0';
       cs_n_signal <= '0';
       rd_en <= '0';
       wr_en <= '0';
-
+      mosi_signal <= '0';
       when SPI_SHIFT =>
       mosi_signal <= send_shift(7);
       rd_en <= '1';
@@ -292,7 +294,7 @@ if rst_n = '0' then
 
       
       when SPI_CSN =>
-      
+      mosi_signal <= '0';
       rd_en <= '0';
       wr_en <= '0';
       cs_n_signal <= '1';

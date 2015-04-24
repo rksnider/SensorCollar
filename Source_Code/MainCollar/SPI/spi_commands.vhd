@@ -22,7 +22,8 @@
 --! @param      address_width_bytes_g       The width of the address in bytes.
 --!                                         If no address is used, this must be set to 0.
 --! @param      data_length_bit_width_g     The bit width of the data_length_in
---!                                         port. Allows greater payload lengths.            
+--!                                         port. Allows greater payload lengths.      
+--! @param      cpol_cpha             Target a 00 or 11 implementation of SPI. Default is 00.    
 --!
 --! @param      clk                   System clock which drives entity. 
 --! @param      rst_n                 Active Low reset to reset entity 
@@ -53,6 +54,8 @@
 --!                                         servicing a command. Do not attempt
 --!                                         to send another command. If this is '0'
 --!                                         the entity is ready to send another command.
+--! @param      command_done                Command done pulse.
+--!
 --! @param      slave_master_data_out       The MISO byte is valid  
 --! @param      slave_master_data_ack_out   A payload associated byte has been 
 --!                                         received back from the slave. Sample
@@ -90,7 +93,7 @@
 -- sent to the entity should match exactly the data_length_in on the first master_slave_data_rdy.
 -- This is because the first byte of payload is associated with the first master_slave_data_rdy
 
--- For every payload byte sent to the slave device, 
+-- For every data section byte sent to the slave device, 
 -- a byte is received back from the SPI slave over the MISO line. 
 -- This byte is loaded into slave_master_data_out and indicated
 -- valid by a pulse on slave_master_data_ack_out. 
@@ -109,6 +112,16 @@
 --slave_master_data_ack_out is a conditional map of spi_abstract's,
 --miso_data_valid_o. 
 
+--Received bytes are only signalled ready at slave_master_data_ack_out
+--that are associated with the sent data bytes of the master.
+--Thus bytes received back by master when the master is sending out
+--command or address sections of the payload are NOT relayed up. This is
+--because in most instances these bytes are not used by the host.
+
+--If the first byte sent to the slave DOES have an associated response byte
+--simply disable command and address portions of the payload by setting generics
+--to zero and setting address_en_in to 0 when sending the data. 
+
 
 
 library ieee;
@@ -120,12 +133,12 @@ use ieee.numeric_std.all;
 entity spi_commands is
   generic(
 
-  command_used_g        : std_logic := '0';
+  command_used_g        : std_logic := '1';
   address_used_g        : std_logic := '1';
   command_width_bytes_g : natural := 1;
   address_width_bytes_g : natural := 1;
   data_length_bit_width_g : natural := 10;
-  cpol_cpha             : std_logic_vector(1 downto 0) := "11"
+  cpol_cpha             : std_logic_vector(1 downto 0) := "00"
   
 );
 	port(
@@ -141,6 +154,7 @@ entity spi_commands is
       master_slave_data_rdy_in  :in   std_logic;
       master_slave_data_ack_out :out  std_logic;
       command_busy_out          :out  std_logic;
+      command_done              :out  std_logic;
 
       slave_master_data_out     : out std_logic_vector(7 downto 0);
       slave_master_data_ack_out : out std_logic;
@@ -185,7 +199,8 @@ end component;
     SPI_STATE_ADDRESS,
     SPI_STATE_DATA_INITIAL,
     SPI_STATE_DATA,
-    SPI_STATE_COMMAND_DONE
+    SPI_STATE_COMMAND_DONE,
+    SPI_STATE_COMMAND_DONE_SIGNAL
     );
     
     
@@ -194,8 +209,11 @@ end component;
 
   --Registers that store the data presented to the entity on the first
   --master_slave_data_rdy_in
+  
+
   signal command_signal : std_logic_vector(command_width_bytes_g*8-1 downto 0);
   signal address_signal : std_logic_vector(address_width_bytes_g*8-1 downto 0);
+
   signal address_en_signal :std_logic;
   signal data_signal :std_logic_vector(7 downto 0);
   signal data_length_signal  : unsigned(data_length_bit_width_g - 1 downto 0);
@@ -335,7 +353,8 @@ begin
       end if;
       
       
-
+--A bug exists here. byte_count and byte_number not reset if
+--address_used_g is set to 0.
 
     when SPI_STATE_COMMAND   =>
 
@@ -357,7 +376,8 @@ begin
             if (data_length_signal = to_unsigned(0,data_length_signal'length)) then
              cur_spi_state <= SPI_STATE_COMMAND_DONE;
             else
-            
+            byte_count  <=   to_unsigned(0,byte_count'length);
+            byte_number <=   to_unsigned(1,byte_count'length);
             cur_spi_state <= SPI_STATE_DATA_INITIAL;
             end if;
 
@@ -381,7 +401,7 @@ begin
       end if;
        
     when SPI_STATE_ADDRESS   =>
-
+    
       if (byte_count = byte_number) then
         if (data_length_signal = to_unsigned(0,data_length_signal'length)) then
           cur_spi_state <= SPI_STATE_COMMAND_DONE;
@@ -396,7 +416,7 @@ begin
               if ( mosi_data_ack_spi = '1') then
                  mosi_data_valid_spi <= '1';
                  
-                 mosi_data_spi <= address_signal(address_signal'length -1 downto address_signal'length -8);
+                 mosi_data_spi <= address_signal(address_signal'length-1 downto address_signal'length -8);
                  
                  
                  address_signal (address_signal'length-1 downto 0) <=
@@ -459,10 +479,16 @@ begin
         if (cs_n_signal_follower /= cs_n_signal) then
         cs_n_signal_follower <= cs_n_signal;
           if (cs_n_signal = '1') then
-          cur_spi_state <= SPI_STATE_WAIT;
+          cur_spi_state <= SPI_STATE_COMMAND_DONE_SIGNAL;
           end if;
-        end if;     
-
+        end if; 
+        
+        
+        
+      when SPI_STATE_COMMAND_DONE_SIGNAL   => 
+        cur_spi_state <= SPI_STATE_WAIT;
+        
+        
       end case ;
   end if ;
 end process spi_command_state_machine ;
@@ -485,6 +511,7 @@ begin
 
 --Default values
 command_busy_out <= '1';
+command_done <= '0';
   
 case cur_spi_state is
 
@@ -495,7 +522,8 @@ case cur_spi_state is
   when SPI_STATE_DATA_INITIAL =>
   when SPI_STATE_DATA =>
   when SPI_STATE_COMMAND_DONE => 
-  
+  when SPI_STATE_COMMAND_DONE_SIGNAL =>
+  command_done <= '1';
 
  
 end case;
@@ -534,11 +562,14 @@ elsif rising_edge(clk) then
   --Attempting to get around >=.
   --Will send the next miso_data_valid_spi. 
 
-  
-  
-  
-  if ( miso_byte_ack_count = to_unsigned(command_width_bytes_g + address_width_bytes_g,miso_byte_ack_count'length)) then
-    slave_master_data_ack_out_en <= '1';
+  if(command_used_g = '1' and address_used_g = '1') then
+    if ( miso_byte_ack_count = to_unsigned(command_width_bytes_g + address_width_bytes_g,miso_byte_ack_count'length)) then
+      slave_master_data_ack_out_en <= '1';
+    end if;
+  elsif(command_used_g = '1' and address_used_g = '0') then
+   if ( miso_byte_ack_count = to_unsigned(command_width_bytes_g,miso_byte_ack_count'length)) then
+      slave_master_data_ack_out_en <= '1';
+    end if;
   end if;
   
   --Strictly speaking there isn't a pathway for an address used 

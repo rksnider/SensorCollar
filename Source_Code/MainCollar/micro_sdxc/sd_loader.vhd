@@ -1,12 +1,12 @@
 ------------------------------------------------------------------------------
 --
---! @file       $File$
+--! @file       sd_loader.vhd
 --! @brief      sdloader is an interface between the output buffer of the sdram and the 
 --!             microsd_controller system. sdloader also handles saving/loading
 --!             properties of the microsd_controller entity to persistent ram.
---! @details   
---! @copyright  
---! @author     
+--! @details    
+--! @copyright  2015
+--! @author     Christopher Casebeer
 --! @version    
 --
 ------------------------------------------------------------------------------
@@ -86,7 +86,6 @@
 
 --Usage Instructions and Description.
 
-
 --sdloader is responsible for detecting data_rdy signal from the 
 --sdram controller and copying from the output buffer of the sdram controller
 --to the microsd_controller's internal buffer. The loader
@@ -107,9 +106,6 @@
 --aware as this is the minimum data length in which microsd_controller works
 --with and interval at which the microsd_buffer will become full. Thus sdloader will check 
 --for buffer_full events at 512 bytes intervals. 
-
-
-
 
 
 
@@ -342,10 +338,7 @@ data_input      <= outbuf_sd_q_b_in;
   --!           The state machine will pause upon microsd_controller's internal buffer
   --!           buffer filling, until more data can be pushed. This is up to the 
   --!           required amt of data (data_nblocks) has been sent. block == 512 bytes. 
-  --!          
-  --!
-  --!
-  --!
+
   --! @param    clk       Take action on positive edge.
   --! @param    rst_n           rst_n to initial state.
   --!

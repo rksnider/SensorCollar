@@ -2,11 +2,11 @@
 --
 -- Filename:     	    microsd_controller.vhd
 -- Description:  	    Source code for microsd serial data logger
--- Author:			    Christopher Casebeer
--- Lab:                 Dr. Snider
--- Department:          Electrical and Computer Engineering
--- Institution:         Montana State University
--- Support:             This work was supported under NSF award No. DBI-1254309
+-- Author:			      Christopher Casebeer
+-- Lab:               Dr. Snider
+-- Department:        Electrical and Computer Engineering
+-- Institution:       Montana State University
+-- Support:           This work was supported under NSF award No. DBI-1254309
 -- Creation Date:	    June 2014	
 --		
 -----------------------------------------------------------------------------------------------------
@@ -67,14 +67,6 @@
 -----------------------------------------------------------------------------------------------------
 
 
---In SD mode, data lines must be pulled up with a weak pull up resistor. 
---This can be accomplished with either the Assignment editor of quartus OR
---pull up resistors built into the socket is being used. For example, if GPIO 
---is used then program weak pull up. If SD card slot of BeMicroCV is used
---nothing else is needed. When using a level translator however, the lines 
---are simply set high prior to a receiving a low start bit. Pull up resistors 
---might not translate across level translator as was the case in this development. 
-
 --The DOxygen system of commenting has been used for effecient documentation.
 
 library IEEE;
@@ -87,9 +79,6 @@ LIBRARY altera_mf;
 USE altera_mf.altera_mf_components.all;
 
 
-
-
-
 ------------------------------------------------------------------------------
 --
 --! @brief      microsd_controller is the top component of the serial logging design.
@@ -97,7 +86,7 @@ USE altera_mf.altera_mf_components.all;
 --!
 --! @param      CLK_FREQ            Frequency of the input clk. Used to generate
 --!                                 new clocks and timeout values.
---! @param      buf_size_g             Number of bytes in the buffer. Must be specified as N * 512 bytes. 
+--! @param      buf_size_g          Number of bytes in the buffer. Must be specified as N * 512 bytes. 
 --!
 --! @param      buf_size_g          Size of microsd_controller internal buffer, bytes.
 --! @param      block_size_g        Size of a sd card block. Minimal addressable data size.
@@ -225,7 +214,7 @@ end microsd_controller;
 --!The component signals with the sd_block_written_flag pulse that the last block written at data_current_block_written 
 --!address was successful. The bidirectional lines are tri-states internally. 
 --!sd_cmd and sd_dat thus must be inout to top entity and tied to bidirectional pins.
---!By default the card will transmit data at 1.8V signalling level. To achieve this a 
+--!By default the card will transmit data at 3.3V signalling level. To achieve a 1.8V signalling level a 
 --!level translator must be present between the FPGA GPIO and the sd card. The outputs of the switches 
 --!are tied together and routed to the voltage reference port of the level translator. 
 --!The component will handle the switching of the sd card side supply voltage pin 
@@ -443,7 +432,7 @@ signal data_we_active_r                     :   std_logic;
 signal data_we_active_r_follower            :   std_logic;
 
 
---PIPE THIS SIGNAL OUT IN FINAL COLLAR
+
 signal  restart_signal                      :   std_logic;
         
 
@@ -455,7 +444,6 @@ signal  restart_signal                      :   std_logic;
 	
   
 	--clk_internal  <=  clk;
-  --Failed attempt at a gated clock.
   --A far more robust method of clk gating must be found
   --for modelsim.
   --clk_internal  <=  clk when (shut_off = '0') else '0';

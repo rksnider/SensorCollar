@@ -2,11 +2,11 @@
 --
 -- Filename:     	    microsd_data.vhd
 -- Description:  	    Source code for microsd serial data logger
--- Author:			    Christopher Casebeer
--- Lab:                 Dr. Snider
--- Department:          Electrical and Computer Engineering
--- Institution:         Montana State University
--- Support:             This work was supported under NSF award No. DBI-1254309
+-- Author:			      Christopher Casebeer
+-- Lab:               Dr. Snider
+-- Department:        Electrical and Computer Engineering
+-- Institution:       Montana State University
+-- Support:           This work was supported under NSF award No. DBI-1254309
 -- Creation Date:	    June 2014	
 --		
 -----------------------------------------------------------------------------------------------------

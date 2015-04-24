@@ -29,6 +29,63 @@
 --
 ----------------------------------------------------------------------------
 
+-----------------------------------------------------------------------------------------------------
+--
+-- Version 1.0
+--
+-----------------------------------------------------------------------------------------------------
+--
+-- Modification Hisory (give date, author, description)
+--
+-- None
+--
+-- Please send bug reports and enhancement requests to Dr. Snider at rksnider@ece.montana.edu
+--
+-----------------------------------------------------------------------------------------------------
+--
+--	  This software is released under
+--            
+--    The MIT License (MIT)
+--
+--    Copyright (C) 2014  Christopher C. Casebeer and Ross K. Snider
+--
+--    Permission is hereby granted, free of charge, to any person obtaining a copy
+--    of this software and associated documentation files (the "Software"), to deal
+--    in the Software without restriction, including without limitation the rights
+--    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+--    copies of the Software, and to permit persons to whom the Software is
+--    furnished to do so, subject to the following conditions:
+--
+--    The above copyright notice and this permission notice shall be included in
+--    all copies or substantial portions of the Software.
+--
+--    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+--    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+--    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+--    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+--    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+--    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+--    THE SOFTWARE.
+--
+--    Christopher Casebeer
+--    Electrical and Computer Engineering
+--    Montana State University
+--    541 Cobleigh Hall
+--    Bozeman, MT 59717
+--    christopher.casebee1@msu.montana.edu
+--
+--    Ross K. Snider
+--    Associate Professor
+--    Electrical and Computer Engineering
+--    Montana State University
+--    538 Cobleigh Hall
+--    Bozeman, MT 59717
+--    rksnider@ece.montana.edu
+--
+--    Information on the MIT license can be found at http://opensource.org/licenses/MIT
+--
+-----------------------------------------------------------------------------------------------------
+
 
 library IEEE ;                  --! Use standard library.
 use IEEE.STD_LOGIC_1164.ALL ;   --! Use standard logic elements.
@@ -77,8 +134,6 @@ USE GENERAL.compile_start_time_pkg.ALL;
 --! @param      reset             Reset to initial conditions.     
 --!         
 --! @param      last_seqno          The last sequence number. 
---!                                  
-
 
 --! @param     log_status           Log Status. Will push a status packet.
     
@@ -104,7 +159,7 @@ USE GENERAL.compile_start_time_pkg.ALL;
 --! @param     mag_data_y      y word from IMU gyro
 --! @param     mag_data_z      z word from IMU gyro
     
---! @param     temp_data       temp word from the IMU.
+--! @param     temp_data       Temp word from the IMU.
     
     --Audio information.
 --! @param     audio_data_rdy         Audio word rdy    
@@ -132,14 +187,14 @@ USE GENERAL.compile_start_time_pkg.ALL;
 --!    
 --! @param     rtc_time                     Real Time Clock time word input into flashblock.
 --!
---! @param     flashblock_counter_rd_addr   Read address into the counter system
---! @param     flashblock_counter_wr_addr     
---! @param     flashblock_counter_rd_en   
---! @param     flashblock_counter_wr_en    
+--! @param     flashblock_counter_rd_addr   Read address into the counter component.
+--! @param     flashblock_counter_wr_addr   Write address into the counter component.
+--! @param     flashblock_counter_rd_en     Read enable into the counter component.
+--! @param     flashblock_counter_wr_en     Write enable into the counter component.
 --! @param     flashblock_counter_clk     
---! @param     flashblock_counter_lock       
---! @param     flashblock_counter_data     
---! @param     counter_flashblock_data    
+--! @param     flashblock_counter_lock      Write enable into the counter component.
+--! @param     flashblock_counter_data      Data into the counter component.
+--! @param     counter_flashblock_data      Data from the counter component.
     
 --! @param     flashblock_sdram_2k_accumulated Signal 2k accumulated flag relayed to the sdram_controller
     
@@ -167,8 +222,8 @@ USE GENERAL.compile_start_time_pkg.ALL;
 
 --Two primary state machines direct flow. One state machine send_block_item
 --is primarily responsible for pushing data out of the component and into the 
---addressed buffer. Different states push different types of data. State transitions
---dictate the order in which the data is pushed out. This structure is again
+--addressed buffer. Different states push different types of data. State transition order
+--dictate the order in which the data is pushed out. Data structure is again
 --noted in associated documentation. 
 
 --The send_item state machine is a smaller state machine. It is more involved
@@ -177,11 +232,8 @@ USE GENERAL.compile_start_time_pkg.ALL;
 
 --A large process audio_sample is concerned with catching the incoming data 
 --and putting it into circular buffers. Send_block_item state machine then
---reads from theses buffers to assembled the sensor segments.
-
-
-
-
+--reads from theses buffers to assembled the sensor segments. Data is read
+--from circular buffer until read pointer equals write pointer. 
 
 
 
@@ -196,10 +248,9 @@ USE GENERAL.compile_start_time_pkg.ALL;
 -- At this point direct write mode is entered. This mode bypasses the physical sd ram
 
 
-
-
-
---TODO: Fetch last sequence number from magram buffer.
+--TODO:
+--Fetch last sequence number from magram buffer.
+--Implement overflow detection on the circular buffers.
 
 
 
@@ -1530,8 +1581,8 @@ blocks_past_crit <= std_logic_vector(blocks_past_crit_signal);
           cur_block_state   <= BLOCK_STATE_AUDIO_LAST ;
 
           when BLOCK_STATE_AUDIO_LAST   =>
-            if audio_written = '0' and
-               audio_written_follower = '0' then
+            if (audio_written = '0' and
+               audio_written_follower = '0') then
           --Depending on buffer level, write the audio word.
           --Might want to turn off rd_en by default in the upper process area.
           --Multiple states will possibly make use of rd_en.
@@ -1981,7 +2032,7 @@ begin
 
           --  Start a new block.
 
-          if block_bytes_left = BLOCK_SIZE then
+          if (block_bytes_left = BLOCK_SIZE) then
             cur_item_state    <= ITEM_STATE_NEW_BLOCK ;
 
 
@@ -2039,18 +2090,16 @@ begin
              if (cur_block_state = BLOCK_STATE_WAIT and next_block_state = BLOCK_STATE_WAIT) then
 
                   --This path will never run.
-                  if audio_seg_length /= 0 and block_bytes_left  = SEG_TRAILER_SIZE then
+                  if (audio_seg_length /= 0 and block_bytes_left  = SEG_TRAILER_SIZE) then
                   
                       bytes_needed        <= TO_UNSIGNED (AUDIO_WORD_BYTES,
                                               bytes_needed'length) ;
                                               
                       cur_item_state      <= ITEM_STATE_AUDIO_END ;
 
-                      --CC Might not be the 100% most elegent way, but it will get the 
-                      --job done.
                       --If the audio block is at its max length of 255, cap it.
-                      
-                      elsif (audio_seg_length + AUDIO_WORD_BYTES > 255) then
+                      --to_unsigned(,+1) to avert the overflow. 
+                      elsif ((to_unsigned(AUDIO_WORD_BYTES,audio_seg_length'length+1) + audio_seg_length) > 255) then
                       cur_item_state        <= ITEM_STATE_AUDIO_END ;
                 
                       else
@@ -2064,7 +2113,7 @@ begin
           
           elsif (gyro_data_write = '1') then
            if (cur_block_state = BLOCK_STATE_WAIT and next_block_state = BLOCK_STATE_WAIT) then
-              if audio_seg_length = 0 then
+              if (audio_seg_length = 0) then
            
               bytes_needed        <= TO_UNSIGNED (IMU_GYRO_SEG_BYTES,
                                                   bytes_needed'length) ;
@@ -2192,7 +2241,7 @@ begin
             cur_item_state        <= ITEM_STATE_PAUSE ;
             next_item_state        <= ITEM_STATE_PADDING_END ;
 
-            if audio_seg_length /= 0 then
+            if (audio_seg_length /= 0) then
               next_block_state    <= BLOCK_STATE_SEG_AUD ;
             end if ;
           end if ;
