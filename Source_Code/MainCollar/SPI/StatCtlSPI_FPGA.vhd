@@ -327,7 +327,9 @@ spi_commands_master_statctl_fpga : spi_commands
   address_used_g        => '0',
   command_width_bytes_g => 1,
   address_width_bytes_g => 1,
-  data_length_bit_width_g => data_length_bit_width_g
+  data_length_bit_width_g => data_length_bit_width_g,
+  cpol_cpha          => "11"
+  
   )
 	port map(
     clk	            => clk,
