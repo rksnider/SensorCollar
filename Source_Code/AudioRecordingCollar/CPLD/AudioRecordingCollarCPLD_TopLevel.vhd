@@ -126,19 +126,9 @@ entity AudioRecordingCollarCPLD_TopLevel is
 
     --  Off Board Connections
 
-    FORCED_START_N_TO_CPLD      : in    std_logic ;
-    FORCED_START_N_TO_FPGA      : inout std_logic ;
+    ESH_FORCE_STARTUP      : in    std_logic ;
+    ESH_FORCE_STARTUP_TO_FPGA      : inout std_logic 
 
-    --  General Purpose I/O Connections
-
-    CPLD_GPIO1                  : out    std_logic ;
-    CPLD_GPIO2                  : out    std_logic ;
-    CPLD_GPIO3                  : out    std_logic ;
-    CPLD_GPIO4                  : out    std_logic ;
-    CPLD_GPIO5                  : in     std_logic ;
-    CPLD_GPIO6                  : out    std_logic ;
-    CPLD_GPIO7                  : out    std_logic ;
-    CPLD_GPIO8                  : out    std_logic
   ) ;
 
   end entity AudioRecordingCollarCPLD_TopLevel ;
@@ -317,17 +307,12 @@ begin
       solar_on_in           => SOLAR_CTRL_ON_TO_CPLD,
       solar_run_out         => solar_run_not,
 
-      gpio_1                => CPLD_GPIO1,
-      gpio_2                => CPLD_GPIO2,
-      gpio_3                => CPLD_GPIO3,
-      gpio_4                => CPLD_GPIO4,
-      gpio_5                => CPLD_GPIO5,
-      gpio_6                => CPLD_GPIO6,
-      gpio_7                => CPLD_GPIO7,
-      gpio_8                => CPLD_GPIO8,
 
-      forced_start_in       => FORCED_START_N_TO_CPLD,
-      fpga_fs_out           => FORCED_START_N_TO_FPGA,
+      gpio_5                => '0',
+
+
+      forced_start_in       => ESH_FORCE_STARTUP,
+      fpga_fs_out           => ESH_FORCE_STARTUP_TO_FPGA,
       rtc_alarm_in          => not RTC_ALARM_TO_CPLD
 
     ) ;

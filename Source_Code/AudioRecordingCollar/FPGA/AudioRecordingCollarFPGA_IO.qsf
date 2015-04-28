@@ -112,10 +112,10 @@ set_instance_assignment -name IO_STANDARD "1.8 V" -to CLK_50MHZ_TO_FPGA
 
 # ESH SPI
 
-# set_location_assignment PIN_J3 -to FPGA_SPI_CLK
-# set_location_assignment PIN_G3 -to FPGA_SPI_MOSI
-# set_location_assignment PIN_J4 -to FPGA_TDO_SPI_MISO
-# set_location_assignment PIN_L5 -to FPGA_TMS_SPI_CS
+set_location_assignment PIN_J3 -to FPGA_SPI_CLK
+set_location_assignment PIN_G3 -to FPGA_SPI_MOSI
+set_location_assignment PIN_J4 -to FPGA_TDO_SPI_MISO
+set_location_assignment PIN_L5 -to FPGA_TMS_SPI_CS
 
 
 #   SD RAM Connections
@@ -186,7 +186,7 @@ set_instance_assignment -name IO_STANDARD "1.8 V" -to SDRAM_address[12]
 # set_location_assignment PIN_G8   -to SDRAM_BA1
 
 set_location_assignment PIN_G14  -to SDRAM_bank[0]
-set_location_assignment PIN_G8  -to SDRAM_bank[1]
+set_location_assignment PIN_E11  -to SDRAM_bank[1]
 
 set_instance_assignment -name IO_STANDARD "1.8 V" -to SDRAM_bank[0]
 set_instance_assignment -name IO_STANDARD "1.8 V" -to SDRAM_bank[1]

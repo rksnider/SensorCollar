@@ -1,8 +1,8 @@
 #   System Information
 
 set_global_assignment -name FAMILY "MAX V"
-set_global_assignment -name DEVICE 5M570ZT100C5
-set_global_assignment -name TOP_LEVEL_ENTITY DevBoard_PowerMonitorCPLDInit_TopLevel
+set_global_assignment -name DEVICE 5M570ZM100I5
+set_global_assignment -name TOP_LEVEL_ENTITY AudioRecordingCollarCPLDInit_TopLevel
 set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
 set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
 set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
@@ -11,7 +11,7 @@ set_global_assignment -name DEVICE_FILTER_SPEED_GRADE 5
 set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR "-1"
 set_global_assignment -name EDA_SIMULATION_TOOL "ModelSim-Altera (VHDL)"
 set_global_assignment -name EDA_OUTPUT_DATA_FORMAT VHDL -section_id eda_simulation
-
+ 
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "NO HEAT SINK WITH STILL AIR"
 set_global_assignment -name RESERVE_ALL_UNUSED_PINS "AS INPUT TRI-STATED WITH WEAK PULL-UP"
 set_global_assignment -name AUTO_RESTART_CONFIGURATION OFF
@@ -42,40 +42,55 @@ set_location_assignment PIN_E11  -to FLASH_PFL[0]
 set_location_assignment PIN_C11  -to FLASH_PFL[1]
 set_location_assignment PIN_D11  -to FLASH_PFL[2]
 set_location_assignment PIN_B11  -to FLASH_PFL[3]
-#set_location_assignment PIN_E10  -to FLASH_FPGA[0]
-#set_location_assignment PIN_C10  -to FLASH_FPGA[1]
-#set_location_assignment PIN_D10  -to FLASH_FPGA[2]
-#set_location_assignment PIN_B10 -to FLASH_FPGA[3]
+# set_location_assignment PIN_E10  -to FLASH_FPGA[0]
+# set_location_assignment PIN_C10  -to FLASH_FPGA[1]
+# set_location_assignment PIN_D10  -to FLASH_FPGA[2]
+# set_location_assignment PIN_B10 -to FLASH_FPGA[3]
 
 #   Clocks
 
 set_location_assignment PIN_G11  -to CLK_50MHZ
-#set_location_assignment PIN_K10  -to CLK_50MHZ_TO_FPGA
+set_location_assignment PIN_K10  -to CLK_50MHZ_TO_FPGA
 
 #   FPGA Configuration Connections
 
 set_location_assignment PIN_K9  -to FPGA_DCLK
 set_location_assignment PIN_H10  -to FPGA_NSTATUS
-set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to FPGA_NSTATUS
 set_location_assignment PIN_G10  -to FPGA_CONF_DONE
-set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to FPGA_CONF_DONE
 set_location_assignment PIN_K8  -to FPGA_INIT_DONE
-set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to FPGA_INIT_DONE
 set_location_assignment PIN_J10  -to FPGA_NCONFIG
 set_location_assignment PIN_K3  -to FPGA_DATA0
 
+#   FPGA Flash Connections (goes to unused pins)
+
+# set_location_assignment PIN_C6  -to PC_FLASH_IO0
+# set_location_assignment PIN_F9  -to PC_FLASH_IO1
+# set_location_assignment PIN_J6  -to PC_FLASH_IO2
+# set_location_assignment PIN_F3  -to PC_FLASH_IO3
+# set_location_assignment PIN_D9  -to PC_FLASH_IO4
+# set_location_assignment PIN_H9  -to PC_FLASH_IO5
+# set_location_assignment PIN_H3  -to PC_FLASH_IO6
+
+# set_location_assignment PIN_C6  -to PC_FLASH_CLK
+# set_location_assignment PIN_F9  -to PC_FLASH_CS_N
+# set_location_assignment PIN_J6  -to PC_FLASH_DATA[0]
+# set_location_assignment PIN_F3  -to PC_FLASH_DATA[1]
+# set_location_assignment PIN_D9  -to PC_FLASH_DATA[2]
+# set_location_assignment PIN_H9  -to PC_FLASH_DATA[3]
+# set_location_assignment PIN_H3  -to PC_FLASH_DIR
+
 #   FPGA Status and SPI Connections
 
-# set_location_assignment PIN_L10  -to PC_STATUS_CHG
+# set_location_assignment PIN_L10  -to PC_STATUS_CHANGED
 # set_location_assignment PIN_K11  -to PC_SPI_CLK
 # set_location_assignment PIN_J11  -to PC_SPI_DIN
 # set_location_assignment PIN_H11  -to PC_SPI_DOUT
-# set_location_assignment PIN_L11  -to PC_SPI_NCS 
+# set_location_assignment PIN_L11  -to PC_SPI_NCS
 
 #   I2C Bus Connections
 
-# set_location_assignment PIN_B7  -to SDA_TO_FPGA_CPLD
-# set_location_assignment PIN_B5  -to SCL_TO_FPGA_CPLD
+# set_location_assignment PIN_B7  -to I2C_SDA
+# set_location_assignment PIN_B5  -to I2C_SCL
 
 #   JTAG Connections
 
@@ -89,11 +104,22 @@ set_location_assignment PIN_K3  -to FPGA_DATA0
 set_location_assignment PIN_K7  -to SDRAM_CNTRL_TO_CPLD
 set_location_assignment PIN_L3  -to CLOCK_CNTRL_TO_CPLD
 set_location_assignment PIN_H1  -to FPGA_ON_TO_CPLD
-set_location_assignment PIN_L6  -to VCC1P8_AUX_CTRL
+# set_location_assignment PIN_L6  -to VCC1P8_AUX_CTRL
 
 set_location_assignment PIN_B4  -to OBUFFER_ENABLE_OUT_TO_CPLD
 
-# Assigned general unused pins some may or may not be connected please refer to documentation
+# (please refer to documentation)
+
+#set_location_assignment PIN_C2  -to M_CPLD_00
+#set_location_assignment PIN_E1  -to M_CPLD_01
+#set_location_assignment PIN_D1  -to M_CPLD_02
+#set_location_assignment PIN_C1  -to M_CPLD_03
+#set_location_assignment PIN_B1  -to M_CPLD_04
+#set_location_assignment PIN_B2  -to M_CPLD_05
+#set_location_assignment PIN_B3  -to M_CPLD_06
+#set_location_assignment PIN_A1  -to M_CPLD_07
+#set_location_assignment PIN_A2  -to M_CPLD_08
+
 set_location_assignment PIN_C2  -to GPS_CNTRL_TO_CPLD
 set_location_assignment PIN_E1  -to MRAM_CNTRL_TO_CPLD
 set_location_assignment PIN_D1  -to MIC_R_CNTRL_TO_CPLD
@@ -104,16 +130,24 @@ set_location_assignment PIN_B3  -to LS_1P8V_CNTRL_TO_CPLD
 set_location_assignment PIN_A1  -to LS_3P3V_CNTRL_TO_CPLD
 set_location_assignment PIN_A2  -to IM_ON_TO_CPLD
 
+
 #   Battery Control Connections (please refer to documentation)
 
-set_location_assignment PIN_A3  -to MAIN_ON_TO_CPLD
-set_location_assignment PIN_A5  -to RECHARGE_EN_TO_CPLD
-#set_location_assignment PIN_A6  -to BAT_HIGH_TO_CPLD
-#set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to BAT_HIGH_TO_CPLD
-#set_location_assignment PIN_A7  -to BAT_HIGH_TO_FPGA
-#set_location_assignment PIN_A8  -to BAT_LOW_TO_CPLD
-#set_location_assignment PIN_A9  -to BATT_GD_N_TO_CPLD
 
+#set_location_assignment PIN_A6  -to M_CPLD_11
+#set_location_assignment PIN_A7  -to M_CPLD_12
+#set_location_assignment PIN_A8  -to M_CPLD_13
+#set_location_assignment PIN_A9  -to M_CPLD_14
+#set_location_assignment PIN_L4  -to CPLDON_02_TO_CPLD
+#set_location_assignment PIN_L5  -to CPLDON_01_TO_CPLD
+
+set_location_assignment PIN_L4  -to MAIN_ON_TO_CPLD
+set_location_assignment PIN_L5  -to RECHARGE_EN_TO_CPLD
+# set_location_assignment PIN_A6  -to BAT_HIGH_TO_CPLD
+# set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to BAT_HIGH_TO_CPLD
+# set_location_assignment PIN_A7  -to BAT_HIGH_TO_FPGA
+# set_location_assignment PIN_A8  -to BAT_LOW_TO_CPLD
+# set_location_assignment PIN_A9  -to BATT_GD_N_TO_CPLD
 
 #   Power Supply Control Connections
 
@@ -127,46 +161,36 @@ set_location_assignment PIN_G2   -to BUCK_PWM_TO_CPLD
 
 #   Solar Controller Connections (please refer to documentation)
 
-#set_location_assignment PIN_D3  -to SOLAR_PGOOD_TO_CPLD
-#set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to SOLAR_PGOOD_TO_CPLD
-#set_location_assignment PIN_A10  -to SOLAR_CTRL_ON_TO_CPLD
-#set_location_assignment PIN_L1  -to SOLAR_CTRL_SHDN_N_TO_CPLD
+#set_location_assignment PIN_A3  -to M_CPLD_09
+
+# set_location_assignment PIN_A3  -to SOLAR_PGOOD_TO_CPLD
+# set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to SOLAR_PGOOD_TO_CPLD
+
+#set_location_assignment PIN_A10  -to M_CPLD_15
+#set_location_assignment PIN_L1  -to CPLDON_00_TO_CPLD
+
+# set_location_assignment PIN_A10  -to SOLAR_CTRL_ON_TO_CPLD
+# set_location_assignment PIN_L1  -to SOLAR_CTRL_SHDN_N_TO_CPLD
 
 #   Real Time Clock Connections (please refer to documentation)
+#set_location_assignment PIN_A5  -to M_CPLD_10
 
-#set_location_assignment PIN_L5  -to RTC_ALARM_TO_CPLD
-#set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to RTC_ALARM_TO_CPLD
+# set_location_assignment PIN_A5  -to RTC_ALARM_TO_CPLD
+# set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to RTC_ALARM_TO_CPLD
 
 #   Off Board Connections
-#set_location_assignment PIN_K4  -to ESH_FORCE_STARTUP
-#set_location_assignment PIN_L9  -to ESH_FORCE_STARTUP_TO_FPGA
+# set_location_assignment PIN_K4  -to ESH_FORCE_STARTUP
+# set_location_assignment PIN_L9  -to ESH_FORCE_STARTUP_TO_FPGA
 
 
 #   General Purpose I/O Connections
 
-#set_location_assignment PIN_C2  -to M_CPLD_[00]
-#set_location_assignment PIN_E1  -to M_CPLD_[01]
-#set_location_assignment PIN_D1  -to M_CPLD_[02]
-#set_location_assignment PIN_C1  -to M_CPLD_[03]
-#set_location_assignment PIN_B1  -to M_CPLD_[04]
-#set_location_assignment PIN_B2  -to M_CPLD_[05]
-#set_location_assignment PIN_B3  -to M_CPLD_[06]
-#set_location_assignment PIN_A1  -to M_CPLD_[07]
-#set_location_assignment PIN_A2  -to M_CPLD_[08]
-#set_location_assignment PIN_A3  -to M_CPLD_[09]
-#set_location_assignment PIN_A5  -to M_CPLD_[10]
-#set_location_assignment PIN_A6  -to M_CPLD_[11]
-#set_location_assignment PIN_A7  -to M_CPLD_[12]
-#set_location_assignment PIN_A8  -to M_CPLD_[13]
-#set_location_assignment PIN_A9  -to M_CPLD_[14]
-#set_location_assignment PIN_A10  -to M_CPLD_[15]
 
 # This is a single unused line that goes between the FPGA and CPLD
-#set_location_assignment PIN_L7  -to M_FPGA_2A_[0]
+#set_location_assignment PIN_L7  -to M_FPGA_2A_0
 
 #   I/0 That Goes Through Buffer
 
-#set_location_assignment PIN_L1  -to CPLDON_[00]_TO_CPLD
-#set_location_assignment PIN_L5  -to CPLDON_[01]_TO_CPLD
-#set_location_assignment PIN_L4  -to CPLDON_[02]_TO_CPLD
+
+
 
