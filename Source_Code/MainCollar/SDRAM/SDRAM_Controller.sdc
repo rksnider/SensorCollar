@@ -1,0 +1,16 @@
+#   SDRAM specific clocks:
+#     inmem_clk_out   Inverted and gated internal_clk.
+#     outmem_clk_out  Inverted and gated internal_clk.
+#     sdram_clk_out   Inverted and gated internal_clk.
+
+set sysclk_clock                [get_instvalue sysclk]
+set sdram_clk_port              [get_instvalue sdram_clk_out]
+
+# Assign a generated clock to the port.
+
+set sdram_clock                 "sdram_clk"
+
+create_generated_clock -source "$sysclk_clock" -name "$sdram_clock" \
+                       -invert "$sdram_clk_port"
+
+set_keyvalue                    "$sdram_clk_port" "$sdram_clock"
