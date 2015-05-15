@@ -77,13 +77,9 @@ source Collar.sdc
 
 #   Set the I/O port delays for all devices.
 
-set sdc_file_list   { "SDRAM.sdc" "PC_SPI.sdc" "SDCard.sdc" "GPS.std" }
+foreach sdc_file    [glob *_dev.sdc] {
 
-foreach sdc_file    $sdc_file_list {
-
-  if { [file exists "$sdc_file"] > 0 } {
     source $sdc_file
-  }
 }
 
 #   Log any other information.
