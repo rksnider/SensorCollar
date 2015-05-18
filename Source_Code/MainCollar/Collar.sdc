@@ -1,9 +1,24 @@
 #   Clock information passed through this entity.
 
-# set Collar_inst             [get_instance]
+set Collar_inst             [get_instance]
 
 # regsub -all {[A-Za-z0-9_]+:} $Collar_inst "" Collar_inst_name
 
+
+#   Power-up to all reset recovery times are not important.  Removal
+#   recovery times are important.
+
+set_false_path -from [get_registers "$Collar_inst|power_up"] -setup
+
+#   Find master clock frequency.
+
+set master_clock            [get_instvalue master_clk]
+
+set master_clock_data       [get_clocks $master_clock]
+set master_clock_period     [get_clock_info -period $master_clock_data]
+
+set master_clock_freq       [expr {int(1.0e9 / \
+                                       $master_clock_period)}]
 
 #   Process SDC file for all collar instances.  Push the new instances onto
 #   the instances stack beforehand and remove them afterwards.
@@ -15,6 +30,11 @@ set sdc_file                "microsd_controller.sdc"
   if { [file exists "$sdc_file"] > 0 } {
 
     push_instance           "microsd_controller:sdcard"
+
+    set clk_divide          [expr {int($master_clk_freq / 400000.0 + \
+                                                          0.5)}]
+
+    set_instance            CLK_DIVIDE $clk_divide
 
     #set sd_driven_clk       "sd_clk"
     set sd_driven_clk       "sdh_clk"
