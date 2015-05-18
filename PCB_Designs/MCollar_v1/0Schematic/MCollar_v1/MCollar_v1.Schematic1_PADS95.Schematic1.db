@@ -1,0 +1,554 @@
+
+(pcb
+ "C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1\MCollar_v1.Schematic1_PADS95.Schematic1.db"
+	(version "5.0.0")
+	(units "basic")
+	(config_properties
+		(attributes
+			(attval "PcbConfigName"
+ "C:\MentorGraphics\9.5PADS\SDD_HOME/standard/pads95.cfg")
+			(attval "CnsFile"
+ "C:\MentorGraphics\9.5PADS\SDD_HOME\standard\isis\pads95.cns")
+			(attval "BeAdapter" "PADS95")
+			(attval "FeAdapter" "DxDesigner")
+			(attval "SYSCONFIG" "pcbfwd")
+			(attval "LASTSYSCONFIG" "pcbfwd"))
+		(constraints
+			(cnsval "U:Velocity" "Unknown:3")
+			(cnsval "U:Time" "Unknown:3")
+			(cnsval "U:Ampere" "Unknown:3")
+			(cnsval "U:Capacitance" "Unknown:3")
+			(cnsval "U:Inductance" "Unknown:3")
+			(cnsval "U:Ohm" "Unknown:3")
+			(cnsval "U:Volt" "Unknown:3")
+			(cnsval "U:Power" "Unknown:3")
+			(cnsval "U:Unknown" "Unknown:3")
+			(cnsval "U:Angle" "Unknown:3")
+			(cnsval "U:Linear" "THOUSANDTHS:3")))
+	(project_properties
+		(attributes
+			(attval "EPLANNER_DSN" "1.0")))
+	(part_library
+		(part "SWITCH_DUAL_SIP32414")
+		(logical_part_mapping "SWITCH_DUAL_SIP32414"
+			(comp "S7" "S5"))
+		(logical_part "SWITCH_DUAL_SIP32414"
+			(slots
+				(slot "SWITCH_DUAL_SIP32414__SWITCH_DUAL_SIP32414_1"
+					(attributes
+						(attval "DEVICE" "SWITCH_DUAL_SIP32414")
+						(attval "Part Number" "SIP32414")
+						(attval "PKG_TYPE" "VISHNAY_DUAL_LOAD_SWITCH")
+						(attval "REFDES" "S?"))))
+			(pin 9  3 "SWITCH_DUAL_SIP32414__SWITCH_DUAL_SIP32414_1" 0 "TERMAL_PAD" 0)
+			(pin 5  5 "SWITCH_DUAL_SIP32414__SWITCH_DUAL_SIP32414_1" 0 "OUT2" 0)
+			(pin 8  5 "SWITCH_DUAL_SIP32414__SWITCH_DUAL_SIP32414_1" 0 "OUT1" 0)
+			(pin 4  5 "SWITCH_DUAL_SIP32414__SWITCH_DUAL_SIP32414_1" 0 "IN2" 0)
+			(pin 1  5 "SWITCH_DUAL_SIP32414__SWITCH_DUAL_SIP32414_1" 0 "IN1" 0)
+			(pin 7  5 "SWITCH_DUAL_SIP32414__SWITCH_DUAL_SIP32414_1" 0 "GND7" 0)
+			(pin 6  5 "SWITCH_DUAL_SIP32414__SWITCH_DUAL_SIP32414_1" 0 "GND6" 0)
+			(pin 3  5 "SWITCH_DUAL_SIP32414__SWITCH_DUAL_SIP32414_1" 0 "CNTRL2" 0)
+			(pin 2  5 "SWITCH_DUAL_SIP32414__SWITCH_DUAL_SIP32414_1" 0 "CNTRL1" 0))
+		(part "IM_LSM9DS1")
+		(logical_part_mapping "IM_LSM9DS1"
+			(comp "U27"))
+		(logical_part "IM_LSM9DS1"
+			(slots
+				(slot "IM_LSM9DS1__IM_LSM9DS1_1"
+					(attributes
+						(attval "DEVICE" "IM_LSM9DS1")
+						(attval "Part Number" "LSM9DS1")
+						(attval "PKG_TYPE" "IM_LSM9DS1")
+						(attval "REFDES" "U?"))))
+			(pin 3  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "VDDIO3" 0)
+			(pin 1  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "VDDIO1" 0)
+			(pin 23  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "VDD23" 0)
+			(pin 22  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "VDD22" 0)
+			(pin 6  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "SDO_M" 0)
+			(pin 5  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "SDO_A_G" 0)
+			(pin 4  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "SDA_SDI_SDO" 0)
+			(pin 2  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "SCL_SPC" 0)
+			(pin 18  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "RES18" 0)
+			(pin 17  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "RES17" 0)
+			(pin 16  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "RES16" 0)
+			(pin 15  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "RES15" 0)
+			(pin 14  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "RES14" 0)
+			(pin 10  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "INT_M" 0)
+			(pin 12  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "INT2_A_G" 0)
+			(pin 11  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "INT1_A_G" 0)
+			(pin 20  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "GND20" 0)
+			(pin 19  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "GND19" 0)
+			(pin 9  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "DRDY_M" 0)
+			(pin 13  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "DEN_A_G" 0)
+			(pin 8  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "CS_M" 0)
+			(pin 7  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "CS_A_G" 0)
+			(pin 21  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "CAP" 0)
+			(pin 24  3 "IM_LSM9DS1__IM_LSM9DS1_1" 0 "C1" 0))
+		(part "CAP_10UF_0402")
+		(logical_part_mapping "CAP_10UF_0402"
+			(comp "C117"))
+		(logical_part "CAP_10UF_0402"
+			(slots
+				(slot "CAP_10UF_0402__CAP_10UF_0402_1"
+					(attributes
+						(attval "DEVICE" "CAP_10UF_0402")
+						(attval "Part Number" "CL05A106MP5NUNC")
+						(attval "PINSWAP" "[(1,2)]")
+						(attval "PKG_TYPE" "0402_MY")
+						(attval "REFDES" "C?")
+						(attval "Tolerance" "")
+						(attval "Value" "10UF"))))
+			(pin 2  5 "CAP_10UF_0402__CAP_10UF_0402_1" 0 "2" 0)
+			(pin 1  5 "CAP_10UF_0402__CAP_10UF_0402_1" 0 "1" 0))
+		(part "CAP_4P7UF_0402")
+		(logical_part_mapping "CAP_4P7UF_0402"
+			(comp "C97" "C96" "C4" "C3"))
+		(logical_part "CAP_4P7UF_0402"
+			(slots
+				(slot "CAP_4P7UF_0402__CAP_4P7UF_0402_1"
+					(attributes
+						(attval "DEVICE" "CAP_4P7UF_0402")
+						(attval "Part Number" "CL05A475MP5NRNC")
+						(attval "PINSWAP" "[(1,2)]")
+						(attval "PKG_TYPE" "0402_MY")
+						(attval "REFDES" "C?")
+						(attval "Tolerance" "")
+						(attval "Value" "4.7UF"))))
+			(pin 2  5 "CAP_4P7UF_0402__CAP_4P7UF_0402_1" 0 "2" 0)
+			(pin 1  5 "CAP_4P7UF_0402__CAP_4P7UF_0402_1" 0 "1" 0))
+		(part "CAP_0P01UF_0402")
+		(logical_part_mapping "CAP_0P01UF_0402"
+			(comp "C118" "C115"))
+		(logical_part "CAP_0P01UF_0402"
+			(slots
+				(slot "CAP_0P01UF_0402__CAP_0P01UF_0402_1"
+					(attributes
+						(attval "DEVICE" "CAP_0P01UF_0402")
+						(attval "Part Number" "CL05B103KA5NNNC")
+						(attval "PINSWAP" "[(1,2)]")
+						(attval "PKG_TYPE" "0402_MY")
+						(attval "REFDES" "C?")
+						(attval "Tolerance" "")
+						(attval "Value" "0.01UF"))))
+			(pin 2  5 "CAP_0P01UF_0402__CAP_0P01UF_0402_1" 0 "2" 0)
+			(pin 1  5 "CAP_0P01UF_0402__CAP_0P01UF_0402_1" 0 "1" 0))
+		(part "CAP_0P1UF_0402")
+		(logical_part_mapping "CAP_0P1UF_0402"
+			(comp "C116" "C114" "C9" "C8" "C7" "C6" "C2" "C1"))
+		(logical_part "CAP_0P1UF_0402"
+			(slots
+				(slot "CAP_0P1UF_0402__CAP_0P1UF_0402_1"
+					(attributes
+						(attval "DEVICE" "CAP_0P1UF_0402")
+						(attval "Part Number" "CL05A104KA5NNNC")
+						(attval "PINSWAP" "[(1,2)]")
+						(attval "PKG_TYPE" "0402_MY")
+						(attval "REFDES" "C?")
+						(attval "Tolerance" "")
+						(attval "Value" "0.1UF"))))
+			(pin 2  5 "CAP_0P1UF_0402__CAP_0P1UF_0402_1" 0 "2" 0)
+			(pin 1  5 "CAP_0P1UF_0402__CAP_0P1UF_0402_1" 0 "1" 0))
+		(part "ADMP621_MEMS_MIC")
+		(logical_part_mapping "ADMP621_MEMS_MIC"
+			(comp "U16" "U15"))
+		(logical_part "ADMP621_MEMS_MIC"
+			(slots
+				(slot "MEMS_MIC_ADMP621__ADMP621_MEMS_MIC_1"
+					(attributes
+						(attval "DEVICE" "ADMP621_MEMS_MIC")
+						(attval "Part Number" "ADMP621")
+						(attval "PKG_TYPE" "MEMS_MIC")
+						(attval "REFDES" "U?"))))
+			(pin 4  3 "MEMS_MIC_ADMP621__ADMP621_MEMS_MIC_1" 0 "VDD" 0)
+			(pin 2  3 "MEMS_MIC_ADMP621__ADMP621_MEMS_MIC_1" 0 "L_R_SELECT" 0)
+			(pin 3  3 "MEMS_MIC_ADMP621__ADMP621_MEMS_MIC_1" 0 "GND" 0)
+			(pin 5  3 "MEMS_MIC_ADMP621__ADMP621_MEMS_MIC_1" 0 "DATA" 0)
+			(pin 1  3 "MEMS_MIC_ADMP621__ADMP621_MEMS_MIC_1" 0 "CLK" 0)))
+	(placement
+		(component "IM_LSM9DS1"
+			(place "U27" 0.0 0.0 top 0.0
+				(comp_pin "3" 0.0 0.0 "IN")
+				(comp_pin "1" 0.0 0.0 "IN")
+				(comp_pin "23" 0.0 0.0 "IN")
+				(comp_pin "22" 0.0 0.0 "IN")
+				(comp_pin "6" 0.0 0.0 "IN")
+				(comp_pin "5" 0.0 0.0 "IN")
+				(comp_pin "4" 0.0 0.0 "IN")
+				(comp_pin "2" 0.0 0.0 "IN")
+				(comp_pin "18" 0.0 0.0 "IN")
+				(comp_pin "17" 0.0 0.0 "IN")
+				(comp_pin "16" 0.0 0.0 "IN")
+				(comp_pin "15" 0.0 0.0 "IN")
+				(comp_pin "14" 0.0 0.0 "IN")
+				(comp_pin "10" 0.0 0.0 "IN")
+				(comp_pin "12" 0.0 0.0 "IN")
+				(comp_pin "11" 0.0 0.0 "IN")
+				(comp_pin "20" 0.0 0.0 "IN")
+				(comp_pin "19" 0.0 0.0 "IN")
+				(comp_pin "9" 0.0 0.0 "IN")
+				(comp_pin "13" 0.0 0.0 "IN")
+				(comp_pin "8" 0.0 0.0 "IN")
+				(comp_pin "7" 0.0 0.0 "IN")
+				(comp_pin "21" 0.0 0.0 "IN")
+				(comp_pin "24" 0.0 0.0 "IN"))
+			(attributes
+				(attval "Part Number" "LSM9DS1")
+				(attval "DEVICE" "IM_LSM9DS1")
+				(attval "REFDES" "U27")))
+		(component "MEMS_MIC"
+			(place "U16" 0.0 0.0 top 0.0
+				(comp_pin "4" 0.0 0.0 "IN")
+				(comp_pin "2" 0.0 0.0 "IN")
+				(comp_pin "3" 0.0 0.0 "IN")
+				(comp_pin "5" 0.0 0.0 "IN")
+				(comp_pin "1" 0.0 0.0 "IN"))
+			(attributes
+				(attval "Part Number" "ADMP621")
+				(attval "DEVICE" "ADMP621_MEMS_MIC")
+				(attval "REFDES" "U16")))
+		(component "MEMS_MIC"
+			(place "U15" 0.0 0.0 top 0.0
+				(comp_pin "4" 0.0 0.0 "IN")
+				(comp_pin "2" 0.0 0.0 "IN")
+				(comp_pin "3" 0.0 0.0 "IN")
+				(comp_pin "5" 0.0 0.0 "IN")
+				(comp_pin "1" 0.0 0.0 "IN"))
+			(attributes
+				(attval "Part Number" "ADMP621")
+				(attval "DEVICE" "ADMP621_MEMS_MIC")
+				(attval "REFDES" "U15")))
+		(component "VISHNAY_DUAL_LOAD_SWITCH"
+			(place "S7" 0.0 0.0 top 0.0
+				(comp_pin "9" 0.0 0.0 "IN")
+				(comp_pin "5" 0.0 0.0 "BI")
+				(comp_pin "8" 0.0 0.0 "BI")
+				(comp_pin "4" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI")
+				(comp_pin "7" 0.0 0.0 "BI")
+				(comp_pin "6" 0.0 0.0 "BI")
+				(comp_pin "3" 0.0 0.0 "BI")
+				(comp_pin "2" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "SIP32414")
+				(attval "DEVICE" "SWITCH_DUAL_SIP32414")
+				(attval "REFDES" "S7")))
+		(component "VISHNAY_DUAL_LOAD_SWITCH"
+			(place "S5" 0.0 0.0 top 0.0
+				(comp_pin "9" 0.0 0.0 "IN")
+				(comp_pin "5" 0.0 0.0 "BI")
+				(comp_pin "8" 0.0 0.0 "BI")
+				(comp_pin "4" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI")
+				(comp_pin "7" 0.0 0.0 "BI")
+				(comp_pin "6" 0.0 0.0 "BI")
+				(comp_pin "3" 0.0 0.0 "BI")
+				(comp_pin "2" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "SIP32414")
+				(attval "DEVICE" "SWITCH_DUAL_SIP32414")
+				(attval "REFDES" "S5")))
+		(component "0402_MY"
+			(place "C118" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "CL05B103KA5NNNC")
+				(attval "Tolerance" "")
+				(attval "Value" "0.01UF")
+				(attval "DEVICE" "CAP_0P01UF_0402")
+				(attval "REFDES" "C118")))
+		(component "0402_MY"
+			(place "C117" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "CL05A106MP5NUNC")
+				(attval "Tolerance" "")
+				(attval "Value" "10UF")
+				(attval "DEVICE" "CAP_10UF_0402")
+				(attval "REFDES" "C117")))
+		(component "0402_MY"
+			(place "C116" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "Tolerance" "")
+				(attval "Value" "0.1UF")
+				(attval "DEVICE" "CAP_0P1UF_0402")
+				(attval "REFDES" "C116")))
+		(component "0402_MY"
+			(place "C115" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "CL05B103KA5NNNC")
+				(attval "Tolerance" "")
+				(attval "Value" "0.01UF")
+				(attval "DEVICE" "CAP_0P01UF_0402")
+				(attval "REFDES" "C115")))
+		(component "0402_MY"
+			(place "C114" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "Tolerance" "")
+				(attval "Value" "0.1UF")
+				(attval "DEVICE" "CAP_0P1UF_0402")
+				(attval "REFDES" "C114")))
+		(component "0402_MY"
+			(place "C97" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "CL05A475MP5NRNC")
+				(attval "Tolerance" "")
+				(attval "Value" "4.7UF")
+				(attval "DEVICE" "CAP_4P7UF_0402")
+				(attval "REFDES" "C97")))
+		(component "0402_MY"
+			(place "C96" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "CL05A475MP5NRNC")
+				(attval "Tolerance" "")
+				(attval "Value" "4.7UF")
+				(attval "DEVICE" "CAP_4P7UF_0402")
+				(attval "REFDES" "C96")))
+		(component "0402_MY"
+			(place "C9" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "Tolerance" "")
+				(attval "Value" "0.1UF")
+				(attval "DEVICE" "CAP_0P1UF_0402")
+				(attval "REFDES" "C9")))
+		(component "0402_MY"
+			(place "C8" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "Tolerance" "")
+				(attval "Value" "0.1UF")
+				(attval "DEVICE" "CAP_0P1UF_0402")
+				(attval "REFDES" "C8")))
+		(component "0402_MY"
+			(place "C7" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "Tolerance" "")
+				(attval "Value" "0.1UF")
+				(attval "DEVICE" "CAP_0P1UF_0402")
+				(attval "REFDES" "C7")))
+		(component "0402_MY"
+			(place "C6" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "Tolerance" "")
+				(attval "Value" "0.1UF")
+				(attval "DEVICE" "CAP_0P1UF_0402")
+				(attval "REFDES" "C6")))
+		(component "0402_MY"
+			(place "C4" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "CL05A475MP5NRNC")
+				(attval "Tolerance" "")
+				(attval "Value" "4.7UF")
+				(attval "DEVICE" "CAP_4P7UF_0402")
+				(attval "REFDES" "C4")))
+		(component "0402_MY"
+			(place "C3" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "CL05A475MP5NRNC")
+				(attval "Tolerance" "")
+				(attval "Value" "4.7UF")
+				(attval "DEVICE" "CAP_4P7UF_0402")
+				(attval "REFDES" "C3")))
+		(component "0402_MY"
+			(place "C2" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "Tolerance" "")
+				(attval "Value" "0.1UF")
+				(attval "DEVICE" "CAP_0P1UF_0402")
+				(attval "REFDES" "C2")))
+		(component "0402_MY"
+			(place "C1" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "Tolerance" "")
+				(attval "Value" "0.1UF")
+				(attval "DEVICE" "CAP_0P1UF_0402")
+				(attval "REFDES" "C1"))))
+	(functions
+		(func "$3I594" "" "U27" 1)
+		(func "$2I182" "" "U16" 1)
+		(func "$2I175" "" "U15" 1)
+		(func "$2I324" "" "S7" 1)
+		(func "$3I438" "" "S5" 1)
+		(func "$3I809" "" "C118" 1)
+		(func "$3I798" "" "C117" 1)
+		(func "$3I794" "" "C116" 1)
+		(func "$3I802" "" "C115" 1)
+		(func "$3I789" "" "C114" 1)
+		(func "$3I769" "" "C97" 1)
+		(func "$3I773" "" "C96" 1)
+		(func "$2I306" "" "C9" 1)
+		(func "$2I311" "" "C8" 1)
+		(func "$3I782" "" "C7" 1)
+		(func "$3I778" "" "C6" 1)
+		(func "$2I328" "" "C4" 1)
+		(func "$2I327" "" "C3" 1)
+		(func "$2I330" "" "C2" 1)
+		(func "$2I329" "" "C1" 1))
+	(network
+		(net "$3N641"
+			(pins C115-1 U27-21))
+		(net "$3N668"
+			(pins C118-2 U27-24))
+		(net "FPGA_1P8V"
+			(pins S5-4 S7-1 S7-4 C96-1 C3-1 C4-1))
+		(net "FPGA_VCC2P5"
+			(pins S5-1 C97-1))
+		(net "GND"
+			(pins C115-2 C118-1 C6-2 C7-2 C114-2 C116-2 C9-2 C8-2 C1-2 C2-2 U15-3 U15-2
+ U16-3 U16-2 U27-19 U27-20 U27-14 U27-15 U27-16 U27-17 U27-18 S5-6 S5-7 S5-9
+ S7-6 S7-7 S7-9 C97-2 C96-2 C3-2 C4-2 C117-2))
+		(net "IM_1P8V_OUT"
+			(pins C6-1 C114-1 U27-13 U27-1 U27-3 S5-5))
+		(net "IM_1P8V_TO_CPLD"
+			(pins S5-3))
+		(net "IM_2P5V_OUT"
+			(pins C7-1 C116-1 U27-22 U27-23 S5-8 C117-1))
+		(net "IM_2P5V_TO_CPLD"
+			(pins S5-2))
+		(net "IM_CS_A_G_TO_FPGA"
+			(pins U27-7))
+		(net "IM_CS_M_TO_FPGA"
+			(pins U27-8))
+		(net "IM_DRDY_M_TO_FPGA"
+			(pins U27-9))
+		(net "IM_INT1_A_G_TO_FPGA"
+			(pins U27-11))
+		(net "IM_INT2_A_G_TO_FPGA"
+			(pins U27-12))
+		(net "IM_INT_M_TO_FPGA"
+			(pins U27-10))
+		(net "IM_SDO_A_G_TO_FPGA"
+			(pins U27-5))
+		(net "IM_SDO_M_TO_FPGA"
+			(pins U27-6))
+		(net "IM_SPI_SCLK_TO_FPGA"
+			(pins U27-2))
+		(net "IM_SPI_SDI_TO_FPGA"
+			(pins U27-4))
+		(net "MIC_CLK"
+			(pins U15-1 U16-1))
+		(net "MIC_DATA_L"
+			(pins U16-5))
+		(net "MIC_DATA_R"
+			(pins U15-5))
+		(net "MIC_L_CNTRL_TO_CPLD"
+			(pins S7-3))
+		(net "MIC_L_POWER_1P8V"
+			(pins C8-1 C1-1 U16-4 S7-5))
+		(net "MIC_R_CNTRL_TO_CPLD"
+			(pins S7-2))
+		(net "MIC_R_POWER_1P8V"
+			(pins C9-1 C2-1 U15-4 S7-8)))
+	(network_electrical
+		(net_scalar "MIC_R_POWER_1P8V"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "MIC_R_CNTRL_TO_CPLD"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "MIC_L_POWER_1P8V"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "MIC_L_CNTRL_TO_CPLD"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "MIC_DATA_R"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "MIC_DATA_L"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "MIC_CLK"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "IM_SPI_SDI_TO_FPGA"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "IM_SPI_SCLK_TO_FPGA"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "IM_SDO_M_TO_FPGA"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "IM_SDO_A_G_TO_FPGA"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "IM_INT_M_TO_FPGA"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "IM_INT2_A_G_TO_FPGA"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "IM_INT1_A_G_TO_FPGA"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "IM_DRDY_M_TO_FPGA"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "IM_CS_M_TO_FPGA"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "IM_CS_A_G_TO_FPGA"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "IM_2P5V_TO_CPLD"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "IM_2P5V_OUT"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "IM_1P8V_TO_CPLD"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "IM_1P8V_OUT"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "GND"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "FPGA_VCC2P5"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "FPGA_1P8V"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "$3N668"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "$3N641"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))))

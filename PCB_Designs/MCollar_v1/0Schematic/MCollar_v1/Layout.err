@@ -1,0 +1,372 @@
+=============================================================
+Add Reuse Report -- Sun Apr 12 21:26:12 2015
+
+=============================================================
+Design File: uUSB3_0.pcb
+Reuse  File: B.reu
+Reuse  Date: Sun Apr 12 22:23:08 2015
+
+=============Checking reuse/design compatibility=============
+=============================================================
+Total ERRORS:   0
+Total WARNINGS: 0
+=============================================================
+
+============= Adding reuse  to design =======================
+
+Decal UUSB3_0_LAND added to design with name UUSB3_0_LAND
+Part Type UUSB_3_0_LAND added to design
+Part J1 added to design with name J1
+Part J2 added to design with name J2
+Part J4 added to design with name J4
+Part J5 added to design with name J5
+Part J6 added to design with name J6
+Part J7 added to design with name J7
+Part J8 added to design with name J8
+Part J9 added to design with name J9
+Part J10 added to design with name J10
+Part J11 added to design with name J11
+Part J12 added to design with name J12
+Part J13 added to design with name J13
+Part J14 added to design with name J14
+Part J15 added to design with name J15
+Part J16 added to design with name J16
+Part J17 added to design with name J17
+Part J18 added to design with name J18
+Part J19 added to design with name J19
+Part J20 added to design with name J20
+Part J21 added to design with name J21
+20 parts added to design
+Reuse signal $$$1 added to design with name $$$1
+Reuse signal $$$2 added to design with name $$$2
+Reuse signal $$$3 added to design with name $$$3
+Reuse signal $$$4 added to design with name $$$4
+Reuse signal $$$5 added to design with name $$$5
+Reuse signal $$$6 added to design with name $$$6
+Reuse signal $$$7 added to design with name $$$7
+Reuse signal $$$8 added to design with name $$$8
+Reuse signal $$$9 added to design with name $$$9
+Reuse signal $$$10 added to design with name $$$10
+Reuse signal $$$17 added to design with name $$$17
+Reuse signal $$$11 added to design with name $$$11
+Reuse signal $$$14 added to design with name $$$14
+Reuse signal $$$16 added to design with name $$$16
+Reuse signal $$$15 added to design with name $$$15
+Reuse signal $$$12 added to design with name $$$12
+Reuse signal $$$18 added to design with name $$$18
+Reuse signal $$$19 added to design with name $$$19
+Reuse signal $$$20 added to design with name $$$20
+Reuse signal $$$13 added to design with name $$$13
+Reuse signal $$$25 added to design with name $$$25
+Reuse signal $$$26 added to design with name $$$26
+Reuse signal $$$27 added to design with name $$$27
+Reuse signal $$$24 added to design with name $$$24
+Reuse signal $$$23 added to design with name $$$23
+Reuse signal $$$21 added to design with name $$$21
+Reuse signal $$$28 added to design with name $$$28
+Reuse signal $$$29 added to design with name $$$29
+Reuse signal $$$30 added to design with name $$$30
+Reuse signal $$$22 added to design with name $$$22
+Reuse signal $$$37 added to design with name $$$37
+Reuse signal $$$31 added to design with name $$$31
+Reuse signal $$$34 added to design with name $$$34
+Reuse signal $$$36 added to design with name $$$36
+Reuse signal $$$35 added to design with name $$$35
+Reuse signal $$$32 added to design with name $$$32
+Reuse signal $$$38 added to design with name $$$38
+Reuse signal $$$39 added to design with name $$$39
+Reuse signal $$$40 added to design with name $$$40
+Reuse signal $$$33 added to design with name $$$33
+Reuse signal $$$47 added to design with name $$$47
+Reuse signal $$$41 added to design with name $$$41
+Reuse signal $$$44 added to design with name $$$44
+Reuse signal $$$46 added to design with name $$$46
+Reuse signal $$$45 added to design with name $$$45
+Reuse signal $$$42 added to design with name $$$42
+Reuse signal $$$48 added to design with name $$$48
+Reuse signal $$$49 added to design with name $$$49
+Reuse signal $$$50 added to design with name $$$50
+Reuse signal $$$43 added to design with name $$$43
+Reuse signal $$$55 added to design with name $$$55
+Reuse signal $$$56 added to design with name $$$56
+Reuse signal $$$57 added to design with name $$$57
+Reuse signal $$$54 added to design with name $$$54
+Reuse signal $$$53 added to design with name $$$53
+Reuse signal $$$51 added to design with name $$$51
+Reuse signal $$$58 added to design with name $$$58
+Reuse signal $$$59 added to design with name $$$59
+Reuse signal $$$60 added to design with name $$$60
+Reuse signal $$$52 added to design with name $$$52
+Reuse signal $$$67 added to design with name $$$67
+Reuse signal $$$61 added to design with name $$$61
+Reuse signal $$$64 added to design with name $$$64
+Reuse signal $$$66 added to design with name $$$66
+Reuse signal $$$65 added to design with name $$$65
+Reuse signal $$$62 added to design with name $$$62
+Reuse signal $$$68 added to design with name $$$68
+Reuse signal $$$69 added to design with name $$$69
+Reuse signal $$$70 added to design with name $$$70
+Reuse signal $$$63 added to design with name $$$63
+Reuse signal $$$75 added to design with name $$$75
+Reuse signal $$$76 added to design with name $$$76
+Reuse signal $$$77 added to design with name $$$77
+Reuse signal $$$74 added to design with name $$$74
+Reuse signal $$$73 added to design with name $$$73
+Reuse signal $$$71 added to design with name $$$71
+Reuse signal $$$78 added to design with name $$$78
+Reuse signal $$$79 added to design with name $$$79
+Reuse signal $$$80 added to design with name $$$80
+Reuse signal $$$72 added to design with name $$$72
+Reuse signal $$$87 added to design with name $$$87
+Reuse signal $$$81 added to design with name $$$81
+Reuse signal $$$84 added to design with name $$$84
+Reuse signal $$$86 added to design with name $$$86
+Reuse signal $$$85 added to design with name $$$85
+Reuse signal $$$82 added to design with name $$$82
+Reuse signal $$$88 added to design with name $$$88
+Reuse signal $$$89 added to design with name $$$89
+Reuse signal $$$90 added to design with name $$$90
+Reuse signal $$$83 added to design with name $$$83
+Reuse signal $$$97 added to design with name $$$97
+Reuse signal $$$91 added to design with name $$$91
+Reuse signal $$$94 added to design with name $$$94
+Reuse signal $$$96 added to design with name $$$96
+Reuse signal $$$95 added to design with name $$$95
+Reuse signal $$$92 added to design with name $$$92
+Reuse signal $$$98 added to design with name $$$98
+Reuse signal $$$99 added to design with name $$$99
+Reuse signal $$$100 added to design with name $$$100
+Reuse signal $$$93 added to design with name $$$93
+Reuse signal $$$105 added to design with name $$$105
+Reuse signal $$$106 added to design with name $$$106
+Reuse signal $$$107 added to design with name $$$107
+Reuse signal $$$104 added to design with name $$$104
+Reuse signal $$$103 added to design with name $$$103
+Reuse signal $$$101 added to design with name $$$101
+Reuse signal $$$108 added to design with name $$$108
+Reuse signal $$$109 added to design with name $$$109
+Reuse signal $$$110 added to design with name $$$110
+Reuse signal $$$102 added to design with name $$$102
+Reuse signal $$$117 added to design with name $$$117
+Reuse signal $$$111 added to design with name $$$111
+Reuse signal $$$114 added to design with name $$$114
+Reuse signal $$$116 added to design with name $$$116
+Reuse signal $$$115 added to design with name $$$115
+Reuse signal $$$112 added to design with name $$$112
+Reuse signal $$$118 added to design with name $$$118
+Reuse signal $$$119 added to design with name $$$119
+Reuse signal $$$120 added to design with name $$$120
+Reuse signal $$$113 added to design with name $$$113
+Reuse signal $$$125 added to design with name $$$125
+Reuse signal $$$126 added to design with name $$$126
+Reuse signal $$$127 added to design with name $$$127
+Reuse signal $$$124 added to design with name $$$124
+Reuse signal $$$123 added to design with name $$$123
+Reuse signal $$$121 added to design with name $$$121
+Reuse signal $$$128 added to design with name $$$128
+Reuse signal $$$129 added to design with name $$$129
+Reuse signal $$$130 added to design with name $$$130
+Reuse signal $$$122 added to design with name $$$122
+Reuse signal $$$137 added to design with name $$$137
+Reuse signal $$$131 added to design with name $$$131
+Reuse signal $$$134 added to design with name $$$134
+Reuse signal $$$136 added to design with name $$$136
+Reuse signal $$$135 added to design with name $$$135
+Reuse signal $$$132 added to design with name $$$132
+Reuse signal $$$138 added to design with name $$$138
+Reuse signal $$$139 added to design with name $$$139
+Reuse signal $$$140 added to design with name $$$140
+Reuse signal $$$133 added to design with name $$$133
+Reuse signal $$$147 added to design with name $$$147
+Reuse signal $$$141 added to design with name $$$141
+Reuse signal $$$144 added to design with name $$$144
+Reuse signal $$$146 added to design with name $$$146
+Reuse signal $$$145 added to design with name $$$145
+Reuse signal $$$142 added to design with name $$$142
+Reuse signal $$$148 added to design with name $$$148
+Reuse signal $$$149 added to design with name $$$149
+Reuse signal $$$150 added to design with name $$$150
+Reuse signal $$$143 added to design with name $$$143
+Reuse signal $$$197 added to design with name $$$197
+Reuse signal $$$191 added to design with name $$$191
+Reuse signal $$$194 added to design with name $$$194
+Reuse signal $$$196 added to design with name $$$196
+Reuse signal $$$195 added to design with name $$$195
+Reuse signal $$$192 added to design with name $$$192
+Reuse signal $$$198 added to design with name $$$198
+Reuse signal $$$199 added to design with name $$$199
+Reuse signal $$$200 added to design with name $$$200
+Reuse signal $$$193 added to design with name $$$193
+Reuse signal $$$187 added to design with name $$$187
+Reuse signal $$$181 added to design with name $$$181
+Reuse signal $$$184 added to design with name $$$184
+Reuse signal $$$186 added to design with name $$$186
+Reuse signal $$$185 added to design with name $$$185
+Reuse signal $$$182 added to design with name $$$182
+Reuse signal $$$188 added to design with name $$$188
+Reuse signal $$$189 added to design with name $$$189
+Reuse signal $$$190 added to design with name $$$190
+Reuse signal $$$183 added to design with name $$$183
+Reuse signal $$$175 added to design with name $$$175
+Reuse signal $$$176 added to design with name $$$176
+Reuse signal $$$177 added to design with name $$$177
+Reuse signal $$$174 added to design with name $$$174
+Reuse signal $$$173 added to design with name $$$173
+Reuse signal $$$171 added to design with name $$$171
+Reuse signal $$$178 added to design with name $$$178
+Reuse signal $$$179 added to design with name $$$179
+Reuse signal $$$180 added to design with name $$$180
+Reuse signal $$$172 added to design with name $$$172
+Reuse signal $$$167 added to design with name $$$167
+Reuse signal $$$161 added to design with name $$$161
+Reuse signal $$$164 added to design with name $$$164
+Reuse signal $$$166 added to design with name $$$166
+Reuse signal $$$165 added to design with name $$$165
+Reuse signal $$$162 added to design with name $$$162
+Reuse signal $$$168 added to design with name $$$168
+Reuse signal $$$169 added to design with name $$$169
+Reuse signal $$$170 added to design with name $$$170
+Reuse signal $$$163 added to design with name $$$163
+Reuse signal $$$155 added to design with name $$$155
+Reuse signal $$$156 added to design with name $$$156
+Reuse signal $$$157 added to design with name $$$157
+Reuse signal $$$154 added to design with name $$$154
+Reuse signal $$$153 added to design with name $$$153
+Reuse signal $$$151 added to design with name $$$151
+Reuse signal $$$158 added to design with name $$$158
+Reuse signal $$$159 added to design with name $$$159
+Reuse signal $$$160 added to design with name $$$160
+Reuse signal $$$152 added to design with name $$$152
+200 signal in reuse definition file
+=============================================================
+Numbers of WARNINGS on adding reuse component stage: 0
+=============================================================
+
+============== REPORT ON REUSE RULES ============
+
+REUSE FILE: C:\Users\kyler.callahan\Documents\work\B.reu
+[MILS]
+
+DESIGN RULES :
+RULE_SET (1)
+{
+FOR :
+{
+DEFAULT :
+}
+AGAINST :
+{
+DEFAULT :
+}
+LAYER All Layers
+CLEARANCE_RULE :
+{
+TRACK_TO_TRACK 7
+VIA_TO_TRACK 7
+VIA_TO_VIA 7
+PAD_TO_TRACK 7
+PAD_TO_VIA 7
+PAD_TO_PAD 7
+SMD_TO_TRACK 7
+SMD_TO_VIA 7
+SMD_TO_PAD 7
+SMD_TO_SMD 7
+COPPER_TO_TRACK 7
+COPPER_TO_VIA 7
+COPPER_TO_PAD 7
+COPPER_TO_SMD 7
+COPPER_TO_COPPER 7
+TEXT_TO_TRACK 7
+TEXT_TO_VIA 7
+TEXT_TO_PAD 7
+TEXT_TO_SMD 7
+OUTLINE_TO_TRACK 20
+OUTLINE_TO_VIA 20
+OUTLINE_TO_PAD 20
+OUTLINE_TO_SMD 20
+OUTLINE_TO_COPPER 20
+DRILL_TO_TRACK 7
+DRILL_TO_VIA 7
+DRILL_TO_PAD 7
+DRILL_TO_SMD 7
+DRILL_TO_COPPER 7
+SAME_NET_SMD_TO_VIA 7
+SAME_NET_SMD_TO_CRN 7
+SAME_NET_VIA_TO_VIA 7
+SAME_NET_PAD_TO_CRN 7
+MIN_TRACK_WIDTH 7
+REC_TRACK_WIDTH 10
+MAX_TRACK_WIDTH 100
+DRILL_TO_DRILL 8
+BODY_TO_BODY 10
+SAME_NET_TRACK_TO_CRN 7
+}
+}
+RULE_SET (2)
+{
+FOR :
+{
+DEFAULT :
+}
+AGAINST :
+{
+DEFAULT :
+}
+LAYER All Layers
+HIGH_SPEED_RULE :
+{
+MIN_LENGTH 0
+MAX_LENGTH 50000
+STUB_LENGTH 0
+PARALLEL_LENGTH 1000
+PARALLEL_GAP 200
+TANDEM_LENGTH 1000
+TANDEM_GAP 200
+MIN_DELAY 0.000000
+MAX_DELAY 10.000000
+MIN_CAPACITANCE 0.000000
+MAX_CAPACITANCE 10.000000
+MIN_IMPEDANCE 50.000000
+MAX_IMPEDANCE 150.000000
+SHIELD_NET *
+SHIELD_GAP 200
+MATCH_LENGTH_TOLERANCE 200
+}
+}
+RULE_SET (3)
+{
+FOR :
+{
+DEFAULT :
+}
+AGAINST :
+{
+DEFAULT :
+}
+LAYER All Layers
+ROUTE_RULE :
+{
+LENGTH_MINIMIZATION_TYPE Total Length
+COPPER_SHARE OFF
+AUTO_ROUTE OFF
+RIPUP OFF
+SHOVE OFF
+SHOVE_PROTECTED OFF
+VIA_SHARE Y
+TRACE_SHARE Y
+AUTO_ROUTE Y
+RIPUP Y
+SHOVE Y
+ROUTE_PRIORITY 3
+MAX_NUMBER_OF_VIAS -0
+VALID_LAYER Top
+VALID_LAYER Bottom
+VALID_VIA_TYPE STANDARDVIA
+}
+}
+
+============= END OF REUSE RULES REPORT =============
+
+
+***************** NO RULES DIFFERENCE FOUND ********************
+
