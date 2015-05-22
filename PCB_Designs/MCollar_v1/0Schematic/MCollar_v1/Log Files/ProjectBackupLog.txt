@@ -255,3 +255,18 @@
 [2015-05-18 11.27.42] Successfully created [AutoSave] backup [2015-05-18 11.27.38 - auto.zip] requested by [ECEROSSLAB01:j82t579].
 [2015-05-18 11.27.42] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1\ProjectBackup\backups\2015-04-12 20.23.26 - auto.zip].
 [2015-05-18 11.27.42] [AutoSave] backup file [MCollar_v1\ProjectBackup\backups\2015-04-12 20.23.26 - auto.zip] removed.
+[2015-05-18 15.27.42] Successfully created [AutoSave] backup [2015-05-18 15.27.38 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2015-05-18 15.27.42] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1\ProjectBackup\backups\2015-04-13 00.23.26 - auto.zip].
+[2015-05-18 15.27.42] [AutoSave] backup file [MCollar_v1\ProjectBackup\backups\2015-04-13 00.23.26 - auto.zip] removed.
+[2015-05-19 10.14.31] Successfully created [AutoSave] backup [2015-05-19 10.14.24 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2015-05-19 10.14.31] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1\ProjectBackup\backups\2015-05-04 14.14.23 - auto.zip].
+[2015-05-19 10.14.31] [AutoSave] backup file [MCollar_v1\ProjectBackup\backups\2015-05-04 14.14.23 - auto.zip] removed.
+[2015-05-19 14.14.30] Successfully created [AutoSave] backup [2015-05-19 14.14.24 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2015-05-19 14.14.30] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1\ProjectBackup\backups\2015-05-18 11.27.38 - auto.zip].
+[2015-05-19 14.14.30] [AutoSave] backup file [MCollar_v1\ProjectBackup\backups\2015-05-18 11.27.38 - auto.zip] removed.
+[2015-05-22 09.08.33] Successfully created [AutoSave] backup [2015-05-22 09.08.32 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2015-05-22 09.08.33] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1\ProjectBackup\backups\2015-05-18 15.27.38 - auto.zip].
+[2015-05-22 09.08.33] [AutoSave] backup file [MCollar_v1\ProjectBackup\backups\2015-05-18 15.27.38 - auto.zip] removed.
+[2015-05-22 13.08.34] Successfully created [AutoSave] backup [2015-05-22 13.08.32 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2015-05-22 13.08.34] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1\ProjectBackup\backups\2015-05-19 10.14.24 - auto.zip].
+[2015-05-22 13.08.34] [AutoSave] backup file [MCollar_v1\ProjectBackup\backups\2015-05-19 10.14.24 - auto.zip] removed.

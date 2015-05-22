@@ -45,7 +45,6 @@ SECTION iCDB
 LIST Designs
 VALUE "MAIN"
 VALUE "SENSOR"
-VALUE "Quick Test"
 ENDLIST
 KEY DedicatedServerName ""
 KEY iCDBDir ".\database"
@@ -67,13 +66,4 @@ KEY SchematicDesignBackAnno "0"
 KEY SchematicDesignStatus "0"
 KEY SearchPathScheme "(Default)"
 KEY RootBlock "S"
-ENDSECTION
-SECTION "Quick Test"
-KEY CADBackAnno "0"
-KEY ConfigType "PCB"
-KEY SchematicConflict "FE"
-KEY SchematicDesignBackAnno "0"
-KEY SchematicDesignStatus "0"
-KEY SearchPathScheme "(Default)"
-KEY RootBlock "Schematic1"
 ENDSECTION

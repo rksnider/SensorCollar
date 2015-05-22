@@ -1,34 +1,12 @@
 ** ECO In Report **
 
-Sun Apr 12 21:25:50 2015
+Fri May 22 12:52:07 2015
 
-Input  File : C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1\Schematic1.eco
-Current Job : uUSB3_0.pcb
+Input  File : C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1\S.eco
+Current Job : MCollar_DAUGHTER_working.pcb
 
 
-
-Line 6 , Section *DELPIN*
-J1.1  $$$1
-* WARNING: Operation modified Reuse B_1. Reuse B_1 is dissolved.
-
-Line 407 , Section *DELPART*
-J3  BOARD_TO_BOARD_50POS_RECEPTACLE_TEMPLATE
-* WARNING: Operation modified Reuse BOARD_1. Reuse BOARD_1 is dissolved.
-* Warning: deleting single-pin signal IM_1P8V_TO_CPLD
-* Warning: deleting single-pin signal IM_2P5V_TO_CPLD
-* Warning: deleting single-pin signal IM_CS_A_G_TO_FPGA
-* Warning: deleting single-pin signal IM_CS_M_TO_FPGA
-* Warning: deleting single-pin signal IM_DRDY_M_TO_FPGA
-* Warning: deleting single-pin signal IM_INT1_A_G_TO_FPGA
-* Warning: deleting single-pin signal IM_INT2_A_G_TO_FPGA
-* Warning: deleting single-pin signal IM_INT_M_TO_FPGA
-* Warning: deleting single-pin signal IM_SDO_A_G_TO_FPGA
-* Warning: deleting single-pin signal IM_SDO_M_TO_FPGA
-* Warning: deleting single-pin signal IM_SPI_SCLK_TO_FPGA
-* Warning: deleting single-pin signal IM_SPI_SDI_TO_FPGA
-* Warning: deleting single-pin signal MIC_DATA_L
-* Warning: deleting single-pin signal MIC_DATA_R
-* Warning: deleting single-pin signal MIC_L_CNTRL_TO_CPLD
-* Warning: deleting single-pin signal MIC_R_CNTRL_TO_CPLD
-
-Warning: Some Reuses are dissolved!
+* Warning: deleting single-pin signal TXRX_GPIO2
+* Warning: deleting single-pin signal TXRX_GPIO3
+* Warning: deleting single-pin signal TXRX_RESET
+* Warning: deleting single-pin signal VCC1P8_AUX

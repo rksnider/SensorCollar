@@ -1,20 +1,26 @@
 pcb: Note 5996: Using Config File C:\MentorGraphics\9.5PADS\SDD_HOME\standard\pads95.cfg
-pcb: Warning 6083: Schematic1 pin $2I324.CNTRL1: Single pin net: MIC_R_CNTRL_TO_CPLD
-pcb: Warning 6083: Schematic1 pin $2I324.CNTRL2: Single pin net: MIC_L_CNTRL_TO_CPLD
-pcb: Warning 6083: Schematic1 pin $2I175.DATA: Single pin net: MIC_DATA_R
-pcb: Warning 6083: Schematic1 pin $2I182.DATA: Single pin net: MIC_DATA_L
-pcb: Warning 6083: Schematic1 pin $3I594.SDA_SDI_SDO: Single pin net: IM_SPI_SDI_TO_FPGA
-pcb: Warning 6083: Schematic1 pin $3I594.SCL_SPC: Single pin net: IM_SPI_SCLK_TO_FPGA
-pcb: Warning 6083: Schematic1 pin $3I594.SDO_M: Single pin net: IM_SDO_M_TO_FPGA
-pcb: Warning 6083: Schematic1 pin $3I594.SDO_A_G: Single pin net: IM_SDO_A_G_TO_FPGA
-pcb: Warning 6083: Schematic1 pin $3I594.INT_M: Single pin net: IM_INT_M_TO_FPGA
-pcb: Warning 6083: Schematic1 pin $3I594.INT2_A_G: Single pin net: IM_INT2_A_G_TO_FPGA
-pcb: Warning 6083: Schematic1 pin $3I594.INT1_A_G: Single pin net: IM_INT1_A_G_TO_FPGA
-pcb: Warning 6083: Schematic1 pin $3I594.DRDY_M: Single pin net: IM_DRDY_M_TO_FPGA
-pcb: Warning 6083: Schematic1 pin $3I594.CS_M: Single pin net: IM_CS_M_TO_FPGA
-pcb: Warning 6083: Schematic1 pin $3I594.CS_A_G: Single pin net: IM_CS_A_G_TO_FPGA
-pcb: Warning 6083: Schematic1 pin $3I438.CNTRL1: Single pin net: IM_2P5V_TO_CPLD
-pcb: Warning 6083: Schematic1 pin $3I438.CNTRL2: Single pin net: IM_1P8V_TO_CPLD
+pcb: Warning 6083: S pin $8I323.39_VCC1P8_AUX: Single pin net: VCC1P8_AUX
+pcb: Warning 6083: S pin $12I51.REST_N: Single pin net: TXRX_RESET
+pcb: Warning 6083: S pin $12I51.GPIO3: Single pin net: TXRX_GPIO3
+pcb: Warning 6083: S pin $12I51.GPOI2: Single pin net: TXRX_GPIO2
+pcb: Warning 6094: S pin $12I51.EXT_XOSC: Pin not connected
+pcb: Warning 6094: S pin $12I51.NC_16: Pin not connected
+pcb: Warning 6094: S pin $8I475.94_M_FPGA_3B_07: Pin not connected
+pcb: Warning 6094: S pin $8I323.23_M_FPGA_7A_01: Pin not connected
+pcb: Warning 6094: S pin $8I323.27_M_FPGA_7A_00: Pin not connected
+pcb: Warning 6094: S pin $8I323.29_M_FPGA_7A_06: Pin not connected
+pcb: Warning 6094: S pin $8I323.31_M_FPGA_8A_02: Pin not connected
+pcb: Warning 6094: S pin $8I323.33_M_FPGA_8A_00: Pin not connected
+pcb: Warning 6094: S pin $8I323.35_M_FPGA_8A_01: Pin not connected
+pcb: Warning 6094: S pin $8I323.46_M_CPLD_14: Pin not connected
+pcb: Warning 6094: S pin $8I323.48_M_CPLD_15: Pin not connected
+pcb: Warning 6094: S pin $1I59.NC: Pin not connected
+pcb: Warning 6094: S pin $1I1.ANT_ON: Pin not connected
+pcb: Warning 6094: S pin $1I1.RESERVED: Pin not connected
+pcb: Warning 6094: S pin $1I1.RESVD: Pin not connected
+pcb: Warning 6094: S pin $1I1.SCL: Pin not connected
+pcb: Warning 6094: S pin $1I1.SDA: Pin not connected
+pcb: Warning 6094: S pin $1I1.VCC_RF: Pin not connected
 pcb: Note 5626: Summary of Log Files/pcb.err
-Status 0, Notes 1, Warnings 16
+Status 0, Notes 1, Warnings 22
 Errors 0, Failures 0, Fatals 0, Internals 0

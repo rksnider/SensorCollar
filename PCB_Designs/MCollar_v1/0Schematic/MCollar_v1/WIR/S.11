@@ -1,0 +1,74 @@
+| Wirelist created using version 6.0 
+V 6.0
+DW S
+|Q DxDesigner_Library:Remote_Connector 1
+AS DxDesigner_Library:Remote_Connector DEVICE=Remote_Connector_20
+AS DxDesigner_Library:Remote_Connector REFDES=J?
+AS DxDesigner_Library:Remote_Connector PKG_TYPE=Remote_Connector_20
+AS DxDesigner_Library:Remote_Connector INOV_VER_REC=16:04:47_5-19-15
+AS DxDesigner_Library:Remote_Connector PINORDER=PIN_1 PIN_10 PIN_11 PIN_12 PIN_13 PIN_14 PIN_15 PIN_16 PIN_17 PIN_18 PIN_19 PIN_2 PIN_20 PIN_3 PIN_4 PIN_5 PIN_6 PIN_7 PIN_8 PIN_9
+AP DxDesigner_Library:Remote_Connector 1 #=1
+AP DxDesigner_Library:Remote_Connector 1 PINTYPE=IN
+AP DxDesigner_Library:Remote_Connector 2 #=10
+AP DxDesigner_Library:Remote_Connector 2 PINTYPE=IN
+AP DxDesigner_Library:Remote_Connector 3 #=11
+AP DxDesigner_Library:Remote_Connector 3 PINTYPE=IN
+AP DxDesigner_Library:Remote_Connector 4 #=12
+AP DxDesigner_Library:Remote_Connector 4 PINTYPE=IN
+AP DxDesigner_Library:Remote_Connector 5 #=13
+AP DxDesigner_Library:Remote_Connector 5 PINTYPE=IN
+AP DxDesigner_Library:Remote_Connector 6 #=14
+AP DxDesigner_Library:Remote_Connector 6 PINTYPE=IN
+AP DxDesigner_Library:Remote_Connector 7 #=15
+AP DxDesigner_Library:Remote_Connector 7 PINTYPE=IN
+AP DxDesigner_Library:Remote_Connector 8 #=16
+AP DxDesigner_Library:Remote_Connector 8 PINTYPE=IN
+AP DxDesigner_Library:Remote_Connector 9 #=17
+AP DxDesigner_Library:Remote_Connector 9 PINTYPE=IN
+AP DxDesigner_Library:Remote_Connector 10 #=18
+AP DxDesigner_Library:Remote_Connector 10 PINTYPE=IN
+AP DxDesigner_Library:Remote_Connector 11 #=19
+AP DxDesigner_Library:Remote_Connector 11 PINTYPE=IN
+AP DxDesigner_Library:Remote_Connector 12 #=2
+AP DxDesigner_Library:Remote_Connector 12 PINTYPE=IN
+AP DxDesigner_Library:Remote_Connector 13 #=20
+AP DxDesigner_Library:Remote_Connector 13 PINTYPE=IN
+AP DxDesigner_Library:Remote_Connector 14 #=3
+AP DxDesigner_Library:Remote_Connector 14 PINTYPE=IN
+AP DxDesigner_Library:Remote_Connector 15 #=4
+AP DxDesigner_Library:Remote_Connector 15 PINTYPE=IN
+AP DxDesigner_Library:Remote_Connector 16 #=5
+AP DxDesigner_Library:Remote_Connector 16 PINTYPE=IN
+AP DxDesigner_Library:Remote_Connector 17 #=6
+AP DxDesigner_Library:Remote_Connector 17 PINTYPE=IN
+AP DxDesigner_Library:Remote_Connector 18 #=7
+AP DxDesigner_Library:Remote_Connector 18 PINTYPE=IN
+AP DxDesigner_Library:Remote_Connector 19 #=8
+AP DxDesigner_Library:Remote_Connector 19 PINTYPE=IN
+AP DxDesigner_Library:Remote_Connector 20 #=9
+AP DxDesigner_Library:Remote_Connector 20 PINTYPE=IN
+G GND
+M DxDesigner_Library:Remote_Connector $11I64
+I $11I64 DxDesigner_Library:Remote_Connector ESH_AUX_VCC ESH_JTAG_TMS_SPI_CS ESH_JTAG_TDI_SPI_MOSI ESH_JTAG_TDO_SPI_MISO THERMISTOR_PLUS BATTERY_PLUS BATTERY_PLUS BATTERY_MINUS BATTERY_MINUS MIC_CLK_TO_FPGA MIC_B_DATA_TO_FPGA ESH_AUX_VCC MIC_B_POWER_3P3V ESH_FPGA_USB_DMINUS ESH_FPGA_USB_DPLUS ESH_FORCE_STARTUP GND GND ESH_FPGA_SPI_CLK ESH_JTAG_TCK REFDES=J?`
+|R 16:04:47_5-19-15
+API $11I64 DxDesigner_Library:Remote_Connector 1 #=1
+API $11I64 DxDesigner_Library:Remote_Connector 2 #=10
+API $11I64 DxDesigner_Library:Remote_Connector 3 #=11
+API $11I64 DxDesigner_Library:Remote_Connector 4 #=12
+API $11I64 DxDesigner_Library:Remote_Connector 5 #=13
+API $11I64 DxDesigner_Library:Remote_Connector 6 #=14
+API $11I64 DxDesigner_Library:Remote_Connector 7 #=15
+API $11I64 DxDesigner_Library:Remote_Connector 8 #=16
+API $11I64 DxDesigner_Library:Remote_Connector 9 #=17
+API $11I64 DxDesigner_Library:Remote_Connector 10 #=18
+API $11I64 DxDesigner_Library:Remote_Connector 11 #=19
+API $11I64 DxDesigner_Library:Remote_Connector 12 #=2
+API $11I64 DxDesigner_Library:Remote_Connector 13 #=20
+API $11I64 DxDesigner_Library:Remote_Connector 14 #=3
+API $11I64 DxDesigner_Library:Remote_Connector 15 #=4
+API $11I64 DxDesigner_Library:Remote_Connector 16 #=5
+API $11I64 DxDesigner_Library:Remote_Connector 17 #=6
+API $11I64 DxDesigner_Library:Remote_Connector 18 #=7
+API $11I64 DxDesigner_Library:Remote_Connector 19 #=8
+API $11I64 DxDesigner_Library:Remote_Connector 20 #=9
+EW

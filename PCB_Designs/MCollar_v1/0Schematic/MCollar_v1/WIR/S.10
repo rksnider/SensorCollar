@@ -1,0 +1,57 @@
+| Wirelist created using version 6.0 
+V 6.0
+DW S
+|Q DxDesigner_Library:RTC_DS1371 1
+AS DxDesigner_Library:RTC_DS1371 INOV_VER_REC=14:34:4_1-9-15
+AS DxDesigner_Library:RTC_DS1371 DEVICE=RTC_DS1371
+AS DxDesigner_Library:RTC_DS1371 REFDES=U?
+AS DxDesigner_Library:RTC_DS1371 PKG_TYPE=RTC_DS1371
+AS DxDesigner_Library:RTC_DS1371 PART_NUMBER=DS1371
+AS DxDesigner_Library:RTC_DS1371 P/D_NUM=DS1371U+-ND
+AS DxDesigner_Library:RTC_DS1371 PINORDER=GND SCL SDA SQW_INT_N VCC WDS X1 X2
+AP DxDesigner_Library:RTC_DS1371 1 #=4
+AP DxDesigner_Library:RTC_DS1371 1 PINTYPE=IN
+AP DxDesigner_Library:RTC_DS1371 2 #=6
+AP DxDesigner_Library:RTC_DS1371 2 PINTYPE=IN
+AP DxDesigner_Library:RTC_DS1371 3 #=5
+AP DxDesigner_Library:RTC_DS1371 3 PINTYPE=IN
+AP DxDesigner_Library:RTC_DS1371 4 #=7
+AP DxDesigner_Library:RTC_DS1371 4 PINTYPE=IN
+AP DxDesigner_Library:RTC_DS1371 5 #=8
+AP DxDesigner_Library:RTC_DS1371 5 PINTYPE=IN
+AP DxDesigner_Library:RTC_DS1371 6 #=3
+AP DxDesigner_Library:RTC_DS1371 6 PINTYPE=IN
+AP DxDesigner_Library:RTC_DS1371 7 #=1
+AP DxDesigner_Library:RTC_DS1371 7 PINTYPE=IN
+AP DxDesigner_Library:RTC_DS1371 8 #=2
+AP DxDesigner_Library:RTC_DS1371 8 PINTYPE=IN
+|Q DxDesigner_Library:Oscillation_Crystal 1
+AS DxDesigner_Library:Oscillation_Crystal INOV_VER_REC=14:33:21_1-9-15
+AS DxDesigner_Library:Oscillation_Crystal DEVICE=Oscillation_Crystal
+AS DxDesigner_Library:Oscillation_Crystal REFDES=U?
+AS DxDesigner_Library:Oscillation_Crystal PKG_TYPE=Oscillation_Crystal
+AS DxDesigner_Library:Oscillation_Crystal PART_NUMBER=ABS07-120-32.768kHz-T
+AS DxDesigner_Library:Oscillation_Crystal P/D_NUM=535-11937-1-ND
+AS DxDesigner_Library:Oscillation_Crystal PINORDER=PIN0 PIN1
+AP DxDesigner_Library:Oscillation_Crystal 1 #=1
+AP DxDesigner_Library:Oscillation_Crystal 1 PINTYPE=IN
+AP DxDesigner_Library:Oscillation_Crystal 2 #=2
+AP DxDesigner_Library:Oscillation_Crystal 2 PINTYPE=IN
+G GND
+M DxDesigner_Library:RTC_DS1371 $10I6
+I $10I6 DxDesigner_Library:RTC_DS1371 GND I2C_SCL I2C_SDA RTC_ALARM_TO_CPLD BATTERY_PLUS GND $10N34 $10N36 REFDES=U?`PART_NUMBER=DS1371`
+|R 14:34:4_1-9-15
+API $10I6 DxDesigner_Library:RTC_DS1371 1 #=4
+API $10I6 DxDesigner_Library:RTC_DS1371 2 #=6
+API $10I6 DxDesigner_Library:RTC_DS1371 3 #=5
+API $10I6 DxDesigner_Library:RTC_DS1371 4 #=7
+API $10I6 DxDesigner_Library:RTC_DS1371 5 #=8
+API $10I6 DxDesigner_Library:RTC_DS1371 6 #=3
+API $10I6 DxDesigner_Library:RTC_DS1371 7 #=1
+API $10I6 DxDesigner_Library:RTC_DS1371 8 #=2
+M DxDesigner_Library:Oscillation_Crystal $10I16
+I $10I16 DxDesigner_Library:Oscillation_Crystal $10N36 $10N34 REFDES=U?`
+|R 14:33:21_1-9-15
+API $10I16 DxDesigner_Library:Oscillation_Crystal 1 #=1
+API $10I16 DxDesigner_Library:Oscillation_Crystal 2 #=2
+EW
