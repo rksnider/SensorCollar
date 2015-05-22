@@ -1,0 +1,12 @@
+[2015-05-20 10.51.07] -------------------- CREATE --------------------
+[2015-05-20 10.51.07] Creating Project Backup infrastructure for project [C:\Users\kyler.callahan\Documents\work\Data_TRX\0Schematic\Data_TRX\Data_TRX.prj].
+[2015-05-20 10.51.08] Successfully created [AutoSave] backup [2015-05-20 10.51.07 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2015-05-20 14.51.07] Successfully created [AutoSave] backup [2015-05-20 14.51.07 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2015-05-21 11.29.04] Successfully created [AutoSave] backup [2015-05-21 11.29.01 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2015-05-21 15.29.03] Successfully created [AutoSave] backup [2015-05-21 15.29.01 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2015-05-21 15.29.03] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\Data_TRX\0Schematic\Data_TRX\ProjectBackup\backups\2015-05-20 10.51.07 - auto.zip].
+[2015-05-21 15.29.03] [AutoSave] backup file [Data_TRX\ProjectBackup\backups\2015-05-20 10.51.07 - auto.zip] removed.
+[2015-05-22 11.19.45] Successfully created [DxD Diagnostics] backup [2015-05-22 11.19.44 - DxDiag.zip] requested by [ECEROSSLAB01:j82t579].
+[2015-05-22 11.20.01] Successfully created [AutoSave] backup [2015-05-22 11.20.01 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2015-05-22 11.20.01] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\Data_TRX\0Schematic\Data_TRX\ProjectBackup\backups\2015-05-20 14.51.07 - auto.zip].
+[2015-05-22 11.20.01] [AutoSave] backup file [Data_TRX\ProjectBackup\backups\2015-05-20 14.51.07 - auto.zip] removed.
