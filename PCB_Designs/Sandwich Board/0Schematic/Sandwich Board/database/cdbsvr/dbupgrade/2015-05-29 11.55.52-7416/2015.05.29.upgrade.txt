@@ -1,0 +1,26 @@
+[2015.05.29 11:55:52] [0000m.01s.405ms] [0] WELCOME
+[2015.05.29 11:55:52] [0000m.01s.408ms] [1] iCDB Server ver.1.094, vt40T8RtWJOG2cE2Nlvc5A, build:535943 created 2013-01-08 09:09:26, sources stamp:vt40T8RtWJOG2cE2Nlvc5A
+[2015.05.29 11:55:52] [0000m.01s.408ms] [1] Copyright 2013 Mentor Graphics Corporation. All Rights Reserved.
+[2015.05.29 11:55:52] [0000m.01s.408ms] [1] Base flow version [7.9.4]
+[2015.05.29 11:55:52] [0000m.01s.408ms] [1] GBS Install Id [27413], Flow Id [PADS 9.5], Full Flow Name [PADS 9.5], Exact Access Date [Jun 1 2012]
+[2015.05.29 11:55:52] [0000m.01s.408ms] [1] UPDATE Install Info, GBS Install Id [29618], UPDATE Name [PADS 9.5 Update 1]
+[2015.05.29 11:55:52] [0000m.01s.408ms] [1] Machine [ECECB50801]  User [s58p233]  PID [7416]
+[2015.05.29 11:55:52] [0000m.01s.408ms] [1] Operating system [Microsoft Windows 7 Enterprise Edition, 32-bit Service Pack 1 (build 7601)]
+[2015.05.29 11:55:52] [0000m.01s.408ms] [1] Current working dir [C:\Users\tyler.davis5\Documents\Sumer Work 2015\Sandwich Board\0Schematic\Sandwich Board]
+[2015.05.29 11:55:52] [0000m.01s.408ms] [1] PATH [C:\MentorGraphics\9.5PADS\SDD_HOME\wv\win32\bin;C:\MentorGraphics\9.5PADS\SDD_HOME\common\win32\bin;C:\MentorGraphics\9.5PADS\SDD_HOME\common\win32\lib;C:\MentorGraphics\9.5PADS\MGC_HOME.ixn\bin;C:\MentorGraphics\9.5PADS\MGC_HOME.ixn\lib;C:\Python27\Lib\site-packages\PyQt4;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\MATLAB\R2013a\runtime\win32;C:\MATLAB\R2013a\bin;C:\Ch\bin;C:\Python27;C:\Python27\DLLs;C:\Python27\Scripts;C:\Python27\Lib\site-packages\vtk;C:\Python27\gnuplot\binary;C:\Program Files\pythonxy\SciTE-3.3.2-3;C:\Program Files\pythonxy\console;C:\MinGW32-xy\bin;C:\Program Files\MiKTeX 2.9\miktex\bin\;C:\Program Files\Windows Kits\8.0\Windows Performance Toolkit\;C:\Program Files\Microsoft SQL Server\110\Tools\Binn\;C:\altera\13.1\modelsim_ase\win32aloem;C:\MentorGraphics\9.4PADS\SDD_HOME\common\win32\lib;C:\MentorGraphics\9.5PADS\SDD_HOME\common\win32\lib]
+[2015.05.29 11:55:52] [0000m.01s.408ms] [1] SDD_HOME [C:\MentorGraphics\9.5PADS\SDD_HOME] on file system [NTFS]
+[2015.05.29 11:55:52] [0000m.01s.408ms] [1] SDD_PLATFORM [win32]
+[2015.05.29 11:55:52] [0000m.01s.408ms] [1] WDIR [C:\PADS Projects;C:\MentorGraphics\9.5PADS\SDD_HOME\standard]
+[2015.05.29 11:55:52] [0000m.01s.408ms] [1] Local iCDB working dir [C:\PADS Projects\iCDB] on file system [NTFS]
+[2015.05.29 11:55:52] [0000m.01s.408ms] [0] Creating database content backup before upgrade
+[2015.05.29 11:55:53] [0000m.01s.505ms] [0] Database content backed up to [C:\Users\tyler.davis5\Documents\Sumer Work 2015\Sandwich Board\0Schematic\Sandwich Board\database\cdbback\2015-05-29 11.55.52-7416.zip] of size [16 026 bytes (15.7 kB)] in [96ms 74us]
+[2015.05.29 11:55:53] [0000m.01s.514ms] [0] Upgrading constraint definitions from version [ce_ee.cns=7.10.24;user.cns=6511-058a-3b8d-3fc9-52d0-853a-2d08-5350-b506-e263-212d-1dbc]
+[2015.05.29 11:55:53] [0000m.01s.535ms] [0] Loading snapshot [1:DxD] version [2709]
+[2015.05.29 11:55:53] [0000m.01s.545ms] [0] Snapshot [1:DxD] loaded in [9ms 861us]
+[2015.05.29 11:55:53] [0000m.01s.545ms] [0] Upgrading constraint definitions for snapshot [1:DxD]
+[2015.05.29 11:55:53] [0000m.01s.546ms] [0] Constraint definitions for snapshot [1:DxD] upgraded in [923us]
+[2015.05.29 11:55:53] [0000m.01s.546ms] [0] Saving snapshot [1:DxD]
+[2015.05.29 11:55:53] [0000m.01s.546ms] [0] Snapshot [1:DxD] saved in [97us]
+[2015.05.29 11:55:53] [0000m.01s.550ms] [0] Constraint definitions upgraded to version [ce_ee.cns=7.10.24;user.cns=8194-3df0-d7c5-d2bb-828a-865d-28a8-6550-035a-e505-63cf-6c5c]
+[2015.05.29 11:55:53] [0000m.01s.551ms] [0] DONE
+[2015.05.29 11:55:53] [0000m.01s.551ms] [0] .

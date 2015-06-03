@@ -1,0 +1,9 @@
+*PADS-ECO-V9.5-MILS*
+*REMARK*  old file: C:\Users\tyler.davis5\Documents\Sumer Work 2015\Sandwich Board\1Working Version\MCollar_SANDWICH_worki01.asc
+*REMARK*  new file: C:\Users\tyler.davis5\Documents\Sumer Work 2015\Sandwich Board\0Schematic\Sandwich Board\S.asc
+*REMARK*  created by ECOGEN (Version 6.4v) on 6/2/2015 4:16:12 PM
+*DEL_ATTRIBUTE*	PCB	DEFAULT
+"CAM.Apply Oversize To All Pads"
+
+*REMARK*  Deleted pins: 0,  Added pins: 0
+*END*
