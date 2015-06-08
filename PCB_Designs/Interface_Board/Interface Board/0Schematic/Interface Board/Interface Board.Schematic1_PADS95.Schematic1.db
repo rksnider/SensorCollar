@@ -744,9 +744,9 @@
 		(net "USB_VCC"
 			(pins J6-1 J5-1))
 		(net "VCCA"
-			(pins U7-3 U2-5 C10-1 J7-3 C1-1 U3-5 U4-5 U5-1 J3-4))
+			(pins U7-3 U2-5 C10-1 J7-3 C1-1 U3-1 U4-1 U5-1 J3-4))
 		(net "VCCB"
-			(pins U7-7 U1-5 C9-1 C3-1 U3-1 U4-1 U5-5 U6-5 U6-1))
+			(pins U7-7 U1-5 C9-1 C3-1 U3-5 U4-5 U5-5 U6-5 U6-1))
 		(net "VCC_USB"
 			(pins U1-1 U2-1 C2-1 C4-1 J4-1)))
 	(network_electrical
