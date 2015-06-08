@@ -1,0 +1,44 @@
+*PADS-ECO-V9.5-MILS*
+*REMARK*  old file: C:\Users\tyler.davis5\Documents\Sumer Work 2015\Interface Board\1Working Version\MCollar_INTERFACE_worki01.asc
+*REMARK*  new file: C:\Users\tyler.davis5\Documents\Sumer Work 2015\Interface Board\0Schematic\Interface Board\Schematic1.asc
+*REMARK*  created by ECOGEN (Version 6.4v) on 6/4/2015 2:36:27 PM
+*DELPIN*
+J4.2  SERIAL_D-
+J4.3  SERIAL_D+
+J6.1  SERIAL_D-
+J6.2  USB_VCC
+J6.3  GND
+J6.4  SERIAL_D+
+J5.1  USB_VCC
+*NET*
+*SIGNAL*  EN_1P8V
+U2.3
+*SIGNAL*  EN_3P3V
+U1.3
+*SIGNAL*  GND
+J6.4
+*SIGNAL*  SERIAL_D+
+J6.3  J4.3
+*SIGNAL*  SERIAL_D-
+J6.2  J4.2
+*SIGNAL*  USB_VCC
+J6.1  J5.1
+*DEL_ATTRIBUTE*	PART	U2
+"Geometry.Height"
+*DEL_ATTRIBUTE*	PART	U1
+"Geometry.Height"
+*DEL_ATTRIBUTE*	PART	U3
+"Geometry.Height"
+*DEL_ATTRIBUTE*	PART	U4
+"Geometry.Height"
+*DEL_ATTRIBUTE*	PART	U5
+"Geometry.Height"
+*DEL_ATTRIBUTE*	PART	U6
+"Geometry.Height"
+*DEL_ATTRIBUTE*	PART	U7
+"Geometry.Height"
+*DEL_ATTRIBUTE*	PART	J5
+"Geometry.Height"
+
+*REMARK*  Deleted pins: 7,  Added pins: 9
+*END*
