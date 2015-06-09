@@ -136,3 +136,8 @@
 [2015-02-09 11.01.32] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
 [2015-05-22 11.27.36] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
 [2015-05-22 11.27.36] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2015-05-26 12.12.16] Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2015-05-26 12.12.16] WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2015-05-26 12.14.53] Successfully created [AutoSave] backup [2015-05-26 12.14.51 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2015-05-26 12.14.53] Removing excessive [AutoSave] backup file [C:\GitHubRepositories\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2014-10-22 10.02.32 - auto.zip].
+[2015-05-26 12.14.53] [AutoSave] backup file [DevBoard_PowerMonitor\ProjectBackup\backups\2014-10-22 10.02.32 - auto.zip] removed.
