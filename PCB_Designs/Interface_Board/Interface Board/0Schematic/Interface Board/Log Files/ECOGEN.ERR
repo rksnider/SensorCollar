@@ -1,20 +1,19 @@
-PADS Layout ECO Generator (Version 6.4v) 6/8/2015 12:19:56 PM
+PADS Layout ECO Generator (Version 6.4v) 6/10/2015 12:04:52 PM
 Copyright (c) 2003 - 2008 Mentor Graphics Corp. - All rights reserved
 Command line arguments:  -e C:\Users\tyler.davis5\Documents\Sumer Work 2015\Interface Board\0Schematic\Interface Board\Log Files\ECOGEN.ERR -r p -a PCB,PART,NET,PIN
-2 msec
+1 msec
 0 msec
 Reading the OLD DESIGN
-There are 29 parts in the design
-There are 24 signals in the design
-There are 103 pins in the design
-4 msec
+There are 21 parts in the design
+There are 23 signals in the design
+There are 89 pins in the design
+2 msec
 Reading the NEW DESIGN
-WARNING: Signal EN_3P3V has 1 pins
-There are 29 parts in the design
-There are 26 signals in the design
-There are 105 pins in the design
+There are 21 parts in the design
+There are 23 signals in the design
+There are 89 pins in the design
 1 msec
-Final cost=160
+Final cost=0
 Partitioning - 0 msec
-Final Matching - 1 msec
-Deleted pins: 4,  Added pins: 6
+Final Matching - 0 msec
+Deleted pins: 0,  Added pins: 0

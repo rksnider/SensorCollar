@@ -157,22 +157,6 @@
 			(pin 3  3 "SM_BUS__SM_BUS_1" 0 "PIN3" 0)
 			(pin 2  3 "SM_BUS__SM_BUS_1" 0 "PIN2" 0)
 			(pin 1  3 "SM_BUS__SM_BUS_1" 0 "PIN1" 0))
-		(part "RES_1M1_0402")
-		(logical_part_mapping "RES_1M1_0402"
-			(comp "R4" "R3" "R2" "R1"))
-		(logical_part "RES_1M1_0402"
-			(slots
-				(slot "RES_1M1_0402__RES_1M1_0402_1"
-					(attributes
-						(attval "DEVICE" "RES_1M1_0402")
-						(attval "Part Number" "ERJ-2RKF1004X")
-						(attval "PINSWAP" "[(1,2)]")
-						(attval "PKG_TYPE" "0402_MY")
-						(attval "REFDES" "R?")
-						(attval "Tolerance" "1%")
-						(attval "Value" "1M"))))
-			(pin 2  5 "RES_1M1_0402__RES_1M1_0402_1" 0 "2" 0)
-			(pin 1  5 "RES_1M1_0402__RES_1M1_0402_1" 0 "1" 0))
 		(part "JUMPER_8PIN_100MIL")
 		(logical_part_mapping "JUMPER_8PIN_100MIL"
 			(comp "U8"))
@@ -221,35 +205,19 @@
 						(attval "DEVICE" "EXT_SERIAL")
 						(attval "PKG_TYPE" "EXT_SERIAL")
 						(attval "REFDES" "J?"))))
-			(pin 1  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "VCC" 0)
-			(pin 7  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "TCLK" 0)
-			(pin 10  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "OUT" 0)
-			(pin 9  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "IN" 0)
-			(pin 5  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "GND" 0)
-			(pin 4  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "FS" 0)
-			(pin 2  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "D-" 0)
-			(pin 3  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "D+" 0)
-			(pin 8  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "CTL" 0)
-			(pin 6  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "CLK" 0))
-		(part "CAP_15PF_0402")
-		(logical_part_mapping "CAP_15PF_0402"
-			(comp "C8" "C7" "C6" "C5"))
-		(logical_part "CAP_15PF_0402"
-			(slots
-				(slot "CAP_15PF_0402__CAP_15PF_0402_1"
-					(attributes
-						(attval "DEVICE" "CAP_15PF_0402")
-						(attval "Part Number" "CL05C150JB5NNNC")
-						(attval "PINSWAP" "[(1,2)]")
-						(attval "PKG_TYPE" "0402_MY")
-						(attval "REFDES" "C?")
-						(attval "Tolerance" "5%")
-						(attval "Value" "15PF"))))
-			(pin 2  5 "CAP_15PF_0402__CAP_15PF_0402_1" 0 "2" 0)
-			(pin 1  5 "CAP_15PF_0402__CAP_15PF_0402_1" 0 "1" 0))
+			(pin 10  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "VCC" 0)
+			(pin 4  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "TCLK" 0)
+			(pin 1  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "OUT" 0)
+			(pin 2  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "IN" 0)
+			(pin 6  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "GND" 0)
+			(pin 7  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "FS" 0)
+			(pin 9  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "D-" 0)
+			(pin 8  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "D+" 0)
+			(pin 3  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "CTL" 0)
+			(pin 5  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "CLK" 0))
 		(part "CAP_1UF_0603")
 		(logical_part_mapping "CAP_1UF_0603"
-			(comp "C1"))
+			(comp "C4" "C2" "C1"))
 		(logical_part "CAP_1UF_0603"
 			(slots
 				(slot "CAP_1UF_0603__CAP_1UF_0603_1"
@@ -279,22 +247,6 @@
 						(attval "Value" "1UF"))))
 			(pin 2  5 "CAP_1UF_0402__CAP_1UF_0402_1" 0 "2" 0)
 			(pin 1  5 "CAP_1UF_0402__CAP_1UF_0402_1" 0 "1" 0))
-		(part "CAP_0P1UF_0603")
-		(logical_part_mapping "CAP_0P1UF_0603"
-			(comp "C4" "C2"))
-		(logical_part "CAP_0P1UF_0603"
-			(slots
-				(slot "CAP_0P1UF_0603__CAP_0P1UF_0603_1"
-					(attributes
-						(attval "DEVICE" "CAP_0P1UF_0603")
-						(attval "Part Number" "GRM188R71C104KA01D")
-						(attval "PINSWAP" "[(1,2)]")
-						(attval "PKG_TYPE" "0603_MY")
-						(attval "REFDES" "C?")
-						(attval "Tolerance" "10%")
-						(attval "Value" "0.1UF"))))
-			(pin 2  5 "CAP_0P1UF_0603__CAP_0P1UF_0603_1" 0 "2" 0)
-			(pin 1  5 "CAP_0P1UF_0603__CAP_0P1UF_0603_1" 0 "1" 0))
 		(part "CAP_0P1UF_0402")
 		(logical_part_mapping "CAP_0P1UF_0402"
 			(comp "C10" "C9"))
@@ -425,8 +377,8 @@
 				(comp_pin "2" 0.0 0.0 "IN")
 				(comp_pin "3" 0.0 0.0 "IN"))
 			(attributes
-				(attval "Part Number" "TLV70218DBVT")
 				(attval "PKG_GRP" "SC-74A")
+				(attval "Part Number" "TLV70218DBVT")
 				(attval "DEVICE" "1P8_LDOREG_TLV702")
 				(attval "REFDES" "U2")))
 		(component "3P3_LDOREG_TLV702"
@@ -441,46 +393,6 @@
 				(attval "PKG_GRP" "SC-74A")
 				(attval "DEVICE" "3P3_LDOREG_TLV702")
 				(attval "REFDES" "U1")))
-		(component "0402_MY"
-			(place "R4" 0.0 0.0 top 0.0
-				(comp_pin "2" 0.0 0.0 "BI")
-				(comp_pin "1" 0.0 0.0 "BI"))
-			(attributes
-				(attval "Part Number" "ERJ-2RKF1004X")
-				(attval "Tolerance" "1%")
-				(attval "Value" "1M")
-				(attval "DEVICE" "RES_1M1_0402")
-				(attval "REFDES" "R4")))
-		(component "0402_MY"
-			(place "R3" 0.0 0.0 top 0.0
-				(comp_pin "2" 0.0 0.0 "BI")
-				(comp_pin "1" 0.0 0.0 "BI"))
-			(attributes
-				(attval "Part Number" "ERJ-2RKF1004X")
-				(attval "Tolerance" "1%")
-				(attval "Value" "1M")
-				(attval "DEVICE" "RES_1M1_0402")
-				(attval "REFDES" "R3")))
-		(component "0402_MY"
-			(place "R2" 0.0 0.0 top 0.0
-				(comp_pin "2" 0.0 0.0 "BI")
-				(comp_pin "1" 0.0 0.0 "BI"))
-			(attributes
-				(attval "Part Number" "ERJ-2RKF1004X")
-				(attval "Tolerance" "1%")
-				(attval "Value" "1M")
-				(attval "DEVICE" "RES_1M1_0402")
-				(attval "REFDES" "R2")))
-		(component "0402_MY"
-			(place "R1" 0.0 0.0 top 0.0
-				(comp_pin "2" 0.0 0.0 "BI")
-				(comp_pin "1" 0.0 0.0 "BI"))
-			(attributes
-				(attval "Part Number" "ERJ-2RKF1004X")
-				(attval "Tolerance" "1%")
-				(attval "Value" "1M")
-				(attval "DEVICE" "RES_1M1_0402")
-				(attval "REFDES" "R1")))
 		(component "SPST_SLIDE_SWITCH"
 			(place "J7" 0.0 0.0 top 0.0
 				(comp_pin "3" 0.0 0.0 "IN")
@@ -512,16 +424,16 @@
 				(attval "REFDES" "J5")))
 		(component "EXT_SERIAL"
 			(place "J4" 0.0 0.0 top 0.0
-				(comp_pin "1" 0.0 0.0 "IN")
-				(comp_pin "7" 0.0 0.0 "IN")
 				(comp_pin "10" 0.0 0.0 "IN")
-				(comp_pin "9" 0.0 0.0 "IN")
-				(comp_pin "5" 0.0 0.0 "IN")
 				(comp_pin "4" 0.0 0.0 "IN")
+				(comp_pin "1" 0.0 0.0 "IN")
 				(comp_pin "2" 0.0 0.0 "IN")
-				(comp_pin "3" 0.0 0.0 "IN")
+				(comp_pin "6" 0.0 0.0 "IN")
+				(comp_pin "7" 0.0 0.0 "IN")
+				(comp_pin "9" 0.0 0.0 "IN")
 				(comp_pin "8" 0.0 0.0 "IN")
-				(comp_pin "6" 0.0 0.0 "IN"))
+				(comp_pin "3" 0.0 0.0 "IN")
+				(comp_pin "5" 0.0 0.0 "IN"))
 			(attributes
 				(attval "DEVICE" "EXT_SERIAL")
 				(attval "REFDES" "J4")))
@@ -586,54 +498,14 @@
 				(attval "DEVICE" "CAP_0P1UF_0402")
 				(attval "REFDES" "C9")))
 		(component "0402_MY"
-			(place "C8" 0.0 0.0 top 0.0
-				(comp_pin "2" 0.0 0.0 "BI")
-				(comp_pin "1" 0.0 0.0 "BI"))
-			(attributes
-				(attval "Part Number" "CL05C150JB5NNNC")
-				(attval "Tolerance" "5%")
-				(attval "Value" "15PF")
-				(attval "DEVICE" "CAP_15PF_0402")
-				(attval "REFDES" "C8")))
-		(component "0402_MY"
-			(place "C7" 0.0 0.0 top 0.0
-				(comp_pin "2" 0.0 0.0 "BI")
-				(comp_pin "1" 0.0 0.0 "BI"))
-			(attributes
-				(attval "Part Number" "CL05C150JB5NNNC")
-				(attval "Tolerance" "5%")
-				(attval "Value" "15PF")
-				(attval "DEVICE" "CAP_15PF_0402")
-				(attval "REFDES" "C7")))
-		(component "0402_MY"
-			(place "C6" 0.0 0.0 top 0.0
-				(comp_pin "2" 0.0 0.0 "BI")
-				(comp_pin "1" 0.0 0.0 "BI"))
-			(attributes
-				(attval "Part Number" "CL05C150JB5NNNC")
-				(attval "Tolerance" "5%")
-				(attval "Value" "15PF")
-				(attval "DEVICE" "CAP_15PF_0402")
-				(attval "REFDES" "C6")))
-		(component "0402_MY"
-			(place "C5" 0.0 0.0 top 0.0
-				(comp_pin "2" 0.0 0.0 "BI")
-				(comp_pin "1" 0.0 0.0 "BI"))
-			(attributes
-				(attval "Part Number" "CL05C150JB5NNNC")
-				(attval "Tolerance" "5%")
-				(attval "Value" "15PF")
-				(attval "DEVICE" "CAP_15PF_0402")
-				(attval "REFDES" "C5")))
-		(component "0603_MY"
 			(place "C4" 0.0 0.0 top 0.0
 				(comp_pin "2" 0.0 0.0 "BI")
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
-				(attval "Part Number" "GRM188R71C104KA01D")
-				(attval "Tolerance" "10%")
-				(attval "Value" "0.1UF")
-				(attval "DEVICE" "CAP_0P1UF_0603")
+				(attval "Part Number" "GRM188R61A105KA61D")
+				(attval "Tolerance" "")
+				(attval "Value" "1UF")
+				(attval "DEVICE" "CAP_1UF_0603")
 				(attval "REFDES" "C4")))
 		(component "0402_MY"
 			(place "C3" 0.0 0.0 top 0.0
@@ -645,15 +517,15 @@
 				(attval "Value" "1UF")
 				(attval "DEVICE" "CAP_1UF_0402")
 				(attval "REFDES" "C3")))
-		(component "0603_MY"
+		(component "0402_MY"
 			(place "C2" 0.0 0.0 top 0.0
 				(comp_pin "2" 0.0 0.0 "BI")
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
-				(attval "Part Number" "GRM188R71C104KA01D")
-				(attval "Tolerance" "10%")
-				(attval "Value" "0.1UF")
-				(attval "DEVICE" "CAP_0P1UF_0603")
+				(attval "Part Number" "GRM188R61A105KA61D")
+				(attval "Tolerance" "")
+				(attval "Value" "1UF")
+				(attval "DEVICE" "CAP_1UF_0603")
 				(attval "REFDES" "C2")))
 		(component "0402_MY"
 			(place "C1" 0.0 0.0 top 0.0
@@ -674,35 +546,25 @@
 		(func "$2I1" "" "U3" 1)
 		(func "$1I41" "" "U2" 1)
 		(func "$1I55" "" "U1" 1)
-		(func "$2I7" "" "R4" 1)
-		(func "$2I41" "" "R3" 1)
-		(func "$2I30" "" "R2" 1)
-		(func "$2I19" "" "R1" 1)
 		(func "$5I45" "" "J7" 1)
 		(func "$5I6" "" "J6" 1)
 		(func "$5I54" "" "J5" 1)
-		(func "$4I122" "" "J4" 1)
+		(func "$4I160" "" "J4" 1)
 		(func "$4I73" "" "J3" 1)
 		(func "$4I31" "" "J2" 1)
 		(func "$4I102" "" "J1" 1)
 		(func "$3I20" "" "C10" 1)
 		(func "$3I16" "" "C9" 1)
-		(func "$2I6" "" "C8" 1)
-		(func "$2I40" "" "C7" 1)
-		(func "$2I29" "" "C6" 1)
-		(func "$2I18" "" "C5" 1)
 		(func "$1I76" "" "C4" 1)
 		(func "$1I70" "" "C3" 1)
 		(func "$1I32" "" "C2" 1)
 		(func "$1I22" "" "C1" 1))
 	(network
-		(net "EN_1P8V"
-			(pins U2-3))
-		(net "EN_3P3V"
-			(pins U1-3))
+		(net "$5N32"
+			(pins J5-3 J5-2))
 		(net "GND"
-			(pins U7-2 J1-4 U1-2 C5-2 C6-2 C7-2 C8-2 U2-2 C9-2 J6-4 C3-2 C1-2 U3-3 U4-3 U5-3
- U6-3 J2-10 J2-2 J3-10 J3-2 J5-5 C2-2 C4-2 J4-5 U8-7 R1-1 R2-1 R3-1 R4-1))
+			(pins U7-2 J1-3 U1-2 U2-2 C9-2 J6-4 C3-2 C1-2 C2-2 C4-2 U3-3 U4-3 U5-3 U6-3
+ J2-10 J2-2 J3-10 J3-2 J5-5 J4-6 U8-7))
 		(net "I2C_JUMPER_PIN1"
 			(pins U7-8 U8-1))
 		(net "I2C_JUMPER_PIN2"
@@ -714,23 +576,23 @@
 		(net "I2C_LT_A1"
 			(pins U7-5 J1-1))
 		(net "I2C_LT_A2"
-			(pins U7-4 J1-3))
+			(pins U7-4 J1-4))
 		(net "LT_TO_SPI_PIN5"
-			(pins C7-1 U6-4 J2-5 R3-2))
+			(pins U6-4 J2-5))
 		(net "SERIAL_CLK"
-			(pins C8-1 U4-4 J4-6 R4-2))
+			(pins U4-4 J4-5))
 		(net "SERIAL_CTL"
-			(pins C5-1 U3-4 J3-5 J4-8 R1-2))
-		(net "SERIAL_D+"
-			(pins J6-3 J4-3))
-		(net "SERIAL_D-"
-			(pins J6-2 J4-2))
+			(pins U3-4 J3-5 J4-3))
+		(net "SERIAL_DMINUS"
+			(pins J6-2 J4-9))
+		(net "SERIAL_DPLUS"
+			(pins J6-3 J4-8))
 		(net "SERIAL_IN"
-			(pins C6-1 U5-4 J3-9 J4-9 R2-2))
+			(pins U5-4 J3-9 J4-2))
 		(net "SERIAL_OUT"
-			(pins U6-2 J3-3 J4-10))
+			(pins U6-2 J3-3 J4-1))
 		(net "SERIAL_TCLK"
-			(pins J3-1 J4-7))
+			(pins J3-1 J4-4))
 		(net "SPI_PIN7_TO_LT"
 			(pins U4-2 J2-7))
 		(net "SPI_PIN8_TO_LT"
@@ -738,31 +600,21 @@
 		(net "SPI_PIN9_TO_LT"
 			(pins U3-2 J2-9))
 		(net "SWITCH_TO_FS"
-			(pins J7-1 J4-4))
-		(net "USB_D-_TO_D+"
-			(pins J5-3 J5-2))
-		(net "USB_VCC"
-			(pins J6-1 J5-1))
-		(net "VCCA"
-			(pins U7-3 U2-5 C10-1 J7-3 C1-1 U3-1 U4-1 U5-1 J3-4))
-		(net "VCCB"
-			(pins U7-7 U1-5 C9-1 C3-1 U3-5 U4-5 U5-5 U6-5 U6-1))
+			(pins J7-1 J4-7))
+		(net "VCC1P8"
+			(pins U7-6 U7-3 U2-5 C10-1 J7-3 C1-1 U3-5 U4-5 U5-5 U6-1 J3-4))
+		(net "VCC3P3"
+			(pins U7-7 U1-5 C9-1 C3-1 U3-1 U4-1 U5-1 U6-5))
 		(net "VCC_USB"
-			(pins U1-1 U2-1 C2-1 C4-1 J4-1)))
+			(pins U1-3 U1-1 U2-3 U2-1 C2-1 C4-1 J5-1 J4-10)))
 	(network_electrical
 		(net_scalar "VCC_USB"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "VCCB"
+		(net_scalar "VCC3P3"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "VCCA"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "USB_VCC"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "USB_D-_TO_D+"
+		(net_scalar "VCC1P8"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "SWITCH_TO_FS"
@@ -786,10 +638,10 @@
 		(net_scalar "SERIAL_IN"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "SERIAL_D-"
+		(net_scalar "SERIAL_DPLUS"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "SERIAL_D+"
+		(net_scalar "SERIAL_DMINUS"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "SERIAL_CTL"
@@ -822,9 +674,6 @@
 		(net_scalar "GND"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "EN_3P3V"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "EN_1P8V"
+		(net_scalar "$5N32"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))))

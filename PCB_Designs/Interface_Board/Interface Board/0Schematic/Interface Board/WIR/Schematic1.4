@@ -95,34 +95,34 @@ AP DxDesigner_Library:SM_BUS 4 PINTYPE=IN
 AP DxDesigner_Library:SM_BUS 5 #=5
 AP DxDesigner_Library:SM_BUS 5 PINTYPE=IN
 |Q DxDesigner_Library:EXT_SERIAL 1
+AS DxDesigner_Library:EXT_SERIAL INOV_VER_REC=11:38:38_6-10-15
 AS DxDesigner_Library:EXT_SERIAL DEVICE=EXT_SERIAL
 AS DxDesigner_Library:EXT_SERIAL REFDES=J?
 AS DxDesigner_Library:EXT_SERIAL PKG_TYPE=EXT_SERIAL
-AS DxDesigner_Library:EXT_SERIAL INOV_VER_REC=16:28:10_6-3-15
 AS DxDesigner_Library:EXT_SERIAL PINORDER=CLK CTL D+ D- FS GND IN OUT TCLK VCC
-AP DxDesigner_Library:EXT_SERIAL 1 #=6
+AP DxDesigner_Library:EXT_SERIAL 1 #=5
 AP DxDesigner_Library:EXT_SERIAL 1 PINTYPE=IN
-AP DxDesigner_Library:EXT_SERIAL 2 #=8
+AP DxDesigner_Library:EXT_SERIAL 2 #=3
 AP DxDesigner_Library:EXT_SERIAL 2 PINTYPE=IN
-AP DxDesigner_Library:EXT_SERIAL 3 #=3
+AP DxDesigner_Library:EXT_SERIAL 3 #=8
 AP DxDesigner_Library:EXT_SERIAL 3 PINTYPE=IN
-AP DxDesigner_Library:EXT_SERIAL 4 #=2
+AP DxDesigner_Library:EXT_SERIAL 4 #=9
 AP DxDesigner_Library:EXT_SERIAL 4 PINTYPE=IN
-AP DxDesigner_Library:EXT_SERIAL 5 #=4
+AP DxDesigner_Library:EXT_SERIAL 5 #=7
 AP DxDesigner_Library:EXT_SERIAL 5 PINTYPE=IN
-AP DxDesigner_Library:EXT_SERIAL 6 #=5
+AP DxDesigner_Library:EXT_SERIAL 6 #=6
 AP DxDesigner_Library:EXT_SERIAL 6 PINTYPE=IN
-AP DxDesigner_Library:EXT_SERIAL 7 #=9
+AP DxDesigner_Library:EXT_SERIAL 7 #=2
 AP DxDesigner_Library:EXT_SERIAL 7 PINTYPE=IN
-AP DxDesigner_Library:EXT_SERIAL 8 #=10
+AP DxDesigner_Library:EXT_SERIAL 8 #=1
 AP DxDesigner_Library:EXT_SERIAL 8 PINTYPE=IN
-AP DxDesigner_Library:EXT_SERIAL 9 #=7
+AP DxDesigner_Library:EXT_SERIAL 9 #=4
 AP DxDesigner_Library:EXT_SERIAL 9 PINTYPE=IN
-AP DxDesigner_Library:EXT_SERIAL 10 #=1
+AP DxDesigner_Library:EXT_SERIAL 10 #=10
 AP DxDesigner_Library:EXT_SERIAL 10 PINTYPE=IN
 G GND
 M DxDesigner_Library:JUMPER_8PIN_100MIL $4I6
-I $4I6 DxDesigner_Library:JUMPER_8PIN_100MIL I2C_JUMPER_PIN1 I2C_JUMPER_TO_SPI_PIN1 I2C_JUMPER_PIN2 I2C_JUMPER_TO_SPI_PIN3 ? ? GND ? REFDES=U?`
+I $4I6 DxDesigner_Library:JUMPER_8PIN_100MIL I2C_JUMPER_PIN1 I2C_JUMPER_TO_SPI_PIN1 I2C_JUMPER_PIN2 I2C_JUMPER_TO_SPI_PIN3 ? ? GND ? DEVICE=JUMPER_8PIN_100MIL`REFDES=U?`
 |R 15:23:15_6-3-15
 API $4I6 DxDesigner_Library:JUMPER_8PIN_100MIL 1 #=1
 API $4I6 DxDesigner_Library:JUMPER_8PIN_100MIL 2 #=2
@@ -146,7 +146,7 @@ API $4I31 DxDesigner_Common_Parts:SPI_HEADER 8 #=6
 API $4I31 DxDesigner_Common_Parts:SPI_HEADER 9 #=7
 API $4I31 DxDesigner_Common_Parts:SPI_HEADER 10 #=9
 M DxDesigner_Library:JTAG_HEADER $4I73
-I $4I73 DxDesigner_Library:JTAG_HEADER GND GND ? ? ? SERIAL_TCLK SERIAL_IN SERIAL_OUT SERIAL_CTL VCCA REFDES=J?`
+I $4I73 DxDesigner_Library:JTAG_HEADER GND GND ? ? ? SERIAL_TCLK SERIAL_IN SERIAL_OUT SERIAL_CTL VCC1P8 REFDES=J?`
 |R 11:32:8_7-9-14
 API $4I73 DxDesigner_Library:JTAG_HEADER 1 #=10
 API $4I73 DxDesigner_Library:JTAG_HEADER 2 #=2
@@ -159,24 +159,24 @@ API $4I73 DxDesigner_Library:JTAG_HEADER 8 #=3
 API $4I73 DxDesigner_Library:JTAG_HEADER 9 #=5
 API $4I73 DxDesigner_Library:JTAG_HEADER 10 #=4
 M DxDesigner_Library:SM_BUS $4I102
-I $4I102 DxDesigner_Library:SM_BUS I2C_LT_A1 ? I2C_LT_A2 GND ? REFDES=J?`
+I $4I102 DxDesigner_Library:SM_BUS I2C_LT_A1 ? GND I2C_LT_A2 ? REFDES=J?`
 |R 16:19:17_6-3-15
 API $4I102 DxDesigner_Library:SM_BUS 1 #=1
 API $4I102 DxDesigner_Library:SM_BUS 2 #=2
 API $4I102 DxDesigner_Library:SM_BUS 3 #=3
 API $4I102 DxDesigner_Library:SM_BUS 4 #=4
 API $4I102 DxDesigner_Library:SM_BUS 5 #=5
-M DxDesigner_Library:EXT_SERIAL $4I122
-I $4I122 DxDesigner_Library:EXT_SERIAL SERIAL_CLK SERIAL_CTL SERIAL_D+ SERIAL_D- SWITCH_TO_FS GND SERIAL_IN SERIAL_OUT SERIAL_TCLK VCC_USB REFDES=J?`
-|R 16:28:10_6-3-15
-API $4I122 DxDesigner_Library:EXT_SERIAL 1 #=6
-API $4I122 DxDesigner_Library:EXT_SERIAL 2 #=8
-API $4I122 DxDesigner_Library:EXT_SERIAL 3 #=3
-API $4I122 DxDesigner_Library:EXT_SERIAL 4 #=2
-API $4I122 DxDesigner_Library:EXT_SERIAL 5 #=4
-API $4I122 DxDesigner_Library:EXT_SERIAL 6 #=5
-API $4I122 DxDesigner_Library:EXT_SERIAL 7 #=9
-API $4I122 DxDesigner_Library:EXT_SERIAL 8 #=10
-API $4I122 DxDesigner_Library:EXT_SERIAL 9 #=7
-API $4I122 DxDesigner_Library:EXT_SERIAL 10 #=1
+M DxDesigner_Library:EXT_SERIAL $4I160
+I $4I160 DxDesigner_Library:EXT_SERIAL SERIAL_CLK SERIAL_CTL SERIAL_DPlus SERIAL_DMinus SWITCH_TO_FS GND SERIAL_IN SERIAL_OUT SERIAL_TCLK VCC_USB REFDES=J?`
+|R 11:38:38_6-10-15
+API $4I160 DxDesigner_Library:EXT_SERIAL 1 #=5
+API $4I160 DxDesigner_Library:EXT_SERIAL 2 #=3
+API $4I160 DxDesigner_Library:EXT_SERIAL 3 #=8
+API $4I160 DxDesigner_Library:EXT_SERIAL 4 #=9
+API $4I160 DxDesigner_Library:EXT_SERIAL 5 #=7
+API $4I160 DxDesigner_Library:EXT_SERIAL 6 #=6
+API $4I160 DxDesigner_Library:EXT_SERIAL 7 #=2
+API $4I160 DxDesigner_Library:EXT_SERIAL 8 #=1
+API $4I160 DxDesigner_Library:EXT_SERIAL 9 #=4
+API $4I160 DxDesigner_Library:EXT_SERIAL 10 #=10
 EW
