@@ -1,0 +1,156 @@
+[2015.06.01 09:24:18] [0000m.00s.036ms] [0] WELCOME
+[2015.06.01 09:24:18] [0000m.00s.037ms] [1] iCDB Server ver.1.094, vt40T8RtWJOG2cE2Nlvc5A, build:535943 created 2013-01-08 09:09:26, sources stamp:vt40T8RtWJOG2cE2Nlvc5A
+[2015.06.01 09:24:18] [0000m.00s.037ms] [1] Copyright 2013 Mentor Graphics Corporation. All Rights Reserved.
+[2015.06.01 09:24:18] [0000m.00s.037ms] [1] Base flow version [7.9.4]
+[2015.06.01 09:24:18] [0000m.00s.037ms] [1] GBS Install Id [27413], Flow Id [PADS 9.5], Full Flow Name [PADS 9.5], Exact Access Date [Jun 1 2012]
+[2015.06.01 09:24:18] [0000m.00s.037ms] [1] UPDATE Install Info, GBS Install Id [29618], UPDATE Name [PADS 9.5 Update 1]
+[2015.06.01 09:24:18] [0000m.00s.037ms] [1] Machine [ECEROSSLAB01]  User [j82t579]  PID [3556]
+[2015.06.01 09:24:18] [0000m.00s.037ms] [1] Operating system [Microsoft Windows 7 Enterprise Edition, 32-bit Service Pack 1 (build 7601)]
+[2015.06.01 09:24:18] [0000m.00s.038ms] [1] Current working dir [C:\Users\kyler.callahan\Documents\work\Data_TRX\0Schematic\Data_TRX]
+[2015.06.01 09:24:18] [0000m.00s.038ms] [1] PATH [C:\MentorGraphics\9.5PADS\SDD_HOME\wv\win32\bin;C:\MentorGraphics\9.5PADS\SDD_HOME\common\win32\bin;C:\MentorGraphics\9.5PADS\SDD_HOME\common\win32\lib;C:\MentorGraphics\9.5PADS\MGC_HOME.ixn\bin;C:\MentorGraphics\9.5PADS\MGC_HOME.ixn\lib;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\MATLAB\R2013a\runtime\win32;C:\MATLAB\R2013a\bin;C:\Program Files\ATI Technologies\ATI.ACE\Core-Static;C:\altera\13.1\modelsim_ae\win32aloem;C:\MentorGraphics\9.5PADS\SDD_HOME\common\win32\lib]
+[2015.06.01 09:24:18] [0000m.00s.038ms] [1] SDD_HOME [C:\MentorGraphics\9.5PADS\SDD_HOME] on file system [NTFS]
+[2015.06.01 09:24:18] [0000m.00s.038ms] [1] SDD_PLATFORM [win32]
+[2015.06.01 09:24:18] [0000m.00s.038ms] [1] WDIR [C:\PADS Projects;C:\MentorGraphics\9.5PADS\SDD_HOME\standard]
+[2015.06.01 09:24:18] [0000m.00s.038ms] [1] Local iCDB working dir [C:\PADS Projects\iCDB] on file system [NTFS]
+[2015.06.01 09:24:18] [0000m.00s.038ms] [2] S: Loading config files
+[2015.06.01 09:24:18] [0000m.00s.045ms] [1] Config file [C:\Users\kyler.callahan\Documents\work\Data_TRX\0Schematic\Data_TRX\database\cdbsvr\Server.cfg] not found
+[2015.06.01 09:24:18] [0000m.00s.050ms] [3] S: Config loaded
+[2015.06.01 09:24:18] [0000m.00s.060ms] [0] S: Project path [C:\Users\kyler.callahan\Documents\work\Data_TRX\0Schematic\Data_TRX\database] on file system [NTFS]
+[2015.06.01 09:24:18] [0000m.00s.060ms] [0] S: Project file (.prj) path [C:\Users\kyler.callahan\Documents\work\Data_TRX\0Schematic\Data_TRX\Data_TRX.prj] on file system [NTFS]
+[2015.06.01 09:24:18] [0000m.00s.060ms] [1] S: WARNING: Database auto-repair support DISABLED
+[2015.06.01 09:24:18] [0000m.00s.061ms] [0] S: Single-user mode (auto)
+[2015.06.01 09:24:18] [0000m.00s.061ms] [0] S: Event polling mode autodetection
+[2015.06.01 09:24:18] [0000m.00s.066ms] [0] S: Started up automatically by iCDB Client: ECEROSSLAB01:j82t579:1112
+[2015.06.01 09:24:18] [0000m.00s.066ms] [0] S: Auto close mode
+[2015.06.01 09:24:18] [0000m.00s.066ms] [0] S: Database ID [e149-d4e5-55df-1e5f-b7bb-c550-8bbc-5550-be07-e263-212d-1dbc]
+[2015.06.01 09:24:18] [0000m.00s.066ms] [0] PathTranslator: BEGIN dumping
+[2015.06.01 09:24:18] [0000m.00s.066ms] [0] PathTranslator: Local -> global path prefix list
+[2015.06.01 09:24:18] [0000m.00s.066ms] [0] PathTranslator: [Z:\] -> [\\opal.msu.montana.edu\j\j82t579\]
+[2015.06.01 09:24:18] [0000m.00s.066ms] [0] PathTranslator: Global -> local path prefix list
+[2015.06.01 09:24:18] [0000m.00s.066ms] [0] PathTranslator: [\\opal.msu.montana.edu\j\j82t579\] -> [Z:\]
+[2015.06.01 09:24:18] [0000m.00s.066ms] [0] PathTranslator: END dumping
+[2015.06.01 09:24:18] [0000m.00s.066ms] [0] S: START
+[2015.06.01 09:24:18] [0000m.00s.067ms] [0] S: Server startup lock file created
+[2015.06.01 09:24:18] [0000m.00s.068ms] [0] S: Listening for client connections on port [10000]
+[2015.06.01 09:24:18] [0000m.00s.069ms] [0] S: Server network ID [ecerosslab01:153.90.121.69,ecerosslab01,ecerosslab01.coe.montana.edu:10000]
+[2015.06.01 09:24:18] [0000m.00s.069ms] [0] S: Server GUID [5073-5e9e-dc7d-8d7f-2297-c657-297c-6550-f496-e263-212d-1dbc]
+[2015.06.01 09:24:18] [0000m.00s.069ms] [0] S: Project GUID [e149-d4e5-55df-1e5f-b7bb-c550-8bbc-5550-be07-e263-212d-1dbc]
+[2015.06.01 09:24:18] [0000m.00s.070ms] [0] S: Wrote data to server address file
+[2015.06.01 09:24:18] [0000m.00s.071ms] [0] S: Server startup lock file removed
+[2015.06.01 09:24:18] [0000m.00s.071ms] [1] ProjectBackupManager: Setting project file (.prj) path: [C:\Users\kyler.callahan\Documents\work\Data_TRX\0Schematic\Data_TRX\Data_TRX.prj]
+[2015.06.01 09:24:19] [0000m.00s.922ms] [0] S: Plugins loaded: [PIM] [ENetGen70] 
+[2015.06.01 09:24:19] [0000m.00s.923ms] [0] S: Local disc access time: 103 us
+[2015.06.01 09:24:19] [0000m.00s.923ms] [0] S: File server access time: 107 us
+[2015.06.01 09:24:19] [0000m.00s.926ms] [0] Single file [C:\Users\kyler.callahan\Documents\work\Data_TRX\0Schematic\Data_TRX\database\icdb.dat] size [119808 (117.0 kB)]
+[2015.06.01 09:24:19] [0000m.00s.926ms] [1] Single file [C:\Users\kyler.callahan\Documents\work\Data_TRX\0Schematic\Data_TRX\database\icdb.dat] opened in read-write mode
+[2015.06.01 09:24:19] [0000m.00s.927ms] [0] SingleFile: [0000-0000-0000-0000] SFI header version check [1009] [1009]
+[2015.06.01 09:24:19] [0000m.00s.927ms] [0] Database GUARD OK: [119808]
+[2015.06.01 09:24:19] [0000m.00s.928ms] [0] SingleFile: [0000-0000-0000-0000] SFI header version check [1009] [1009]
+[2015.06.01 09:24:19] [0000m.00s.928ms] [0] Database GUARD OK: [119808]
+[2015.06.01 09:24:19] [0000m.00s.928ms] [0] SingleFile: [480c-8d99-f1b9-907c] SFI version check [1009] [1009]
+[2015.06.01 09:24:19] [0000m.00s.931ms] [0] SingleFile: [480c-8d99-f1b9-907c] Database SFI header has been read in [3ms 260us]
+[2015.06.01 09:24:19] [0000m.00s.934ms] [0] iCDB Server PI: Server & plugin session [118]
+[2015.06.01 09:24:19] [0000m.00s.934ms] [0] iCDB Server PI: Opening database [C:\Users\kyler.callahan\Documents\work\Data_TRX\0Schematic\Data_TRX\database]
+[2015.06.01 09:24:19] [0000m.00s.934ms] [0] iCDB Server PI: Database [C:\Users\kyler.callahan\Documents\work\Data_TRX\0Schematic\Data_TRX\database] opened
+[2015.06.01 09:24:20] [0000m.01s.103ms] [0] iCDB Database: Checking existence of constraint definitions
+[2015.06.01 09:24:20] [0000m.01s.103ms] [0] iCDB Database: Checking constraint definitions version
+[2015.06.01 09:24:20] [0000m.01s.208ms] [1] iCDB Database: Constraint definitions version [ce_ee.cns=7.10.24;user.cns=6511-058a-3b8d-3fc9-52d0-853a-2d08-5350-b506-e263-212d-1dbc] up to date
+[2015.06.01 09:24:20] [0000m.01s.993ms] [0] iCDB Server PI: Initializing plugins
+[2015.06.01 09:24:20] [0000m.01s.993ms] [0] iCDB Server PI: Plugins initialized
+[2015.06.01 09:24:20] [0000m.01s.993ms] [0] S: iCDB database loaded
+[2015.06.01 09:24:20] [0000m.01s.994ms] [0] S: Starting threads
+[2015.06.01 09:24:20] [0000m.01s.995ms] [0] BT: Listening for broadcast messages on port [10000]
+[2015.06.01 09:24:20] [0000m.02s.006ms] [1] CMT: There are no clients - waiting [10 seconds]
+[2015.06.01 09:24:20] [0000m.02s.007ms] [0] IT: Session [119] for host [ecerosslab01] user [j82t579] with process ID [1112] created
+[2015.06.01 09:24:20] [0000m.02s.009ms] [1] SC[119]: Registered sub-client [DxD] with ID [1] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:20] [0000m.02s.024ms] [1] SC[119]: Registered sub-client [TransactionRollbackSubClient] with ID [2] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:20] [0000m.02s.028ms] [1] SC[119]: Registered sub-client [xprob] with ID [3] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:21] [0000m.02s.110ms] [1] CMT: There are [1] clients now: 119
+[2015.06.01 09:24:22] [0000m.03s.685ms] [1] SC[119]: Registered sub-client [SelectionHolder] with ID [4] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:22] [0000m.03s.734ms] [1] SC[119]: Registered sub-client [SymbolEditor] with ID [5] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:23] [0000m.04s.342ms] [1] SC[119]: Registered sub-client [HdlProject] with ID [6] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:23] [0000m.04s.349ms] [1] SC[119]: Registered sub-client [Navigator] with ID [7] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:23] [0000m.04s.359ms] [1] SC[119]: Registered sub-client [OutputWindow] with ID [8] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:23] [0000m.04s.362ms] [1] SC[119]: Registered sub-client [PlaceDevice] with ID [9] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:23] [0000m.04s.369ms] [1] SC[119]: Registered sub-client [SAE] with ID [10] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:23] [0000m.04s.390ms] [1] SC[119]: Registered sub-client [DxConstraints] with ID [11] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:23] [0000m.04s.393ms] [1] SC[119]: Registered sub-client [CCZAddin] with ID [12] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:23] [0000m.04s.397ms] [1] SC[119]: Registered sub-client [DxThumbnails] with ID [13] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:23] [0000m.04s.477ms] [1] SC[119]: Registered sub-client [SheetConnectorsCacheDxD:1433172263] with ID [14] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:23] [0000m.04s.483ms] [1] SC[119]: Registered sub-client [NetsNamesCollectorDxD:1433172263] with ID [15] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:23] [0000m.04s.559ms] [1] SC[119]: Registered sub-client [ObjectHolder_299720752] with ID [16] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:23] [0000m.04s.562ms] [1] SC[119]: Registered sub-client [BlockCacheDxD:298973768] with ID [17] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:23] [0000m.04s.565ms] [1] SC[119]: Registered sub-client [GlobalNetAliasUpdater_299720928] with ID [18] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:23] [0000m.04s.568ms] [1] SC[119]: Registered sub-client [IcdbNetProcessorSubClientDxD:299265296] with ID [19] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:24] [0000m.05s.119ms] [1] SC[119]: Registered sub-client [DxDbSearch] with ID [20] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:24] [0000m.05s.146ms] [1] SC[119]: Registered sub-client [LDD_ECO_IMPORT] with ID [21] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:24] [0000m.05s.149ms] [1] SC[119]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [21] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:24] [0000m.05s.826ms] [1] SC[119]: Registered sub-client [LDD_ECO_IMPORT] with ID [22] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:24] [0000m.05s.828ms] [1] SC[119]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [22] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:25] [0000m.06s.882ms] [1] SC[119]: Registered sub-client [LDD_ECO_IMPORT] with ID [23] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:25] [0000m.06s.884ms] [1] SC[119]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [23] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:26] [0000m.07s.854ms] [1] SC[119]: Registered sub-client [LDD_ECO_IMPORT] with ID [24] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:26] [0000m.07s.857ms] [1] SC[119]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [24] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:27] [0000m.08s.868ms] [1] SC[119]: Registered sub-client [LDD_ECO_IMPORT] with ID [25] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:27] [0000m.08s.870ms] [1] SC[119]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [25] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:28] [0000m.09s.882ms] [1] SC[119]: Registered sub-client [LDD_ECO_IMPORT] with ID [26] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:28] [0000m.09s.884ms] [1] SC[119]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [26] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:30] [0000m.11s.329ms] [1] SC[119]: Registered sub-client [LDD_ECO_IMPORT] with ID [27] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:30] [0000m.11s.331ms] [1] SC[119]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [27] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:30] [0000m.11s.911ms] [1] SC[119]: Registered sub-client [LDD_ECO_IMPORT] with ID [28] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:30] [0000m.11s.913ms] [1] SC[119]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [28] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:31] [0000m.12s.925ms] [1] SC[119]: Registered sub-client [LDD_ECO_IMPORT] with ID [29] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:31] [0000m.12s.927ms] [1] SC[119]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [29] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:32] [0000m.13s.939ms] [1] SC[119]: Registered sub-client [LDD_ECO_IMPORT] with ID [30] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:32] [0000m.13s.941ms] [1] SC[119]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [30] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:33] [0000m.14s.953ms] [1] SC[119]: Registered sub-client [LDD_ECO_IMPORT] with ID [31] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:33] [0000m.14s.955ms] [1] SC[119]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [31] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:34] [0000m.15s.967ms] [1] SC[119]: Registered sub-client [LDD_ECO_IMPORT] with ID [32] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:34] [0000m.15s.969ms] [1] SC[119]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [32] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:35] [0000m.16s.981ms] [1] SC[119]: Registered sub-client [LDD_ECO_IMPORT] with ID [33] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:35] [0000m.16s.983ms] [1] SC[119]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [33] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:36] [0000m.17s.994ms] [1] SC[119]: Registered sub-client [LDD_ECO_IMPORT] with ID [34] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:36] [0000m.17s.996ms] [1] SC[119]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [34] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:37] [0000m.19s.008ms] [1] SC[119]: Registered sub-client [LDD_ECO_IMPORT] with ID [35] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:37] [0000m.19s.010ms] [1] SC[119]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [35] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:38] [0000m.20s.023ms] [1] SC[119]: Registered sub-client [LDD_ECO_IMPORT] with ID [36] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:38] [0000m.20s.025ms] [1] SC[119]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [36] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:39] [0000m.20s.449ms] [1] SC[119]: UnRegistered sub-client [GlobalNetAliasUpdater_299720928] with ID [18] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:39] [0000m.20s.449ms] [1] SC[119]: UnRegistered sub-client [BlockCacheDxD:298973768] with ID [17] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:39] [0000m.20s.449ms] [1] SC[119]: UnRegistered sub-client [ObjectHolder_299720752] with ID [16] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:39] [0000m.20s.450ms] [1] SC[119]: UnRegistered sub-client [IcdbNetProcessorSubClientDxD:299265296] with ID [19] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:39] [0000m.20s.452ms] [1] SC[119]: UnRegistered sub-client [SelectionHolder] with ID [4] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:39] [0000m.20s.452ms] [1] SC[119]: UnRegistered sub-client [SheetConnectorsCacheDxD:1433172263] with ID [14] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:39] [0000m.20s.453ms] [1] SC[119]: UnRegistered sub-client [NetsNamesCollectorDxD:1433172263] with ID [15] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:39] [0000m.20s.453ms] [1] SC[119]: UnRegistered sub-client [TransactionRollbackSubClient] with ID [2] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:39] [0000m.20s.453ms] [1] SC[119]: UnRegistered sub-client [DxD] with ID [1] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:39] [0000m.20s.485ms] [1] SC[119]: UnRegistered sub-client [xprob] with ID [3] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:39] [0000m.20s.485ms] [1] SC[119]: UnRegistered sub-client [SymbolEditor] with ID [5] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:39] [0000m.20s.511ms] [1] SC[119]: UnRegistered sub-client [Navigator] with ID [7] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:39] [0000m.20s.518ms] [1] SC[119]: UnRegistered sub-client [OutputWindow] with ID [8] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:39] [0000m.20s.525ms] [1] SC[119]: UnRegistered sub-client [DxDbSearch] with ID [20] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:39] [0000m.20s.532ms] [1] SC[119]: UnRegistered sub-client [SAE] with ID [10] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:39] [0000m.20s.559ms] [1] SC[119]: UnRegistered sub-client [CCZAddin] with ID [12] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:39] [0000m.20s.566ms] [1] SC[119]: UnRegistered sub-client [DxThumbnails] with ID [13] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:39] [0000m.20s.679ms] [1] SC[119]: UnRegistered sub-client [DxConstraints] with ID [11] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:40] [0000m.21s.357ms] [0] DFAMT: File server access time: 112 us
+[2015.06.01 09:24:42] [0000m.23s.381ms] [1] SC[119]: UnRegistered sub-client [PlaceDevice] with ID [9] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:42] [0000m.23s.407ms] [1] SC[119]: UnRegistered sub-client [HdlProject] with ID [6] for session ID [119] host [ecerosslab01] user [j82t579] process ID [1112]
+[2015.06.01 09:24:42] [0000m.23s.500ms] [1] CMT: Removed client [119]
+[2015.06.01 09:24:42] [0000m.23s.500ms] [1] CMT: There are no clients left - waiting [1 seconds]
+[2015.06.01 09:24:44] [0000m.25s.100ms] [0] CMT: Starting server auto-close
+[2015.06.01 09:24:44] [0000m.25s.139ms] [0] S: Closing server
+[2015.06.01 09:24:44] [0000m.25s.214ms] [0] iCDB Server PI: Closing plugins
+[2015.06.01 09:24:44] [0000m.25s.214ms] [0] iCDB Server PI: Plugins closed
+[2015.06.01 09:24:44] [0000m.25s.214ms] [0] iCDB Server PI: Unloading database
+[2015.06.01 09:24:44] [0000m.25s.214ms] [0] iCDB Server PI: Saving storage
+[2015.06.01 09:24:44] [0000m.25s.214ms] [0] iCDB Server PI: Closing database
+[2015.06.01 09:24:44] [0000m.25s.248ms] [1] iCDB Server PI: Stats: Database defragmentation: max[1] avg[1] holes[0%] data[97%]
+[2015.06.01 09:24:44] [0000m.25s.248ms] [1] iCDB Server PI: Stats: Database file size [119808 (117.0 kB)]
+[2015.06.01 09:24:44] [0000m.25s.285ms] [0] iCDB Server PI: Database closed
+[2015.06.01 09:24:44] [0000m.25s.285ms] [1] iCDB Server PI: Stats: Total iCDB execution time: [909] ticks
+[2015.06.01 09:24:44] [0000m.25s.285ms] [1] iCDB Server PI: Stats: Total iCDB execution time: [279] microseconds
+[2015.06.01 09:24:44] [0000m.25s.285ms] [1] iCDB Server PI: Stats: Total iCDB commands count: [5]
+[2015.06.01 09:24:44] [0000m.25s.285ms] [1] iCDB Server PI: Stats: Average iCDB speed:        [17860] commands per second
+[2015.06.01 09:24:44] [0000m.25s.285ms] [0] Single file [C:\Users\kyler.callahan\Documents\work\Data_TRX\0Schematic\Data_TRX\database\icdb.dat] closed with size [119808 (117.0 kB)]
+[2015.06.01 09:24:44] [0000m.25s.333ms] [0] S: STOP

@@ -1,12 +1,9 @@
 ** ECO In Report **
 
-Fri May 22 12:52:07 2015
+Wed Jun 10 13:09:15 2015
 
 Input  File : C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1\S.eco
-Current Job : MCollar_DAUGHTER_working.pcb
+Current Job : MCollar_SENSOR_working.pcb
 
 
-* Warning: deleting single-pin signal TXRX_GPIO2
-* Warning: deleting single-pin signal TXRX_GPIO3
-* Warning: deleting single-pin signal TXRX_RESET
-* Warning: deleting single-pin signal VCC1P8_AUX
+No errors found

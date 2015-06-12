@@ -1,0 +1,23 @@
+=============================================================
+Add Reuse Report -- Tue May 26 16:10:24 2015
+
+=============================================================
+Design File: MCollar_DAUGHTER_working.pcb
+Reuse  File: TRX.reu
+Reuse  Date: Tue May 26 17:08:59 2015
+
+=============Checking reuse/design compatibility=============
+ERROR:   Electrical layer count mismatch.
+   Electrical layer count in Design: 10
+   Electrical layer count in Reuse:  2
+WARNING: Attribute value mismatch (Decal DATA_TRANSFER_CC1120)
+   Attribute Design.Timestamp
+   Value in design: 2015.01.30.16.48.20
+   Value in reuse:  2015.05.20.18.19.40
+WARNING: Part Type DATA_TRANSFER_CC1120 associated decal mismatch.
+   Decal DATA_TRANSFER_CC1120 in design mismatch with decal DATA_TRANSFER_CC1120 in reuse.
+   Reuse decal DATA_TRANSFER_CC1120 will be added with new name DATA_TRANSFER_CC1120(A).
+=============================================================
+Total ERRORS:   1
+Total WARNINGS: 2
+=============================================================

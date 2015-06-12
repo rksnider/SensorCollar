@@ -1,0 +1,136 @@
+
+Components/elements on layers report
+	design name: C:\Users\kyler.callahan\Documents\work\MCollar_v1\2Current Version\MCollar_SENSOR.pcb
+	generate on: 06/01/2015 14:45:05
+
+	 Checking layer no. 1!
+ Component C10 keepout found
+ Component C1 keepout found
+ Component C6 keepout found
+ Component C7 keepout found
+ Component C8 keepout found
+ Component C9 keepout found
+ Component C2 keepout found
+ Component C110 keepout found
+ Component C96 keepout found
+ Component C97 keepout found
+ Component C98 keepout found
+ Component C99 keepout found
+ Component C114 keepout found
+ Component C115 keepout found
+ Component C116 keepout found
+ Component C117 keepout found
+ Component C118 keepout found
+ Component C53 keepout found
+ Component C54 keepout found
+ Component R21 keepout found
+ Component R22 keepout found
+ Component R23 keepout found
+ Component R24 keepout found
+ Component C131 keepout found
+ Component C171 keepout found
+ Component C211 keepout found
+ Component C11 keepout found
+ Component C121 keepout found
+ Component C151 keepout found
+ Component C281 keepout found
+ Component C261 keepout found
+ Component C251 keepout found
+ Component C271 keepout found
+ Component C291 keepout found
+ Component C221 keepout found
+ Component C51 keepout found
+ Component C3 keepout found
+ Component C172 keepout found
+ Component C174 keepout found
+ Component C301 keepout found
+ Component C231 keepout found
+ Component C176 keepout found
+ Component C181 keepout found
+ Component C173 keepout found
+ Component C191 keepout found
+ Component C201 keepout found
+ Component C175 keepout found
+ Component L171 keepout found
+ Component L174 keepout found
+ Component L193 keepout found
+ Component L192 keepout found
+ Component L201 keepout found
+ Component L191 keepout found
+ Component L173 keepout found
+ Component L172 keepout found
+ Component R171 keepout found
+ Component R141 keepout found
+ Component C311 keepout found
+
+	 Checking layer no. 2!
+ Copper Cut Out found, name = DRW46987405, position: x=733, y=3490
+ Hatch Outline found, name = ANP000486, position: x=4729.5, y=21
+
+	 Checking layer no. 3!
+ Layer number 3 has no data and can be deleted
+
+	 Checking layer no. 4!
+ Layer number 4 has no data and can be deleted
+
+	 Checking layer no. 5!
+ Copper Cut Out found, name = DRW98475763, position: x=733, y=2921
+ Hatch Outline found, name = ANP000000, position: x=3939.5, y=2634.64
+ Hatch Outline found, name = ANP000113, position: x=4194.5, y=1321.15
+ Hatch Outline found, name = ANP002314, position: x=4729.5, y=21
+
+	 Checking layer no. 6!
+ Copper Cut Out found, name = DRW28230537, position: x=733, y=2920
+ Hatch Outline found, name = ANP003523, position: x=2229.5, y=1577
+ Hatch Outline found, name = ANP000447, position: x=2194.5, y=2400
+ Hatch Outline found, name = ANP003672, position: x=2337.5, y=2235
+ Hatch Outline found, name = ANP003727, position: x=4729.5, y=21
+
+	 Checking layer no. 7!
+ Copper Cut Out found, name = DRW43032522, position: x=733, y=3003
+ Hatch Outline found, name = ANP000211, position: x=4432.5, y=1346
+ Hatch Outline found, name = ANP002891, position: x=4729.5, y=21
+
+	 Checking layer no. 8!
+ Layer number 8 has no data and can be deleted
+
+	 Checking layer no. 9!
+ Copper Cut Out found, name = DRW23125849, position: x=734, y=3003
+ Hatch Outline found, name = ANP000408, position: x=4729.5, y=1536
+ Hatch Outline found, name = ANP001548, position: x=4729.5, y=1842
+
+	 Checking layer no. 10!
+ Component found, name = S1, position: x=550, y=635
+ Component found, name = S2, position: x=585, y=500
+ Component C12 keepout found
+ Component C100 keepout found
+ Component C17 keepout found
+ Component C18 keepout found
+ Component C22 keepout found
+ Component C23 keepout found
+ Component C105 keepout found
+ Component C106 keepout found
+ Component C36 keepout found
+ Component C111 keepout found
+ Component C112 keepout found
+ Component C55 keepout found
+ Component C56 keepout found
+ Component C57 keepout found
+ Component C58 keepout found
+ Component C59 keepout found
+ Component C60 keepout found
+ Component C61 keepout found
+ Component C62 keepout found
+ Component R25 keepout found
+ Component R26 keepout found
+ Component R28 keepout found
+ Component R29 keepout found
+ Component R30 keepout found
+ Component R31 keepout found
+ Component R33 keepout found
+ Component R32 keepout found
+ Component R34 keepout found
+ Component R35 keepout found
+ Component R12 keepout found
+ Component R13 keepout found
+ Component C31 keepout found

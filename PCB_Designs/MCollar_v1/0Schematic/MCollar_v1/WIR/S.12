@@ -320,22 +320,18 @@ AP DxDesigner_Common_Parts:cap_1800pF_0402 1 #=1
 AP DxDesigner_Common_Parts:cap_1800pF_0402 1 PINTYPE=ANALOG
 AP DxDesigner_Common_Parts:cap_1800pF_0402 2 #=2
 AP DxDesigner_Common_Parts:cap_1800pF_0402 2 PINTYPE=ANALOG
-|Q DxDesigner_Common_Parts:SMA_Vert 1
-AS DxDesigner_Common_Parts:SMA_Vert DEVICE=SMA_Vert
-AS DxDesigner_Common_Parts:SMA_Vert REFDES=J?
-AS DxDesigner_Common_Parts:SMA_Vert PKG_TYPE=SMA_Vert
-AS DxDesigner_Common_Parts:SMA_Vert INOV_VER_REC=13:18:23_2-11-15
-AS DxDesigner_Common_Parts:SMA_Vert PINORDER=PIN0 PIN1 PIN2 PIN3 PIN4
-AP DxDesigner_Common_Parts:SMA_Vert 1 #=1
-AP DxDesigner_Common_Parts:SMA_Vert 1 PINTYPE=IN
-AP DxDesigner_Common_Parts:SMA_Vert 2 #=2
-AP DxDesigner_Common_Parts:SMA_Vert 2 PINTYPE=IN
-AP DxDesigner_Common_Parts:SMA_Vert 3 #=3
-AP DxDesigner_Common_Parts:SMA_Vert 3 PINTYPE=IN
-AP DxDesigner_Common_Parts:SMA_Vert 4 #=4
-AP DxDesigner_Common_Parts:SMA_Vert 4 PINTYPE=IN
-AP DxDesigner_Common_Parts:SMA_Vert 5 #=5
-AP DxDesigner_Common_Parts:SMA_Vert 5 PINTYPE=IN
+|Q DxDesigner_Library:TRX_ANTENNA 1
+AS DxDesigner_Library:TRX_ANTENNA DEVICE=TRX_ANTENNA
+AS DxDesigner_Library:TRX_ANTENNA REFDES=AE?
+AS DxDesigner_Library:TRX_ANTENNA PKG_TYPE=TRX_ANTENNA
+AS DxDesigner_Library:TRX_ANTENNA PART_NUMBER
+AS DxDesigner_Library:TRX_ANTENNA P/D_NUM
+AS DxDesigner_Library:TRX_ANTENNA INOV_VER_REC=15:03:20_6-1-15
+AS DxDesigner_Library:TRX_ANTENNA PINORDER=FEEDING_POINT NC
+AP DxDesigner_Library:TRX_ANTENNA 1 #=1
+AP DxDesigner_Library:TRX_ANTENNA 1 PINTYPE=IN
+AP DxDesigner_Library:TRX_ANTENNA 2 #=2
+AP DxDesigner_Library:TRX_ANTENNA 2 PINTYPE=IN
 |Q DxDesigner_Library:CRYSTAL_32MHz 1
 AS DxDesigner_Library:CRYSTAL_32MHz DEVICE=CRYSTAL_32MHz
 AS DxDesigner_Library:CRYSTAL_32MHz REFDES=X?
@@ -369,7 +365,7 @@ AP DxDesigner_Common_Parts:Res_56k1_0402 2 #=2
 AP DxDesigner_Common_Parts:Res_56k1_0402 2 PINTYPE=ANALOG
 G GND
 M DxDesigner_Library:Data_Transfer_CC1120_1 $12I51
-I $12I51 DxDesigner_Library:Data_Transfer_CC1120_1 DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V TXRX_CS_N $12N114 $12N342 $12N274 $12N357 DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V ? GND TXRX_GPIO0 TXRX_GPIO3 TXRX_GPIO2 $12N239 $12N234 $12N295 $12N293 ? $12N148 $12N457 TXRX_RESET TXRX_SCLK TXRX_MOSI TXRX_MISO $12N226 DATA_TX_PWR_3P3V $12N396 $12N394 REFDES=U?`
+I $12I51 DxDesigner_Library:Data_Transfer_CC1120_1 DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V TXRX_CS_N $12N114 $12N342 $12N274 $12N357 DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V ? GND TXRX_GPIO0_TO_FPGA ? ? $12N239 $12N234 $12N295 $12N293 ? $12N148 $12N457 ? TXRX_SCLK TXRX_MOSI TXRX_MISO $12N226 DATA_TX_PWR_3P3V $12N396 $12N394 REFDES=U?`
 |R 10:56:53_5-21-15
 API $12I51 DxDesigner_Library:Data_Transfer_CC1120_1 1 #=13
 API $12I51 DxDesigner_Library:Data_Transfer_CC1120_1 2 #=25
@@ -544,6 +540,11 @@ I $12I334 DxDesigner_Common_Parts:cap_0p047uF_0402 GND DATA_TX_PWR_3P3V REFDES=C
 |R 13:25:44_2-6-15
 API $12I334 DxDesigner_Common_Parts:cap_0p047uF_0402 1 #=1
 API $12I334 DxDesigner_Common_Parts:cap_0p047uF_0402 2 #=2
+M DxDesigner_Library:TRX_ANTENNA $12I466
+I $12I466 DxDesigner_Library:TRX_ANTENNA $12N218 ? REFDES=AE?`
+|R 15:03:20_6-1-15
+API $12I466 DxDesigner_Library:TRX_ANTENNA 1 #=1
+API $12I466 DxDesigner_Library:TRX_ANTENNA 2 #=2
 M DxDesigner_Common_Parts:cap_0p047uF_0402 $12I338
 I $12I338 DxDesigner_Common_Parts:cap_0p047uF_0402 GND $12N342 VALUE=0.047uF`REFDES=C?`
 |R 13:25:44_2-6-15
@@ -569,14 +570,6 @@ I $12I397 DxDesigner_Common_Parts:cap_15pF_0402 GND $12N396 REFDES=C?`
 |R 15:10:31_2-6-15
 API $12I397 DxDesigner_Common_Parts:cap_15pF_0402 1 #=1
 API $12I397 DxDesigner_Common_Parts:cap_15pF_0402 2 #=2
-M DxDesigner_Common_Parts:SMA_Vert $12I379
-I $12I379 DxDesigner_Common_Parts:SMA_Vert $12N218 GND GND GND GND REFDES=J?`
-|R 13:18:23_2-11-15
-API $12I379 DxDesigner_Common_Parts:SMA_Vert 1 #=1
-API $12I379 DxDesigner_Common_Parts:SMA_Vert 2 #=2
-API $12I379 DxDesigner_Common_Parts:SMA_Vert 3 #=3
-API $12I379 DxDesigner_Common_Parts:SMA_Vert 4 #=4
-API $12I379 DxDesigner_Common_Parts:SMA_Vert 5 #=5
 M DxDesigner_Library:CRYSTAL_32MHz $12I421
 I $12I421 DxDesigner_Library:CRYSTAL_32MHz $12N394 $12N396 GND GND REFDES=X?`
 |R 17:04:59_5-20-15

@@ -351,25 +351,17 @@ AP DxDesigner_Common_Parts:cap_1800pF_0402 1 #=1
 AP DxDesigner_Common_Parts:cap_1800pF_0402 1 PINTYPE=ANALOG
 AP DxDesigner_Common_Parts:cap_1800pF_0402 2 #=2
 AP DxDesigner_Common_Parts:cap_1800pF_0402 2 PINTYPE=ANALOG
-|Q DxDesigner_Common_Parts:SMA_Vert 1
-AS DxDesigner_Common_Parts:SMA_Vert DEVICE=SMA_Vert
-AS DxDesigner_Common_Parts:SMA_Vert REFDES=J?
-AS DxDesigner_Common_Parts:SMA_Vert PKG_TYPE=SMA_Vert
-AS DxDesigner_Common_Parts:SMA_Vert INOV_VER_REC=13:18:23_2-11-15
-AS DxDesigner_Common_Parts:SMA_Vert PINORDER=PIN0 PIN1 PIN2 PIN3 PIN4
-AP DxDesigner_Common_Parts:SMA_Vert 1 #=1
-AP DxDesigner_Common_Parts:SMA_Vert 1 PINTYPE=IN
-AP DxDesigner_Common_Parts:SMA_Vert 2 #=2
-AP DxDesigner_Common_Parts:SMA_Vert 2 PINTYPE=IN
-AP DxDesigner_Common_Parts:SMA_Vert 3 #=3
-AP DxDesigner_Common_Parts:SMA_Vert 3 PINTYPE=IN
-AP DxDesigner_Common_Parts:SMA_Vert 4 #=4
-AP DxDesigner_Common_Parts:SMA_Vert 4 PINTYPE=IN
-AP DxDesigner_Common_Parts:SMA_Vert 5 #=5
-AP DxDesigner_Common_Parts:SMA_Vert 5 PINTYPE=IN
+|Q DxDesigner_Common_Parts:TEST_POINT 1
+AS DxDesigner_Common_Parts:TEST_POINT DEVICE=TEST_POINT
+AS DxDesigner_Common_Parts:TEST_POINT REFDES=J?
+AS DxDesigner_Common_Parts:TEST_POINT PKG_TYPE=JUMPER_TP
+AS DxDesigner_Common_Parts:TEST_POINT INOV_VER_REC=13:47:5_7-22-14
+AS DxDesigner_Common_Parts:TEST_POINT PINORDER=PIN1
+AP DxDesigner_Common_Parts:TEST_POINT 1 #=1
+AP DxDesigner_Common_Parts:TEST_POINT 1 PINTYPE=IN
 G GND
 M DxDesigner_Library:Data_Transfer_CC1120 $2I51
-I $2I51 DxDesigner_Library:Data_Transfer_CC1120 DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V TX_CS_N $2N114 $2N342 $2N274 $2N357 DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V ? GND TX_GPIO0 TX_GPIO3 TX_GPIO2 $2N239 $2N234 $2N295 $2N293 ? $2N148 $2N457 TX_RESET TX_SCLK TX_MOSI TX_MISO $2N226 DATA_TX_PWR_3P3V $2N396 $2N394 REFDES=U?`
+I $2I51 DxDesigner_Library:Data_Transfer_CC1120 DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V TXRX_CS_N $2N114 $2N342 $2N274 $2N357 DATA_TX_PWR_3P3V DATA_TX_PWR_3P3V ? GND TXRX_GPIO0 TXRX_GPIO3 TXRX_GPIO2 $2N239 $2N234 $2N295 $2N293 ? $2N148 $2N457 TXRX_RESET TXRX_SCLK TXRX_MOSI TXRX_MISO $2N226 DATA_TX_PWR_3P3V $2N396 $2N394 REFDES=U?`
 |R 10:56:53_5-21-15
 API $2I51 DxDesigner_Library:Data_Transfer_CC1120 1 #=13
 API $2I51 DxDesigner_Library:Data_Transfer_CC1120 2 #=25
@@ -586,12 +578,8 @@ I $2I397 DxDesigner_Common_Parts:cap_15pF_0402 GND $2N396 REFDES=C?`
 |R 15:10:31_2-6-15
 API $2I397 DxDesigner_Common_Parts:cap_15pF_0402 1 #=1
 API $2I397 DxDesigner_Common_Parts:cap_15pF_0402 2 #=2
-M DxDesigner_Common_Parts:SMA_Vert $2I379
-I $2I379 DxDesigner_Common_Parts:SMA_Vert $2N218 GND GND GND GND REFDES=J?`
-|R 13:18:23_2-11-15
-API $2I379 DxDesigner_Common_Parts:SMA_Vert 1 #=1
-API $2I379 DxDesigner_Common_Parts:SMA_Vert 2 #=2
-API $2I379 DxDesigner_Common_Parts:SMA_Vert 3 #=3
-API $2I379 DxDesigner_Common_Parts:SMA_Vert 4 #=4
-API $2I379 DxDesigner_Common_Parts:SMA_Vert 5 #=5
+M DxDesigner_Common_Parts:TEST_POINT $2I462
+I $2I462 DxDesigner_Common_Parts:TEST_POINT $2N218 REFDES=AE2`
+|R 13:47:5_7-22-14
+API $2I462 DxDesigner_Common_Parts:TEST_POINT 1 #=1
 EW

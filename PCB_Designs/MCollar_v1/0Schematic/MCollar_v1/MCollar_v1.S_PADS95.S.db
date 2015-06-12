@@ -29,6 +29,19 @@
 		(attributes
 			(attval "EPLANNER_DSN" "1.0")))
 	(part_library
+		(part "TRX_ANTENNA")
+		(logical_part_mapping "TRX_ANTENNA"
+			(comp "AE2"))
+		(logical_part "TRX_ANTENNA"
+			(slots
+				(slot "TRX_ANTENNA__TRX_ANTENNA_1"
+					(attributes
+						(attval "DEVICE" "TRX_ANTENNA")
+						(attval "Part Number" "")
+						(attval "PKG_TYPE" "TRX_ANTENNA")
+						(attval "REFDES" "AE?"))))
+			(pin 2  3 "TRX_ANTENNA__TRX_ANTENNA_1" 0 "NC" 0)
+			(pin 1  3 "TRX_ANTENNA__TRX_ANTENNA_1" 0 "FEEDING_POINT" 0))
 		(part "SWITCH_SINGLE_TPS22912C")
 		(logical_part_mapping "SWITCH_SINGLE_TPS22912C"
 			(comp "S2" "S1"))
@@ -111,21 +124,6 @@
 			(pin 3  3 "SOLAR_CTL_LTC3105DD__SOLAR_CTL_LTC3105DD_1" 0 "FBLDO" 0)
 			(pin 1  3 "SOLAR_CTL_LTC3105DD__SOLAR_CTL_LTC3105DD_1" 0 "FB" 0)
 			(pin 10  3 "SOLAR_CTL_LTC3105DD__SOLAR_CTL_LTC3105DD_1" 0 "AUX" 0))
-		(part "SMA_VERT")
-		(logical_part_mapping "SMA_VERT"
-			(comp "J3"))
-		(logical_part "SMA_VERT"
-			(slots
-				(slot "SMA_VERT__SMA_VERT_1"
-					(attributes
-						(attval "DEVICE" "SMA_VERT")
-						(attval "PKG_TYPE" "SMA_VERT")
-						(attval "REFDES" "J?"))))
-			(pin 5  3 "SMA_VERT__SMA_VERT_1" 0 "PIN4" 0)
-			(pin 4  3 "SMA_VERT__SMA_VERT_1" 0 "PIN3" 0)
-			(pin 3  3 "SMA_VERT__SMA_VERT_1" 0 "PIN2" 0)
-			(pin 2  3 "SMA_VERT__SMA_VERT_1" 0 "PIN1" 0)
-			(pin 1  3 "SMA_VERT__SMA_VERT_1" 0 "PIN0" 0))
 		(part "SCHOTTKY_DIODE")
 		(logical_part_mapping "SCHOTTKY_DIODE"
 			(comp "D1"))
@@ -350,39 +348,9 @@
 						(attval "Value" "0.01"))))
 			(pin 2  5 "RES_0P01CURRENTSENSE1_0603__RES_0P01CURRENTSENSE1_0603_1" 0 "2" 0)
 			(pin 1  5 "RES_0P01CURRENTSENSE1_0603__RES_0P01CURRENTSENSE1_0603_1" 0 "1" 0))
-		(part "REMOTE_CONNECTOR_20")
-		(logical_part_mapping "REMOTE_CONNECTOR_20"
-			(comp "J4"))
-		(logical_part "REMOTE_CONNECTOR_20"
-			(slots
-				(slot "REMOTE_CONNECTOR__REMOTE_CONNECTOR_20_1"
-					(attributes
-						(attval "DEVICE" "REMOTE_CONNECTOR_20")
-						(attval "PKG_TYPE" "REMOTE_CONNECTOR_20")
-						(attval "REFDES" "J?"))))
-			(pin 9  3 "REMOTE_CONNECTOR__REMOTE_CONNECTOR_20_1" 0 "PIN_9" 0)
-			(pin 8  3 "REMOTE_CONNECTOR__REMOTE_CONNECTOR_20_1" 0 "PIN_8" 0)
-			(pin 7  3 "REMOTE_CONNECTOR__REMOTE_CONNECTOR_20_1" 0 "PIN_7" 0)
-			(pin 6  3 "REMOTE_CONNECTOR__REMOTE_CONNECTOR_20_1" 0 "PIN_6" 0)
-			(pin 5  3 "REMOTE_CONNECTOR__REMOTE_CONNECTOR_20_1" 0 "PIN_5" 0)
-			(pin 4  3 "REMOTE_CONNECTOR__REMOTE_CONNECTOR_20_1" 0 "PIN_4" 0)
-			(pin 3  3 "REMOTE_CONNECTOR__REMOTE_CONNECTOR_20_1" 0 "PIN_3" 0)
-			(pin 20  3 "REMOTE_CONNECTOR__REMOTE_CONNECTOR_20_1" 0 "PIN_20" 0)
-			(pin 2  3 "REMOTE_CONNECTOR__REMOTE_CONNECTOR_20_1" 0 "PIN_2" 0)
-			(pin 19  3 "REMOTE_CONNECTOR__REMOTE_CONNECTOR_20_1" 0 "PIN_19" 0)
-			(pin 18  3 "REMOTE_CONNECTOR__REMOTE_CONNECTOR_20_1" 0 "PIN_18" 0)
-			(pin 17  3 "REMOTE_CONNECTOR__REMOTE_CONNECTOR_20_1" 0 "PIN_17" 0)
-			(pin 16  3 "REMOTE_CONNECTOR__REMOTE_CONNECTOR_20_1" 0 "PIN_16" 0)
-			(pin 15  3 "REMOTE_CONNECTOR__REMOTE_CONNECTOR_20_1" 0 "PIN_15" 0)
-			(pin 14  3 "REMOTE_CONNECTOR__REMOTE_CONNECTOR_20_1" 0 "PIN_14" 0)
-			(pin 13  3 "REMOTE_CONNECTOR__REMOTE_CONNECTOR_20_1" 0 "PIN_13" 0)
-			(pin 12  3 "REMOTE_CONNECTOR__REMOTE_CONNECTOR_20_1" 0 "PIN_12" 0)
-			(pin 11  3 "REMOTE_CONNECTOR__REMOTE_CONNECTOR_20_1" 0 "PIN_11" 0)
-			(pin 10  3 "REMOTE_CONNECTOR__REMOTE_CONNECTOR_20_1" 0 "PIN_10" 0)
-			(pin 1  3 "REMOTE_CONNECTOR__REMOTE_CONNECTOR_20_1" 0 "PIN_1" 0))
 		(part "OSCILLATION_CRYSTAL")
 		(logical_part_mapping "OSCILLATION_CRYSTAL"
-			(comp "U25"))
+			(comp "X2"))
 		(logical_part "OSCILLATION_CRYSTAL"
 			(slots
 				(slot "OSCILLATION_CRYSTAL__OSCILLATION_CRYSTAL_1"
@@ -390,9 +358,37 @@
 						(attval "DEVICE" "OSCILLATION_CRYSTAL")
 						(attval "Part Number" "ABS07-120-32.768KHZ-T")
 						(attval "PKG_TYPE" "OSCILLATION_CRYSTAL")
-						(attval "REFDES" "U?"))))
+						(attval "REFDES" "X?"))))
 			(pin 2  3 "OSCILLATION_CRYSTAL__OSCILLATION_CRYSTAL_1" 0 "PIN1" 0)
 			(pin 1  3 "OSCILLATION_CRYSTAL__OSCILLATION_CRYSTAL_1" 0 "PIN0" 0))
+		(part "MUX_4BIT_SN74CBTLV3257")
+		(logical_part_mapping "MUX_4BIT_SN74CBTLV3257"
+			(comp "U4"))
+		(logical_part "MUX_4BIT_SN74CBTLV3257"
+			(slots
+				(slot "MUX_4BIT_SN74CBTLV3257__MUX_4BIT_SN74CBTLV3257_1"
+					(attributes
+						(attval "DEVICE" "MUX_4BIT_SN74CBTLV3257")
+						(attval "Part Number" "SN74CBTLV3257RSVR")
+						(attval "PKG_GRP" "16-UFQFN")
+						(attval "PKG_TYPE" "MUX_4BIT_SN74CBTLV3257")
+						(attval "REFDES" "U?"))))
+			(pin 16  2 "MUX_4BIT_SN74CBTLV3257__MUX_4BIT_SN74CBTLV3257_1" 0 "VCC" 0)
+			(pin 15  3 "MUX_4BIT_SN74CBTLV3257__MUX_4BIT_SN74CBTLV3257_1" 0 "S" 0)
+			(pin 14  3 "MUX_4BIT_SN74CBTLV3257__MUX_4BIT_SN74CBTLV3257_1" 0 "OE_N" 0)
+			(pin 13  0 "MUX_4BIT_SN74CBTLV3257__MUX_4BIT_SN74CBTLV3257_1" 0 "GND" 0)
+			(pin 12  5 "MUX_4BIT_SN74CBTLV3257__MUX_4BIT_SN74CBTLV3257_1" 0 "4B2" 0)
+			(pin 11  5 "MUX_4BIT_SN74CBTLV3257__MUX_4BIT_SN74CBTLV3257_1" 0 "4B1" 0)
+			(pin 10  5 "MUX_4BIT_SN74CBTLV3257__MUX_4BIT_SN74CBTLV3257_1" 0 "4A" 0)
+			(pin 9  5 "MUX_4BIT_SN74CBTLV3257__MUX_4BIT_SN74CBTLV3257_1" 0 "3B2" 0)
+			(pin 8  5 "MUX_4BIT_SN74CBTLV3257__MUX_4BIT_SN74CBTLV3257_1" 0 "3B1" 0)
+			(pin 7  5 "MUX_4BIT_SN74CBTLV3257__MUX_4BIT_SN74CBTLV3257_1" 0 "3A" 0)
+			(pin 6  5 "MUX_4BIT_SN74CBTLV3257__MUX_4BIT_SN74CBTLV3257_1" 0 "2B2" 0)
+			(pin 5  5 "MUX_4BIT_SN74CBTLV3257__MUX_4BIT_SN74CBTLV3257_1" 0 "2B1" 0)
+			(pin 4  5 "MUX_4BIT_SN74CBTLV3257__MUX_4BIT_SN74CBTLV3257_1" 0 "2A" 0)
+			(pin 3  5 "MUX_4BIT_SN74CBTLV3257__MUX_4BIT_SN74CBTLV3257_1" 0 "1B2" 0)
+			(pin 2  5 "MUX_4BIT_SN74CBTLV3257__MUX_4BIT_SN74CBTLV3257_1" 0 "1B1" 0)
+			(pin 1  5 "MUX_4BIT_SN74CBTLV3257__MUX_4BIT_SN74CBTLV3257_1" 0 "1A" 0))
 		(part "MRAM_MR20H40CDF_8DFN_SMALLFLAG_PART")
 		(logical_part_mapping "MRAM_MR20H40CDF_8DFN_SMALLFLAG_PART"
 			(comp "U18"))
@@ -423,6 +419,20 @@
  "MRAM_MR20H40CDF_8DFN_SMALLFLAG_PART__MRAM_MR20H40CDF_8DFN_SMALLFLAG_PART_1" 0 "GND_LEAF" 0)
 			(pin 1  3
  "MRAM_MR20H40CDF_8DFN_SMALLFLAG_PART__MRAM_MR20H40CDF_8DFN_SMALLFLAG_PART_1" 0 "CS_N" 0))
+		(part "MIC_HEADER")
+		(logical_part_mapping "MIC_HEADER"
+			(comp "J5" "J3"))
+		(logical_part "MIC_HEADER"
+			(slots
+				(slot "MIC_HEADER__MIC_HEADER_1"
+					(attributes
+						(attval "DEVICE" "MIC_HEADER")
+						(attval "PKG_TYPE" "MIC_HEADER")
+						(attval "REFDES" "J?"))))
+			(pin 1  3 "MIC_HEADER__MIC_HEADER_1" 0 "PWR" 0)
+			(pin 4  3 "MIC_HEADER__MIC_HEADER_1" 0 "GND" 0)
+			(pin 3  3 "MIC_HEADER__MIC_HEADER_1" 0 "DATA" 0)
+			(pin 2  3 "MIC_HEADER__MIC_HEADER_1" 0 "CLK" 0))
 		(part "MAX-7Q")
 		(logical_part_mapping "MAX-7Q"
 			(comp "U11"))
@@ -700,7 +710,7 @@
 			(pin 1  5 "CAP_15PF_0402__CAP_15PF_0402_1" 0 "1" 0))
 		(part "CAP_10UF_0402")
 		(logical_part_mapping "CAP_10UF_0402"
-			(comp "C117" "C53" "C2"))
+			(comp "C117" "C53" "C5" "C2"))
 		(logical_part "CAP_10UF_0402"
 			(slots
 				(slot "CAP_10UF_0402__CAP_10UF_0402_1"
@@ -876,7 +886,7 @@
 			(pin 1  5 "CAP_0P01UF_0402__CAP_0P01UF_0402_1" 0 "1" 0))
 		(part "CAP_0P1UF_0402")
 		(logical_part_mapping "CAP_0P1UF_0402"
-			(comp "C116" "C114" "C62" "C61" "C59" "C58" "C56" "C55" "C31" "C23" "C22" "C18" "C17" "C12" "C10" "C9" "C8" "C7" "C6" "C1"))
+			(comp "C116" "C114" "C62" "C61" "C59" "C58" "C56" "C55" "C31" "C23" "C22" "C18" "C17" "C12" "C10" "C9" "C8" "C7" "C6" "C4" "C1"))
 		(logical_part "CAP_0P1UF_0402"
 			(slots
 				(slot "CAP_0P1UF_0402__CAP_0P1UF_0402_1"
@@ -931,6 +941,33 @@
  "BAT_GD_N" 0)
 			(pin E2  3 "BATTERY_MONITOR_BQ27520-G3__BATTERY_MONITOR_BQ27520-G3_1" 0
  "BAT" 0))
+		(part "BATTERY_BOARD_CONNECTOR")
+		(logical_part_mapping "BATTERY_BOARD_CONNECTOR"
+			(comp "J4"))
+		(logical_part "BATTERY_BOARD_CONNECTOR"
+			(slots
+				(slot "BATTERY_BOARD_CONNECTOR__BATTERY_BOARD_CONNECTOR_1"
+					(attributes
+						(attval "DEVICE" "BATTERY_BOARD_CONNECTOR")
+						(attval "PKG_TYPE" "BATTERY_BOARD_CONNECTOR")
+						(attval "REFDES" "J?"))))
+			(pin 9  3 "BATTERY_BOARD_CONNECTOR__BATTERY_BOARD_CONNECTOR_1" 0 "PIN_9" 0)
+			(pin 8  3 "BATTERY_BOARD_CONNECTOR__BATTERY_BOARD_CONNECTOR_1" 0 "PIN_8" 0)
+			(pin 7  3 "BATTERY_BOARD_CONNECTOR__BATTERY_BOARD_CONNECTOR_1" 0 "PIN_7" 0)
+			(pin 6  3 "BATTERY_BOARD_CONNECTOR__BATTERY_BOARD_CONNECTOR_1" 0 "PIN_6" 0)
+			(pin 5  3 "BATTERY_BOARD_CONNECTOR__BATTERY_BOARD_CONNECTOR_1" 0 "PIN_5" 0)
+			(pin 4  3 "BATTERY_BOARD_CONNECTOR__BATTERY_BOARD_CONNECTOR_1" 0 "PIN_4" 0)
+			(pin 3  3 "BATTERY_BOARD_CONNECTOR__BATTERY_BOARD_CONNECTOR_1" 0 "PIN_3" 0)
+			(pin 2  3 "BATTERY_BOARD_CONNECTOR__BATTERY_BOARD_CONNECTOR_1" 0 "PIN_2" 0)
+			(pin 17  3 "BATTERY_BOARD_CONNECTOR__BATTERY_BOARD_CONNECTOR_1" 0 "PIN_17" 0)
+			(pin 16  3 "BATTERY_BOARD_CONNECTOR__BATTERY_BOARD_CONNECTOR_1" 0 "PIN_16" 0)
+			(pin 15  3 "BATTERY_BOARD_CONNECTOR__BATTERY_BOARD_CONNECTOR_1" 0 "PIN_15" 0)
+			(pin 14  3 "BATTERY_BOARD_CONNECTOR__BATTERY_BOARD_CONNECTOR_1" 0 "PIN_14" 0)
+			(pin 13  3 "BATTERY_BOARD_CONNECTOR__BATTERY_BOARD_CONNECTOR_1" 0 "PIN_13" 0)
+			(pin 12  3 "BATTERY_BOARD_CONNECTOR__BATTERY_BOARD_CONNECTOR_1" 0 "PIN_12" 0)
+			(pin 11  3 "BATTERY_BOARD_CONNECTOR__BATTERY_BOARD_CONNECTOR_1" 0 "PIN_11" 0)
+			(pin 10  3 "BATTERY_BOARD_CONNECTOR__BATTERY_BOARD_CONNECTOR_1" 0 "PIN_10" 0)
+			(pin 1  3 "BATTERY_BOARD_CONNECTOR__BATTERY_BOARD_CONNECTOR_1" 0 "PIN_1" 0))
 		(part "B2B_50POS_RECEPTACLE")
 		(logical_part_mapping "B2B_50POS_RECEPTACLE"
 			(comp "J2"))
@@ -1142,8 +1179,39 @@
 			(pin 7  3 "USD_CARD_HOUSING_4UCON__4UCON_SD_SPARK_PART_1" 0 "DAT0" 0)
 			(pin 3  3 "USD_CARD_HOUSING_4UCON__4UCON_SD_SPARK_PART_1" 0 "CMD" 0)
 			(pin 5  3 "USD_CARD_HOUSING_4UCON__4UCON_SD_SPARK_PART_1" 0 "CLK" 0)
-			(pin 2  3 "USD_CARD_HOUSING_4UCON__4UCON_SD_SPARK_PART_1" 0 "CD_DAT3" 0)))
+			(pin 2  3 "USD_CARD_HOUSING_4UCON__4UCON_SD_SPARK_PART_1" 0 "CD_DAT3" 0))
+		(part "4BIT_LS_SN74AVC4T234")
+		(logical_part_mapping "4BIT_LS_SN74AVC4T234"
+			(comp "U3"))
+		(logical_part "4BIT_LS_SN74AVC4T234"
+			(slots
+				(slot "4BIT_LS_SN74AVC4T234__4BIT_LS_SN74AVC4T234_1"
+					(attributes
+						(attval "DEVICE" "4BIT_LS_SN74AVC4T234")
+						(attval "Part Number" "SN74CBTLV3257RSVR")
+						(attval "PKG_GRP" "16-UFQFN")
+						(attval "PKG_TYPE" "4BIT_LS_SN74AVC4T234")
+						(attval "REFDES" "U?"))))
+			(pin B4  2 "4BIT_LS_SN74AVC4T234__4BIT_LS_SN74AVC4T234_1" 0 "VCCB" 0)
+			(pin B6  2 "4BIT_LS_SN74AVC4T234__4BIT_LS_SN74AVC4T234_1" 0 "VCCA" 0)
+			(pin B2  0 "4BIT_LS_SN74AVC4T234__4BIT_LS_SN74AVC4T234_1" 0 "GND" 0)
+			(pin C1  3 "4BIT_LS_SN74AVC4T234__4BIT_LS_SN74AVC4T234_1" 0 "B4" 0)
+			(pin C3  3 "4BIT_LS_SN74AVC4T234__4BIT_LS_SN74AVC4T234_1" 0 "B3" 0)
+			(pin C5  3 "4BIT_LS_SN74AVC4T234__4BIT_LS_SN74AVC4T234_1" 0 "B2" 0)
+			(pin C7  3 "4BIT_LS_SN74AVC4T234__4BIT_LS_SN74AVC4T234_1" 0 "B1" 0)
+			(pin A1  4 "4BIT_LS_SN74AVC4T234__4BIT_LS_SN74AVC4T234_1" 0 "A4" 0)
+			(pin A3  4 "4BIT_LS_SN74AVC4T234__4BIT_LS_SN74AVC4T234_1" 0 "A3" 0)
+			(pin A5  4 "4BIT_LS_SN74AVC4T234__4BIT_LS_SN74AVC4T234_1" 0 "A2" 0)
+			(pin A7  4 "4BIT_LS_SN74AVC4T234__4BIT_LS_SN74AVC4T234_1" 0 "A1" 0)))
 	(placement
+		(component "OSCILLATION_CRYSTAL"
+			(place "X2" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "IN")
+				(comp_pin "1" 0.0 0.0 "IN"))
+			(attributes
+				(attval "Part Number" "ABS07-120-32.768KHZ-T")
+				(attval "DEVICE" "OSCILLATION_CRYSTAL")
+				(attval "REFDES" "X2")))
 		(component "CRYSTAL_32MHZ"
 			(place "X1" 0.0 0.0 top 0.0
 				(comp_pin "2" 0.0 0.0 "IN")
@@ -1198,14 +1266,6 @@
 				(attval "Part Number" "DS1371")
 				(attval "DEVICE" "RTC_DS1371")
 				(attval "REFDES" "U26")))
-		(component "OSCILLATION_CRYSTAL"
-			(place "U25" 0.0 0.0 top 0.0
-				(comp_pin "2" 0.0 0.0 "IN")
-				(comp_pin "1" 0.0 0.0 "IN"))
-			(attributes
-				(attval "Part Number" "ABS07-120-32.768KHZ-T")
-				(attval "DEVICE" "OSCILLATION_CRYSTAL")
-				(attval "REFDES" "U25")))
 		(component "MRAM_MR20H40CDF_8DFN_SMALLFLAG_DECAL"
 			(place "U18" 0.0 0.0 top 0.0
 				(comp_pin "3" 0.0 0.0 "IN")
@@ -1303,6 +1363,47 @@
 			(attributes
 				(attval "DEVICE" "4UCON_SD_SPARK_PART")
 				(attval "REFDES" "U7")))
+		(component "MUX_4BIT_SN74CBTLV3257"
+			(place "U4" 0.0 0.0 top 0.0
+				(comp_pin "16" 0.0 0.0 "POWER")
+				(comp_pin "15" 0.0 0.0 "IN")
+				(comp_pin "14" 0.0 0.0 "IN")
+				(comp_pin "13" 0.0 0.0)
+				(comp_pin "12" 0.0 0.0 "BI")
+				(comp_pin "11" 0.0 0.0 "BI")
+				(comp_pin "10" 0.0 0.0 "BI")
+				(comp_pin "9" 0.0 0.0 "BI")
+				(comp_pin "8" 0.0 0.0 "BI")
+				(comp_pin "7" 0.0 0.0 "BI")
+				(comp_pin "6" 0.0 0.0 "BI")
+				(comp_pin "5" 0.0 0.0 "BI")
+				(comp_pin "4" 0.0 0.0 "BI")
+				(comp_pin "3" 0.0 0.0 "BI")
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "SN74CBTLV3257RSVR")
+				(attval "PKG_GRP" "16-UFQFN")
+				(attval "DEVICE" "MUX_4BIT_SN74CBTLV3257")
+				(attval "REFDES" "U4")))
+		(component "4BIT_LS_SN74AVC4T234"
+			(place "U3" 0.0 0.0 top 0.0
+				(comp_pin "B4" 0.0 0.0 "POWER")
+				(comp_pin "B6" 0.0 0.0 "POWER")
+				(comp_pin "B2" 0.0 0.0)
+				(comp_pin "C1" 0.0 0.0 "IN")
+				(comp_pin "C3" 0.0 0.0 "IN")
+				(comp_pin "C5" 0.0 0.0 "IN")
+				(comp_pin "C7" 0.0 0.0 "IN")
+				(comp_pin "A1" 0.0 0.0 "OUT")
+				(comp_pin "A3" 0.0 0.0 "OUT")
+				(comp_pin "A5" 0.0 0.0 "OUT")
+				(comp_pin "A7" 0.0 0.0 "OUT"))
+			(attributes
+				(attval "Part Number" "SN74CBTLV3257RSVR")
+				(attval "PKG_GRP" "16-UFQFN")
+				(attval "DEVICE" "4BIT_LS_SN74AVC4T234")
+				(attval "REFDES" "U3")))
 		(component "DATA_TRANSFER_CC1120"
 			(place "U2" 0.0 0.0 top 0.0
 				(comp_pin "31" 0.0 0.0 "IN")
@@ -1708,7 +1809,16 @@
 				(attval "Value" "10UH")
 				(attval "DEVICE" "INDUCTOR_10UH")
 				(attval "REFDES" "L5")))
-		(component "REMOTE_CONNECTOR_20"
+		(component "MIC_HEADER"
+			(place "J5" 0.0 0.0 top 0.0
+				(comp_pin "1" 0.0 0.0 "IN")
+				(comp_pin "4" 0.0 0.0 "IN")
+				(comp_pin "3" 0.0 0.0 "IN")
+				(comp_pin "2" 0.0 0.0 "IN"))
+			(attributes
+				(attval "DEVICE" "MIC_HEADER")
+				(attval "REFDES" "J5")))
+		(component "BATTERY_BOARD_CONNECTOR"
 			(place "J4" 0.0 0.0 top 0.0
 				(comp_pin "9" 0.0 0.0 "IN")
 				(comp_pin "8" 0.0 0.0 "IN")
@@ -1717,10 +1827,7 @@
 				(comp_pin "5" 0.0 0.0 "IN")
 				(comp_pin "4" 0.0 0.0 "IN")
 				(comp_pin "3" 0.0 0.0 "IN")
-				(comp_pin "20" 0.0 0.0 "IN")
 				(comp_pin "2" 0.0 0.0 "IN")
-				(comp_pin "19" 0.0 0.0 "IN")
-				(comp_pin "18" 0.0 0.0 "IN")
 				(comp_pin "17" 0.0 0.0 "IN")
 				(comp_pin "16" 0.0 0.0 "IN")
 				(comp_pin "15" 0.0 0.0 "IN")
@@ -1731,17 +1838,16 @@
 				(comp_pin "10" 0.0 0.0 "IN")
 				(comp_pin "1" 0.0 0.0 "IN"))
 			(attributes
-				(attval "DEVICE" "REMOTE_CONNECTOR_20")
+				(attval "DEVICE" "BATTERY_BOARD_CONNECTOR")
 				(attval "REFDES" "J4")))
-		(component "SMA_VERT"
+		(component "MIC_HEADER"
 			(place "J3" 0.0 0.0 top 0.0
-				(comp_pin "5" 0.0 0.0 "IN")
+				(comp_pin "1" 0.0 0.0 "IN")
 				(comp_pin "4" 0.0 0.0 "IN")
 				(comp_pin "3" 0.0 0.0 "IN")
-				(comp_pin "2" 0.0 0.0 "IN")
-				(comp_pin "1" 0.0 0.0 "IN"))
+				(comp_pin "2" 0.0 0.0 "IN"))
 			(attributes
-				(attval "DEVICE" "SMA_VERT")
+				(attval "DEVICE" "MIC_HEADER")
 				(attval "REFDES" "J3")))
 		(component "BOARD_TO_BOARD_50POS_RECEPTACLE_TEMPLATE"
 			(place "J2" 0.0 0.0 top 0.0
@@ -2475,6 +2581,26 @@
 				(attval "DEVICE" "CAP_0P1UF_0402")
 				(attval "REFDES" "C6")))
 		(component "0402_MY"
+			(place "C5" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "CL05A106MP5NUNC")
+				(attval "Tolerance" "")
+				(attval "Value" "10UF")
+				(attval "DEVICE" "CAP_10UF_0402")
+				(attval "REFDES" "C5")))
+		(component "0402_MY"
+			(place "C4" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "Tolerance" "")
+				(attval "Value" "0.1UF")
+				(attval "DEVICE" "CAP_0P1UF_0402")
+				(attval "REFDES" "C4")))
+		(component "0402_MY"
 			(place "C3" 0.0 0.0 top 0.0
 				(comp_pin "2" 0.0 0.0 "BI")
 				(comp_pin "1" 0.0 0.0 "BI"))
@@ -2504,6 +2630,14 @@
 				(attval "Value" "0.1UF")
 				(attval "DEVICE" "CAP_0P1UF_0402")
 				(attval "REFDES" "C1")))
+		(component "TRX_ANTENNA"
+			(place "AE2" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "IN")
+				(comp_pin "1" 0.0 0.0 "IN"))
+			(attributes
+				(attval "Part Number" "")
+				(attval "DEVICE" "TRX_ANTENNA")
+				(attval "REFDES" "AE2")))
 		(component "ANTENNA"
 			(place "AE1" 0.0 0.0 top 0.0
 				(comp_pin "2" 0.0 0.0 "IN")
@@ -2513,16 +2647,18 @@
 				(attval "DEVICE" "ANTENNA")
 				(attval "REFDES" "AE1"))))
 	(functions
+		(func "$10I16" "" "X2" 1)
 		(func "$12I421" "" "X1" 1)
 		(func "$2I594" "" "U27" 1)
 		(func "$10I6" "" "U26" 1)
-		(func "$10I16" "" "U25" 1)
 		(func "$9I1" "" "U18" 1)
 		(func "$3I379" "" "U16" 1)
 		(func "$3I175" "" "U15" 1)
 		(func "$6I1" "" "U12" 1)
 		(func "$1I1" "" "U11" 1)
 		(func "$4I437" "" "U7" 1)
+		(func "$13I84" "" "U4" 1)
+		(func "$13I11" "" "U3" 1)
 		(func "$12I51" "" "U2" 1)
 		(func "$7I242" "" "U1" 1)
 		(func "$1I101" "" "S8" 1)
@@ -2559,8 +2695,9 @@
 		(func "$12I190" "" "L172" 1)
 		(func "$12I157" "" "L171" 1)
 		(func "$7I261" "" "L5" 1)
-		(func "$11I64" "" "J4" 1)
-		(func "$12I379" "" "J3" 1)
+		(func "$3I410" "" "J5" 1)
+		(func "$11I157" "" "J4" 1)
+		(func "$3I404" "" "J3" 1)
 		(func "$8I323" "" "J2" 1)
 		(func "$8I475" "" "J2" 2)
 		(func "$7I312" "" "J1" 1)
@@ -2626,9 +2763,12 @@
 		(func "$3I380" "" "C8" 1)
 		(func "$2I782" "" "C7" 1)
 		(func "$2I778" "" "C6" 1)
+		(func "$4I780" "" "C5" 1)
+		(func "$13I138" "" "C4" 1)
 		(func "$12I110" "" "C3" 1)
 		(func "$7I266" "" "C2" 1)
 		(func "$3I290" "" "C1" 1)
+		(func "$12I466" "" "AE2" 1)
 		(func "$1I59" "" "AE1" 1))
 	(network
 		(net "$1N63"
@@ -2660,9 +2800,9 @@
 		(net "$7N220"
 			(pins U1-2 R21-1 C110-1))
 		(net "$10N34"
-			(pins U25-2 U26-1))
+			(pins X2-2 U26-1))
 		(net "$10N36"
-			(pins U25-1 U26-2))
+			(pins X2-1 U26-2))
 		(net "$12N114"
 			(pins C3-1 U2-6))
 		(net "$12N148"
@@ -2676,7 +2816,7 @@
 		(net "$12N213"
 			(pins C175-1 L174-1 L173-2))
 		(net "$12N218"
-			(pins L174-2 J3-1))
+			(pins AE2-1 L174-2))
 		(net "$12N226"
 			(pins C181-1 L193-2 U2-18))
 		(net "$12N234"
@@ -2702,9 +2842,9 @@
 		(net "$12N457"
 			(pins U2-14 R141-2))
 		(net "BATTERY_MINUS"
-			(pins R25-1 J4-16 J4-17 R28-2))
+			(pins J4-16 J4-17 R25-1 R28-2))
 		(net "BATTERY_PLUS"
-			(pins S1-A2 S2-A1 C23-1 C58-1 C59-1 U12-E2 U12-D2 U12-E1 J4-14 J4-15 C111-1
+			(pins S1-A2 S2-A1 J4-14 J4-15 C23-1 C58-1 C59-1 U12-E2 U12-D2 U12-E1 C111-1
  U26-8))
 		(net "BATT_GD_N_TO_CPLD"
 			(pins J2-44 R12-2))
@@ -2715,30 +2855,30 @@
 		(net "BAT_LOW_TO_CPLD"
 			(pins J2-22 R13-1))
 		(net "DATA_TXRX_POWER_3P3V"
-			(pins C18-1 S8-8))
+			(pins C18-1 S8-8 U3-B6 U4-16 C4-1))
 		(net "DATA_TX_CNTRL_TO_CPLD"
 			(pins J2-42 S8-2))
 		(net "DATA_TX_PWR_3P3V"
 			(pins C171-1 C121-1 C131-1 C151-1 C221-1 C251-2 C271-2 C281-2 C11-1 C51-1
  R171-1 C172-1 U2-13 U2-25 U2-15 U2-22 U2-27 U2-28 U2-12 U2-5 U2-1 C173-2))
 		(net "ESH_AUX_VCC"
-			(pins D1-1 J2-100 J2-97 J2-98 J2-99 J4-1 J4-2))
+			(pins J4-1 J4-2 D1-1 J2-100 J2-97 J2-98 J2-99))
 		(net "ESH_FORCE_STARTUP"
-			(pins J2-89 J4-5))
+			(pins J4-5 J2-89))
 		(net "ESH_FPGA_SPI_CLK"
-			(pins J2-87 J4-8))
+			(pins J4-8 J2-87))
 		(net "ESH_FPGA_USB_DMINUS"
-			(pins J2-86 J4-3))
+			(pins J4-3 J2-86))
 		(net "ESH_FPGA_USB_DPLUS"
-			(pins J2-88 J4-4))
+			(pins J4-4 J2-88))
 		(net "ESH_JTAG_TCK"
-			(pins J2-85 J4-9))
+			(pins J4-9 J2-85))
 		(net "ESH_JTAG_TDI_SPI_MOSI"
-			(pins J2-81 J4-11))
+			(pins J4-11 J2-81))
 		(net "ESH_JTAG_TDO_SPI_MISO"
-			(pins J2-79 J4-12))
+			(pins J4-12 J2-79))
 		(net "ESH_JTAG_TMS_SPI_CS"
-			(pins J2-83 J4-10))
+			(pins J4-10 J2-83))
 		(net "EXTINT_GPS_TO_FPGA"
 			(pins U11-5 J2-82))
 		(net "FPGA_1P8V"
@@ -2746,18 +2886,19 @@
 		(net "FPGA_2P5V"
 			(pins J2-66 S5-1 C97-1))
 		(net "FPGA_3P3V"
-			(pins J2-2 J2-4 S3-1 S3-4 C99-1 C98-1))
+			(pins J2-2 J2-4 S3-1 S3-4 C99-1 C98-1 U4-15))
 		(net "GND"
-			(pins S1-B1 S2-B1 C115-2 C118-1 C171-2 C211-2 U1-3 U1-11 R26-1 U7-10 U7-9
- U7-6 C175-2 L192-2 C301-1 C311-1 C121-2 C131-2 C151-2 C221-2 C251-1 C261-1
- C271-1 C281-1 C291-1 C11-2 C51-2 J3-2 J3-3 J3-4 J3-5 X1-4 X1-2 C6-2 C7-2 C114-2
- C116-2 C17-2 C18-2 C10-2 C1-2 C9-2 C8-2 C22-2 C23-2 C61-2 C58-2 C59-2 C56-1
- C55-2 C31-2 C12-2 C57-2 C54-2 C172-2 U11-1 U11-10 U11-12 U12-C2 U12-C1 J1-2
- C3-2 U15-3 U15-2 U16-3 U16-2 U27-19 U27-20 U27-14 U27-15 U27-16 U27-17
- U27-18 J2-10 J2-13 J2-25 J2-37 J2-45 J2-50 J2-67 J2-91 J2-96 J4-6 J4-7 S5-6
- S5-7 S5-9 S8-6 S8-7 S8-9 S3-6 S3-7 S3-9 S7-6 S7-7 S7-9 R28-1 U2-33 R23-1
- R141-1 C201-2 C97-2 C96-2 C106-2 C105-2 C99-2 C98-2 C111-2 C112-2 C110-2
- C36-2 C100-2 C117-2 C2-2 C53-2 U18-9 U18-4 R22-1 U26-4 U26-3 C60-2))
+			(pins S1-B1 S2-B1 J4-6 J4-7 C115-2 C118-1 C171-2 C211-2 U1-3 U1-11 R26-1
+ U7-10 U7-9 U7-6 C175-2 L192-2 C301-1 C311-1 C121-2 C131-2 C151-2 C221-2
+ C251-1 C261-1 C271-1 C281-1 C291-1 C11-2 C51-2 J3-4 J5-4 X1-4 X1-2 C6-2 C7-2
+ C114-2 C116-2 C17-2 C18-2 C10-2 C1-2 C9-2 C8-2 C22-2 C23-2 C61-2 C58-2 C59-2
+ C56-1 C55-2 C31-2 C12-2 C57-2 C54-2 C172-2 U11-1 U11-10 U11-12 U12-C2 U12-C1
+ J1-2 C3-2 U15-3 U15-2 U16-3 U16-2 U27-19 U27-20 U27-14 U27-15 U27-16 U27-17
+ U27-18 J2-10 J2-13 J2-25 J2-37 J2-45 J2-50 J2-67 J2-91 J2-96 S5-6 S5-7 S5-9
+ S8-6 S8-7 S8-9 S3-6 S3-7 S3-9 S7-6 S7-7 S7-9 R28-1 U2-33 R23-1 R141-1 C201-2
+ C97-2 C96-2 C106-2 C105-2 C99-2 C98-2 C111-2 C112-2 C110-2 C36-2 C100-2
+ C117-2 C2-2 C53-2 U18-9 U18-4 R22-1 U26-4 U26-3 C60-2 U3-B2 U4-13 U4-14 C4-2
+ C5-2))
 		(net "GPS_CNTRL_TO_CPLD"
 			(pins J2-40 S8-3))
 		(net "GPS_POWER_3P3V"
@@ -2769,11 +2910,11 @@
 		(net "IM_1P8V_OUT"
 			(pins C6-1 C114-1 U27-13 U27-1 U27-3 S5-5))
 		(net "IM_1P8V_TO_CPLD"
-			(pins J2-30 S5-3))
+			(pins J2-30 S5-3 U3-C5))
 		(net "IM_2P5V_OUT"
 			(pins C7-1 C116-1 U27-22 U27-23 S5-8 C117-1))
 		(net "IM_2P5V_TO_CPLD"
-			(pins J2-28 S5-2))
+			(pins J2-28 S5-2 U3-C7))
 		(net "IM_CS_A_G_TO_FPGA"
 			(pins U27-7 J2-9))
 		(net "IM_CS_M_TO_FPGA"
@@ -2794,24 +2935,32 @@
 			(pins U27-2 J2-1))
 		(net "IM_SPI_SDI_TO_FPGA"
 			(pins U27-4 J2-3))
+		(net "LS_A1"
+			(pins U3-A7 U4-2))
+		(net "LS_A2"
+			(pins U3-A5 U4-5))
+		(net "LS_A3"
+			(pins U3-A3 U4-8))
+		(net "LS_A4"
+			(pins U3-A1 U4-11))
 		(net "MAIN_ON"
 			(pins S1-B2 J2-12 R35-2))
 		(net "MIC_A_CNTRL"
 			(pins J2-32 S3-2))
 		(net "MIC_A_DATA_TO_FPGA"
-			(pins U15-5 J2-78))
+			(pins J3-3 U15-5 J2-78))
 		(net "MIC_A_POWER_3P3V"
-			(pins C1-1 C9-1 U15-4 S3-8))
+			(pins J3-1 C1-1 C9-1 U15-4 S3-8))
 		(net "MIC_B_CNTRL"
 			(pins J2-34 S3-3))
 		(net "MIC_B_DATA_TO_FPGA"
-			(pins U16-5 J2-80 J4-19))
+			(pins J5-3 U16-5 J2-80))
 		(net "MIC_B_POWER_3P3V"
-			(pins C10-1 C8-1 U16-4 J4-20 S3-5))
+			(pins J5-1 C10-1 C8-1 U16-4 S3-5))
 		(net "MIC_CLK_TO_FPGA"
-			(pins U15-1 U16-1 J2-76 J4-18))
+			(pins J3-2 J5-2 U15-1 U16-1 J2-76))
 		(net "MRAM_CNTRL_TO_CPLD"
-			(pins J2-38 S7-3))
+			(pins J2-38 S7-3 U3-C1))
 		(net "MRAM_CS_N_TO_FPGA"
 			(pins J2-69 U18-1))
 		(net "MRAM_POWER_3P3V"
@@ -2833,7 +2982,7 @@
 		(net "RXD_GPS_TO_FPGA"
 			(pins U11-3 J2-90))
 		(net "SDCARD_CNTRL_TO_CPLD"
-			(pins J2-36 S7-2))
+			(pins J2-36 S7-2 U3-C3))
 		(net "SDCARD_DI_CD_DAT3_TO_FPGA"
 			(pins U7-2 J2-64))
 		(net "SDCARD_DI_CLK_TO_FPGA"
@@ -2847,7 +2996,7 @@
 		(net "SDCARD_DI_DAT2_TO_FPGA"
 			(pins U7-1 J2-62))
 		(net "SDCARD_POWER_3P3V"
-			(pins U7-4 C31-1 S7-8))
+			(pins U7-4 C31-1 S7-8 C5-1))
 		(net "SOLAR_CELL_POWER"
 			(pins U1-6 J1-1 D1-2 L5-1 C2-1))
 		(net "SOLAR_CTRL_ON_TO_CPLD"
@@ -2857,33 +3006,35 @@
 		(net "SOLAR_PGOOD_TO_CPLD"
 			(pins U1-8 J2-20))
 		(net "THERMISTOR_PLUS"
-			(pins R32-2 J4-13 R33-1))
+			(pins J4-13 R32-2 R33-1))
 		(net "TIMEPULSE_GPS_TO_FPGA"
 			(pins U11-4 J2-84))
 		(net "TXD_GPS_TO_FPGA"
 			(pins U11-2 J2-92))
 		(net "TXRX_CS_N"
-			(pins J2-52 U2-11))
-		(net "TXRX_GPIO0"
+			(pins U2-11 U4-1))
+		(net "TXRX_CS_N_TO_FPGA"
+			(pins J2-52 U4-3))
+		(net "TXRX_GPIO0_TO_FPGA"
 			(pins J2-60 U2-10))
-		(net "TXRX_GPIO2"
-			(pins U2-4))
-		(net "TXRX_GPIO3"
-			(pins U2-3))
 		(net "TXRX_MISO"
-			(pins J2-54 U2-9))
+			(pins U2-9 U4-4))
+		(net "TXRX_MISO_TO_FPGA"
+			(pins J2-54 U4-6))
 		(net "TXRX_MOSI"
-			(pins J2-56 U2-7))
-		(net "TXRX_RESET"
-			(pins U2-2))
+			(pins U2-7 U4-7))
+		(net "TXRX_MOSI_TO_FPGA"
+			(pins J2-56 U4-9))
 		(net "TXRX_SCLK"
-			(pins J2-58 U2-8))
+			(pins U2-8 U4-10))
+		(net "TXRX_SCLK_TO_FPGA"
+			(pins J2-58 U4-12))
 		(net "VCC1P1"
 			(pins J2-93 J2-95))
 		(net "VCC1P8"
 			(pins R29-2 R30-2 U11-6 J2-6 J2-8))
 		(net "VCC1P8_AUX"
-			(pins J2-39))
+			(pins J2-39 U3-B4))
 		(net "VCC2P5"
 			(pins J2-63 J2-65))
 		(net "VCC3P3"
@@ -2900,9 +3051,6 @@
 		(net_scalar "VCC2P5"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "VCC1P8_AUX"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "VCC1P8"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
@@ -2912,22 +3060,10 @@
 		(net_scalar "TXRX_SCLK"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "TXRX_RESET"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "TXRX_MOSI"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "TXRX_MISO"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "TXRX_GPIO3"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "TXRX_GPIO2"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "TXRX_GPIO0"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "TXRX_CS_N"

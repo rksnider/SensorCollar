@@ -1,10 +1,10 @@
 pcb: Note 5996: Using Config File C:\MentorGraphics\9.5PADS\SDD_HOME\standard\pads95.cfg
-pcb: Warning 6083: S pin $8I323.39_VCC1P8_AUX: Single pin net: VCC1P8_AUX
-pcb: Warning 6083: S pin $12I51.REST_N: Single pin net: TXRX_RESET
-pcb: Warning 6083: S pin $12I51.GPIO3: Single pin net: TXRX_GPIO3
-pcb: Warning 6083: S pin $12I51.GPOI2: Single pin net: TXRX_GPIO2
 pcb: Warning 6094: S pin $12I51.EXT_XOSC: Pin not connected
+pcb: Warning 6094: S pin $12I51.GPIO3: Pin not connected
+pcb: Warning 6094: S pin $12I51.GPOI2: Pin not connected
 pcb: Warning 6094: S pin $12I51.NC_16: Pin not connected
+pcb: Warning 6094: S pin $12I51.REST_N: Pin not connected
+pcb: Warning 6094: S pin $12I466.NC: Pin not connected
 pcb: Warning 6094: S pin $8I475.94_M_FPGA_3B_07: Pin not connected
 pcb: Warning 6094: S pin $8I323.23_M_FPGA_7A_01: Pin not connected
 pcb: Warning 6094: S pin $8I323.27_M_FPGA_7A_00: Pin not connected
@@ -21,6 +21,10 @@ pcb: Warning 6094: S pin $1I1.RESVD: Pin not connected
 pcb: Warning 6094: S pin $1I1.SCL: Pin not connected
 pcb: Warning 6094: S pin $1I1.SDA: Pin not connected
 pcb: Warning 6094: S pin $1I1.VCC_RF: Pin not connected
+pcb: Note 5854: Instance value (REFDES=U3) was added to instance ($13I11) on (S).
+pcb: Note 5854: Instance value (REFDES=U4) was added to instance ($13I84) on (S).
+pcb: Note 5854: Instance value (REFDES=C4) was added to instance ($13I138) on (S).
+pcb: Note 5854: Instance value (REFDES=C5) was added to instance ($4I780) on (S).
 pcb: Note 5626: Summary of Log Files/pcb.err
-Status 0, Notes 1, Warnings 22
+Status 0, Notes 5, Warnings 22
 Errors 0, Failures 0, Fatals 0, Internals 0

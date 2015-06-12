@@ -1,11 +1,9 @@
 ** ECO In Report **
 
-Thu May 21 13:17:03 2015
+Thu May 28 15:31:45 2015
 
 Input  File : C:\Users\kyler.callahan\Documents\work\Data_TRX\0Schematic\Data_TRX\D.eco
 Current Job : Data_TRX_v1_working.pcb
 
 
-* Warning: deleting single-pin signal ESH_FPGA_USB_DMINUS
-* Warning: deleting single-pin signal ESH_FPGA_USB_DPLUS
-* Warning: deleting single-pin signal FPGA_2P5V
+No errors found

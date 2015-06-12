@@ -1,22 +1,19 @@
-PADS Layout ECO Generator (Version 6.4v) 5/21/2015 1:17:03 PM
+PADS Layout ECO Generator (Version 6.4v) 5/28/2015 3:31:44 PM
 Copyright (c) 2003 - 2008 Mentor Graphics Corp. - All rights reserved
 Command line arguments:  -e C:\Users\kyler.callahan\Documents\work\Data_TRX\0Schematic\Data_TRX\Log Files\ECOGEN.ERR -a PCB,PART,NET,PIN
 2 msec
 0 msec
 Reading the OLD DESIGN
-There are 41 parts in the design
-There are 28 signals in the design
-There are 137 pins in the design
-3 msec
-Reading the NEW DESIGN
-WARNING: Signal FPGA_2P5V has 1 pins
-WARNING: Signal ESH_FPGA_USB_DPLUS has 1 pins
-WARNING: Signal ESH_FPGA_USB_DMINUS has 1 pins
 There are 47 parts in the design
-There are 41 signals in the design
-There are 178 pins in the design
+There are 38 signals in the design
+There are 171 pins in the design
+5 msec
+Reading the NEW DESIGN
+There are 47 parts in the design
+There are 31 signals in the design
+There are 153 pins in the design
 2 msec
-Final cost=2602
+Final cost=288
 Partitioning - 0 msec
-Final Matching - 33 msec
-Deleted pins: 16,  Added pins: 57
+Final Matching - 1 msec
+Deleted pins: 18,  Added pins: 0

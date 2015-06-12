@@ -31,7 +31,7 @@
 	(part_library
 		(part "TEST_POINT")
 		(logical_part_mapping "TEST_POINT"
-			(comp "J4" "J1"))
+			(comp "J4" "J1" "AE2"))
 		(logical_part "TEST_POINT"
 			(slots
 				(slot "TEST_POINT__TEST_POINT_1"
@@ -60,21 +60,6 @@
 			(pin 6  5 "SWITCH_DUAL_SIP32414__SWITCH_DUAL_SIP32414_1" 0 "GND6" 0)
 			(pin 3  5 "SWITCH_DUAL_SIP32414__SWITCH_DUAL_SIP32414_1" 0 "CNTRL2" 0)
 			(pin 2  5 "SWITCH_DUAL_SIP32414__SWITCH_DUAL_SIP32414_1" 0 "CNTRL1" 0))
-		(part "SMA_VERT")
-		(logical_part_mapping "SMA_VERT"
-			(comp "J3"))
-		(logical_part "SMA_VERT"
-			(slots
-				(slot "SMA_VERT__SMA_VERT_1"
-					(attributes
-						(attval "DEVICE" "SMA_VERT")
-						(attval "PKG_TYPE" "SMA_VERT")
-						(attval "REFDES" "J?"))))
-			(pin 5  3 "SMA_VERT__SMA_VERT_1" 0 "PIN4" 0)
-			(pin 4  3 "SMA_VERT__SMA_VERT_1" 0 "PIN3" 0)
-			(pin 3  3 "SMA_VERT__SMA_VERT_1" 0 "PIN2" 0)
-			(pin 2  3 "SMA_VERT__SMA_VERT_1" 0 "PIN1" 0)
-			(pin 1  3 "SMA_VERT__SMA_VERT_1" 0 "PIN0" 0))
 		(part "RES_56K1_0402")
 		(logical_part_mapping "RES_56K1_0402"
 			(comp "R141"))
@@ -801,16 +786,6 @@
 			(attributes
 				(attval "DEVICE" "TEST_POINT")
 				(attval "REFDES" "J4")))
-		(component "SMA_VERT"
-			(place "J3" 0.0 0.0 top 0.0
-				(comp_pin "5" 0.0 0.0 "IN")
-				(comp_pin "4" 0.0 0.0 "IN")
-				(comp_pin "3" 0.0 0.0 "IN")
-				(comp_pin "2" 0.0 0.0 "IN")
-				(comp_pin "1" 0.0 0.0 "IN"))
-			(attributes
-				(attval "DEVICE" "SMA_VERT")
-				(attval "REFDES" "J3")))
 		(component "BOARD_TO_BOARD_50POS_RECEPTACLE_TEMPLATE"
 			(place "J2" 0.0 0.0 top 0.0
 				(comp_pin "99" 0.0 0.0 "IN")
@@ -1212,7 +1187,13 @@
 				(attval "Tolerance" "10%")
 				(attval "Value" "0.047UF")
 				(attval "DEVICE" "CAP_0P047UF_0402")
-				(attval "REFDES" "C11"))))
+				(attval "REFDES" "C11")))
+		(component "JUMPER_TP"
+			(place "AE2" 0.0 0.0 top 0.0
+				(comp_pin "1" 0.0 0.0 "IN"))
+			(attributes
+				(attval "DEVICE" "TEST_POINT")
+				(attval "REFDES" "AE2"))))
 	(functions
 		(func "$2I421" "" "X1" 1)
 		(func "$2I51" "" "U1" 1)
@@ -1229,7 +1210,6 @@
 		(func "$2I157" "" "L171" 1)
 		(func "$4I25" "" "J5" 1)
 		(func "$4I13" "" "J4" 1)
-		(func "$2I379" "" "J3" 1)
 		(func "$3I323" "" "J2" 1)
 		(func "$3I475" "" "J2" 2)
 		(func "$4I12" "" "J1" 1)
@@ -1261,7 +1241,8 @@
 		(func "$5I16" "" "C25" 1)
 		(func "$5I15" "" "C20" 1)
 		(func "$5I14" "" "C19" 1)
-		(func "$2I85" "" "C11" 1))
+		(func "$2I85" "" "C11" 1)
+		(func "$2I462" "" "AE2" 1))
 	(network
 		(net "$2N114"
 			(pins C61-1 U1-6))
@@ -1276,7 +1257,7 @@
 		(net "$2N213"
 			(pins C175-1 L174-1 L173-2))
 		(net "$2N218"
-			(pins L174-2 J3-1))
+			(pins L174-2 AE2-1))
 		(net "$2N226"
 			(pins C181-1 L193-2 U1-18))
 		(net "$2N234"
@@ -1307,108 +1288,58 @@
 			(pins C171-1 C121-1 C131-1 C151-1 C221-1 C251-2 C271-2 C281-2 C11-1 C51-1
  C19-1 C20-1 R171-1 C172-1 J1-1 S1-8 S1-5 U1-13 U1-25 U1-15 U1-22 U1-27 U1-28
  U1-12 U1-5 U1-1 C173-2))
-		(net "ESH_AUX_VCC"
-			(pins J2-100 J2-97 J2-98 J2-99))
-		(net "ESH_FPGA_USB_DMINUS"
-			(pins J2-86))
-		(net "ESH_FPGA_USB_DPLUS"
-			(pins J2-88))
-		(net "FPGA_1P8V"
-			(pins J2-59 J2-61))
-		(net "FPGA_2P5V"
-			(pins J2-66))
-		(net "FPGA_3P3V"
-			(pins J2-2 J2-4))
 		(net "GND"
 			(pins C171-2 C211-2 C175-2 L192-2 C301-1 C311-1 C121-2 C131-2 C151-2 C221-2
- C251-1 C261-1 C271-1 C281-1 C291-1 C11-2 C51-2 J3-2 J3-3 J3-4 J3-5 X1-4 X1-2
- C19-2 C20-2 C172-2 J4-1 C61-2 J2-10 J2-13 J2-25 J2-37 J2-45 J2-50 J2-67 J2-91
- J2-96 S1-6 S1-7 S1-9 U1-33 R141-1 C201-2 C25-2 C26-2))
-		(net "PWR_MAIN"
-			(pins J2-41 J2-43 J2-55 J2-57))
-		(net "TX_CS_N"
-			(pins J5-4 J2-82 U1-11))
-		(net "TX_GPIO0"
-			(pins J5-5 J2-80 U1-10))
-		(net "TX_GPIO2"
-			(pins J5-6 J2-72 U1-4))
-		(net "TX_GPIO3"
-			(pins J5-7 J2-70 U1-3))
-		(net "TX_MISO"
-			(pins J5-2 J2-78 U1-9))
-		(net "TX_MOSI"
-			(pins J5-3 J2-74 U1-7))
-		(net "TX_RESET"
-			(pins J5-8 J2-68 U1-2))
-		(net "TX_SCLK"
-			(pins J5-1 J2-76 U1-8))
-		(net "VCC1P1"
-			(pins J2-93 J2-95))
-		(net "VCC1P8"
-			(pins J2-6 J2-8))
-		(net "VCC2P5"
-			(pins J2-63 J2-65))
+ C251-1 C261-1 C271-1 C281-1 C291-1 C11-2 C51-2 X1-4 X1-2 C19-2 C20-2 C172-2
+ J4-1 C61-2 J2-10 J2-13 J2-25 J2-37 J2-45 J2-50 J2-67 J2-91 J2-96 S1-6 S1-7
+ S1-9 U1-33 R141-1 C201-2 C25-2 C26-2))
+		(net "TXRX_CS_N"
+			(pins J5-4 J2-68 U1-11))
+		(net "TXRX_GPIO0"
+			(pins J5-8 J2-70 U1-10))
+		(net "TXRX_GPIO2"
+			(pins J5-6 J2-78 U1-4))
+		(net "TXRX_GPIO3"
+			(pins J5-1 J2-80 U1-3))
+		(net "TXRX_MISO"
+			(pins J5-3 J2-72 U1-9))
+		(net "TXRX_MOSI"
+			(pins J5-2 J2-76 U1-7))
+		(net "TXRX_RESET"
+			(pins J5-5 J2-82 U1-2))
+		(net "TXRX_SCLK"
+			(pins J5-7 J2-74 U1-8))
 		(net "VCC3P3"
 			(pins J2-51 J2-53 S1-1 S1-4 C25-1 C26-1)))
 	(network_electrical
 		(net_scalar "VCC3P3"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "VCC2P5"
+		(net_scalar "TXRX_SCLK"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "VCC1P8"
+		(net_scalar "TXRX_RESET"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "VCC1P1"
+		(net_scalar "TXRX_MOSI"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "TX_SCLK"
+		(net_scalar "TXRX_MISO"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "TX_RESET"
+		(net_scalar "TXRX_GPIO3"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "TX_MOSI"
+		(net_scalar "TXRX_GPIO2"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "TX_MISO"
+		(net_scalar "TXRX_GPIO0"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "TX_GPIO3"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "TX_GPIO2"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "TX_GPIO0"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "TX_CS_N"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "PWR_MAIN"
+		(net_scalar "TXRX_CS_N"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "GND"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "FPGA_3P3V"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "FPGA_2P5V"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "FPGA_1P8V"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "ESH_FPGA_USB_DPLUS"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "ESH_FPGA_USB_DMINUS"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "ESH_AUX_VCC"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "DATA_TX_PWR_3P3V"

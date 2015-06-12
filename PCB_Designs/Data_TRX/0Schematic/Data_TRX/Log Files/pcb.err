@@ -1,14 +1,19 @@
 pcb: Note 5996: Using Config File C:\MentorGraphics\9.5PADS\SDD_HOME\standard\pads95.cfg
-pcb: Warning 6083: D pin $3I475.66_FPGA_2P5V: Single pin net: FPGA_2P5V
-pcb: Warning 6083: D pin $3I475.88_ESH_FPGA_USB_DPLUS: Single pin net: ESH_FPGA_USB_DPLUS
-pcb: Warning 6083: D pin $3I475.86_ESH_FPGA_USB_DMINUS: Single pin net: ESH_FPGA_USB_DMINUS
+pcb: Warning 6094: D pin $3I475.100_ESH_AUX_VCC: Pin not connected
 pcb: Warning 6094: D pin $3I475.52_M_FPGA_4A_05: Pin not connected
 pcb: Warning 6094: D pin $3I475.54_M_FPGA_4A_09: Pin not connected
+pcb: Warning 6094: D pin $3I475.55_PWR_MAIN: Pin not connected
 pcb: Warning 6094: D pin $3I475.56_M_FPGA_4A_08: Pin not connected
+pcb: Warning 6094: D pin $3I475.57_PWR_MAIN: Pin not connected
 pcb: Warning 6094: D pin $3I475.58_M_FPGA_4A_04: Pin not connected
+pcb: Warning 6094: D pin $3I475.59_FPGA_1P8V: Pin not connected
 pcb: Warning 6094: D pin $3I475.60_M_FPGA_4A_07: Pin not connected
+pcb: Warning 6094: D pin $3I475.61_FPGA_1P8V: Pin not connected
 pcb: Warning 6094: D pin $3I475.62_M_FPGA_4A_03: Pin not connected
+pcb: Warning 6094: D pin $3I475.63_VCC2P5: Pin not connected
 pcb: Warning 6094: D pin $3I475.64_M_FPGA_4A_02: Pin not connected
+pcb: Warning 6094: D pin $3I475.65_VCC2P5: Pin not connected
+pcb: Warning 6094: D pin $3I475.66_FPGA_2P5V: Pin not connected
 pcb: Warning 6094: D pin $3I475.69_M_FPGA_4A_00: Pin not connected
 pcb: Warning 6094: D pin $3I475.71_M_FPGA_3B_04: Pin not connected
 pcb: Warning 6094: D pin $3I475.73_M_FPGA_3B_02: Pin not connected
@@ -19,15 +24,26 @@ pcb: Warning 6094: D pin $3I475.81_ESH_JTAG_TDI_SPI_MOSI: Pin not connected
 pcb: Warning 6094: D pin $3I475.83_ESH_JTAG_TMS_SPI_CS: Pin not connected
 pcb: Warning 6094: D pin $3I475.84_M_FPGA_3B_12: Pin not connected
 pcb: Warning 6094: D pin $3I475.85_ESH_JTAG_TCK: Pin not connected
+pcb: Warning 6094: D pin $3I475.86_ESH_FPGA_USB_DMINUS: Pin not connected
 pcb: Warning 6094: D pin $3I475.87_ESH_FPGA_SPI_CLK: Pin not connected
+pcb: Warning 6094: D pin $3I475.88_ESH_FPGA_USB_DPLUS: Pin not connected
 pcb: Warning 6094: D pin $3I475.89_ESH_FORCE_STARTUP: Pin not connected
 pcb: Warning 6094: D pin $3I475.90_M_FPGA_3B_05: Pin not connected
 pcb: Warning 6094: D pin $3I475.92_M_FPGA_3B_08: Pin not connected
+pcb: Warning 6094: D pin $3I475.93_VCC1P1: Pin not connected
 pcb: Warning 6094: D pin $3I475.94_M_FPGA_3B_07: Pin not connected
+pcb: Warning 6094: D pin $3I475.95_VCC1P1: Pin not connected
+pcb: Warning 6094: D pin $3I475.97_ESH_AUX_VCC: Pin not connected
+pcb: Warning 6094: D pin $3I475.98_ESH_AUX_VCC: Pin not connected
+pcb: Warning 6094: D pin $3I475.99_ESH_AUX_VCC: Pin not connected
 pcb: Warning 6094: D pin $3I323.01_M_FPGA_7A_11: Pin not connected
+pcb: Warning 6094: D pin $3I323.02_FPGA_3P3V: Pin not connected
 pcb: Warning 6094: D pin $3I323.03_M_FPGA_7A_12: Pin not connected
+pcb: Warning 6094: D pin $3I323.04_FPGA_3P3V: Pin not connected
 pcb: Warning 6094: D pin $3I323.05_M_FPGA_7A_10: Pin not connected
+pcb: Warning 6094: D pin $3I323.06_VCC1P8: Pin not connected
 pcb: Warning 6094: D pin $3I323.07_M_FPGA_7A_05: Pin not connected
+pcb: Warning 6094: D pin $3I323.08_VCC1P8: Pin not connected
 pcb: Warning 6094: D pin $3I323.09_M_FPGA_7A_09: Pin not connected
 pcb: Warning 6094: D pin $3I323.11_M_FPGA_7A_04: Pin not connected
 pcb: Warning 6094: D pin $3I323.12_CPLDON_00: Pin not connected
@@ -55,7 +71,9 @@ pcb: Warning 6094: D pin $3I323.36_M_CPLD_09: Pin not connected
 pcb: Warning 6094: D pin $3I323.38_M_CPLD_10: Pin not connected
 pcb: Warning 6094: D pin $3I323.39_VCC1P8_AUX: Pin not connected
 pcb: Warning 6094: D pin $3I323.40_M_CPLD_11: Pin not connected
+pcb: Warning 6094: D pin $3I323.41_PWR_MAIN: Pin not connected
 pcb: Warning 6094: D pin $3I323.42_M_CPLD_12: Pin not connected
+pcb: Warning 6094: D pin $3I323.43_PWR_MAIN: Pin not connected
 pcb: Warning 6094: D pin $3I323.44_M_CPLD_13: Pin not connected
 pcb: Warning 6094: D pin $3I323.46_M_CPLD_14: Pin not connected
 pcb: Warning 6094: D pin $3I323.47_I2C_SDA: Pin not connected
@@ -64,5 +82,5 @@ pcb: Warning 6094: D pin $3I323.49_I2C_SCL: Pin not connected
 pcb: Warning 6094: D pin $2I51.EXT_XOSC: Pin not connected
 pcb: Warning 6094: D pin $2I51.NC_16: Pin not connected
 pcb: Note 5626: Summary of Log Files/pcb.err
-Status 0, Notes 1, Warnings 64
+Status 0, Notes 1, Warnings 82
 Errors 0, Failures 0, Fatals 0, Internals 0
