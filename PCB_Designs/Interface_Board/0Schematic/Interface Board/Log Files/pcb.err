@@ -1,0 +1,23 @@
+pcb: Note 5996: Using Config File C:\MentorGraphics\9.5PADS\SDD_HOME\standard\pads95.cfg
+pcb: Warning 6094: Schematic1 pin $6I8.IO_6: Pin not connected
+pcb: Warning 6094: Schematic1 pin $6I8.IO_7: Pin not connected
+pcb: Warning 6094: Schematic1 pin $6I8.NC: Pin not connected
+pcb: Warning 6094: Schematic1 pin $6I30.NC: Pin not connected
+pcb: Warning 6094: Schematic1 pin $5I6.VBUS: Pin not connected
+pcb: Warning 6094: Schematic1 pin $5I54.ID: Pin not connected
+pcb: Warning 6094: Schematic1 pin $4I73.NC_7: Pin not connected
+pcb: Warning 6094: Schematic1 pin $4I73.NC_8: Pin not connected
+pcb: Warning 6094: Schematic1 pin $4I73.RST: Pin not connected
+pcb: Warning 6094: Schematic1 pin $4I6.5: Pin not connected
+pcb: Warning 6094: Schematic1 pin $4I6.6: Pin not connected
+pcb: Warning 6094: Schematic1 pin $4I6.8: Pin not connected
+pcb: Warning 6094: Schematic1 pin $4I31.NC4: Pin not connected
+pcb: Warning 6094: Schematic1 pin $4I31.NC6: Pin not connected
+pcb: Warning 6094: Schematic1 pin $4I102.PIN2: Pin not connected
+pcb: Warning 6094: Schematic1 pin $4I102.PIN5: Pin not connected
+pcb: Warning 6094: Schematic1 pin $3I20.2: Pin not connected
+pcb: Warning 6094: Schematic1 pin $1I55.NC: Pin not connected
+pcb: Warning 6094: Schematic1 pin $1I41.NC: Pin not connected
+pcb: Note 5626: Summary of Log Files/pcb.err
+Status 0, Notes 1, Warnings 19
+Errors 0, Failures 0, Fatals 0, Internals 0
