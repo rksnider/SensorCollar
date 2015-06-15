@@ -1,17 +1,9 @@
 *PADS-ECO-V9.5-MILS*
-*REMARK*  old file: C:\Users\tyler.davis5\Documents\Sumer Work 2015\Interface Board\1Working Version\MCollar_INTERFACE_worki03.asc
+*REMARK*  old file: C:\Users\tyler.davis5\Documents\Sumer Work 2015\Interface Board\1Working Version\MCollar_INTERFACE_worki01.asc
 *REMARK*  new file: C:\Users\tyler.davis5\Documents\Sumer Work 2015\Interface Board\0Schematic\Interface Board\Schematic1.asc
-*REMARK*  created by ECOGEN (Version 6.4v) on 6/12/2015 2:44:52 PM
-*RENNET*
-I2C_JUMPER_PIN1  I2C_LT_B1
-I2C_JUMPER_PIN2  I2C_LT_B2
-*NET*
-*SIGNAL*  I2C_LT_B1
-U9.7
-*SIGNAL*  I2C_LT_B2
-U9.6
-*SIGNAL*  USB_VCC
-J5.1
+*REMARK*  created by ECOGEN (Version 6.4v) on 6/15/2015 10:06:37 AM
+*DEL_ATTRIBUTE*	PCB	DEFAULT
+"CAM.Apply Oversize To All Pads"
 *DEL_ATTRIBUTE*	PART	U2
 "Geometry.Height"
 *DEL_ATTRIBUTE*	PART	U1
@@ -33,5 +25,5 @@ J5.1
 *DEL_ATTRIBUTE*	PART	J5
 "Geometry.Height"
 
-*REMARK*  Deleted pins: 0,  Added pins: 3
+*REMARK*  Deleted pins: 0,  Added pins: 0
 *END*
