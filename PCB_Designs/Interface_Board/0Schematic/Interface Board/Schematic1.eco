@@ -1,7 +1,14 @@
 *PADS-ECO-V9.5-MILS*
-*REMARK*  old file: C:\Users\tyler.davis5\Documents\Sumer Work 2015\Interface Board\1Working Version\MCollar_INTERFACE_worki01.asc
+*REMARK*  old file: C:\Users\tyler.davis5\Documents\Sumer Work 2015\Interface Board\2Current Version\MCollar_INTERFACE_worki01.asc
 *REMARK*  new file: C:\Users\tyler.davis5\Documents\Sumer Work 2015\Interface Board\0Schematic\Interface Board\Schematic1.asc
-*REMARK*  created by ECOGEN (Version 6.4v) on 6/15/2015 10:06:37 AM
+*REMARK*  created by ECOGEN (Version 6.4v) on 6/22/2015 2:38:27 PM
+*CHGPART*
+C1  CAP_1UF_0603  CAP_1UF_0402
+C2  CAP_1UF_0603  CAP_1UF_0402
+C4  CAP_1UF_0603  CAP_1UF_0402
+*RENPART*
+C1  C4
+C4  C1
 *DEL_ATTRIBUTE*	PCB	DEFAULT
 "CAM.Apply Oversize To All Pads"
 *DEL_ATTRIBUTE*	PART	U2
@@ -24,6 +31,21 @@
 "Geometry.Height"
 *DEL_ATTRIBUTE*	PART	J5
 "Geometry.Height"
+*SET_ATTRIBUTE*	PART	C1
+"Value"	1UF
+"Tolerance"	
+"PKG_TYPE"	0402_MY
+"Part Number"	GRM155R61A105KE15D
+*SET_ATTRIBUTE*	PART	C2
+"Value"	1UF
+"Tolerance"	
+"PKG_TYPE"	0402_MY
+"Part Number"	GRM155R61A105KE15D
+*SET_ATTRIBUTE*	PART	C4
+"Value"	1UF
+"Tolerance"	
+"PKG_TYPE"	0402_MY
+"Part Number"	GRM155R61A105KE15D
 
 *REMARK*  Deleted pins: 0,  Added pins: 0
 *END*

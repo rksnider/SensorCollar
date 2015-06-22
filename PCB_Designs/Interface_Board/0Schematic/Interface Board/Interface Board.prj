@@ -15,6 +15,7 @@ KEY PcbCfgFileName "%SDD_HOME%/standard/pads95.cfg"
 KEY PinComponents "./speccomp.ini"
 KEY SheetsEditMode "1"
 KEY DxD_Version "7.9.4"
+KEY PartListerCfg "C:\Users\tyler.davis5\Documents\Sumer Work 2015\Interface Board\0Schematic\Interface Board\PartLister.ipl"
 ENDSECTION
 SECTION FlowSettings
 KEY FlowType "NETLIST"

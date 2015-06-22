@@ -1,21 +1,6 @@
 | Wirelist created using version 6.0 
 V 6.0
 DW Schematic1
-|Q DxDesigner_Common_Parts:cap_1uF_0603 1
-AS DxDesigner_Common_Parts:cap_1uF_0603 PINSWAP=(1,2)
-AS DxDesigner_Common_Parts:cap_1uF_0603 REFDES=C?
-AS DxDesigner_Common_Parts:cap_1uF_0603 DEVICE=cap_1uF_0603
-AS DxDesigner_Common_Parts:cap_1uF_0603 VALUE=1uF
-AS DxDesigner_Common_Parts:cap_1uF_0603 PKG_TYPE=0402_MY
-AS DxDesigner_Common_Parts:cap_1uF_0603 TOLERANCE
-AS DxDesigner_Common_Parts:cap_1uF_0603 PART_NUMBER=GRM188R61A105KA61D
-AS DxDesigner_Common_Parts:cap_1uF_0603 P/D_NUM=490-1543-1-ND
-AS DxDesigner_Common_Parts:cap_1uF_0603 INOV_VER_REC=12:36:58_3-4-15
-AS DxDesigner_Common_Parts:cap_1uF_0603 PINORDER=1 2
-AP DxDesigner_Common_Parts:cap_1uF_0603 1 #=1
-AP DxDesigner_Common_Parts:cap_1uF_0603 1 PINTYPE=ANALOG
-AP DxDesigner_Common_Parts:cap_1uF_0603 2 #=2
-AP DxDesigner_Common_Parts:cap_1uF_0603 2 PINTYPE=ANALOG
 |Q DxDesigner_Library:1p8_ldoreg_TLV702 1
 AS DxDesigner_Library:1p8_ldoreg_TLV702 DEVICE=reg_TLV702
 AS DxDesigner_Library:1p8_ldoreg_TLV702 REFDES=U?
@@ -72,14 +57,6 @@ AP DxDesigner_Common_Parts:cap_1uF_0402 1 PINTYPE=ANALOG
 AP DxDesigner_Common_Parts:cap_1uF_0402 2 #=2
 AP DxDesigner_Common_Parts:cap_1uF_0402 2 PINTYPE=ANALOG
 G GND
-M DxDesigner_Common_Parts:cap_1uF_0603 $1I22
-I $1I22 DxDesigner_Common_Parts:cap_1uF_0603 VCC1P8 GND REFDES=C?`
-|R 12:36:58_3-4-15
-API $1I22 DxDesigner_Common_Parts:cap_1uF_0603 1 #=1
-API $1I22 DxDesigner_Common_Parts:cap_1uF_0603 2 #=2
-M DxDesigner_Common_Parts:cap_1uF_0603 $1I32
-I $1I32 DxDesigner_Common_Parts:cap_1uF_0603 USB_VCC GND REFDES=C?`VALUE=1uF`
-|R 12:36:58_3-4-15
 M DxDesigner_Library:1p8_ldoreg_TLV702 $1I41
 I $1I41 DxDesigner_Library:1p8_ldoreg_TLV702 USB_VCC GND USB_VCC ? VCC1P8 PART_NUMBER=TLV70218DBVT`PKG_TYPE=1p8_ldoreg_TLV702`DEVICE=1p8_ldoreg_TLV702`REFDES=U?`
 |R 12:41:42_6-3-15
@@ -101,7 +78,19 @@ I $1I70 DxDesigner_Common_Parts:cap_1uF_0402 VCC3P3 GND REFDES=C?`
 |R 12:58:49_1-22-15
 API $1I70 DxDesigner_Common_Parts:cap_1uF_0402 1 #=1
 API $1I70 DxDesigner_Common_Parts:cap_1uF_0402 2 #=2
-M DxDesigner_Common_Parts:cap_1uF_0603 $1I76
-I $1I76 DxDesigner_Common_Parts:cap_1uF_0603 USB_VCC GND REFDES=C?`VALUE=1uF`
-|R 12:36:58_3-4-15
+M DxDesigner_Common_Parts:cap_1uF_0402 $1I283
+I $1I283 DxDesigner_Common_Parts:cap_1uF_0402 USB_VCC GND REFDES=C?`
+|R 12:58:49_1-22-15
+API $1I283 DxDesigner_Common_Parts:cap_1uF_0402 1 #=1
+API $1I283 DxDesigner_Common_Parts:cap_1uF_0402 2 #=2
+M DxDesigner_Common_Parts:cap_1uF_0402 $1I287
+I $1I287 DxDesigner_Common_Parts:cap_1uF_0402 USB_VCC GND REFDES=C?`
+|R 12:58:49_1-22-15
+API $1I287 DxDesigner_Common_Parts:cap_1uF_0402 1 #=1
+API $1I287 DxDesigner_Common_Parts:cap_1uF_0402 2 #=2
+M DxDesigner_Common_Parts:cap_1uF_0402 $1I291
+I $1I291 DxDesigner_Common_Parts:cap_1uF_0402 VCC1P8 GND REFDES=C?`
+|R 12:58:49_1-22-15
+API $1I291 DxDesigner_Common_Parts:cap_1uF_0402 1 #=1
+API $1I291 DxDesigner_Common_Parts:cap_1uF_0402 2 #=2
 EW
