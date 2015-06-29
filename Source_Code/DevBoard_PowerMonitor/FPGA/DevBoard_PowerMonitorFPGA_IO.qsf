@@ -164,6 +164,12 @@ set_instance_assignment -name IO_STANDARD "1.8 V" -to CLK_50MHZ_TO_FPGA
 # set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to SDCARD_DI_DAT_TO_FPGA[2]
 # set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to SDCARD_DI_DAT_TO_FPGA[3]
 
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDCARD_DI_CMD_TO_FPGA
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDCARD_DI_DAT_TO_FPGA[0]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDCARD_DI_DAT_TO_FPGA[1]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDCARD_DI_DAT_TO_FPGA[2]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDCARD_DI_DAT_TO_FPGA[3]
+
 #   Level Shifted SDCard Connections
 
 #set_location_assignment PIN_T7  -to SDCARD_CLK_TO_FPGA
@@ -187,6 +193,12 @@ set_instance_assignment -name IO_STANDARD "1.8 V" -to CLK_50MHZ_TO_FPGA
 # set_instance_assignment -name IO_STANDARD "1.8 V" -to SDCARD_DAT_TO_FPGA[1]
 # set_instance_assignment -name IO_STANDARD "1.8 V" -to SDCARD_DAT_TO_FPGA[2]
 # set_instance_assignment -name IO_STANDARD "1.8 V" -to SDCARD_DAT_TO_FPGA[3]
+
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDCARD_CMD_TO_FPGA
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDCARD_DAT_TO_FPGA[0]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDCARD_DAT_TO_FPGA[1]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDCARD_DAT_TO_FPGA[2]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDCARD_DAT_TO_FPGA[3]
 
 #   Magnetic RAM Connections
 
@@ -322,6 +334,23 @@ set_instance_assignment -name IO_STANDARD "1.8 V" -to SDRAM_data[12]
 set_instance_assignment -name IO_STANDARD "1.8 V" -to SDRAM_data[13]
 set_instance_assignment -name IO_STANDARD "1.8 V" -to SDRAM_data[14]
 set_instance_assignment -name IO_STANDARD "1.8 V" -to SDRAM_data[15]
+
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[0]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[1]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[2]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[3]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[4]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[5]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[6]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[7]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[8]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[9]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[10]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[11]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[12]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[13]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[14]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[15]
 
 # set_location_assignment PIN_E1  -to SDRAM_LDQM
 # set_location_assignment PIN_M2  -to SDRAM_UDQM
