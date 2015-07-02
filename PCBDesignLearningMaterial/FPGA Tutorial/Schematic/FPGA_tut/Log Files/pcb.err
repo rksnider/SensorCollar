@@ -1,0 +1,41 @@
+pcb: Note 5996: Using Config File C:\MentorGraphics\9.5PADS\SDD_HOME\standard\pads95.cfg
+pcb: Warning 6083: T pin $1I303.RREF_TL: Single pin net: $1N630
+pcb: Warning 6094: T pin $2I940.DATA1: Pin not connected
+pcb: Warning 6094: T pin $2I940.DATA2: Pin not connected
+pcb: Warning 6094: T pin $2I940.DATA3: Pin not connected
+pcb: Warning 6094: T pin $2I940.DATA4: Pin not connected
+pcb: Warning 6094: T pin $2I853.IO_PR_DONE: Pin not connected
+pcb: Warning 6094: T pin $2I853.IO_PR_ERROR: Pin not connected
+pcb: Warning 6094: T pin $2I853.IO_PR_READY: Pin not connected
+pcb: Warning 6094: T pin $2I1352.IO_27: Pin not connected
+pcb: Warning 6094: T pin $2I1050.IO_CRC_ERROR: Pin not connected
+pcb: Warning 6094: T pin $2I1050.IO_CVP_CONFDONE: Pin not connected
+pcb: Warning 6094: T pin $2I1050.IO_DEV_CLRN: Pin not connected
+pcb: Warning 6094: T pin $2I1050.IO_DEV_OE: Pin not connected
+pcb: Warning 6094: T pin $2I1050.IO_NCEO: Pin not connected
+pcb: Warning 6094: T pin $2I1050.IO_PR_REQUEST: Pin not connected
+pcb: Warning 6094: T pin $1I297.DNU1: Pin not connected
+pcb: Warning 6094: T pin $1I297.DNU2: Pin not connected
+pcb: Warning 6094: T pin $1I297.DNU3: Pin not connected
+pcb: Warning 6094: T pin $1I297.DNU4: Pin not connected
+pcb: Warning 6094: T pin $4I940.DATA1: Pin not connected
+pcb: Warning 6094: T pin $4I940.DATA2: Pin not connected
+pcb: Warning 6094: T pin $4I940.DATA3: Pin not connected
+pcb: Warning 6094: T pin $4I940.DATA4: Pin not connected
+pcb: Warning 6094: T pin $4I853.IO_PR_DONE: Pin not connected
+pcb: Warning 6094: T pin $4I853.IO_PR_ERROR: Pin not connected
+pcb: Warning 6094: T pin $4I853.IO_PR_READY: Pin not connected
+pcb: Warning 6094: T pin $4I1352.IO_27: Pin not connected
+pcb: Warning 6094: T pin $4I1050.IO_CRC_ERROR: Pin not connected
+pcb: Warning 6094: T pin $4I1050.IO_CVP_CONFDONE: Pin not connected
+pcb: Warning 6094: T pin $4I1050.IO_DEV_CLRN: Pin not connected
+pcb: Warning 6094: T pin $4I1050.IO_DEV_OE: Pin not connected
+pcb: Warning 6094: T pin $4I1050.IO_NCEO: Pin not connected
+pcb: Warning 6094: T pin $4I1050.IO_PR_REQUEST: Pin not connected
+pcb: Warning 6094: T pin $3I297.DNU1: Pin not connected
+pcb: Warning 6094: T pin $3I297.DNU2: Pin not connected
+pcb: Warning 6094: T pin $3I297.DNU3: Pin not connected
+pcb: Warning 6094: T pin $3I297.DNU4: Pin not connected
+pcb: Note 5626: Summary of Log Files/pcb.err
+Status 0, Notes 1, Warnings 37
+Errors 0, Failures 0, Fatals 0, Internals 0

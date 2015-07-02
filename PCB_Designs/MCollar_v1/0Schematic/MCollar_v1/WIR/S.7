@@ -29,21 +29,6 @@ AP DxDesigner_Common_Parts:cap_10uF_0402 1 #=1
 AP DxDesigner_Common_Parts:cap_10uF_0402 1 PINTYPE=ANALOG
 AP DxDesigner_Common_Parts:cap_10uF_0402 2 #=2
 AP DxDesigner_Common_Parts:cap_10uF_0402 2 PINTYPE=ANALOG
-|Q DxDesigner_Common_Parts:Res_40p2k1_0402 1
-AS DxDesigner_Common_Parts:Res_40p2k1_0402 PINSWAP=(1,2)
-AS DxDesigner_Common_Parts:Res_40p2k1_0402 REFDES=R?
-AS DxDesigner_Common_Parts:Res_40p2k1_0402 DEVICE=Res_40p2k1_0402
-AS DxDesigner_Common_Parts:Res_40p2k1_0402 VALUE
-AS DxDesigner_Common_Parts:Res_40p2k1_0402 TOLERANCE=1%
-AS DxDesigner_Common_Parts:Res_40p2k1_0402 PKG_TYPE=0402_MY
-AS DxDesigner_Common_Parts:Res_40p2k1_0402 PART_NUMBER=ERJ-2RKF4022X
-AS DxDesigner_Common_Parts:Res_40p2k1_0402 P/D_NUM=P40.2KLCT-ND
-AS DxDesigner_Common_Parts:Res_40p2k1_0402 INOV_VER_REC=15:34:28_1-21-15
-AS DxDesigner_Common_Parts:Res_40p2k1_0402 PINORDER=1 2
-AP DxDesigner_Common_Parts:Res_40p2k1_0402 1 #=1
-AP DxDesigner_Common_Parts:Res_40p2k1_0402 1 PINTYPE=ANALOG
-AP DxDesigner_Common_Parts:Res_40p2k1_0402 2 #=2
-AP DxDesigner_Common_Parts:Res_40p2k1_0402 2 PINTYPE=ANALOG
 |Q DxDesigner_Common_Parts:cap_1uF_0402 1
 AS DxDesigner_Common_Parts:cap_1uF_0402 PINSWAP=(1,2)
 AS DxDesigner_Common_Parts:cap_1uF_0402 REFDES=C?
@@ -119,19 +104,6 @@ AP DxDesigner_Common_Parts:Res_332k1_0402 1 #=1
 AP DxDesigner_Common_Parts:Res_332k1_0402 1 PINTYPE=ANALOG
 AP DxDesigner_Common_Parts:Res_332k1_0402 2 #=2
 AP DxDesigner_Common_Parts:Res_332k1_0402 2 PINTYPE=ANALOG
-|Q DxDesigner_Common_Parts:SCHOTTKY_DIODE 1
-AS DxDesigner_Common_Parts:SCHOTTKY_DIODE INOV_VER_REC=14:52:49_1-22-15
-AS DxDesigner_Common_Parts:SCHOTTKY_DIODE REFDES=D?
-AS DxDesigner_Common_Parts:SCHOTTKY_DIODE Model=D1N914
-AS DxDesigner_Common_Parts:SCHOTTKY_DIODE PKG_TYPE=SCHOTTKY_DIODE
-AS DxDesigner_Common_Parts:SCHOTTKY_DIODE PART_NUMBER=SSA23L
-AS DxDesigner_Common_Parts:SCHOTTKY_DIODE DEVICE=SCHOTTKY_DIODE
-AS DxDesigner_Common_Parts:SCHOTTKY_DIODE P/D_NUM=SSA23L-E3/61TGICT-ND
-AS DxDesigner_Common_Parts:SCHOTTKY_DIODE PINORDER=A C
-AP DxDesigner_Common_Parts:SCHOTTKY_DIODE 1 #=1
-AP DxDesigner_Common_Parts:SCHOTTKY_DIODE 1 PINTYPE=BI
-AP DxDesigner_Common_Parts:SCHOTTKY_DIODE 2 #=2
-AP DxDesigner_Common_Parts:SCHOTTKY_DIODE 2 PINTYPE=OUT
 |Q DxDesigner_Library:Solar_Ctl_LTC3105DD 1
 AS DxDesigner_Library:Solar_Ctl_LTC3105DD INOV_VER_REC=13:04:42_1-22-15
 AS DxDesigner_Library:Solar_Ctl_LTC3105DD DEVICE=Solar_Ctl_LTC3105DD
@@ -172,6 +144,65 @@ AP DxDesigner_Library:Solar_Pannel_Interface 1 #=2
 AP DxDesigner_Library:Solar_Pannel_Interface 1 PINTYPE=IN
 AP DxDesigner_Library:Solar_Pannel_Interface 2 #=1
 AP DxDesigner_Library:Solar_Pannel_Interface 2 PINTYPE=IN
+|Q DxDesigner_Common_Parts:DUAL_ANODE_SCHOTTKY_DIODE 1
+AS DxDesigner_Common_Parts:DUAL_ANODE_SCHOTTKY_DIODE INOV_VER_REC=15:37:25_6-30-15
+AS DxDesigner_Common_Parts:DUAL_ANODE_SCHOTTKY_DIODE REFDES=D?
+AS DxDesigner_Common_Parts:DUAL_ANODE_SCHOTTKY_DIODE Model=D1N914
+AS DxDesigner_Common_Parts:DUAL_ANODE_SCHOTTKY_DIODE PKG_TYPE=DUAL_ANODE_SCHOTTKY_DIODE
+AS DxDesigner_Common_Parts:DUAL_ANODE_SCHOTTKY_DIODE PART_NUMBER=SS10P4C-M3/86A
+AS DxDesigner_Common_Parts:DUAL_ANODE_SCHOTTKY_DIODE DEVICE=DUAL_ANODE_SCHOTTKY_DIODE
+AS DxDesigner_Common_Parts:DUAL_ANODE_SCHOTTKY_DIODE P/D_NUM=SS10P4C-M3/86AGICT-ND
+AS DxDesigner_Common_Parts:DUAL_ANODE_SCHOTTKY_DIODE PART_LABEL=DIODE ARRAY SCHOTTKY 40V TO277A
+AS DxDesigner_Common_Parts:DUAL_ANODE_SCHOTTKY_DIODE PKG_GRP=TO-277
+AS DxDesigner_Common_Parts:DUAL_ANODE_SCHOTTKY_DIODE PINORDER=A1 A2 C
+AP DxDesigner_Common_Parts:DUAL_ANODE_SCHOTTKY_DIODE 1 #=1
+AP DxDesigner_Common_Parts:DUAL_ANODE_SCHOTTKY_DIODE 1 PINTYPE=IN
+AP DxDesigner_Common_Parts:DUAL_ANODE_SCHOTTKY_DIODE 2 #=2
+AP DxDesigner_Common_Parts:DUAL_ANODE_SCHOTTKY_DIODE 2 PINTYPE=IN
+AP DxDesigner_Common_Parts:DUAL_ANODE_SCHOTTKY_DIODE 3 #=3
+AP DxDesigner_Common_Parts:DUAL_ANODE_SCHOTTKY_DIODE 3 PINTYPE=OUT
+|Q DxDesigner_Common_Parts:Res_169k1_0402 1
+AS DxDesigner_Common_Parts:Res_169k1_0402 PINSWAP=(1,2)
+AS DxDesigner_Common_Parts:Res_169k1_0402 REFDES=R?
+AS DxDesigner_Common_Parts:Res_169k1_0402 DEVICE=Res_169k1_0402
+AS DxDesigner_Common_Parts:Res_169k1_0402 VALUE=169k
+AS DxDesigner_Common_Parts:Res_169k1_0402 TOLERANCE=1%
+AS DxDesigner_Common_Parts:Res_169k1_0402 PKG_TYPE=0402_MY
+AS DxDesigner_Common_Parts:Res_169k1_0402 PART_NUMBER=ERJ-2RKF1693X
+AS DxDesigner_Common_Parts:Res_169k1_0402 P/D_NUM=P169KLCT-ND
+AS DxDesigner_Common_Parts:Res_169k1_0402 PART_LABEL=RES SMD 169K OHM 1% 1/10W 0402
+AS DxDesigner_Common_Parts:Res_169k1_0402 PKG_GRP=0402
+AS DxDesigner_Common_Parts:Res_169k1_0402 INOV_VER_REC=11:22:37_7-1-15
+AS DxDesigner_Common_Parts:Res_169k1_0402 PINORDER=1 2
+AP DxDesigner_Common_Parts:Res_169k1_0402 1 #=1
+AP DxDesigner_Common_Parts:Res_169k1_0402 1 PINTYPE=ANALOG
+AP DxDesigner_Common_Parts:Res_169k1_0402 2 #=2
+AP DxDesigner_Common_Parts:Res_169k1_0402 2 PINTYPE=ANALOG
+|Q DxDesigner_Common_Parts:cap_0p01uF_0402 1
+AS DxDesigner_Common_Parts:cap_0p01uF_0402 PINSWAP=(1,2)
+AS DxDesigner_Common_Parts:cap_0p01uF_0402 REFDES=C?
+AS DxDesigner_Common_Parts:cap_0p01uF_0402 DEVICE=cap_0p01uF_0402
+AS DxDesigner_Common_Parts:cap_0p01uF_0402 VALUE=0.01uF
+AS DxDesigner_Common_Parts:cap_0p01uF_0402 PKG_TYPE=0402_MY
+AS DxDesigner_Common_Parts:cap_0p01uF_0402 TOLERANCE
+AS DxDesigner_Common_Parts:cap_0p01uF_0402 PART_NUMBER=CL05B103KA5NNNC
+AS DxDesigner_Common_Parts:cap_0p01uF_0402 P/D_NUM=1276-1057-1-ND
+AS DxDesigner_Common_Parts:cap_0p01uF_0402 INOV_VER_REC=12:43:23_1-9-15
+AS DxDesigner_Common_Parts:cap_0p01uF_0402 PINORDER=1 2
+AP DxDesigner_Common_Parts:cap_0p01uF_0402 1 #=1
+AP DxDesigner_Common_Parts:cap_0p01uF_0402 1 PINTYPE=ANALOG
+AP DxDesigner_Common_Parts:cap_0p01uF_0402 2 #=2
+AP DxDesigner_Common_Parts:cap_0p01uF_0402 2 PINTYPE=ANALOG
+|Q DxDesigner_Library:Thermal_Diode 1
+AS DxDesigner_Library:Thermal_Diode DEVICE=Thermal_Diode
+AS DxDesigner_Library:Thermal_Diode REFDES=D?
+AS DxDesigner_Library:Thermal_Diode PKG_TYPE=Thermal_Diode
+AS DxDesigner_Library:Thermal_Diode INOV_VER_REC=11:45:17_7-1-15
+AS DxDesigner_Library:Thermal_Diode PINORDER=PIN0 PIN1
+AP DxDesigner_Library:Thermal_Diode 1 #=1
+AP DxDesigner_Library:Thermal_Diode 1 PINTYPE=IN
+AP DxDesigner_Library:Thermal_Diode 2 #=2
+AP DxDesigner_Library:Thermal_Diode 2 PINTYPE=IN
 G GND
 M DxDesigner_Common_Parts:Inductor_10uH $7I261
 I $7I261 DxDesigner_Common_Parts:Inductor_10uH SOLAR_CELL_POWER $7N122 VALUE=10uH`REFDES=L5`
@@ -183,11 +214,6 @@ I $7I266 DxDesigner_Common_Parts:cap_10uF_0402 SOLAR_CELL_POWER GND VALUE=10uF`R
 |R 11:58:53_1-7-15
 API $7I266 DxDesigner_Common_Parts:cap_10uF_0402 1 #=1
 API $7I266 DxDesigner_Common_Parts:cap_10uF_0402 2 #=2
-M DxDesigner_Common_Parts:Res_40p2k1_0402 $7I271
-I $7I271 DxDesigner_Common_Parts:Res_40p2k1_0402 GND $7N63 VALUE=40.2k`REFDES=R22`
-|R 15:34:28_1-21-15
-API $7I271 DxDesigner_Common_Parts:Res_40p2k1_0402 1 #=1
-API $7I271 DxDesigner_Common_Parts:Res_40p2k1_0402 2 #=2
 M DxDesigner_Common_Parts:cap_1uF_0402 $7I276
 I $7I276 DxDesigner_Common_Parts:cap_1uF_0402 $7N54 GND VALUE=1uF`REFDES=C54`
 |R 12:58:49_1-22-15
@@ -218,11 +244,6 @@ I $7I306 DxDesigner_Common_Parts:Res_332k1_0402 GND $7N101 TOLERANCE=1%`VALUE=33
 |R 14:44:35_1-22-15
 API $7I306 DxDesigner_Common_Parts:Res_332k1_0402 1 #=1
 API $7I306 DxDesigner_Common_Parts:Res_332k1_0402 2 #=2
-M DxDesigner_Common_Parts:SCHOTTKY_DIODE $7I211
-I $7I211 DxDesigner_Common_Parts:SCHOTTKY_DIODE ESH_AUX_VCC SOLAR_CELL_POWER REFDES=D?`
-|R 14:52:49_1-22-15
-API $7I211 DxDesigner_Common_Parts:SCHOTTKY_DIODE 1 #=1
-API $7I211 DxDesigner_Common_Parts:SCHOTTKY_DIODE 2 #=2
 M DxDesigner_Library:Solar_Ctl_LTC3105DD $7I242
 I $7I242 DxDesigner_Library:Solar_Ctl_LTC3105DD $7N54 $7N101 GND GND $7N220 $7N63 SOLAR_PGOOD_TO_CPLD SOLAR_CTRL_SHDN_N $7N122 SOLAR_CELL_POWER PWR_MAIN PART_NUMBER=LTC3105EDD`REFDES=U?`
 |R 13:04:42_1-22-15
@@ -238,8 +259,29 @@ API $7I242 DxDesigner_Library:Solar_Ctl_LTC3105DD 9 #=7
 API $7I242 DxDesigner_Library:Solar_Ctl_LTC3105DD 10 #=6
 API $7I242 DxDesigner_Library:Solar_Ctl_LTC3105DD 11 #=9
 M DxDesigner_Library:Solar_Pannel_Interface $7I312
-I $7I312 DxDesigner_Library:Solar_Pannel_Interface GND SOLAR_CELL_POWER REFDES=J?`
+I $7I312 DxDesigner_Library:Solar_Pannel_Interface GND $7N327 REFDES=J?`
 |R 10:55:25_5-22-15
 API $7I312 DxDesigner_Library:Solar_Pannel_Interface 1 #=2
 API $7I312 DxDesigner_Library:Solar_Pannel_Interface 2 #=1
+M DxDesigner_Common_Parts:DUAL_ANODE_SCHOTTKY_DIODE $7I320
+I $7I320 DxDesigner_Common_Parts:DUAL_ANODE_SCHOTTKY_DIODE $7N327 ESH_AUX_VCC SOLAR_CELL_POWER REFDES=D1`
+|R 15:37:25_6-30-15
+API $7I320 DxDesigner_Common_Parts:DUAL_ANODE_SCHOTTKY_DIODE 1 #=1
+API $7I320 DxDesigner_Common_Parts:DUAL_ANODE_SCHOTTKY_DIODE 2 #=2
+API $7I320 DxDesigner_Common_Parts:DUAL_ANODE_SCHOTTKY_DIODE 3 #=3
+M DxDesigner_Common_Parts:Res_169k1_0402 $7I331
+I $7I331 DxDesigner_Common_Parts:Res_169k1_0402 $7N340 $7N63 VALUE=169k`REFDES=R22`
+|R 11:22:37_7-1-15
+API $7I331 DxDesigner_Common_Parts:Res_169k1_0402 1 #=1
+API $7I331 DxDesigner_Common_Parts:Res_169k1_0402 2 #=2
+M DxDesigner_Common_Parts:cap_0p01uF_0402 $7I336
+I $7I336 DxDesigner_Common_Parts:cap_0p01uF_0402 $7N340 GND VALUE=0.01uF`REFDES=C?`
+|R 12:43:23_1-9-15
+API $7I336 DxDesigner_Common_Parts:cap_0p01uF_0402 1 #=1
+API $7I336 DxDesigner_Common_Parts:cap_0p01uF_0402 2 #=2
+M DxDesigner_Library:Thermal_Diode $7I345
+I $7I345 DxDesigner_Library:Thermal_Diode $7N340 GND REFDES=D?`
+|R 11:45:17_7-1-15
+API $7I345 DxDesigner_Library:Thermal_Diode 1 #=1
+API $7I345 DxDesigner_Library:Thermal_Diode 2 #=2
 EW

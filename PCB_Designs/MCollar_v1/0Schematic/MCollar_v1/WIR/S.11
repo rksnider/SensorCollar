@@ -41,6 +41,38 @@ AP DxDesigner_Library:Battery_Board_Connector 16 #=8
 AP DxDesigner_Library:Battery_Board_Connector 16 PINTYPE=IN
 AP DxDesigner_Library:Battery_Board_Connector 17 #=9
 AP DxDesigner_Library:Battery_Board_Connector 17 PINTYPE=IN
+|Q DxDesigner_Library:I2C_Header_v2 1
+AS DxDesigner_Library:I2C_Header_v2 DEVICE=I2C_Header_v2
+AS DxDesigner_Library:I2C_Header_v2 REFDES=J?
+AS DxDesigner_Library:I2C_Header_v2 PKG_TYPE=I2C_Header_v2
+AS DxDesigner_Library:I2C_Header_v2 INOV_VER_REC=14:51:14_6-17-15
+AS DxDesigner_Library:I2C_Header_v2 PINORDER=GND SCL SDA
+AP DxDesigner_Library:I2C_Header_v2 1 #=4
+AP DxDesigner_Library:I2C_Header_v2 1 PINTYPE=IN
+AP DxDesigner_Library:I2C_Header_v2 2 #=2
+AP DxDesigner_Library:I2C_Header_v2 2 PINTYPE=IN
+AP DxDesigner_Library:I2C_Header_v2 3 #=3
+AP DxDesigner_Library:I2C_Header_v2 3 PINTYPE=IN
+|Q DxDesigner_Common_Parts:GROUND_PAD 1
+AS DxDesigner_Common_Parts:GROUND_PAD DEVICE=GROUND_PAD
+AS DxDesigner_Common_Parts:GROUND_PAD REFDES=J?
+AS DxDesigner_Common_Parts:GROUND_PAD PKG_TYPE=GROUND_PAD
+AS DxDesigner_Common_Parts:GROUND_PAD INOV_VER_REC=16:03:28_6-17-15
+AS DxDesigner_Common_Parts:GROUND_PAD PINORDER=PIN1
+AP DxDesigner_Common_Parts:GROUND_PAD 1 #=1
+AP DxDesigner_Common_Parts:GROUND_PAD 1 PINTYPE=IN
+|Q DxDesigner_Library:Drop_Interface 1
+AS DxDesigner_Library:Drop_Interface DEVICE=Drop_Interface
+AS DxDesigner_Library:Drop_Interface REFDES=J?
+AS DxDesigner_Library:Drop_Interface PKG_TYPE=Drop_Interface
+AS DxDesigner_Library:Drop_Interface INOV_VER_REC=15:05:56_6-17-15
+AS DxDesigner_Library:Drop_Interface PINORDER=DATA GND VCC
+AP DxDesigner_Library:Drop_Interface 1 #=2
+AP DxDesigner_Library:Drop_Interface 1 PINTYPE=IN
+AP DxDesigner_Library:Drop_Interface 2 #=3
+AP DxDesigner_Library:Drop_Interface 2 PINTYPE=IN
+AP DxDesigner_Library:Drop_Interface 3 #=1
+AP DxDesigner_Library:Drop_Interface 3 PINTYPE=IN
 G GND
 M DxDesigner_Library:Battery_Board_Connector $11I157
 I $11I157 DxDesigner_Library:Battery_Board_Connector ESH_AUX_VCC ESH_JTAG_TMS_SPI_CS ESH_JTAG_TDI_SPI_MOSI ESH_JTAG_TDO_SPI_MISO THERMISTOR_PLUS BATTERY_PLUS BATTERY_PLUS BATTERY_MINUS BATTERY_MINUS ESH_AUX_VCC ESH_FPGA_USB_DMINUS ESH_FPGA_USB_DPLUS ESH_FORCE_STARTUP GND GND ESH_FPGA_SPI_CLK ESH_JTAG_TCK REFDES=J4`
@@ -62,4 +94,20 @@ API $11I157 DxDesigner_Library:Battery_Board_Connector 14 #=6
 API $11I157 DxDesigner_Library:Battery_Board_Connector 15 #=7
 API $11I157 DxDesigner_Library:Battery_Board_Connector 16 #=8
 API $11I157 DxDesigner_Library:Battery_Board_Connector 17 #=9
+M DxDesigner_Library:I2C_Header_v2 $11I180
+I $11I180 DxDesigner_Library:I2C_Header_v2 GND I2C_SCL I2C_SDA REFDES=J?`
+|R 14:51:14_6-17-15
+API $11I180 DxDesigner_Library:I2C_Header_v2 1 #=4
+API $11I180 DxDesigner_Library:I2C_Header_v2 2 #=2
+API $11I180 DxDesigner_Library:I2C_Header_v2 3 #=3
+M DxDesigner_Common_Parts:GROUND_PAD $11I195
+I $11I195 DxDesigner_Common_Parts:GROUND_PAD GND REFDES=J?`
+|R 16:03:28_6-17-15
+API $11I195 DxDesigner_Common_Parts:GROUND_PAD 1 #=1
+M DxDesigner_Library:Drop_Interface $11I202
+I $11I202 DxDesigner_Library:Drop_Interface DROP_CTRL_TO_CPLD GND FPGA_3P3V REFDES=J?`
+|R 15:05:56_6-17-15
+API $11I202 DxDesigner_Library:Drop_Interface 1 #=2
+API $11I202 DxDesigner_Library:Drop_Interface 2 #=3
+API $11I202 DxDesigner_Library:Drop_Interface 3 #=1
 EW

@@ -1,0 +1,14 @@
+[2015-06-08 13.59.05] -------------------- CREATE --------------------
+[2015-06-08 13.59.05] Creating Project Backup infrastructure for project [C:\Users\kyler.callahan\Documents\work\PCBDesignLearningMaterial\FPGA Tutorial\Schematic\FPGA_tut\FPGA_tut.prj].
+[2015-06-08 13.59.06] Successfully created [AutoSave] backup [2015-06-08 13.59.06 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2015-06-10 13.13.59] Successfully created [AutoSave] backup [2015-06-10 13.13.59 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2015-06-11 11.20.07] Successfully created [AutoSave] backup [2015-06-11 11.20.06 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2015-06-11 15.20.08] Successfully created [AutoSave] backup [2015-06-11 15.20.06 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2015-06-11 15.20.08] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\PCBDesignLearningMaterial\FPGA Tutorial\Schematic\FPGA_tut\ProjectBackup\backups\2015-06-08 13.59.06 - auto.zip].
+[2015-06-11 15.20.08] [AutoSave] backup file [FPGA_tut\ProjectBackup\backups\2015-06-08 13.59.06 - auto.zip] removed.
+[2015-06-16 10.18.46] Successfully created [AutoSave] backup [2015-06-16 10.18.43 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2015-06-16 10.18.46] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\PCBDesignLearningMaterial\FPGA Tutorial\Schematic\FPGA_tut\ProjectBackup\backups\2015-06-10 13.13.59 - auto.zip].
+[2015-06-16 10.18.46] [AutoSave] backup file [FPGA_tut\ProjectBackup\backups\2015-06-10 13.13.59 - auto.zip] removed.
+[2015-06-17 11.04.59] Successfully created [AutoSave] backup [2015-06-17 11.04.58 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2015-06-17 11.04.59] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\PCBDesignLearningMaterial\FPGA Tutorial\Schematic\FPGA_tut\ProjectBackup\backups\2015-06-11 11.20.06 - auto.zip].
+[2015-06-17 11.04.59] [AutoSave] backup file [FPGA_tut\ProjectBackup\backups\2015-06-11 11.20.06 - auto.zip] removed.

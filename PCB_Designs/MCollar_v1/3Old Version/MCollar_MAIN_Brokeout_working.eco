@@ -1,0 +1,29 @@
+*PADS-ECO-V9.5-MILS*
+
+*REMARK* -- MCollar_MAIN_Brokeout_working.pcb -- Tue Jun 16 15:18:00 2015
+
+*END*
+*PADS-ECO-V9.5-MILS*
+
+*REMARK* -- MCollar_MAIN_Brokeout_working.pcb -- Tue Jun 16 15:25:48 2015
+
+
+*NET*
+*SIGNAL* M_FPGA_3B_13 5
+U3.V6 J2.38
+*END*
+*PADS-ECO-V9.5-MILS*
+
+*REMARK* -- MCollar_MAIN_Brokeout_working.pcb -- Tue Jun 16 15:34:46 2015
+
+
+*NET*
+*SIGNAL* M_FPGA_3A_05 5
+U3.U7 J2.36
+*SIGNAL* M_FPGA_3B_14 5
+U3.V7 J2.34
+*SIGNAL* M_FPGA_3B_10 5
+U3.U8 J2.32
+*SIGNAL* M_FPGA_3B_15 5
+U3.V8 J2.30
+*END*

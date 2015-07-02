@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <PartListerConfiguration version="2">
   <Entry name="outputVersion" value="1"/>
-  <Entry name="outputFormat" value="EXCEL"/>
+  <Entry name="outputFormat" value="HTML"/>
   <Entry name="pagination" value="NO"/>
   <Entry name="pagelength" value="65535"/>
   <Entry name="delimiter" value=" "/>

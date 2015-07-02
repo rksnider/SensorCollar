@@ -1,0 +1,16 @@
+PADS Layout
+ctrl+alt+c: opens color and layer display
+ctrl+alt+n: opens net management window
+(select component) alt + Enter: open component properties
+ctrl + Enter: open Options window
+ctrl + E: Move part
+ctrl + R: Rotate part
+
+
+PADS Router
+F3 Route
+(When routing) Shift + click: place via
+(when routing) Ctrl + click: end route
+
+
+write down macros
