@@ -86,9 +86,9 @@ set CLKout_brd_min              0.080
 set_false_path -to    [get_ports PC_SPI_CLK]
 set_false_path -from  [get_ports PC_STATUS_CHG]
 
-set output_port_list          {PC_SPI_NCS PC_SPI_DOUT}
+set output_port_list          {PC_SPI_NCS PC_SPI_DIN}
 
-set input_port_list           {PC_SPI_DIN}
+set input_port_list           {PC_SPI_DOUT}
 
 set in_min_delay              [expr $CLKin_src_min + $CLKin_dev_min + \
                                     $CLKin_brd_min - $CLKin_dst_max]

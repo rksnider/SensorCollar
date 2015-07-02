@@ -120,6 +120,32 @@ AP DxDesigner_Library:EXT_SERIAL 9 #=4
 AP DxDesigner_Library:EXT_SERIAL 9 PINTYPE=IN
 AP DxDesigner_Library:EXT_SERIAL 10 #=10
 AP DxDesigner_Library:EXT_SERIAL 10 PINTYPE=IN
+|Q DxDesigner_Library:USB3P0 1
+AS DxDesigner_Library:USB3P0 INOV_VER_REC=9:43:43_6-22-15
+AS DxDesigner_Library:USB3P0 DEVICE=USB3P0_LAND
+AS DxDesigner_Library:USB3P0 REFDES=J?
+AS DxDesigner_Library:USB3P0 PKG_TYPE=USB3P0_LAND
+AS DxDesigner_Library:USB3P0 PINORDER=CLK CTL D+ D- FS GND IN OUT TCLK VCC
+AP DxDesigner_Library:USB3P0 1 #=5
+AP DxDesigner_Library:USB3P0 1 PINTYPE=IN
+AP DxDesigner_Library:USB3P0 2 #=3
+AP DxDesigner_Library:USB3P0 2 PINTYPE=IN
+AP DxDesigner_Library:USB3P0 3 #=8
+AP DxDesigner_Library:USB3P0 3 PINTYPE=IN
+AP DxDesigner_Library:USB3P0 4 #=9
+AP DxDesigner_Library:USB3P0 4 PINTYPE=IN
+AP DxDesigner_Library:USB3P0 5 #=7
+AP DxDesigner_Library:USB3P0 5 PINTYPE=IN
+AP DxDesigner_Library:USB3P0 6 #=6
+AP DxDesigner_Library:USB3P0 6 PINTYPE=IN
+AP DxDesigner_Library:USB3P0 7 #=2
+AP DxDesigner_Library:USB3P0 7 PINTYPE=IN
+AP DxDesigner_Library:USB3P0 8 #=1
+AP DxDesigner_Library:USB3P0 8 PINTYPE=IN
+AP DxDesigner_Library:USB3P0 9 #=4
+AP DxDesigner_Library:USB3P0 9 PINTYPE=IN
+AP DxDesigner_Library:USB3P0 10 #=10
+AP DxDesigner_Library:USB3P0 10 PINTYPE=IN
 G GND
 M DxDesigner_Library:JUMPER_8PIN_100MIL $4I6
 I $4I6 DxDesigner_Library:JUMPER_8PIN_100MIL I2C_LT_B1 I2C_JUMPER_TO_SPI_PIN1 I2C_LT_B2 I2C_JUMPER_TO_SPI_PIN3 ? ? GND ? DEVICE=JUMPER_8PIN_100MIL`REFDES=U?`
@@ -179,4 +205,17 @@ API $4I160 DxDesigner_Library:EXT_SERIAL 7 #=2
 API $4I160 DxDesigner_Library:EXT_SERIAL 8 #=1
 API $4I160 DxDesigner_Library:EXT_SERIAL 9 #=4
 API $4I160 DxDesigner_Library:EXT_SERIAL 10 #=10
+M DxDesigner_Library:USB3P0 $4I210
+I $4I210 DxDesigner_Library:USB3P0 SERIAL_CLK SERIAL_CTL SERIAL_DPlus SERIAL_DMinus SWITCH_TO_FS GND SERIAL_IN SERIAL_OUT SERIAL_TCLK USB_VCC REFDES=J?`
+|R 9:43:43_6-22-15
+API $4I210 DxDesigner_Library:USB3P0 1 #=5
+API $4I210 DxDesigner_Library:USB3P0 2 #=3
+API $4I210 DxDesigner_Library:USB3P0 3 #=8
+API $4I210 DxDesigner_Library:USB3P0 4 #=9
+API $4I210 DxDesigner_Library:USB3P0 5 #=7
+API $4I210 DxDesigner_Library:USB3P0 6 #=6
+API $4I210 DxDesigner_Library:USB3P0 7 #=2
+API $4I210 DxDesigner_Library:USB3P0 8 #=1
+API $4I210 DxDesigner_Library:USB3P0 9 #=4
+API $4I210 DxDesigner_Library:USB3P0 10 #=10
 EW

@@ -97,11 +97,12 @@ begin
   --------------------------------------------------------------------------
 
   clk_gen : process (reset, clk)
+    variable new_clk        : std_logic ;
   begin
     if (reset = '1') then
-      clk_cnt             <= (others => '0') ;
-      out_clk             <= '0' ;
-      gated_clk_en        <= '0' ;
+      clk_cnt               <= (others => '0') ;
+      out_clk               <= '0' ;
+      gated_clk_en          <= '0' ;
 
     --  Count out a half cycle of the output clock in driver clock cycles.
 
@@ -109,33 +110,33 @@ begin
       if (clk_cnt /= TO_UNSIGNED (clk_cntmax_c,
                                   clk_cnt'length)) then
 
-        clk_cnt           <= clk_cnt + 1 ;
+        clk_cnt             <= clk_cnt + 1 ;
       else
-
-        --  Enable or disable the gated clock only on a falling edge of the
-        --  output clock.
-
-        if (out_clk = '1') then
-
-          if (clk_on_in = '1') then
-            gated_clk_en  <= '1' ;
-          elsif (clk_off_in = '1') then
-            gated_clk_en  <= '0' ;
-          end if ;
-        end if ;
+        clk_cnt             <= (others => '0') ;
 
         --  Generate a new output clock edge and start counting a half
         --  cycle again.
 
-        clk_cnt           <= (others => '0') ;
-        out_clk           <= not out_clk ;
+        new_clk             := not out_clk ;
+        out_clk             <= new_clk ;
+
+        if (clk_on_in = '1') then
+          gated_clk_en      <= '1' ;
+          gated_clk_out     <= new_clk ;
+
+        elsif (clk_off_in = '1') then
+          gated_clk_en      <= '0' ;
+          gated_clk_out     <= '0' ;
+
+        elsif (gated_clk_en = '1') then
+          gated_clk_out     <= new_clk ;
+        end if ;
       end if ;
     end if ;
 
   end process clk_gen ;
 
-  clk_out                 <= out_clk ;
-  gated_clk_out           <= out_clk and gated_clk_en ;
+  clk_out                   <= out_clk ;
 
 
 end architecture rtl ;

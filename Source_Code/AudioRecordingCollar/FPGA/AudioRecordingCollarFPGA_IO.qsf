@@ -34,7 +34,7 @@ set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -fall
 set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -rise
 set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -fall
 set_global_assignment -name ACTIVE_SERIAL_CLOCK FREQ_100MHZ
-set_global_assignment -name DEVICE_INITIALIZATION_CLOCK INIT_DCLK
+set_global_assignment -name DEVICE_INITIALIZATION_CLOCK INIT_INTOSC
 
 #   System Control - Not defined in QSF file
 
@@ -241,6 +241,23 @@ set_instance_assignment -name IO_STANDARD "1.8 V" -to SDRAM_data[12]
 set_instance_assignment -name IO_STANDARD "1.8 V" -to SDRAM_data[13]
 set_instance_assignment -name IO_STANDARD "1.8 V" -to SDRAM_data[14]
 set_instance_assignment -name IO_STANDARD "1.8 V" -to SDRAM_data[15]
+
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[0]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[1]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[2]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[3]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[4]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[5]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[6]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[7]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[8]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[9]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[10]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[11]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[12]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[13]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[14]
+# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[15]
 
 # set_location_assignment PIN_E1  -to SDRAM_LDQM
 # set_location_assignment PIN_M2  -to SDRAM_UDQM

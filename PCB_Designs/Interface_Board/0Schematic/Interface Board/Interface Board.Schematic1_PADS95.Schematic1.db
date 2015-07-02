@@ -60,6 +60,26 @@
 			(pin 4  3 "USB_FCI_CONNECTOR__USB_FCI_CONNECTOR_1" 0 "GND" 0)
 			(pin 2  3 "USB_FCI_CONNECTOR__USB_FCI_CONNECTOR_1" 0 "D-" 0)
 			(pin 3  3 "USB_FCI_CONNECTOR__USB_FCI_CONNECTOR_1" 0 "D+" 0))
+		(part "USB3P0_LAND")
+		(logical_part_mapping "USB3P0_LAND"
+			(comp "J8"))
+		(logical_part "USB3P0_LAND"
+			(slots
+				(slot "USB3P0__USB3P0_LAND_1"
+					(attributes
+						(attval "DEVICE" "USB3P0_LAND")
+						(attval "PKG_TYPE" "USB3P0_LAND")
+						(attval "REFDES" "J?"))))
+			(pin 10  3 "USB3P0__USB3P0_LAND_1" 0 "VCC" 0)
+			(pin 4  3 "USB3P0__USB3P0_LAND_1" 0 "TCLK" 0)
+			(pin 1  3 "USB3P0__USB3P0_LAND_1" 0 "OUT" 0)
+			(pin 2  3 "USB3P0__USB3P0_LAND_1" 0 "IN" 0)
+			(pin 6  3 "USB3P0__USB3P0_LAND_1" 0 "GND" 0)
+			(pin 7  3 "USB3P0__USB3P0_LAND_1" 0 "FS" 0)
+			(pin 9  3 "USB3P0__USB3P0_LAND_1" 0 "D-" 0)
+			(pin 8  3 "USB3P0__USB3P0_LAND_1" 0 "D+" 0)
+			(pin 3  3 "USB3P0__USB3P0_LAND_1" 0 "CTL" 0)
+			(pin 5  3 "USB3P0__USB3P0_LAND_1" 0 "CLK" 0))
 		(part "TWO_BIT_BI_TRANSLATOR_TXS0102")
 		(logical_part_mapping "TWO_BIT_BI_TRANSLATOR_TXS0102"
 			(comp "U7"))
@@ -69,7 +89,8 @@
  "TWO_BIT_BI_TRANSLATOR_TXS0102__TWO_BIT_BI_TRANSLATOR_TXS0102_1"
 					(attributes
 						(attval "DEVICE" "TWO_BIT_BI_TRANSLATOR_TXS0102")
-						(attval "Part Number" "TXS0102DCUR")
+						(attval "Part Number" "TXS0102DCUT")
+						(attval "PKG_GRP" "8-VFSOP")
 						(attval "PKG_TYPE" "TWO_BIT_BI_TRANSLATOR_TXS0102")
 						(attval "REFDES" "U?"))))
 			(pin 7  3
@@ -96,6 +117,8 @@
 				(slot "TVS_DIODE_ARRAY_SP3003_08ATG__TVS_DIODE_ARRAY_SP3003_08ATG_1"
 					(attributes
 						(attval "DEVICE" "TVS_DIODE_ARRAY_SP3003_08ATG")
+						(attval "Part Number" "SP3003-08ATG")
+						(attval "PKG_GRP" "10-MSOP")
 						(attval "PKG_TYPE" "TVS_DIODE_ARRAY_SP3003_08ATG")
 						(attval "REFDES" "U?"))))
 			(pin 8  3
@@ -127,6 +150,7 @@
 					(attributes
 						(attval "DEVICE" "S_BIT_UNI_TRANSLATOR_FXLP34")
 						(attval "Part Number" "FXLP34P5X")
+						(attval "PKG_GRP" "SC-70-5")
 						(attval "PKG_TYPE" "S_BIT_UNI_TRANSLATOR_FXLP34")
 						(attval "REFDES" "U?"))))
 			(pin 4  3
@@ -245,25 +269,9 @@
 			(pin 8  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "D+" 0)
 			(pin 3  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "CTL" 0)
 			(pin 5  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "CLK" 0))
-		(part "CAP_1UF_0603")
-		(logical_part_mapping "CAP_1UF_0603"
-			(comp "C4" "C2" "C1"))
-		(logical_part "CAP_1UF_0603"
-			(slots
-				(slot "CAP_1UF_0603__CAP_1UF_0603_1"
-					(attributes
-						(attval "DEVICE" "CAP_1UF_0603")
-						(attval "Part Number" "GRM188R61A105KA61D")
-						(attval "PINSWAP" "[(1,2)]")
-						(attval "PKG_TYPE" "0402_MY")
-						(attval "REFDES" "C?")
-						(attval "Tolerance" "")
-						(attval "Value" "1UF"))))
-			(pin 2  5 "CAP_1UF_0603__CAP_1UF_0603_1" 0 "2" 0)
-			(pin 1  5 "CAP_1UF_0603__CAP_1UF_0603_1" 0 "1" 0))
 		(part "CAP_1UF_0402")
 		(logical_part_mapping "CAP_1UF_0402"
-			(comp "C3"))
+			(comp "C4" "C3" "C2" "C1"))
 		(logical_part "CAP_1UF_0402"
 			(slots
 				(slot "CAP_1UF_0402__CAP_1UF_0402_1"
@@ -341,6 +349,8 @@
 				(comp_pin "1" 0.0 0.0 "IN")
 				(comp_pin "5" 0.0 0.0 "IN"))
 			(attributes
+				(attval "Part Number" "SP3003-08ATG")
+				(attval "PKG_GRP" "10-MSOP")
 				(attval "DEVICE" "TVS_DIODE_ARRAY_SP3003_08ATG")
 				(attval "REFDES" "U10")))
 		(component "TVS_DIODE_ARRAY_SP3003_08ATG"
@@ -356,6 +366,8 @@
 				(comp_pin "1" 0.0 0.0 "IN")
 				(comp_pin "5" 0.0 0.0 "IN"))
 			(attributes
+				(attval "Part Number" "SP3003-08ATG")
+				(attval "PKG_GRP" "10-MSOP")
 				(attval "DEVICE" "TVS_DIODE_ARRAY_SP3003_08ATG")
 				(attval "REFDES" "U9")))
 		(component "JUMPER_8PIN_100MIL"
@@ -382,7 +394,8 @@
 				(comp_pin "4" 0.0 0.0 "IN")
 				(comp_pin "5" 0.0 0.0 "IN"))
 			(attributes
-				(attval "Part Number" "TXS0102DCUR")
+				(attval "Part Number" "TXS0102DCUT")
+				(attval "PKG_GRP" "8-VFSOP")
 				(attval "DEVICE" "TWO_BIT_BI_TRANSLATOR_TXS0102")
 				(attval "REFDES" "U7")))
 		(component "S_BIT_UNI_TRANSLATOR_FXLP34"
@@ -394,6 +407,7 @@
 				(comp_pin "2" 0.0 0.0 "IN"))
 			(attributes
 				(attval "Part Number" "FXLP34P5X")
+				(attval "PKG_GRP" "SC-70-5")
 				(attval "DEVICE" "S_BIT_UNI_TRANSLATOR_FXLP34")
 				(attval "REFDES" "U6")))
 		(component "S_BIT_UNI_TRANSLATOR_FXLP34"
@@ -405,6 +419,7 @@
 				(comp_pin "2" 0.0 0.0 "IN"))
 			(attributes
 				(attval "Part Number" "FXLP34P5X")
+				(attval "PKG_GRP" "SC-70-5")
 				(attval "DEVICE" "S_BIT_UNI_TRANSLATOR_FXLP34")
 				(attval "REFDES" "U5")))
 		(component "S_BIT_UNI_TRANSLATOR_FXLP34"
@@ -416,6 +431,7 @@
 				(comp_pin "2" 0.0 0.0 "IN"))
 			(attributes
 				(attval "Part Number" "FXLP34P5X")
+				(attval "PKG_GRP" "SC-70-5")
 				(attval "DEVICE" "S_BIT_UNI_TRANSLATOR_FXLP34")
 				(attval "REFDES" "U4")))
 		(component "S_BIT_UNI_TRANSLATOR_FXLP34"
@@ -427,6 +443,7 @@
 				(comp_pin "2" 0.0 0.0 "IN"))
 			(attributes
 				(attval "Part Number" "FXLP34P5X")
+				(attval "PKG_GRP" "SC-70-5")
 				(attval "DEVICE" "S_BIT_UNI_TRANSLATOR_FXLP34")
 				(attval "REFDES" "U3")))
 		(component "1P8_LDOREG_TLV702"
@@ -453,6 +470,21 @@
 				(attval "PKG_GRP" "SC-74A")
 				(attval "DEVICE" "3P3_LDOREG_TLV702")
 				(attval "REFDES" "U1")))
+		(component "USB3P0_LAND"
+			(place "J8" 0.0 0.0 top 0.0
+				(comp_pin "10" 0.0 0.0 "IN")
+				(comp_pin "4" 0.0 0.0 "IN")
+				(comp_pin "1" 0.0 0.0 "IN")
+				(comp_pin "2" 0.0 0.0 "IN")
+				(comp_pin "6" 0.0 0.0 "IN")
+				(comp_pin "7" 0.0 0.0 "IN")
+				(comp_pin "9" 0.0 0.0 "IN")
+				(comp_pin "8" 0.0 0.0 "IN")
+				(comp_pin "3" 0.0 0.0 "IN")
+				(comp_pin "5" 0.0 0.0 "IN"))
+			(attributes
+				(attval "DEVICE" "USB3P0_LAND")
+				(attval "REFDES" "J8")))
 		(component "SPST_SLIDE_SWITCH"
 			(place "J7" 0.0 0.0 top 0.0
 				(comp_pin "3" 0.0 0.0 "IN")
@@ -562,10 +594,10 @@
 				(comp_pin "2" 0.0 0.0 "BI")
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
-				(attval "Part Number" "GRM188R61A105KA61D")
+				(attval "Part Number" "GRM155R61A105KE15D")
 				(attval "Tolerance" "")
 				(attval "Value" "1UF")
-				(attval "DEVICE" "CAP_1UF_0603")
+				(attval "DEVICE" "CAP_1UF_0402")
 				(attval "REFDES" "C4")))
 		(component "0402_MY"
 			(place "C3" 0.0 0.0 top 0.0
@@ -582,20 +614,20 @@
 				(comp_pin "2" 0.0 0.0 "BI")
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
-				(attval "Part Number" "GRM188R61A105KA61D")
+				(attval "Part Number" "GRM155R61A105KE15D")
 				(attval "Tolerance" "")
 				(attval "Value" "1UF")
-				(attval "DEVICE" "CAP_1UF_0603")
+				(attval "DEVICE" "CAP_1UF_0402")
 				(attval "REFDES" "C2")))
 		(component "0402_MY"
 			(place "C1" 0.0 0.0 top 0.0
 				(comp_pin "2" 0.0 0.0 "BI")
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
-				(attval "Part Number" "GRM188R61A105KA61D")
+				(attval "Part Number" "GRM155R61A105KE15D")
 				(attval "Tolerance" "")
 				(attval "Value" "1UF")
-				(attval "DEVICE" "CAP_1UF_0603")
+				(attval "DEVICE" "CAP_1UF_0402")
 				(attval "REFDES" "C1"))))
 	(functions
 		(func "$6I8" "" "U10" 1)
@@ -608,6 +640,7 @@
 		(func "$2I1" "" "U3" 1)
 		(func "$1I41" "" "U2" 1)
 		(func "$1I55" "" "U1" 1)
+		(func "$4I210" "" "J8" 1)
 		(func "$5I45" "" "J7" 1)
 		(func "$5I6" "" "J6" 1)
 		(func "$5I54" "" "J5" 1)
@@ -617,20 +650,16 @@
 		(func "$4I102" "" "J1" 1)
 		(func "$3I20" "" "C10" 1)
 		(func "$3I16" "" "C9" 1)
-		(func "$1I76" "" "C4" 1)
+		(func "$1I291" "" "C4" 1)
 		(func "$1I70" "" "C3" 1)
-		(func "$1I32" "" "C2" 1)
-		(func "$1I22" "" "C1" 1))
+		(func "$1I287" "" "C2" 1)
+		(func "$1I283" "" "C1" 1))
 	(network
 		(net "$5N32"
 			(pins J5-3 J5-2))
-		(net "ESD_VCC"
-			(pins U1-3 U1-1 U2-3 U2-1 C2-1 C4-1))
-		(net "ESD_VCC1P8"
-			(pins U7-6 U7-3 U2-5 C10-1 C1-1 U3-5 U4-5 U5-5 U6-1))
 		(net "GND"
-			(pins U7-2 J1-3 U1-2 U9-5 U10-5 U2-2 C9-2 J6-4 C3-2 C1-2 C2-2 C4-2 U3-3 U4-3
- U5-3 U6-3 J2-10 J2-2 J3-10 J3-2 J5-5 J4-6 U8-7))
+			(pins U7-2 J1-3 U1-2 U9-5 U10-5 U2-2 C9-2 J6-4 J8-6 C3-2 U3-3 U4-3 U5-3 U6-3
+ J2-10 J2-2 J3-10 J3-2 J5-5 J4-6 U8-7 C1-2 C2-2 C4-2))
 		(net "I2C_JUMPER_TO_SPI_PIN1"
 			(pins J2-1 U8-2))
 		(net "I2C_JUMPER_TO_SPI_PIN3"
@@ -646,19 +675,19 @@
 		(net "LT_TO_SPI_PIN5"
 			(pins U9-1 U6-4 J2-5))
 		(net "SERIAL_CLK"
-			(pins U10-3 U4-4 J4-5))
+			(pins U10-3 J8-5 U4-4 J4-5))
 		(net "SERIAL_CTL"
-			(pins U10-4 U3-4 J3-5 J4-3))
+			(pins U10-4 J8-3 U3-4 J3-5 J4-3))
 		(net "SERIAL_DMINUS"
-			(pins J6-2 J4-9))
+			(pins J6-2 J8-9 J4-9))
 		(net "SERIAL_DPLUS"
-			(pins J6-3 J4-8))
+			(pins J6-3 J8-8 J4-8))
 		(net "SERIAL_IN"
-			(pins U10-9 U5-4 J3-9 J4-2))
+			(pins U10-9 J8-2 U5-4 J3-9 J4-2))
 		(net "SERIAL_OUT"
-			(pins U10-10 U6-2 J3-3 J4-1))
+			(pins U10-10 J8-1 U6-2 J3-3 J4-1))
 		(net "SERIAL_TCLK"
-			(pins J3-1 J4-4))
+			(pins J8-4 J3-1 J4-4))
 		(net "SPI_PIN7_TO_LT"
 			(pins U9-2 U4-2 J2-7))
 		(net "SPI_PIN8_TO_LT"
@@ -666,11 +695,11 @@
 		(net "SPI_PIN9_TO_LT"
 			(pins U9-3 U3-2 J2-9))
 		(net "SWITCH_TO_FS"
-			(pins J7-1 J4-7))
+			(pins J8-7 J7-1 J4-7))
 		(net "USB_VCC"
-			(pins U10-1 J5-1 J4-10))
+			(pins U1-3 U1-1 U10-1 U2-3 U2-1 J8-10 J5-1 J4-10 C1-1 C2-1))
 		(net "VCC1P8"
-			(pins U10-2 J7-3 J3-4))
+			(pins U7-6 U7-3 U10-2 U2-5 C10-1 J7-3 U3-5 U4-5 U5-5 U6-1 J3-4 C4-1))
 		(net "VCC3P3"
 			(pins U7-7 U1-5 C9-1 C3-1 U3-1 U4-1 U5-1 U6-5)))
 	(network_electrical
@@ -738,12 +767,6 @@
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "GND"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "ESD_VCC1P8"
-			(constraints
-				(cnsval "SCHEDULED" "FALSE")))
-		(net_scalar "ESD_VCC"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "$5N32"
