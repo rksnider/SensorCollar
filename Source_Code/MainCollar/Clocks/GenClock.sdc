@@ -9,6 +9,9 @@ set genclk_inst                 [get_instance]
 
 set sysclk_clock                [get_instvalue clk]
 
+set sysclk_data                 [get_clocks $sysclk_clock]
+set sysclk_source               [get_clock_info -targets $sysclk_data]
+
 #   Determine the clock divider.
 
 set clk_freq_g                  [get_instvalue clk_freq_g]
@@ -18,6 +21,8 @@ set clk_div                     [expr {int($clk_freq_g / \
                                            $out_clk_freq_g)}]
 
 #   Generate the continuously running clock if it is desired.
+#   Timings between the source clock and the generating clock are not
+#   important.
 
 set clk_out_info                [get_instvalue clk_out]
 
@@ -34,8 +39,13 @@ if {[llength $clk_out_info] > 0} {
 
   puts $sdc_log "Creating clock '$clk_out_clock' on '$clk_out_target' from '$clk_out_info'\n"
 
-  create_generated_clock -source "$sysclk_clock" -name "$clk_out_clock" \
-                         -divide_by "$clk_div"         "$clk_out_target"
+  create_generated_clock -source "$sysclk_source" -name "$clk_out_clock" \
+                         -divide_by "$clk_div"          "$clk_out_target"
+
+  set clk_out_data              [get_clocks "$clk_out_clock"]
+
+  set_false_path -from $sysclk_data  -to $clk_out_data
+  set_false_path -from $clk_out_data -to $sysclk_data
 }
 
 #   Generate the gated clock if it is desired.
@@ -55,6 +65,11 @@ if {[llength $clk_out_info] > 0} {
 
   puts $sdc_log "Creating clock '$clk_out_clock' on '$clk_out_target' from '$clk_out_info'\n"
 
-  create_generated_clock -source "$sysclk_clock" -name "$clk_out_clock" \
-                         -divide_by "$clk_div"         "$clk_out_target"
+  create_generated_clock -source "$sysclk_source" -name "$clk_out_clock" \
+                         -divide_by "$clk_div"          "$clk_out_target"
+
+  set clk_out_data              [get_clocks "$clk_out_clock"]
+
+  set_false_path -from $sysclk_data  -to $clk_out_data
+  set_false_path -from $clk_out_data -to $sysclk_data
 }
