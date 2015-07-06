@@ -107,33 +107,47 @@ begin
       out_gated_clk         <= '0' ;
       gated_clk_en          <= '0' ;
 
-    --  Count out a half cycle of the output clock in driver clock cycles.
+    --  Handle gated clocks when the input clock passes through directly.
 
-    elsif (rising_edge (clk) and clk_cntmax_c /= 0) then
-
-      if (clk_cnt /= TO_UNSIGNED (clk_cntmax_c,
-                                  clk_cnt'length)) then
-
-        clk_cnt             <= clk_cnt + 1 ;
-      else
-        clk_cnt             <= (others => '0') ;
-
-        --  Generate a new output clock edge and start counting a half
-        --  cycle again.
-
-        new_clk             := not out_clk ;
-        out_clk             <= new_clk ;
-
+    elsif (falling_edge (clk)) then
+      if (clk_cntmax_c = 0) then
         if (clk_on_in = '1') then
           gated_clk_en      <= '1' ;
-          out_gated_clk     <= new_clk ;
 
         elsif (clk_off_in = '1') then
           gated_clk_en      <= '0' ;
-          out_gated_clk     <= '0' ;
 
-        elsif (gated_clk_en = '1') then
-          out_gated_clk     <= new_clk ;
+        end if ;
+      end if ;
+
+    --  Count out a half cycle of the output clock in driver clock cycles.
+
+    elsif (rising_edge (clk)) then
+      if (clk_cntmax_c /= 0) then
+        if (clk_cnt /= TO_UNSIGNED (clk_cntmax_c,
+                                    clk_cnt'length)) then
+
+          clk_cnt             <= clk_cnt + 1 ;
+        else
+          clk_cnt             <= (others => '0') ;
+
+          --  Generate a new output clock edge and start counting a half
+          --  cycle again.
+
+          new_clk             := not out_clk ;
+          out_clk             <= new_clk ;
+
+          if (clk_on_in = '1') then
+            gated_clk_en      <= '1' ;
+            out_gated_clk     <= new_clk ;
+
+          elsif (clk_off_in = '1') then
+            gated_clk_en      <= '0' ;
+            out_gated_clk     <= '0' ;
+
+          elsif (gated_clk_en = '1') then
+            out_gated_clk     <= new_clk ;
+          end if ;
         end if ;
       end if ;
     end if ;
@@ -146,7 +160,7 @@ begin
   clk_out                   <= out_clk       when (clk_cntmax_c /= 0) else
                                clk ;
   gated_clk_out             <= out_gated_clk when (clk_cntmax_c /= 0) else
-                               clk and gated_clk_en ;
+                               (clk and gated_clk_en) ;
 
 
 end architecture rtl ;
