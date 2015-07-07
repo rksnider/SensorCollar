@@ -22,6 +22,13 @@ package UTILITIES_PKG is
 
   --  New type defined for 2008.
   type integer_vector is array (natural range <>) of integer ;
+  
+  --  New functions defined for 2008.
+  function minimum (a, b : in integer)
+  return integer ;
+  
+  function maximum (a, b : in integer)
+  return integer ;
 
   --  Reverse the bits in a vector.
   function reverse_any_vector (a : in std_logic_vector)
@@ -86,9 +93,41 @@ package UTILITIES_PKG is
   --          The vacated positions are removed.
   --          The COUNT rightmost elements are lost.
 
+  procedure attach2except (signal dest      : out std_logic_vector ;
+                           signal src       : in  std_logic_vector ;
+                           constant except  : in  integer_vector) ;
+  --  Attaches all source bits to corresponding destination bits except for
+  --  those indexed in the except array.  This allows the latter to be
+  --  attached to different signals.
+
+
 end package UTILITIES_PKG ;
 
 package body UTILITIES_PKG is
+
+  --  New functions defined for 2008.
+
+  function minimum (a, b : in integer)
+  return integer is
+    variable result   : integer ;
+  begin
+    if (a < b) then
+      return a ;
+    else
+      return b ;
+    end if ;
+  end ;
+  
+  function maximum (a, b : in integer)
+  return integer is
+    variable result   : integer ;
+  begin
+    if (a > b) then
+      return a ;
+    else
+      return b ;
+    end if ;
+  end ;
 
   --  Code originated from Jonathan Bromley to reverse the bits in a vector.
 
@@ -291,5 +330,27 @@ package body UTILITIES_PKG is
     return RESIZE (SHIFT_RIGHT (ARG, COUNT), ARG'length - COUNT) ;
   end SHIFT_RIGHT_LL ;
 
+
+  --  Attaches all source bits to corresponding destination bits except for
+  --  those indexed in the except array.  This allows the latter to be
+  --  attached to different signals.
+
+  procedure attach2except (signal dest      : out std_logic_vector ;
+                           signal src       : in  std_logic_vector ;
+                           constant except  : in  integer_vector) is
+    variable exclude    : std_logic_vector (dest'range) :=
+                                  (others => '0') ;
+  begin
+    for i in except'range loop
+      if (except (i) <= exclude'high and except (i) >= exclude'low) then
+        exclude (except (i))     := '1' ;
+      end if ;
+    end loop ;
+    for i in exclude'range loop
+      if (exclude (i) = '0' and i <= src'high and i >= src'low) then
+        dest (i)        <= src (i) ;
+      end if ;
+    end loop ;
+  end ;
 
 end package body UTILITIES_PKG ;

@@ -39,9 +39,13 @@ proc push_instance { instance } {
 
   if { 1 != [info exists instance_stack]} {
     set instance_stack          [list]
+    set full_instance           "$instance"
+  } else {
+    set cur_instance            [lindex $instance_stack 0]
+    set full_instance           "$cur_instance|$instance"
   }
 
-  set instance_stack            [linsert $instance_stack 0 $instance]
+  set instance_stack            [linsert $instance_stack 0 $full_instance]
 }
 
 proc pop_instance {} {

@@ -15,14 +15,14 @@ package SDRAM_Information_pkg is
 
   --  Capacity data about specific synchronous dynamic RAM chips.
 
-  type SDRAM_Capacity is record
+  type SDRAM_Capacity_t is record
     ROWBITS   : natural ;   --  Number of bits in a row.
     ROWCOUNT  : natural ;   --  Number of rows in a bank.
     BANKS     : natural ;   --  Number of banks in the chip.
     ADDRBITS  : natural ;   --  Number of address pins on the chip.
     DATABITS  : natural ;   --  Number of data bits on the chip.
     CMDBITS   : natural ;   --  Number of command bits on the chip.
-  end record SDRAM_Capacity ;
+  end record SDRAM_Capacity_t ;
 
   --  Timing data about specific synchronous dynamic RAM chips.  Timings are
   --  mostly minimum values unless MAX is specified in the comment.  When
@@ -31,7 +31,7 @@ package SDRAM_Information_pkg is
   --  are specified in seconds (1.0e-9 is a nanosecond) or as multiples of
   --  the clock cycle time (T_CK).
 
-  type SDRAM_Timing is record
+  type SDRAM_Timing_t is record
     CL        : natural ;   --  Column (CAS) Latency in clock cycles.  MAX
     T_AC      : real    ;   --  Access time from CLK (positive edge).
     T_AH      : real    ;   --  Address hold time.
@@ -61,7 +61,7 @@ package SDRAM_Information_pkg is
     T_T_H     : real    ;   --  Transition time.  MAX
     T_WR      : real    ;   --  WRITE recovery time.
     T_XSR     : real    ;   --  Exit SELF REFRESH-to-ACTIVE command.
-    T_BDL     : natural ;   --  Last data-in to burset STOP command.
+    T_BDL     : natural ;   --  Last data-in to burst STOP command.
     T_CCD     : natural ;   --  READ/WRITE command to READ/WRITE command.
     T_CDL     : natural ;   --  Last data-in to new READ/WRITE command.
     T_CKED    : natural ;   --  CKE to clock disable or power-down entry
@@ -77,35 +77,47 @@ package SDRAM_Information_pkg is
     T_PED     : natural ;   --  CKE to clock enable or power-down exit mode.
     T_RDL     : natural ;   --  Last data-in to PRECHARGE command.
     T_ROH     : natural ;   --  Data-out High-Z from PRECHARGE command.
-  end record SDRAM_Timing ;
+  end record SDRAM_Timing_t ;
 
   --  LPSDR SDRAM 32 bit chip.
 
-  constant SDRAM_32_Capacity  : SDRAM_Capacity :=
+  constant SDRAM_32_Capacity_c  : SDRAM_Capacity_t :=
   (
     ROWBITS         => 16384,
     ROWCOUNT        => 8192,
     BANKS           => 4,
-    ADDRBITS        => 14,
+    ADDRBITS        => 13,
     DATABITS        => 32,
     CMDBITS         => 4
   ) ;
 
   --  LPSDR SDRAM 16 bit chip.
 
-  constant SDRAM_16_Capacity  : SDRAM_Capacity :=
+  constant SDRAM_16_Capacity_c  : SDRAM_Capacity_t :=
   (
     ROWBITS         => 16384,
     ROWCOUNT        => 8192,
     BANKS           => 4,
-    ADDRBITS        => 14,
+    ADDRBITS        => 13,
     DATABITS        => 16,
+    CMDBITS         => 4
+  ) ;
+
+  --  LPSDR SDRAM Reduced page size chip.
+
+  constant SDRAM_RPS_Capacity_c : SDRAM_Capacity_t :=
+  (
+    ROWBITS         => 16384,
+    ROWCOUNT        => 16384,
+    BANKS           => 4,
+    ADDRBITS        => 14,
+    DATABITS        => 32,
     CMDBITS         => 4
   ) ;
 
   --  LPSDR SDRAM 7.5ns CL = 2.
 
-  constant SDRAM_75_2_Timing  : SDRAM_Timing :=
+  constant SDRAM_75_2_Timing_c  : SDRAM_Timing_t :=
   (
     CL              => 2,
     T_AC            => 8.0e-9,
@@ -154,7 +166,7 @@ package SDRAM_Information_pkg is
 
   --  LPSDR SDRAM 7.5ns CL = 3.
 
-  constant SDRAM_75_3_Timing  : SDRAM_Timing :=
+  constant SDRAM_75_3_Timing_c  : SDRAM_Timing_t :=
   (
     CL              => 3,
     T_AC            => 5.4e-9,
