@@ -427,6 +427,7 @@
 					(attributes
 						(attval "DEVICE" "INDUCTOR_18NH_0402")
 						(attval "Part Number" "LQW15AN18NJ00D")
+						(attval "PKG_GRP" "0402")
 						(attval "PKG_TYPE" "0402_MY")
 						(attval "REFDES" "L?")
 						(attval "Value" "18NH"))))
@@ -441,6 +442,7 @@
 					(attributes
 						(attval "DEVICE" "INDUCTOR_15NH_0402")
 						(attval "Part Number" "LQW15AN15NJ00D")
+						(attval "PKG_GRP" "0402")
 						(attval "PKG_TYPE" "0402_MY")
 						(attval "REFDES" "L?")
 						(attval "Value" "15NH"))))
@@ -455,6 +457,7 @@
 					(attributes
 						(attval "DEVICE" "INDUCTOR_12NH_0402")
 						(attval "Part Number" "LQW15AN12NJ00D")
+						(attval "PKG_GRP" "0402")
 						(attval "PKG_TYPE" "0402_MY")
 						(attval "REFDES" "L?")
 						(attval "Value" "12NH"))))
@@ -462,14 +465,15 @@
 			(pin 1  5 "INDUCTOR_12NH_0402__INDUCTOR_12NH_0402_1" 0 "N1" 0))
 		(part "INDUCTOR_10UH")
 		(logical_part_mapping "INDUCTOR_10UH"
-			(comp "L5"))
+			(comp "L1"))
 		(logical_part "INDUCTOR_10UH"
 			(slots
 				(slot "INDUCTOR_10UH__INDUCTOR_10UH_1"
 					(attributes
 						(attval "DEVICE" "INDUCTOR_10UH")
-						(attval "Part Number" "252012CDMCDS-100MC")
-						(attval "PKG_TYPE" "INDUCTOR_252012CDMCD")
+						(attval "Part Number" "VLF302512MT-100M-CA")
+						(attval "PKG_GRP" "NONSTANDARD")
+						(attval "PKG_TYPE" "INDUCTOR_VLF302512MT")
 						(attval "REFDES" "L?")
 						(attval "Value" "10UH"))))
 			(pin 2  5 "INDUCTOR_10UH__INDUCTOR_10UH_1" 0 "N2" 0)
@@ -483,6 +487,7 @@
 					(attributes
 						(attval "DEVICE" "INDUCTOR_10NH_0402")
 						(attval "Part Number" "LQW15AN10NJ00D")
+						(attval "PKG_GRP" "0402")
 						(attval "PKG_TYPE" "0402_MY")
 						(attval "REFDES" "L?")
 						(attval "Value" "10NH"))))
@@ -662,6 +667,7 @@
 						(attval "DEVICE" "CAP_1800PF_0402")
 						(attval "Part Number" "GRM1557U1A182JA01D")
 						(attval "PINSWAP" "[(1,2)]")
+						(attval "PKG_GRP" "0402")
 						(attval "PKG_TYPE" "0402_MY")
 						(attval "REFDES" "C?")
 						(attval "Tolerance" "5%")
@@ -678,6 +684,7 @@
 						(attval "DEVICE" "CAP_100PF_0402")
 						(attval "Part Number" "GRM1555C1H101JA01D")
 						(attval "PINSWAP" "[(1,2)]")
+						(attval "PKG_GRP" "0402")
 						(attval "PKG_TYPE" "0402_MY")
 						(attval "REFDES" "C?")
 						(attval "Tolerance" "5%")
@@ -694,9 +701,10 @@
 						(attval "DEVICE" "CAP_33PF_0402")
 						(attval "Part Number" "CL05C330JB5NNNC")
 						(attval "PINSWAP" "[(1,2)]")
+						(attval "PKG_GRP" "0402")
 						(attval "PKG_TYPE" "0402_MY")
 						(attval "REFDES" "C?")
-						(attval "Tolerance" "")
+						(attval "Tolerance" "5%")
 						(attval "Value" "33PF"))))
 			(pin 2  5 "CAP_33PF_0402__CAP_33PF_0402_1" 0 "2" 0)
 			(pin 1  5 "CAP_33PF_0402__CAP_33PF_0402_1" 0 "1" 0))
@@ -710,6 +718,7 @@
 						(attval "DEVICE" "CAP_15PF_0402")
 						(attval "Part Number" "CL05C150JB5NNNC")
 						(attval "PINSWAP" "[(1,2)]")
+						(attval "PKG_GRP" "0402")
 						(attval "PKG_TYPE" "0402_MY")
 						(attval "REFDES" "C?")
 						(attval "Tolerance" "5%")
@@ -726,9 +735,10 @@
 						(attval "DEVICE" "CAP_10UF_0402")
 						(attval "Part Number" "CL05A106MP5NUNC")
 						(attval "PINSWAP" "[(1,2)]")
+						(attval "PKG_GRP" "0402")
 						(attval "PKG_TYPE" "0402_MY")
 						(attval "REFDES" "C?")
-						(attval "Tolerance" "")
+						(attval "Tolerance" "20%")
 						(attval "Value" "10UF"))))
 			(pin 2  5 "CAP_10UF_0402__CAP_10UF_0402_1" 0 "2" 0)
 			(pin 1  5 "CAP_10UF_0402__CAP_10UF_0402_1" 0 "1" 0))
@@ -742,9 +752,10 @@
 						(attval "DEVICE" "CAP_4P7UF_0402")
 						(attval "Part Number" "CL05A475MP5NRNC")
 						(attval "PINSWAP" "[(1,2)]")
+						(attval "PKG_GRP" "0402")
 						(attval "PKG_TYPE" "0402_MY")
 						(attval "REFDES" "C?")
-						(attval "Tolerance" "")
+						(attval "Tolerance" "20%")
 						(attval "Value" "4.7UF"))))
 			(pin 2  5 "CAP_4P7UF_0402__CAP_4P7UF_0402_1" 0 "2" 0)
 			(pin 1  5 "CAP_4P7UF_0402__CAP_4P7UF_0402_1" 0 "1" 0))
@@ -758,9 +769,10 @@
 						(attval "DEVICE" "CAP_3PF_0402")
 						(attval "Part Number" "CL05C030CB5NNNC")
 						(attval "PINSWAP" "[(1,2)]")
+						(attval "PKG_GRP" "0402")
 						(attval "PKG_TYPE" "0402_MY")
 						(attval "REFDES" "C?")
-						(attval "Tolerance" "5%")
+						(attval "Tolerance" "0.25PF")
 						(attval "Value" "3PF"))))
 			(pin 2  5 "CAP_3PF_0402__CAP_3PF_0402_1" 0 "2" 0)
 			(pin 1  5 "CAP_3PF_0402__CAP_3PF_0402_1" 0 "1" 0))
@@ -774,6 +786,7 @@
 						(attval "DEVICE" "CAP_3P3PF_0402")
 						(attval "Part Number" "GRM1555C1H3R3CA01D")
 						(attval "PINSWAP" "[(1,2)]")
+						(attval "PKG_GRP" "0402")
 						(attval "PKG_TYPE" "0402_MY")
 						(attval "REFDES" "C?")
 						(attval "Tolerance" "0.25PF")
@@ -790,6 +803,7 @@
 						(attval "DEVICE" "CAP_2P2PF_0402")
 						(attval "Part Number" "GRM1555C1H2R2CA01D")
 						(attval "PINSWAP" "[(1,2)]")
+						(attval "PKG_GRP" "0402")
 						(attval "PKG_TYPE" "0402_MY")
 						(attval "REFDES" "C?")
 						(attval "Tolerance" "0.25PF")
@@ -806,9 +820,10 @@
 						(attval "DEVICE" "CAP_1UF_0402")
 						(attval "Part Number" "GRM155R61A105KE15D")
 						(attval "PINSWAP" "[(1,2)]")
+						(attval "PKG_GRP" "0402")
 						(attval "PKG_TYPE" "0402_MY")
 						(attval "REFDES" "C?")
-						(attval "Tolerance" "")
+						(attval "Tolerance" "10%")
 						(attval "Value" "1UF"))))
 			(pin 2  5 "CAP_1UF_0402__CAP_1UF_0402_1" 0 "2" 0)
 			(pin 1  5 "CAP_1UF_0402__CAP_1UF_0402_1" 0 "1" 0))
@@ -822,6 +837,7 @@
 						(attval "DEVICE" "CAP_1PF_0402")
 						(attval "Part Number" "GJM1555C1H1R0BB01J")
 						(attval "PINSWAP" "[(1,2)]")
+						(attval "PKG_GRP" "0402")
 						(attval "PKG_TYPE" "0402_MY")
 						(attval "REFDES" "C?")
 						(attval "Tolerance" "0.1PF")
@@ -838,6 +854,7 @@
 						(attval "DEVICE" "CAP_0P047UF_0402")
 						(attval "Part Number" "GRM155R71E473KA88D")
 						(attval "PINSWAP" "[(1,2)]")
+						(attval "PKG_GRP" "0402")
 						(attval "PKG_TYPE" "0402_MY")
 						(attval "REFDES" "C?")
 						(attval "Tolerance" "10%")
@@ -854,9 +871,10 @@
 						(attval "DEVICE" "CAP_0P033UF_0402")
 						(attval "Part Number" "GRM155R61A333KA01D")
 						(attval "PINSWAP" "[(1,2)]")
+						(attval "PKG_GRP" "0402")
 						(attval "PKG_TYPE" "0402_MY")
 						(attval "REFDES" "C?")
-						(attval "Tolerance" "")
+						(attval "Tolerance" "10%")
 						(attval "Value" "0.033UF"))))
 			(pin 2  5 "CAP_0P033UF_0402__CAP_0P033UF_0402_1" 0 "2" 0)
 			(pin 1  5 "CAP_0P033UF_0402__CAP_0P033UF_0402_1" 0 "1" 0))
@@ -870,6 +888,7 @@
 						(attval "DEVICE" "CAP_0P22UF_0402")
 						(attval "Part Number" "GRM155R61A224KE19D")
 						(attval "PINSWAP" "[(1,2)]")
+						(attval "PKG_GRP" "0402")
 						(attval "PKG_TYPE" "0402_MY")
 						(attval "REFDES" "C?")
 						(attval "Tolerance" "10%")
@@ -886,9 +905,10 @@
 						(attval "DEVICE" "CAP_0P01UF_0402")
 						(attval "Part Number" "CL05B103KA5NNNC")
 						(attval "PINSWAP" "[(1,2)]")
+						(attval "PKG_GRP" "0402")
 						(attval "PKG_TYPE" "0402_MY")
 						(attval "REFDES" "C?")
-						(attval "Tolerance" "")
+						(attval "Tolerance" "10%")
 						(attval "Value" "0.01UF"))))
 			(pin 2  5 "CAP_0P01UF_0402__CAP_0P01UF_0402_1" 0 "2" 0)
 			(pin 1  5 "CAP_0P01UF_0402__CAP_0P01UF_0402_1" 0 "1" 0))
@@ -902,6 +922,7 @@
 						(attval "DEVICE" "CAP_0P1UF_0402")
 						(attval "Part Number" "CL05A104KA5NNNC")
 						(attval "PINSWAP" "[(1,2)]")
+						(attval "PKG_GRP" "0402")
 						(attval "PKG_TYPE" "0402_MY")
 						(attval "REFDES" "C?")
 						(attval "Tolerance" "")
@@ -1648,6 +1669,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "LQW15AN12NJ00D")
+				(attval "PKG_GRP" "0402")
 				(attval "Value" "12NH")
 				(attval "DEVICE" "INDUCTOR_12NH_0402")
 				(attval "REFDES" "L201")))
@@ -1657,6 +1679,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "LQW15AN12NJ00D")
+				(attval "PKG_GRP" "0402")
 				(attval "Value" "12NH")
 				(attval "DEVICE" "INDUCTOR_12NH_0402")
 				(attval "REFDES" "L193")))
@@ -1666,6 +1689,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "LQW15AN12NJ00D")
+				(attval "PKG_GRP" "0402")
 				(attval "Value" "12NH")
 				(attval "DEVICE" "INDUCTOR_12NH_0402")
 				(attval "REFDES" "L192")))
@@ -1675,6 +1699,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "LQW15AN15NJ00D")
+				(attval "PKG_GRP" "0402")
 				(attval "Value" "15NH")
 				(attval "DEVICE" "INDUCTOR_15NH_0402")
 				(attval "REFDES" "L191")))
@@ -1684,6 +1709,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "LQW15AN12NJ00D")
+				(attval "PKG_GRP" "0402")
 				(attval "Value" "12NH")
 				(attval "DEVICE" "INDUCTOR_12NH_0402")
 				(attval "REFDES" "L174")))
@@ -1693,6 +1719,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "LQW15AN18NJ00D")
+				(attval "PKG_GRP" "0402")
 				(attval "Value" "18NH")
 				(attval "DEVICE" "INDUCTOR_18NH_0402")
 				(attval "REFDES" "L173")))
@@ -1711,18 +1738,20 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "LQW15AN10NJ00D")
+				(attval "PKG_GRP" "0402")
 				(attval "Value" "10NH")
 				(attval "DEVICE" "INDUCTOR_10NH_0402")
 				(attval "REFDES" "L171")))
-		(component "INDUCTOR_252012CDMCD"
-			(place "L5" 0.0 0.0 top 0.0
+		(component "INDUCTOR_VLF302512MT"
+			(place "L1" 0.0 0.0 top 0.0
 				(comp_pin "2" 0.0 0.0 "BI")
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
-				(attval "Part Number" "252012CDMCDS-100MC")
+				(attval "Part Number" "VLF302512MT-100M-CA")
+				(attval "PKG_GRP" "NONSTANDARD")
 				(attval "Value" "10UH")
 				(attval "DEVICE" "INDUCTOR_10UH")
-				(attval "REFDES" "L5")))
+				(attval "REFDES" "L1")))
 		(component "DROP_INTERFACE"
 			(place "J8" 0.0 0.0 top 0.0
 				(comp_pin "1" 0.0 0.0 "IN")
@@ -1921,6 +1950,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05C150JB5NNNC")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "5%")
 				(attval "Value" "15PF")
 				(attval "DEVICE" "CAP_15PF_0402")
@@ -1931,6 +1961,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05C150JB5NNNC")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "5%")
 				(attval "Value" "15PF")
 				(attval "DEVICE" "CAP_15PF_0402")
@@ -1941,6 +1972,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "GRM155R71E473KA88D")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "10%")
 				(attval "Value" "0.047UF")
 				(attval "DEVICE" "CAP_0P047UF_0402")
@@ -1951,6 +1983,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "GRM155R71E473KA88D")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "10%")
 				(attval "Value" "0.047UF")
 				(attval "DEVICE" "CAP_0P047UF_0402")
@@ -1961,6 +1994,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "GRM155R71E473KA88D")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "10%")
 				(attval "Value" "0.047UF")
 				(attval "DEVICE" "CAP_0P047UF_0402")
@@ -1971,6 +2005,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "GRM155R71E473KA88D")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "10%")
 				(attval "Value" "0.047UF")
 				(attval "DEVICE" "CAP_0P047UF_0402")
@@ -1981,6 +2016,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "GRM155R71E473KA88D")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "10%")
 				(attval "Value" "0.047UF")
 				(attval "DEVICE" "CAP_0P047UF_0402")
@@ -1991,6 +2027,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "GRM1557U1A182JA01D")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "5%")
 				(attval "Value" "1800PF")
 				(attval "DEVICE" "CAP_1800PF_0402")
@@ -2001,6 +2038,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "GRM155R71E473KA88D")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "10%")
 				(attval "Value" "0.047UF")
 				(attval "DEVICE" "CAP_0P047UF_0402")
@@ -2011,7 +2049,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05B103KA5NNNC")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "10%")
 				(attval "Value" "0.01UF")
 				(attval "DEVICE" "CAP_0P01UF_0402")
 				(attval "REFDES" "C211")))
@@ -2021,6 +2060,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "GRM1555C1H3R3CA01D")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "0.25PF")
 				(attval "Value" "3.3PF")
 				(attval "DEVICE" "CAP_3P3PF_0402")
@@ -2031,6 +2071,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "GRM1555C1H3R3CA01D")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "0.25PF")
 				(attval "Value" "3.3PF")
 				(attval "DEVICE" "CAP_3P3PF_0402")
@@ -2041,6 +2082,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "GRM1555C1H2R2CA01D")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "0.25PF")
 				(attval "Value" "2.2PF")
 				(attval "DEVICE" "CAP_2P2PF_0402")
@@ -2051,6 +2093,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "GJM1555C1H1R0BB01J")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "0.1PF")
 				(attval "Value" "1PF")
 				(attval "DEVICE" "CAP_1PF_0402")
@@ -2061,7 +2104,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05C030CB5NNNC")
-				(attval "Tolerance" "5%")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "0.25PF")
 				(attval "Value" "3PF")
 				(attval "DEVICE" "CAP_3PF_0402")
 				(attval "REFDES" "C175")))
@@ -2071,6 +2115,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05C150JB5NNNC")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "5%")
 				(attval "Value" "15PF")
 				(attval "DEVICE" "CAP_15PF_0402")
@@ -2081,7 +2126,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05C330JB5NNNC")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "5%")
 				(attval "Value" "33PF")
 				(attval "DEVICE" "CAP_33PF_0402")
 				(attval "REFDES" "C173")))
@@ -2091,6 +2137,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "GRM1555C1H101JA01D")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "5%")
 				(attval "Value" "100PF")
 				(attval "DEVICE" "CAP_100PF_0402")
@@ -2101,7 +2148,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05B103KA5NNNC")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "10%")
 				(attval "Value" "0.01UF")
 				(attval "DEVICE" "CAP_0P01UF_0402")
 				(attval "REFDES" "C171")))
@@ -2111,6 +2159,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "GRM155R71E473KA88D")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "10%")
 				(attval "Value" "0.047UF")
 				(attval "DEVICE" "CAP_0P047UF_0402")
@@ -2121,6 +2170,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "GRM155R71E473KA88D")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "10%")
 				(attval "Value" "0.047UF")
 				(attval "DEVICE" "CAP_0P047UF_0402")
@@ -2131,6 +2181,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "GRM155R71E473KA88D")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "10%")
 				(attval "Value" "0.047UF")
 				(attval "DEVICE" "CAP_0P047UF_0402")
@@ -2141,7 +2192,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05B103KA5NNNC")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "10%")
 				(attval "Value" "0.01UF")
 				(attval "DEVICE" "CAP_0P01UF_0402")
 				(attval "REFDES" "C118")))
@@ -2151,7 +2203,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A106MP5NUNC")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "20%")
 				(attval "Value" "10UF")
 				(attval "DEVICE" "CAP_10UF_0402")
 				(attval "REFDES" "C117")))
@@ -2161,6 +2214,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "")
 				(attval "Value" "0.1UF")
 				(attval "DEVICE" "CAP_0P1UF_0402")
@@ -2171,7 +2225,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05B103KA5NNNC")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "10%")
 				(attval "Value" "0.01UF")
 				(attval "DEVICE" "CAP_0P01UF_0402")
 				(attval "REFDES" "C115")))
@@ -2181,6 +2236,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "")
 				(attval "Value" "0.1UF")
 				(attval "DEVICE" "CAP_0P1UF_0402")
@@ -2191,7 +2247,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A475MP5NRNC")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "20%")
 				(attval "Value" "4.7UF")
 				(attval "DEVICE" "CAP_4P7UF_0402")
 				(attval "REFDES" "C112")))
@@ -2201,7 +2258,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A475MP5NRNC")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "20%")
 				(attval "Value" "4.7UF")
 				(attval "DEVICE" "CAP_4P7UF_0402")
 				(attval "REFDES" "C111")))
@@ -2211,7 +2269,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A475MP5NRNC")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "20%")
 				(attval "Value" "4.7UF")
 				(attval "DEVICE" "CAP_4P7UF_0402")
 				(attval "REFDES" "C110")))
@@ -2221,7 +2280,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A475MP5NRNC")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "20%")
 				(attval "Value" "4.7UF")
 				(attval "DEVICE" "CAP_4P7UF_0402")
 				(attval "REFDES" "C106")))
@@ -2231,7 +2291,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A475MP5NRNC")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "20%")
 				(attval "Value" "4.7UF")
 				(attval "DEVICE" "CAP_4P7UF_0402")
 				(attval "REFDES" "C105")))
@@ -2241,7 +2302,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A475MP5NRNC")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "20%")
 				(attval "Value" "4.7UF")
 				(attval "DEVICE" "CAP_4P7UF_0402")
 				(attval "REFDES" "C100")))
@@ -2251,7 +2313,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A475MP5NRNC")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "20%")
 				(attval "Value" "4.7UF")
 				(attval "DEVICE" "CAP_4P7UF_0402")
 				(attval "REFDES" "C99")))
@@ -2261,7 +2324,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A475MP5NRNC")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "20%")
 				(attval "Value" "4.7UF")
 				(attval "DEVICE" "CAP_4P7UF_0402")
 				(attval "REFDES" "C98")))
@@ -2271,7 +2335,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A475MP5NRNC")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "20%")
 				(attval "Value" "4.7UF")
 				(attval "DEVICE" "CAP_4P7UF_0402")
 				(attval "REFDES" "C97")))
@@ -2281,7 +2346,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A475MP5NRNC")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "20%")
 				(attval "Value" "4.7UF")
 				(attval "DEVICE" "CAP_4P7UF_0402")
 				(attval "REFDES" "C96")))
@@ -2291,6 +2357,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "")
 				(attval "Value" "0.1UF")
 				(attval "DEVICE" "CAP_0P1UF_0402")
@@ -2301,6 +2368,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "")
 				(attval "Value" "0.1UF")
 				(attval "DEVICE" "CAP_0P1UF_0402")
@@ -2311,7 +2379,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "GRM155R61A333KA01D")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "10%")
 				(attval "Value" "0.033UF")
 				(attval "DEVICE" "CAP_0P033UF_0402")
 				(attval "REFDES" "C60")))
@@ -2321,6 +2390,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "")
 				(attval "Value" "0.1UF")
 				(attval "DEVICE" "CAP_0P1UF_0402")
@@ -2331,6 +2401,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "")
 				(attval "Value" "0.1UF")
 				(attval "DEVICE" "CAP_0P1UF_0402")
@@ -2341,7 +2412,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "GRM155R61A105KE15D")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "10%")
 				(attval "Value" "1UF")
 				(attval "DEVICE" "CAP_1UF_0402")
 				(attval "REFDES" "C57")))
@@ -2351,6 +2423,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "")
 				(attval "Value" "0.1UF")
 				(attval "DEVICE" "CAP_0P1UF_0402")
@@ -2361,6 +2434,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "")
 				(attval "Value" "0.1UF")
 				(attval "DEVICE" "CAP_0P1UF_0402")
@@ -2371,7 +2445,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "GRM155R61A105KE15D")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "10%")
 				(attval "Value" "1UF")
 				(attval "DEVICE" "CAP_1UF_0402")
 				(attval "REFDES" "C54")))
@@ -2381,7 +2456,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A106MP5NUNC")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "20%")
 				(attval "Value" "10UF")
 				(attval "DEVICE" "CAP_10UF_0402")
 				(attval "REFDES" "C53")))
@@ -2391,6 +2467,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "GRM155R71E473KA88D")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "10%")
 				(attval "Value" "0.047UF")
 				(attval "DEVICE" "CAP_0P047UF_0402")
@@ -2401,7 +2478,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A475MP5NRNC")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "20%")
 				(attval "Value" "4.7UF")
 				(attval "DEVICE" "CAP_4P7UF_0402")
 				(attval "REFDES" "C36")))
@@ -2411,6 +2489,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "")
 				(attval "Value" "0.1UF")
 				(attval "DEVICE" "CAP_0P1UF_0402")
@@ -2421,6 +2500,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "")
 				(attval "Value" "0.1UF")
 				(attval "DEVICE" "CAP_0P1UF_0402")
@@ -2431,6 +2511,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "")
 				(attval "Value" "0.1UF")
 				(attval "DEVICE" "CAP_0P1UF_0402")
@@ -2441,6 +2522,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "")
 				(attval "Value" "0.1UF")
 				(attval "DEVICE" "CAP_0P1UF_0402")
@@ -2451,6 +2533,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "")
 				(attval "Value" "0.1UF")
 				(attval "DEVICE" "CAP_0P1UF_0402")
@@ -2461,7 +2544,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "GRM155R61A105KE15D")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "10%")
 				(attval "Value" "1UF")
 				(attval "DEVICE" "CAP_1UF_0402")
 				(attval "REFDES" "C14")))
@@ -2471,6 +2555,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "")
 				(attval "Value" "0.1UF")
 				(attval "DEVICE" "CAP_0P1UF_0402")
@@ -2481,6 +2566,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "")
 				(attval "Value" "0.1UF")
 				(attval "DEVICE" "CAP_0P1UF_0402")
@@ -2491,6 +2577,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "GRM155R71E473KA88D")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "10%")
 				(attval "Value" "0.047UF")
 				(attval "DEVICE" "CAP_0P047UF_0402")
@@ -2501,6 +2588,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "")
 				(attval "Value" "0.1UF")
 				(attval "DEVICE" "CAP_0P1UF_0402")
@@ -2511,6 +2599,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "")
 				(attval "Value" "0.1UF")
 				(attval "DEVICE" "CAP_0P1UF_0402")
@@ -2521,6 +2610,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "")
 				(attval "Value" "0.1UF")
 				(attval "DEVICE" "CAP_0P1UF_0402")
@@ -2531,6 +2621,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "")
 				(attval "Value" "0.1UF")
 				(attval "DEVICE" "CAP_0P1UF_0402")
@@ -2541,7 +2632,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A106MP5NUNC")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "20%")
 				(attval "Value" "10UF")
 				(attval "DEVICE" "CAP_10UF_0402")
 				(attval "REFDES" "C5")))
@@ -2551,7 +2643,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05B103KA5NNNC")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "10%")
 				(attval "Value" "0.01UF")
 				(attval "DEVICE" "CAP_0P01UF_0402")
 				(attval "REFDES" "C4")))
@@ -2561,6 +2654,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "GRM155R61A224KE19D")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "10%")
 				(attval "Value" "0.22UF")
 				(attval "DEVICE" "CAP_0P22UF_0402")
@@ -2571,7 +2665,8 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A106MP5NUNC")
-				(attval "Tolerance" "")
+				(attval "PKG_GRP" "0402")
+				(attval "Tolerance" "20%")
 				(attval "Value" "10UF")
 				(attval "DEVICE" "CAP_10UF_0402")
 				(attval "REFDES" "C2")))
@@ -2581,6 +2676,7 @@
 				(comp_pin "1" 0.0 0.0 "BI"))
 			(attributes
 				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "PKG_GRP" "0402")
 				(attval "Tolerance" "")
 				(attval "Value" "0.1UF")
 				(attval "DEVICE" "CAP_0P1UF_0402")
@@ -2644,7 +2740,7 @@
 		(func "$12I208" "" "L173" 1)
 		(func "$12I190" "" "L172" 1)
 		(func "$12I157" "" "L171" 1)
-		(func "$7I261" "" "L5" 1)
+		(func "$7I350" "" "L1" 1)
 		(func "$11I202" "" "J8" 1)
 		(func "$11I195" "" "J7" 1)
 		(func "$11I180" "" "J6" 1)
@@ -2751,7 +2847,7 @@
 		(net "$7N101"
 			(pins U1-1 R24-1 R23-2))
 		(net "$7N122"
-			(pins U1-7 L5-2))
+			(pins U1-7 L1-2))
 		(net "$7N220"
 			(pins U1-2 R21-1 C110-1))
 		(net "$7N327"
@@ -2950,7 +3046,7 @@
 		(net "SDCARD_POWER_3P3V"
 			(pins U7-4 C12-1 S7-5 C5-1))
 		(net "SOLAR_CELL_POWER"
-			(pins U1-6 D1-3 L5-1 C2-1))
+			(pins U1-6 D1-3 L1-1 C2-1))
 		(net "SOLAR_CTRL_ON_TO_CPLD"
 			(pins J2-36 R21-2))
 		(net "SOLAR_CTRL_SHDN_N"

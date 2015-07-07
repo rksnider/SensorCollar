@@ -28,15 +28,17 @@ AP DxDesigner_Library:uSD_CARD_HOUSING_4UCON 9 PINTYPE=IN
 AP DxDesigner_Library:uSD_CARD_HOUSING_4UCON 10 #=6
 AP DxDesigner_Library:uSD_CARD_HOUSING_4UCON 10 PINTYPE=IN
 |Q DxDesigner_Common_Parts:cap_10uF_0402 1
+AS DxDesigner_Common_Parts:cap_10uF_0402 INOV_VER_REC=11:23:18_7-6-15
 AS DxDesigner_Common_Parts:cap_10uF_0402 PINSWAP=(1,2)
 AS DxDesigner_Common_Parts:cap_10uF_0402 REFDES=C?
 AS DxDesigner_Common_Parts:cap_10uF_0402 DEVICE=cap_10uF_0402
 AS DxDesigner_Common_Parts:cap_10uF_0402 VALUE=10uF
 AS DxDesigner_Common_Parts:cap_10uF_0402 PKG_TYPE=0402_MY
-AS DxDesigner_Common_Parts:cap_10uF_0402 TOLERANCE
+AS DxDesigner_Common_Parts:cap_10uF_0402 TOLERANCE=20%
 AS DxDesigner_Common_Parts:cap_10uF_0402 PART_NUMBER=CL05A106MP5NUNC
 AS DxDesigner_Common_Parts:cap_10uF_0402 P/D_NUM=1276-1450-1-ND
-AS DxDesigner_Common_Parts:cap_10uF_0402 INOV_VER_REC=11:58:53_1-7-15
+AS DxDesigner_Common_Parts:cap_10uF_0402 PART_LABEL=CAP CER 10UF 10V 20% X5R 0402
+AS DxDesigner_Common_Parts:cap_10uF_0402 PKG_GRP=0402
 AS DxDesigner_Common_Parts:cap_10uF_0402 PINORDER=1 2
 AP DxDesigner_Common_Parts:cap_10uF_0402 1 #=1
 AP DxDesigner_Common_Parts:cap_10uF_0402 1 PINTYPE=ANALOG
@@ -58,7 +60,7 @@ API $4I437 DxDesigner_Library:uSD_CARD_HOUSING_4UCON 9 #=4
 API $4I437 DxDesigner_Library:uSD_CARD_HOUSING_4UCON 10 #=6
 M DxDesigner_Common_Parts:cap_10uF_0402 $4I780
 I $4I780 DxDesigner_Common_Parts:cap_10uF_0402 SDCARD_POWER_3P3V GND VALUE=10uF`REFDES=C?`
-|R 11:58:53_1-7-15
+|R 11:23:18_7-6-15
 API $4I780 DxDesigner_Common_Parts:cap_10uF_0402 1 #=1
 API $4I780 DxDesigner_Common_Parts:cap_10uF_0402 2 #=2
 EW

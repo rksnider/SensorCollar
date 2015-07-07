@@ -1,19 +1,14 @@
 *PADS-ECO-V9.5-MILS*
 *REMARK*  old file: C:\Users\kyler.callahan\Documents\work\MCollar_v1\1Working Version\SENSOR working\MCollar_SENSOR_worki01.asc
 *REMARK*  new file: C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1\S.asc
-*REMARK*  created by ECOGEN (Version 6.4v) on 7/1/2015 3:47:54 PM
-*DELPIN*
-J2.32  GPS_CNTRL_TO_CPLD
-J2.34  DATA_TX_CNTRL_TO_CPLD
-S8.2  DATA_TX_CNTRL_TO_CPLD
-S8.3  GPS_CNTRL_TO_CPLD
+*REMARK*  created by ECOGEN (Version 6.4v) on 7/6/2015 2:21:17 PM
+*PART*
+L1  INDUCTOR_10UH
 *NET*
-*SIGNAL*  DATA_TX_CNTRL_TO_CPLD
-S8.2  J2.32
-*SIGNAL*  GPS_CNTRL_TO_CPLD
-S8.3  J2.34
-*DEL_ATTRIBUTE*	PCB	DEFAULT
-"CAM.Apply Oversize To All Pads"
+*SIGNAL*  $7N122
+L1.2  U1.7
+*SIGNAL*  SOLAR_CELL_POWER
+L1.1
 *DEL_ATTRIBUTE*	PART	U12
 "Geometry.Height"
 *DEL_ATTRIBUTE*	PART	U2
@@ -28,6 +23,10 @@ S8.3  J2.34
 "Geometry.Height"
 *DEL_ATTRIBUTE*	PART	S2
 "Geometry.Height"
+*SET_ATTRIBUTE*	PART	L1
+"Value"	10UH
+"PKG_TYPE"	INDUCTOR_VLF302512MT
+"Part Number"	VLF302512MT-100M-CA
 
-*REMARK*  Deleted pins: 4,  Added pins: 4
+*REMARK*  Deleted pins: 0,  Added pins: 3
 *END*

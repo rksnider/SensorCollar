@@ -351,3 +351,15 @@
 [2015-07-02 15.11.53] Successfully created [AutoSave] backup [2015-07-02 15.11.48 - auto.zip] requested by [ECEROSSLAB01:j82t579].
 [2015-07-02 15.11.53] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1\ProjectBackup\backups\2015-06-30 15.03.50 - auto.zip].
 [2015-07-02 15.11.53] [AutoSave] backup file [MCollar_v1\ProjectBackup\backups\2015-06-30 15.03.50 - auto.zip] removed.
+[2015-07-06 10.07.53] Successfully created [AutoSave] backup [2015-07-06 10.07.14 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2015-07-06 10.07.53] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1\ProjectBackup\backups\2015-07-01 11.18.09 - auto.zip].
+[2015-07-06 10.07.53] [AutoSave] backup file [MCollar_v1\ProjectBackup\backups\2015-07-01 11.18.09 - auto.zip] removed.
+[2015-07-06 14.07.20] Successfully created [AutoSave] backup [2015-07-06 14.07.14 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2015-07-06 14.07.20] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1\ProjectBackup\backups\2015-07-01 15.18.09 - auto.zip].
+[2015-07-06 14.07.20] [AutoSave] backup file [MCollar_v1\ProjectBackup\backups\2015-07-01 15.18.09 - auto.zip] removed.
+[2015-07-07 10.07.14] Successfully created [AutoSave] backup [2015-07-07 10.07.08 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2015-07-07 10.07.14] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1\ProjectBackup\backups\2015-07-02 15.11.48 - auto.zip].
+[2015-07-07 10.07.14] [AutoSave] backup file [MCollar_v1\ProjectBackup\backups\2015-07-02 15.11.48 - auto.zip] removed.
+[2015-07-07 14.07.10] Successfully created [AutoSave] backup [2015-07-07 14.07.08 - auto.zip] requested by [ECEROSSLAB01:j82t579].
+[2015-07-07 14.07.10] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1\ProjectBackup\backups\2015-07-06 10.07.14 - auto.zip].
+[2015-07-07 14.07.10] [AutoSave] backup file [MCollar_v1\ProjectBackup\backups\2015-07-06 10.07.14 - auto.zip] removed.

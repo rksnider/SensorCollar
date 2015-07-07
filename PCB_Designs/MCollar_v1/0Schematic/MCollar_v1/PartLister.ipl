@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <PartListerConfiguration version="2">
   <Entry name="outputVersion" value="1"/>
-  <Entry name="outputFormat" value="HTML"/>
+  <Entry name="outputFormat" value="EXCEL"/>
   <Entry name="pagination" value="NO"/>
   <Entry name="pagelength" value="65535"/>
   <Entry name="delimiter" value=" "/>
@@ -22,5 +22,7 @@
     <Column type="QUANTITY" label="QTY" width="5"/>
     <Column type="PROPERTY" property="VALUE" label="VALUE" width="10" display="Compress"/>
     <Column type="PROPERTY" property="TOLERANCE" label="TOLERANCE" width="10" display="Compress"/>
+    <Column type="PROPERTY" property="PART_LABEL" label="PART_LABEL" width="10" display="Compress"/>
+    <Column type="PROPERTY" property="PKG_GRP" label="PKG_GRP" width="10" display="Compress"/>
   </Columns>
 </PartListerConfiguration>
