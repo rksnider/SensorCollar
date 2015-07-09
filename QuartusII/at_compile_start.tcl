@@ -29,6 +29,8 @@
 #
 # --------------------------------------------------------------------------
 
+#   Put the commit time and the current time into a package.
+
 set chan      [open commit_timestamp.log r]
 set commit    [gets $chan]
 close $chan
@@ -36,5 +38,13 @@ close $chan
 set now       [clock seconds]
 
 exec quartus_sh -t set_vhdl_constants.tcl compile_start_time_pkg \
-                compile_timestamp_c natural $now \
-                commit_timestamp_c  natural $commit
+                [list compile_timestamp_c natural $now \
+                      commit_timestamp_c  natural $commit]
+
+#   Put the values shared by the source and SDC files into a package.
+
+source sdc_values.tcl
+
+exec quartus_sh -t set_vhdl_constants.tcl shared_sdc_values_pkg \
+                $sdc_value_list
+               

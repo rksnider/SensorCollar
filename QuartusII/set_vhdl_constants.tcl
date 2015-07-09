@@ -12,10 +12,11 @@
 #   @date       August 2014
 #   @copyright  Copyright (C) 2014 Ross K. Snider and Emery L. Newlon
 #   @param[in]  packname    Name of the package to create.
-#   @param[in]  constname   Name of the constant to define.
-#   @param[in]  typename    The constant's type.
-#   @param[in]  constvalue  Value of the constant to define.
-#   @param[in]  moreconsts  More constant definitions if desired.
+#   @param[in]  constlist   List of constants to define.  Each list has:
+#                           Name of the constant to define.
+#                           The constant's type.
+#                           Value of the constant to define.
+#                           More constant definitions if desired.
 
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -42,7 +43,7 @@
 set arglist     $quartus(args)
 
 set packname    [lindex $arglist 0]
-set constlist   [lrange $arglist 1 end]
+set constlist   [lindex $arglist 1]
 
 set chan [open "$packname.vhd" w]
 
