@@ -81,6 +81,14 @@ set CLKout_dev_hld              $t_P2P_H_min    ;#  tHb
 set CLKout_brd_max              0.100           ;#  BDb
 set CLKout_brd_min              0.080
 
+#   The reset port can interact badly with SPI lines.
+
+set reset_line                  {*|power_up}
+set reset_exclude_list          {PC_SPI_DIN}
+
+set_false_path -from [get_registers "$reset_line"] \
+               -to   [get_ports $reset_exclude_list]
+
 #   Set the delays for the I/O ports.
 
 set_false_path -to    [get_ports PC_SPI_CLK]
