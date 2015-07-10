@@ -109,7 +109,6 @@ package body UTILITIES_PKG is
 
   function minimum (a, b : in integer)
   return integer is
-    variable result   : integer ;
   begin
     if (a < b) then
       return a ;
@@ -120,7 +119,6 @@ package body UTILITIES_PKG is
   
   function maximum (a, b : in integer)
   return integer is
-    variable result   : integer ;
   begin
     if (a > b) then
       return a ;
