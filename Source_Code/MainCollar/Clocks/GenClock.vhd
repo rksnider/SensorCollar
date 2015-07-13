@@ -78,17 +78,20 @@ end entity GenClock ;
 
 architecture rtl of GenClock is
 
-  --  Clock information.
+  --  Clock information.  If this clock drives the reset line (externally)
+  --  it will not ever receive a reset signal.  It should initialize itself
+  --  as best it can without one.
 
   constant clk_cntmax_c     : natural := clk_freq_g / (out_clk_freq_g * 2) ;
   constant clk_cntsize_c    : natural := maximum (1, clk_cntmax_c) ;
   constant clk_cntbits_c    : natural := const_bits (clk_cntsize_c) ;
 
-  signal clk_cnt            : unsigned (clk_cntbits_c-1 downto 0) ;
+  signal clk_cnt            : unsigned (clk_cntbits_c-1 downto 0) :=
+                                              (others => '0') ;
 
-  signal out_clk            : std_logic ;
-  signal out_gated_clk      : std_logic ;
-  signal gated_clk_en       : std_logic ;
+  signal out_clk            : std_logic := '0' ;
+  signal out_gated_clk      : std_logic := '0' ;
+  signal gated_clk_en       : std_logic := '0';
 
 
 begin
