@@ -1,0 +1,113 @@
+*
+*
+G04 PADS 9.5 Build Number: 522968 generated Gerber (RS-274-X) file*
+G04 PC Version=2.1*
+*
+%IN "MCollar_Microphone_work"*%
+*
+%MOIN*%
+*
+%FSLAX35Y35*%
+*
+*
+*
+*
+G04 PC Standard Apertures*
+*
+*
+G04 Thermal Relief Aperture macro.*
+%AMTER*
+1,1,$1,0,0*
+1,0,$1-$2,0,0*
+21,0,$3,$4,0,0,45*
+21,0,$3,$4,0,0,135*
+%
+*
+*
+G04 Annular Aperture macro.*
+%AMANN*
+1,1,$1,0,0*
+1,0,$2,0,0*
+%
+*
+*
+G04 Odd Aperture macro.*
+%AMODD*
+1,1,$1,0,0*
+1,0,$1-0.005,0,0*
+%
+*
+*
+G04 PC Custom Aperture Macros*
+*
+*
+*
+*
+*
+*
+G04 PC Aperture Table*
+*
+%ADD010C,0.001*%
+%ADD016C,0.006*%
+%ADD116C,0.06693*%
+%ADD160R,0.02X0.02362*%
+%ADD161R,0.02362X0.01575*%
+%ADD162C,0.043*%
+*
+*
+*
+*
+G04 PC Circuitry*
+G04 Layer Name MCollar_Microphone_work - circuitry*
+%LPD*%
+*
+*
+G04 PC Custom Flashes*
+G04 Layer Name MCollar_Microphone_work - flashes*
+%LPD*%
+*
+*
+G04 PC Circuitry*
+G04 Layer Name MCollar_Microphone_work - circuitry*
+%LPD*%
+*
+G54D10*
+G54D16*
+G01X110800Y122000D02*
+X112228Y120572D01*
+Y114416*
+X104300Y122000D02*
+X107400Y125100D01*
+X118513*
+X120500Y123113*
+Y113045*
+X122765Y110780*
+X115772Y114416D02*
+Y120472D01*
+X117300Y122000*
+X115772Y111660D02*
+X116651Y110780D01*
+X122765*
+X114000Y106345D02*
+X122266D01*
+X122765Y106843*
+X112228Y111660D02*
+X113020D01*
+X114000Y106345*
+G54D116*
+X114000D03*
+G54D160*
+X122765Y110780D03*
+Y106843D03*
+G54D161*
+X112228Y114416D03*
+Y111660D03*
+X115772D03*
+Y114416D03*
+G54D162*
+X104300Y122000D03*
+X110800D03*
+X117300D03*
+X123800D03*
+X0Y0D02*
+M02*

@@ -1,0 +1,75 @@
+| Wirelist created using version 6.0 
+V 6.0
+DW Schematic1
+|Q DxDesigner_Library:MEMS_MIC_ADMP621 1
+AS DxDesigner_Library:MEMS_MIC_ADMP621 Pin!Order=CLK L/R_SELECT GND VDD DATA
+AS DxDesigner_Library:MEMS_MIC_ADMP621 PKG_TYPE=MEMS_MIC
+AS DxDesigner_Library:MEMS_MIC_ADMP621 DEVICE=ADMP621_MEMS_MIC
+AS DxDesigner_Library:MEMS_MIC_ADMP621 REFDES=U?
+AS DxDesigner_Library:MEMS_MIC_ADMP621 PART_NUMBER=ADMP621
+AS DxDesigner_Library:MEMS_MIC_ADMP621 P/D_NUM=1428-1018-1-ND
+AS DxDesigner_Library:MEMS_MIC_ADMP621 INOV_VER_REC=12:21:2_1-15-15
+AS DxDesigner_Library:MEMS_MIC_ADMP621 PINORDER=CLK DATA GND L_R_SELECT VDD
+AP DxDesigner_Library:MEMS_MIC_ADMP621 1 #=1
+AP DxDesigner_Library:MEMS_MIC_ADMP621 1 PINTYPE=IN
+AP DxDesigner_Library:MEMS_MIC_ADMP621 2 #=5
+AP DxDesigner_Library:MEMS_MIC_ADMP621 2 PINTYPE=IN
+AP DxDesigner_Library:MEMS_MIC_ADMP621 3 #=3
+AP DxDesigner_Library:MEMS_MIC_ADMP621 3 PINTYPE=IN
+AP DxDesigner_Library:MEMS_MIC_ADMP621 4 #=2
+AP DxDesigner_Library:MEMS_MIC_ADMP621 4 PINTYPE=IN
+AP DxDesigner_Library:MEMS_MIC_ADMP621 5 #=4
+AP DxDesigner_Library:MEMS_MIC_ADMP621 5 PINTYPE=IN
+|Q DxDesigner_Common_Parts:cap_0p1uF_0402 1
+AS DxDesigner_Common_Parts:cap_0p1uF_0402 INOV_VER_REC=14:43:56_1-7-15
+AS DxDesigner_Common_Parts:cap_0p1uF_0402 PINSWAP=(1,2)
+AS DxDesigner_Common_Parts:cap_0p1uF_0402 REFDES=C?
+AS DxDesigner_Common_Parts:cap_0p1uF_0402 DEVICE=cap_0p1uF_0402
+AS DxDesigner_Common_Parts:cap_0p1uF_0402 VALUE=0.1uF
+AS DxDesigner_Common_Parts:cap_0p1uF_0402 PKG_TYPE=0402_MY
+AS DxDesigner_Common_Parts:cap_0p1uF_0402 TOLERANCE
+AS DxDesigner_Common_Parts:cap_0p1uF_0402 PART_NUMBER=CL05A104KA5NNNC
+AS DxDesigner_Common_Parts:cap_0p1uF_0402 P/D_NUM=1276-1043-1-ND
+AS DxDesigner_Common_Parts:cap_0p1uF_0402 PINORDER=1 2
+AP DxDesigner_Common_Parts:cap_0p1uF_0402 1 #=1
+AP DxDesigner_Common_Parts:cap_0p1uF_0402 1 PINTYPE=ANALOG
+AP DxDesigner_Common_Parts:cap_0p1uF_0402 2 #=2
+AP DxDesigner_Common_Parts:cap_0p1uF_0402 2 PINTYPE=ANALOG
+|Q DxDesigner_Library:THRUHOLE_22GUAGE 1
+AS DxDesigner_Library:THRUHOLE_22GUAGE DEVICE=THRUHOLE_22GUAGE
+AS DxDesigner_Library:THRUHOLE_22GUAGE REFDES=U?
+AS DxDesigner_Library:THRUHOLE_22GUAGE PARTS=1
+AS DxDesigner_Library:THRUHOLE_22GUAGE LEVEL=STD
+AS DxDesigner_Library:THRUHOLE_22GUAGE PKG_TYPE=THRUHOLE_22GUAGE
+AS DxDesigner_Library:THRUHOLE_22GUAGE INOV_VER_REC=14:00:21_7-1-15
+AS DxDesigner_Library:THRUHOLE_22GUAGE PINORDER=PIN_1 PIN_2 PIN_3 PIN_4
+AP DxDesigner_Library:THRUHOLE_22GUAGE 1 #=1
+AP DxDesigner_Library:THRUHOLE_22GUAGE 1 PINTYPE=IN
+AP DxDesigner_Library:THRUHOLE_22GUAGE 2 #=2
+AP DxDesigner_Library:THRUHOLE_22GUAGE 2 PINTYPE=IN
+AP DxDesigner_Library:THRUHOLE_22GUAGE 3 #=3
+AP DxDesigner_Library:THRUHOLE_22GUAGE 3 PINTYPE=IN
+AP DxDesigner_Library:THRUHOLE_22GUAGE 4 #=4
+AP DxDesigner_Library:THRUHOLE_22GUAGE 4 PINTYPE=IN
+G GND
+M DxDesigner_Library:MEMS_MIC_ADMP621 $1I6
+I $1I6 DxDesigner_Library:MEMS_MIC_ADMP621 CLK DATA GND GND VDD REFDES=U?`
+|R 12:21:2_1-15-15
+API $1I6 DxDesigner_Library:MEMS_MIC_ADMP621 1 #=1
+API $1I6 DxDesigner_Library:MEMS_MIC_ADMP621 2 #=5
+API $1I6 DxDesigner_Library:MEMS_MIC_ADMP621 3 #=3
+API $1I6 DxDesigner_Library:MEMS_MIC_ADMP621 4 #=2
+API $1I6 DxDesigner_Library:MEMS_MIC_ADMP621 5 #=4
+M DxDesigner_Common_Parts:cap_0p1uF_0402 $1I25
+I $1I25 DxDesigner_Common_Parts:cap_0p1uF_0402 VDD GND REFDES=C?`
+|R 14:43:56_1-7-15
+API $1I25 DxDesigner_Common_Parts:cap_0p1uF_0402 1 #=1
+API $1I25 DxDesigner_Common_Parts:cap_0p1uF_0402 2 #=2
+M DxDesigner_Library:THRUHOLE_22GUAGE $1I32
+I $1I32 DxDesigner_Library:THRUHOLE_22GUAGE VDD CLK DATA GND REFDES=U?`
+|R 14:00:21_7-1-15
+API $1I32 DxDesigner_Library:THRUHOLE_22GUAGE 1 #=1
+API $1I32 DxDesigner_Library:THRUHOLE_22GUAGE 2 #=2
+API $1I32 DxDesigner_Library:THRUHOLE_22GUAGE 3 #=3
+API $1I32 DxDesigner_Library:THRUHOLE_22GUAGE 4 #=4
+EW

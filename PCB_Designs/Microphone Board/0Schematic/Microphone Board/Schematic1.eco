@@ -1,0 +1,22 @@
+*PADS-ECO-V9.5-MILS*
+*REMARK*  old file: C:\Users\tyler.davis5\Documents\Sumer Work 2015\Microphone Board\1Working Version\MCollar_Microphone_worki01.asc
+*REMARK*  new file: C:\Users\tyler.davis5\Documents\Sumer Work 2015\Microphone Board\0Schematic\Microphone Board\Schematic1.asc
+*REMARK*  created by ECOGEN (Version 6.4v) on 7/1/2015 2:39:06 PM
+*DELPIN*
+U1.1  CLK
+U1.5  DATA
+U2.2  GND
+U2.3  CLK
+U2.4  DATA
+*NET*
+*SIGNAL*  CLK
+U1.1  U2.2
+*SIGNAL*  DATA
+U2.3  U1.5
+*SIGNAL*  GND
+U2.4
+*DEL_ATTRIBUTE*	PCB	DEFAULT
+"CAM.Apply Oversize To All Pads"
+
+*REMARK*  Deleted pins: 5,  Added pins: 5
+*END*
