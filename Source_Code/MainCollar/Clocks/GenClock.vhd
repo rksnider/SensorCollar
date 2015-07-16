@@ -93,40 +93,76 @@ architecture rtl of GenClock is
   signal out_gated_clk      : std_logic := '0' ;
   signal gated_clk_en       : std_logic := '0';
 
+  attribute keep            : boolean ;
+
+  attribute keep of out_clk       : signal is true ;
+  attribute keep of out_gated_clk : signal is true ;
 
 begin
+
+  clk_out                   <= out_clk ;
+  gated_clk_out             <= out_gated_clk ;
+
+  --------------------------------------------------------------------------
+  --  Clock enable setting.
+  --------------------------------------------------------------------------
+
+  clk_enable : process (reset, clk)
+    variable new_clk        : std_logic ;
+  begin
+    if (reset = '1') then
+      gated_clk_en          <= '0' ;
+
+    --  Handle gated clocks when the input clock passes through directly.
+
+    elsif (falling_edge (clk)) then
+      if (clk_on_in = '1') then
+        gated_clk_en      <= '1' ;
+
+      elsif (clk_off_in = '1') then
+        gated_clk_en      <= '0' ;
+
+      end if ;
+    end if ;
+
+  end process clk_enable ;
 
 
   --------------------------------------------------------------------------
   --  Clock generation.
   --------------------------------------------------------------------------
 
-  clk_gen : process (reset, clk)
-    variable new_clk        : std_logic ;
-  begin
-    if (reset = '1') then
-      clk_cnt               <= (others => '0') ;
-      out_clk               <= '0' ;
-      out_gated_clk         <= '0' ;
-      gated_clk_en          <= '0' ;
+  direct_clock : if (clk_cntmax_c = 0) generate
 
-    --  Handle gated clocks when the input clock passes through directly.
+    clk_gen : process (reset, clk, gated_clk_en)
+    begin
+      if (reset = '1') then
+        out_clk               <= '0' ;
+        out_gated_clk         <= '0' ;
 
-    elsif (falling_edge (clk)) then
-      if (clk_cntmax_c = 0) then
-        if (clk_on_in = '1') then
-          gated_clk_en      <= '1' ;
+      --  Handle clocks that pass through directly.
 
-        elsif (clk_off_in = '1') then
-          gated_clk_en      <= '0' ;
-
-        end if ;
+      else
+        out_clk               <= clk ;
+        out_gated_clk         <= clk and gated_clk_en ;
       end if ;
+    end process clk_gen ;
 
-    --  Count out a half cycle of the output clock in driver clock cycles.
+  end generate direct_clock ;
 
-    elsif (rising_edge (clk)) then
-      if (clk_cntmax_c /= 0) then
+  divided_clock : if (clk_cntmax_c /= 0) generate
+
+    clk_gen : process (reset, clk)
+      variable new_clk        : std_logic ;
+    begin
+      if (reset = '1') then
+        clk_cnt               <= (others => '0') ;
+        out_clk               <= '0' ;
+        out_gated_clk         <= '0' ;
+
+      --  Count out a half cycle of the output clock in driver clock cycles.
+
+      elsif (rising_edge (clk)) then
         if (clk_cnt /= TO_UNSIGNED (clk_cntmax_c,
                                     clk_cnt'length)) then
 
@@ -139,31 +175,11 @@ begin
 
           new_clk             := not out_clk ;
           out_clk             <= new_clk ;
-
-          if (clk_on_in = '1') then
-            gated_clk_en      <= '1' ;
-            out_gated_clk     <= new_clk ;
-
-          elsif (clk_off_in = '1') then
-            gated_clk_en      <= '0' ;
-            out_gated_clk     <= '0' ;
-
-          elsif (gated_clk_en = '1') then
-            out_gated_clk     <= new_clk ;
-          end if ;
+          out_gated_clk       <= new_clk and gated_clk_en ;
         end if ;
       end if ;
-    end if ;
+    end process clk_gen ;
 
-  end process clk_gen ;
-
-  --  Pass the clock through directly when the input and output clock
-  --  frequencies are the same.
-
-  clk_out                   <= out_clk       when (clk_cntmax_c /= 0) else
-                               clk ;
-  gated_clk_out             <= out_gated_clk when (clk_cntmax_c /= 0) else
-                               (clk and gated_clk_en) ;
-
+  end generate divided_clock ;
 
 end architecture rtl ;

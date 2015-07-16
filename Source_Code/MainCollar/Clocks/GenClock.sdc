@@ -37,7 +37,7 @@ if {[llength $clk_out_info] > 0} {
     set clk_out_target          "$genclk_inst|out_clk"
   }
 
-  puts $sdc_log "Creating clock '$clk_out_clock' on '$clk_out_target' from '$clk_out_info'\n"
+  puts $sdc_log "Creating clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
 
   create_generated_clock -source "$sysclk_source" -name "$clk_out_clock" \
                          -divide_by "$clk_div"          "$clk_out_target"
@@ -60,10 +60,10 @@ if {[llength $clk_out_info] > 0} {
     set clk_out_target          "$clk_out_port"
     set_keyvalue                "$clk_out_port" "$clk_out_clock"
   } else {
-    set clk_out_target          "$genclk_inst|gated_out_clk"
+    set clk_out_target          "$genclk_inst|out_gated_clk"
   }
 
-  puts $sdc_log "Creating clock '$clk_out_clock' on '$clk_out_target' from '$clk_out_info'\n"
+  puts $sdc_log "Creating clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
 
   create_generated_clock -source "$sysclk_source" -name "$clk_out_clock" \
                          -divide_by "$clk_div"          "$clk_out_target"
