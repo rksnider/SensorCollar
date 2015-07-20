@@ -23,6 +23,14 @@ set sdc_log [open "output_files/sdc_log.txt" w]
 
 source SDC_Procedures.sdc
 
+#   Build an array of all constants shared between SDC and VHDL.
+
+source sdc_values.tcl
+
+foreach {name type value} $sdc_value_list {
+  set shared_constants($name)     $value
+}
+
 #   Use timings as nanoseconds with three decimal places.
 
 set decplaces     3
