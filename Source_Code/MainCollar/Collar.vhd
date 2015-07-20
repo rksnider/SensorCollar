@@ -221,16 +221,22 @@ architecture structural of Collar is
 
   --  Reset information.  The power up signal defaults to zero.
 
-  constant pb_time_c        : real    := 0.5 ;
-  constant pb_count_c       : natural :=
-              natural (trunc (real (master_clk_freq_g) * pb_time_c)) ;
-  constant pb_count_bits_c  : natural := const_bits (pb_count_c) ;
+  constant pu_time_c        : real    := 0.5 ;   -- Give sigtap start time.
+  constant pu_count_c       : natural :=
+              natural (trunc (real (master_clk_freq_g) * pu_time_c)) ;
 
   signal reset              : std_logic ;
   signal power_up           : std_logic := '0' ;
+  signal pu_counter         : unsigned (const_bits (pu_count_c)-1
+                                        downto 0) := (others => '0') ;
+
+  constant pb_time_c        : real    := 0.5 ;
+  constant pb_count_c       : natural :=
+              natural (trunc (real (master_clk_freq_g) * pb_time_c)) ;
+
   signal reset_pushed       : std_logic := '0' ;
-  signal pb_counter         : unsigned (pb_count_bits_c-1 downto 0) :=
-                                (others => '0') ;
+  signal pb_counter         : unsigned (const_bits (pb_count_c)-1
+                                        downto 0) := (others => '0') ;
 
   --  GPS signals.
 
@@ -710,7 +716,11 @@ begin
   reset_poweron : process (master_clk)
   begin
     if (rising_edge (master_clk)) then
-      power_up              <= '1' ;
+      if (pu_counter = pu_count_c) then
+        power_up            <= '1' ;
+      else
+        pu_counter          <= pu_counter + 1 ;
+      end if ;
     end if ;
   end process reset_poweron ;
 
