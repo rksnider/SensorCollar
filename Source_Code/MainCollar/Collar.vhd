@@ -43,6 +43,7 @@ use GENERAL.GPS_CLOCK_PKG.ALL ;
 library WORK ;                  --! Local Library
 use WORK.COLLAR_CONTROL_PKG.ALL ;
 use WORK.SHARED_SDC_VALUES_PKG.ALL ;
+use WORK.PC_STATUSCONTROL_PKG.ALL ;
 
 
 ----------------------------------------------------------------------------
@@ -260,9 +261,18 @@ architecture structural of Collar is
 
   end component GenClock ;
 
+  --  PC control and status signals.
+
+  signal PC_StatusReg           : std_logic_vector (StatusSignalsCnt_c-1
+                                                    downto 0) ;
+  signal PC_StatusSet           : std_logic ;
+  signal PC_ControlReg          : std_logic_vector (ControlSignalsCnt_c-1
+                                                    downto 0) :=
+                                      (others => '0') ;
+
   --  GPS signals.
 
-  signal aop_running        : std_logic ;
+  signal aop_running            : std_logic ;
 
   --  GPS dual port RAM communication signals.
 
@@ -358,6 +368,65 @@ begin
   --------------------------------------------------------------------------
   --  Power Controller.
   --------------------------------------------------------------------------
+
+  --  Power Controller SPI communications channel.
+
+  use_PC:
+    if (Collar_Control_usePC_c = '0') generate
+
+      component StatCtlSPI_FPGA is
+        Generic (
+          status_bits_g           : natural := 16 ;
+          control_bits_g          : natural := 16 ;
+          flash_bytes_transfer    : natural := 0 ;
+          data_length_bit_width_g : natural := 8
+        ) ;
+        Port (
+          clk                     : in    std_logic ;
+          rst_n                   : in    std_logic ;
+          status_out              : out   std_logic_vector (status_bits_g-1
+                                                            downto 0) ;
+          status_chg_in           : in    std_logic ;
+          status_set_out          : out   std_logic ;
+          control_in              : in    std_logic_vector (control_bits_g-1
+                                                            downto 0) ;
+
+          sclk                    : out   std_logic ;
+          mosi                    : out   std_logic ;
+          miso                    : in    std_logic ;
+          cs_n                    : out   std_logic
+        ) ;
+      end component StatCtlSPI_FPGA ;
+
+    begin
+
+      pc_spi : StatCtlSPI_FPGA
+        Generic Map (
+          status_bits_g               => StatusSignalsCnt_c,
+          control_bits_g              => ControlSignalsCnt_c,
+          flash_bytes_transfer        => 0,
+          data_length_bit_width_g     => 8
+        )
+        Port Map (
+          clk                         => spi_clk,
+          rst_n                       => not reset,
+          status_out                  => PC_StatusReg,
+          status_chg_in               => pc_statchg_in,
+          status_set_out              => PC_StatusSet,
+          control_in                  => PC_ControlReg,
+
+          sclk                        => pc_spi_clk,
+          mosi                        => pc_spi_mosi_out,
+          miso                        => pc_spi_miso_in,
+          cs_n                        => pc_spi_cs_out
+        ) ;
+
+      pc_flash_clk            <= '0' ;
+      pc_flash_cs_out         <= '1' ;
+      pc_flash_data_io        <= (others => 'Z') ;
+      pc_flash_dir_out        <= '0' ;
+
+    end generate no_use_SDRAM ;
 
   no_use_PC:
     if (Collar_Control_usePC_c = '0') generate

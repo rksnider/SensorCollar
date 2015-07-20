@@ -39,6 +39,19 @@ source GenClock.sdc
 
 pop_instance
 
+#   Process SDC file for Status/Control SPI.  Push the new instance onto the
+#   instances stack beforehand and remove it afterwards.
+
+push_instance               "StatCtlSPI_FPGA:pc_spi"
+
+set_instvalue               clk "$collar_spi_clk_name"
+
+copy_instvalues             { "pc_spi_clk,sclk" }
+
+source StatCtlSPI_FPGA.sdc
+
+pop_instance
+
 #   The SD Card Controller.
 
 set sdc_file                "microsd_controller.sdc"
