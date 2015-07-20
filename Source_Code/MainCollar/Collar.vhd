@@ -42,6 +42,7 @@ use GENERAL.GPS_CLOCK_PKG.ALL ;
 
 library WORK ;                  --! Local Library
 use WORK.COLLAR_CONTROL_PKG.ALL ;
+use WORK.SHARED_SDC_VALUES_PKG.ALL ;
 
 
 ----------------------------------------------------------------------------
@@ -238,6 +239,27 @@ architecture structural of Collar is
   signal pb_counter         : unsigned (const_bits (pb_count_c)-1
                                         downto 0) := (others => '0') ;
 
+  --  SPI clock.
+
+  signal spi_clk            : std_logic ;
+
+  component GenClock is
+
+    Generic (
+      clk_freq_g              : natural   := 10e6 ;
+      out_clk_freq_g          : natural   := 1e6
+    ) ;
+    Port (
+      reset                   : in    std_logic ;
+      clk                     : in    std_logic ;
+      clk_on_in               : in    std_logic ;
+      clk_off_in              : in    std_logic ;
+      clk_out                 : out   std_logic ;
+      gated_clk_out           : out   std_logic
+    ) ;
+
+  end component GenClock ;
+
   --  GPS signals.
 
   signal aop_running        : std_logic ;
@@ -270,6 +292,23 @@ architecture structural of Collar is
 
 
 begin
+
+  --------------------------------------------------------------------------
+  --  SPI clock.
+  --------------------------------------------------------------------------
+
+  spi_clock : GenClock
+    Generic Map (
+      clk_freq_g              => master_clk_freq_g,
+      out_clk_freq_g          => spi_clk_freq_c
+    )
+    Port Map (
+      reset                   => reset,
+      clk                     => master_clk,
+      clk_on_in               => '0',
+      clk_off_in              => '0',
+      clk_out                 => spi_clk
+    ) ;
 
   --------------------------------------------------------------------------
   --  Time since reset clock.

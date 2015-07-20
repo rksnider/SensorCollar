@@ -23,6 +23,22 @@ set master_clock_freq       [expr {int(1.0e9 / \
 #   Process SDC file for all collar instances.  Push the new instances onto
 #   the instances stack beforehand and remove them afterwards.
 
+#   SPI clock.
+
+set collar_spi_clk_name     spi_clk
+push_instance               "GenClock:spi_clock"
+
+set_instvalue               out_clk_freq_g  $shared_constants(spi_clk_freq_c)
+set_instvalue               clk_out         [list $collar_spi_clk_name]
+set_instvalue               gated_clk_out   { }
+
+copy_instvalues             { "master_clk_freq_g,clk_freq_g" \
+                              "master_clk,clk" }
+
+source GenClock.sdc
+
+pop_instance
+
 #   The SD Card Controller.
 
 set sdc_file                "microsd_controller.sdc"
