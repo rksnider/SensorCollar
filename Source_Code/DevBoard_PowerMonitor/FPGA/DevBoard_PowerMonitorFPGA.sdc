@@ -39,7 +39,7 @@ set_time_format -unit ns -decimal_places $decplaces
 
 #   Main system clock.
 
-set master_clk_freq     50.0e6
+set master_clk_freq     $shared_constants(master_clk_freq_c)
 
 set master_clk_period   [expr 1.0e9 / $master_clk_freq]
 set per                 [format "%.*f" $decplaces $master_clk_period]
@@ -48,8 +48,11 @@ set fall                [expr $master_clk_period * 0.5]
 set duty                [format "%.*f %.*f" $decplaces $rise $decplaces $fall]
 
 set master_clk_target   [get_ports CLK_50MHZ_TO_FPGA]
+set master_clk_name     master_clk
 
-create_clock -name master_clk -period $per -waveform $duty $master_clk_target
+create_clock -name $master_clk_name -period $per -waveform $duty \
+                   $master_clk_target
+
 #create_clock -name master_clk -period 20.000 -waveform { 0.000 10.000 } \
 #             [get_ports CLK_50MHZ_TO_FPGA]
 
@@ -67,19 +70,20 @@ create_clock -name master_clk -period $per -waveform $duty $master_clk_target
 set top_level_inst            "Collar:C"
 push_instance                 $top_level_inst
 
-set_instvalue                 master_clk      $master_clk_target
+set_instvalue                 master_clk_freq_g $master_clk_freq
+set_instvalue                 master_clk        $master_clk_name
 
-set_instvalue                 i2c_clk_io      "SDA_TO_FPGA_CPLD"
-set_instvalue                 pc_spi_clk      "PC_SPI_CLK"
-set_instvalue                 sdram_clk       "SDRAM_CLK"
-set_instvalue                 sd_clk          "SDCARD_CLK_TO_FPGA"
-set_instvalue                 sdh_clk         "SDCARD_DI_CLK_TO_FPGA"
-set_instvalue                 gps_rx_in       "TXD_GPS_TO_FPGA"
-set_instvalue                 gps_tx_out      "RXD_GPS_TO_FPGA"
-set_instvalue                 ms_clk          "IM2_SPI_SCLK"
-set_instvalue                 magram_clk      "MRAM_SCLK_TO_FPGA"
-set_instvalue                 mic_clk         "MIC_CLK"
-set_instvalue                 radio_clk       "DATA_TX_CLK_TO_FPGA"
+set_instvalue                 i2c_clk_io        "SDA_TO_FPGA_CPLD"
+set_instvalue                 pc_spi_clk        "PC_SPI_CLK"
+set_instvalue                 sdram_clk         "SDRAM_CLK"
+set_instvalue                 sd_clk            "SDCARD_CLK_TO_FPGA"
+set_instvalue                 sdh_clk           "SDCARD_DI_CLK_TO_FPGA"
+set_instvalue                 gps_rx_in         "TXD_GPS_TO_FPGA"
+set_instvalue                 gps_tx_out        "RXD_GPS_TO_FPGA"
+set_instvalue                 ms_clk            "IM2_SPI_SCLK"
+set_instvalue                 magram_clk        "MRAM_SCLK_TO_FPGA"
+set_instvalue                 mic_clk           "MIC_CLK"
+set_instvalue                 radio_clk         "DATA_TX_CLK_TO_FPGA"
 
 source Collar.sdc
 
