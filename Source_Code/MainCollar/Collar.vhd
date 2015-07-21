@@ -426,7 +426,7 @@ begin
       pc_flash_data_io        <= (others => 'Z') ;
       pc_flash_dir_out        <= '0' ;
 
-    end generate no_use_SDRAM ;
+    end generate use_PC ;
 
   no_use_PC:
     if (Collar_Control_usePC_c = '0') generate
