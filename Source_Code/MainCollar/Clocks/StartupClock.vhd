@@ -55,6 +55,7 @@ USE GENERAL.GPS_CLOCK_PKG.ALL ; --  Use GPS Clock information.
 --! @param      CLK_FREQ              Frequency of the clock signal.
 --! @param      clk                   Clock used to drive the counters.
 --! @param      time_since_reset_out  Time in GPS format.
+--! @param      time_bytes_out        Same time padded into a byte string.
 --
 ----------------------------------------------------------------------------
 
@@ -66,7 +67,9 @@ entity StartupClock is
   Port (
     clk                   : in    std_logic ;
     time_since_reset_out  : out   std_logic_vector (gps_time_bits_c-1
-                                                      downto 0)
+                                                    downto 0) ;
+    time_bytes_out        : out   std_logic_vector (gps_time_bytes_c*8-1
+                                                    downto 0)
   ) ;
 
 end entity StartupClock ;
@@ -77,6 +80,16 @@ architecture rtl of StartupClock is
   --  Reset time for conversion from GPS time to standard logic vector bits.
 
   signal time_since_reset   : GPS_Time ;
+
+  signal time_bytes         : std_logic_vector (gps_time_bytes_c*8-1
+                                                downto 0) ;
+  alias reset_time          : std_logic_vector (gps_time_bits_c-1
+                                                downto 0) is
+        reset_time_bytes (gps_time_bits_c-1 downto 0) ;
+
+  alias reset_time_padding  : std_logic_vector (gps_time_bytes_c*8-1
+                                                downto gps_time_bits_c) := 
+                                                    (others => '0') ;
 
   --  Number of clock ticks in a millisecond and nanoseconds in a
   --  clock tick.
@@ -105,7 +118,9 @@ begin
 
   --  Conversion from GPS time format to standard logic vector output.
 
-  time_since_reset_out    <= TO_STD_LOGIC_VECTOR (time_since_reset) ;
+  reset_time              <= TO_STD_LOGIC_VECTOR (time_since_reset) ;
+  time_since_reset_out    <= reset_time ;
+  time_bytes_out          <= time_bytes ;
 
   --  Counter definitions.
 
