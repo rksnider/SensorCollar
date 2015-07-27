@@ -58,7 +58,7 @@ use GENERAL.UTILITIES_PKG.ALL ; --  Generally useful functions.
 --! @param      clk_off_in          Turn off the gated result clock.
 --! @param      clk_out             The result clock.
 --! @param      gated_clk_out       The gated result clock.
---! @param      gated_clk_not_out   The inverted gated result clock.
+--! @param      gated_clk_inv_out   The inverted gated result clock.
 --
 ----------------------------------------------------------------------------
 
@@ -75,7 +75,7 @@ entity GenClock is
     clk_off_in              : in    std_logic ;
     clk_out                 : out   std_logic ;
     gated_clk_out           : out   std_logic ;
-    gated_clk_not_out       : out   std_logic
+    gated_clk_inv_out       : out   std_logic
   ) ;
 
 end entity GenClock ;
@@ -109,7 +109,7 @@ begin
 
   clk_out                   <= out_clk ;
   gated_clk_out             <= out_gated_clk ;
-  gated_clk_not_out         <= out_inv_gated_clk ;
+  gated_clk_inv_out         <= out_inv_gated_clk ;
 
   --------------------------------------------------------------------------
   --  Clock enable setting.
