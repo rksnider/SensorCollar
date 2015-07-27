@@ -57,6 +57,7 @@ use GENERAL.UTILITIES_PKG.ALL ; --  Generally useful functions.
 --! @param      clk_on_in           Turn on the gated result clock.
 --! @param      clk_off_in          Turn off the gated result clock.
 --! @param      clk_out             The result clock.
+--! @param      clk_inv_out         The inverted result clock.
 --! @param      gated_clk_out       The gated result clock.
 --! @param      gated_clk_inv_out   The inverted gated result clock.
 --
@@ -74,6 +75,7 @@ entity GenClock is
     clk_on_in               : in    std_logic ;
     clk_off_in              : in    std_logic ;
     clk_out                 : out   std_logic ;
+    clk_inv_out             : out   std_logic ;
     gated_clk_out           : out   std_logic ;
     gated_clk_inv_out       : out   std_logic
   ) ;
@@ -94,6 +96,7 @@ architecture rtl of GenClock is
                                               (others => '0') ;
 
   signal out_clk            : std_logic := '0' ;
+  signal out_inv_clk        : std_logic := '0' ;
   signal out_gated_clk      : std_logic := '0' ;
   signal out_inv_gated_clk  : std_logic := '0' ;
   signal gated_clk_en       : std_logic := '0' ;
@@ -102,12 +105,14 @@ architecture rtl of GenClock is
   attribute keep            : boolean ;
 
   attribute keep of out_clk           : signal is true ;
+  attribute keep of out_inv_clk       : signal is true ;
   attribute keep of out_gated_clk     : signal is true ;
   attribute keep of out_inv_gated_clk : signal is true ;
 
 begin
 
   clk_out                   <= out_clk ;
+  clk_inv_out               <= out_inv_clk ;
   gated_clk_out             <= out_gated_clk ;
   gated_clk_inv_out         <= out_inv_gated_clk ;
 
@@ -155,6 +160,7 @@ begin
     begin
       if (reset = '1') then
         out_clk               <= '0' ;
+        out_inv_clk           <= '0' ;
         out_gated_clk         <= '0' ;
         out_inv_gated_clk     <= '0' ;
 
@@ -162,6 +168,7 @@ begin
 
       else
         out_clk               <= clk ;
+        out_inv_clk           <= not clk ;
         out_gated_clk         <= clk and gated_clk_en ;
         out_inv_gated_clk     <= (not clk) and gated_inv_clk_en ;
       end if ;
@@ -177,6 +184,7 @@ begin
       if (reset = '1') then
         clk_cnt               <= (others => '0') ;
         out_clk               <= '0' ;
+        out_inv_clk           <= '0' ;
         out_gated_clk         <= '0' ;
         out_inv_gated_clk     <= '0' ;
 
@@ -195,6 +203,7 @@ begin
 
           new_clk             := not out_clk ;
           out_clk             <= new_clk ;
+          out_inv_clk         <= not new_clk ;
           out_gated_clk       <= new_clk and gated_clk_en ;
           out_inv_gated_clk   <= (not new_clk) and gated_inv_clk_en ;
         end if ;
