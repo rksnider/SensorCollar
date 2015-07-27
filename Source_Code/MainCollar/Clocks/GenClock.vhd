@@ -42,9 +42,11 @@ use GENERAL.UTILITIES_PKG.ALL ; --  Generally useful functions.
 ----------------------------------------------------------------------------
 --
 --! @brief      Generate a clock using a faster clock.
---! @details    Generate a clock and a gated version by counting the cycles
+--! @details    Generate a clock and gated versions by counting the cycles
 --!             of a faster clock until a half cycle of the new clock is
---!             reached.  The new clock output is toggled then.
+--!             reached.  The new clock output is toggled then.  If the
+--!             new clock runs at the same speed as the old clock then
+--!             pass it through directly.
 --!
 --! @param      clk_freq_g          Frequency of the source clock in
 --!                                 cycles per second.
@@ -56,6 +58,7 @@ use GENERAL.UTILITIES_PKG.ALL ; --  Generally useful functions.
 --! @param      clk_off_in          Turn off the gated result clock.
 --! @param      clk_out             The result clock.
 --! @param      gated_clk_out       The gated result clock.
+--! @param      gated_clk_not_out   The inverted gated result clock.
 --
 ----------------------------------------------------------------------------
 
@@ -71,7 +74,8 @@ entity GenClock is
     clk_on_in               : in    std_logic ;
     clk_off_in              : in    std_logic ;
     clk_out                 : out   std_logic ;
-    gated_clk_out           : out   std_logic
+    gated_clk_out           : out   std_logic ;
+    gated_clk_not_out       : out   std_logic
   ) ;
 
 end entity GenClock ;
@@ -91,17 +95,21 @@ architecture rtl of GenClock is
 
   signal out_clk            : std_logic := '0' ;
   signal out_gated_clk      : std_logic := '0' ;
-  signal gated_clk_en       : std_logic := '0';
+  signal out_inv_gated_clk  : std_logic := '0' ;
+  signal gated_clk_en       : std_logic := '0' ;
+  signal gated_inv_clk_en   : std_logic := '0' ;
 
   attribute keep            : boolean ;
 
-  attribute keep of out_clk       : signal is true ;
-  attribute keep of out_gated_clk : signal is true ;
+  attribute keep of out_clk           : signal is true ;
+  attribute keep of out_gated_clk     : signal is true ;
+  attribute keep of out_inv_gated_clk : signal is true ;
 
 begin
 
   clk_out                   <= out_clk ;
   gated_clk_out             <= out_gated_clk ;
+  gated_clk_not_out         <= out_inv_gated_clk ;
 
   --------------------------------------------------------------------------
   --  Clock enable setting.
@@ -114,6 +122,15 @@ begin
       gated_clk_en          <= '0' ;
 
     --  Handle gated clocks when the input clock passes through directly.
+
+    elsif (rising_edge (clk)) then
+      if (clk_on_in = '1') then
+        gated_inv_clk_en  <= '1' ;
+
+      elsif (clk_off_in = '1') then
+        gated_inv_clk_en  <= '0' ;
+
+      end if ;
 
     elsif (falling_edge (clk)) then
       if (clk_on_in = '1') then
@@ -134,17 +151,19 @@ begin
 
   direct_clock : if (clk_cntmax_c = 0) generate
 
-    clk_gen : process (reset, clk, gated_clk_en)
+    clk_gen : process (reset, clk, gated_clk_en, gated_inv_clk_en)
     begin
       if (reset = '1') then
         out_clk               <= '0' ;
         out_gated_clk         <= '0' ;
+        out_inv_gated_clk     <= '0' ;
 
       --  Handle clocks that pass through directly.
 
       else
         out_clk               <= clk ;
         out_gated_clk         <= clk and gated_clk_en ;
+        out_inv_gated_clk     <= (not clk) and gated_inv_clk_en ;
       end if ;
     end process clk_gen ;
 
@@ -159,6 +178,7 @@ begin
         clk_cnt               <= (others => '0') ;
         out_clk               <= '0' ;
         out_gated_clk         <= '0' ;
+        out_inv_gated_clk     <= '0' ;
 
       --  Count out a half cycle of the output clock in driver clock cycles.
 
@@ -176,6 +196,7 @@ begin
           new_clk             := not out_clk ;
           out_clk             <= new_clk ;
           out_gated_clk       <= new_clk and gated_clk_en ;
+          out_inv_gated_clk   <= (not new_clk) and gated_inv_clk_en ;
         end if ;
       end if ;
     end process clk_gen ;

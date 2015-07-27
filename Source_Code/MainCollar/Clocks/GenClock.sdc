@@ -48,7 +48,7 @@ if {[llength $clk_out_info] > 0} {
   set_false_path -from $clk_out_data -to $sysclk_data
 }
 
-#   Generate the gated clock if it is desired.
+#   Generate gated clock if it is desired.
 
 set clk_out_info                [get_instvalue gated_clk_out]
 
@@ -61,6 +61,32 @@ if {[llength $clk_out_info] > 0} {
     set_keyvalue                "$clk_out_port" "$clk_out_clock"
   } else {
     set clk_out_target          "$genclk_inst|out_gated_clk"
+  }
+
+  puts $sdc_log "Creating clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
+
+  create_generated_clock -source "$sysclk_source" -name "$clk_out_clock" \
+                         -divide_by "$clk_div"          "$clk_out_target"
+
+  set clk_out_data              [get_clocks "$clk_out_clock"]
+
+  set_false_path -from $sysclk_data  -to $clk_out_data
+  set_false_path -from $clk_out_data -to $sysclk_data
+}
+
+#   Generate inverted gated clock if it is desired.
+
+set clk_out_info                [get_instvalue gated_inv_clk_out]
+
+if {[llength $clk_out_info] > 0} {
+  set clk_out_clock             [lindex $clk_out_info 0]
+
+  if {[llength $clk_out_info] > 1} {
+    set clk_out_port            [lindex $clk_out_info 1]
+    set clk_out_target          "$clk_out_port"
+    set_keyvalue                "$clk_out_port" "$clk_out_clock"
+  } else {
+    set clk_out_target          "$genclk_inst|out_inv_gated_clk"
   }
 
   puts $sdc_log "Creating clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
