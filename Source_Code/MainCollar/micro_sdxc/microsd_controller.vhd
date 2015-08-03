@@ -221,585 +221,126 @@ end microsd_controller;
 --!of the level translator. An internal signal of the design can also be changed easily to run  the card in 
 --!3.3V mode if so desired.
 
-architecture Behavioral of microsd_controller is
-
-
-component microsd_controller_inner 
-	generic(
-    
-        CLK_DIVIDE                      :natural;
-        CLK_FREQ                        :natural
-    );
-	port(
-
-        clk							    :in	    std_logic; 							
-        rst_n							  :in 	  std_logic;							
-        sd_init_start			  :in	    std_logic;							
-		  
-        sd_control				  :in	    std_logic_vector(7 downto 0);       
-        sd_status						:out	  std_logic_vector(7 downto 0);      
-		  
-        block_read_sd_addr			    :in	    std_logic_vector(31 downto 0);
-        
-        block_byte_data				    :out	std_logic_vector(7 downto 0);		
-        block_byte_wren				    :out	std_logic;							
-        block_byte_addr				    :out	std_logic_vector(8 downto 0) ;      
-
-        block_write_sd_addr			    :in	  std_logic_vector(31 downto 0);      
-        block_write_data				    :in 	std_logic_vector(7 downto 0);		
-        num_blocks_to_write			    :in 	integer range 0 to 2**16 - 1;	 
-		  
-        ram_read_address				:out 	std_logic_vector(8 downto 0); 	    
-		  
-        erase_start					    :in 	std_logic_vector(31 downto 0);	    
-        erase_end						    :in 	std_logic_vector(31 downto 0);	   
-
-        dat0							:out	std_logic;                          
-        dat1							:out	std_logic;                           
-        dat2							:out	std_logic;
-        dat3							:out	std_logic;                           
-        cmd						    :out	std_logic;
-        sclk							:out	std_logic;                           
-         
-        prev_block_write_sd_addr 	      :out	std_logic_vector(31 downto 0);   
-        prev_block_write_sd_addr_pulse  :out	std_logic;						 
-
-        cmd_write_en				:out std_logic;     
-        D0_write_en				  :out std_logic;
-        D1_write_en				  :out std_logic;
-        D2_write_en				  :out std_logic;
-        D3_write_en				  :out std_logic;
-
-        cmd_signal_in			  :in	std_logic;      
-        D0_signal_in				:in	std_logic;
-        D1_signal_in				:in	std_logic;
-        D2_signal_in				:in	std_logic;
-        D3_signal_in				:in	std_logic;
-        
-        vc_18_on                :out    std_logic;
-        vc_33_on                :out    std_logic;    
-
-  
-        signalling_18_en			:in std_logic;      
-        hs_sdr25_mode_en			:in std_logic;      
-        state_leds				    :out std_logic_vector(3 downto 0);  
-
-        restart               :out std_logic;    
-
-        init_done					:out std_logic;     
-
-        ext_trigger				:out std_logic      
-	
-	);
-	end component;
-	
-
---Debug ram. I read data off the sd card and store it here. 
---Debuggable as its single clock single port. 
--- component ram_1_port IS
-	-- PORT
-	-- (
-		-- address		: IN STD_LOGIC_VECTOR (8 DOWNTO 0);
-		-- clock		: IN STD_LOGIC  := '1';
-		-- data		    : IN STD_LOGIC_VECTOR (7 DOWNTO 0);
-		-- wren		    : IN STD_LOGIC ;
-		-- q		    : OUT STD_LOGIC_VECTOR (7 DOWNTO 0)
-	-- );
--- END component;
-
-
-
-component microsd_buffer is
-    generic(
-
-        buf_size_g                      :   natural;
-        block_size_g                    :   natural      
-    );
-    port(
-      rst_n                             :in      std_logic;
-      clk                            		:in      std_logic;  
-      mem_address						            :in 	   std_logic_vector(8 downto 0);
-      data_out                          :out     std_logic_vector(7 downto 0);  
-      data_input                        :in      std_logic_vector(7 downto 0);                  
-     -- data_clk                          :in      std_logic;
-      data_we                           :in      std_logic;
-      data_full                         :out     std_logic;                 
-      sd_write_rdy                      :out     std_logic;                                     
-      sd_write_done						          :in		  std_logic;										
-      buffer_reinit_done		            :out    std_logic;
-      data_nblocks                      :in     std_logic_vector(31 downto 0);                 
-      sd_block_written			            :in     std_logic;
-      buffer_level                      :out    std_logic_vector (natural(trunc(log2(real(buf_size_g/block_size_g)))) downto 0); 
-      init_start						            :in 	  std_logic
-    );
-end component;
-
---Signals to be sent to card.
-signal  dat0_top_signal						:	std_logic;  				
-signal  dat1_top_signal						:	std_logic;
-signal  dat2_top_signal						:	std_logic;
-signal  dat3_top_signal						:	std_logic;
-signal  sclk_top_signal						:	std_logic;		
-signal  cmd_top_signal						:	std_logic;
---Tri-State Read Signals
-signal  cmd_top_signal_in					:	std_logic;     	    
-signal  D0_top_signal_in			    :	std_logic;	
-signal  D1_top_signal_in			    :	std_logic;	
-signal  D2_top_signal_in			    :	std_logic;	
-signal  D3_top_signal_in			    :	std_logic;	
-
---sd_data will leave its APP_WAIT state to execute differt commands.
-signal  sd_control_signal					:	std_logic_vector(7 downto 0); 
---Byte enconding of the current state of sd_data. Not complete or unique.       
-signal  sd_status_signal					:	std_logic_vector(7 downto 0);       
-
----Where on sd card a block will be read.
-signal  block_read_sd_addr_signal		    :	std_logic_vector(31 downto 0);      
---Read data from SD card memory
-signal	block_byte_data_top			        :	std_logic_vector(7 downto 0);
---Signals that a data byte has been read. Ram wr_en.		
-signal 	block_byte_wren_top			        :	std_logic;
---Address to write read data to in ram.							
-signal  block_byte_addr_top			        :	std_logic_vector(8 downto 0);  
-
-     
---The address for the current CMD25
-signal  block_write_sd_addr_signal	    	:	std_logic_vector(31 downto 0);
---Data sent to card      
-signal  block_write_data_signal		      	: std_logic_vector(7 downto 0);
---Number of blocks to be sent in any multiblock write.       
-signal  num_blocks_to_write_signal		    :	integer range 0 to 2**16 - 1;       
---Start address for an erase.  
-signal  erase_start_signal					:	std_logic_vector(31 downto 0);
---End   address for an erase. 	      
-signal  erase_end_signal				    : std_logic_vector(31 downto 0); 
-     
---Once off control signal for data_buffer_to_sd_data_handler process
-signal  stop_write 							  :	std_logic;                          
---Used to simply push sd_data current state to Leds.
-signal  state_leds_top						:	std_logic_vector(3 downto 0);   
-    
---Enables for the tri-state output
-signal  cmd_write_en_signal 		    :	std_logic;  
-signal  D0_write_en_signal					:	std_logic;
-signal  D1_write_en_signal					:	std_logic;
-signal  D2_write_en_signal					:	std_logic;
-signal  D3_write_en_signal					:	std_logic;
-
-
- --Where sd_data is going to fetch its data from to write to card
-signal  ram_read_address_top			    :	std_logic_vector(8 downto 0);  
-
-
---Counter to keep track of how many blocks have been written to card
---using multiple cmd25s.  
-signal  num_of_blocks_written 	    :   natural;    
-
---sd_init has finished init.
-signal  init_done_top					    :   std_logic;  
-
-                   
---Bit used to enable CMD6 hs_sdr25 mode transition before first CMD25 in the data core. 
-signal 	hs_sdr25_mode_en				    :   std_logic;      
-
---ext_trigger bit which can be used for an oscope.
-signal	ext_trigger_top			            :   std_logic;       
- 
-   
---Bit signifying that buffer is either full OR data_nblocks number of 
---blocks has streamed and the card must first flush the buffer to the card.
-signal 	buf_ful_top                         :   std_logic := '0';
---Bit signifying that buffer has at least 1 writeable block in it.       
-signal 	sd_write_rdy_top                    :   std_logic := '0'; 
-      
---clk_en gating signal.
-signal 	shut_off 			                :   std_logic;  
---Main system clock. Renamed signal to allow shutoff with gating.
-signal	clk_internal		              :   std_logic;  
-
---A CMD25 stream has finished.
-signal 	sd_write_done_internal        :   std_logic;  
---data_buffer has finished reinit.
-signal 	buffer_reinit_done_internal	  :   std_logic;  
---sd_block_written_flag. Last block finished crc receive check by the card.
-signal 	sd_block_written_internal           :   std_logic;  
-
---Used to detect if the mem_clk has been started by the host.
-signal mem_clk_started                      :   std_logic;  
-signal mem_clk_started_follower             :   std_logic; 
-signal data_we_active                       :   std_logic; 
-signal data_we_active_r                     :   std_logic; 
-signal data_we_active_r_follower            :   std_logic;
-
-
-
-signal  restart_signal                      :   std_logic;
-        
-
-	begin 
-
-
-	
-	sd_block_written_flag   <=  sd_block_written_internal;
-	
-  
-	--clk_internal  <=  clk;
-  --A far more robust method of clk gating must be found
-  --for modelsim.
-  --clk_internal  <=  clk when (shut_off = '0') else '0';
-    
-  user_led_n_out(3 downto 0)  <=  not state_leds_top;		
-
-  
-  sd_clk  <=  sclk_top_signal	; 
-
-	
-	
-i_microsd_controller_inner_0 :  microsd_controller_inner 
-	generic map (
-		CLK_DIVIDE 				  =>	CLK_DIVIDE,
-    CLK_FREQ            =>  CLK_FREQ
-	)
-	port map (
-        clk						        => clk, 
-        rst_n						      => rst_n,
-		 
-        sd_init_start			    => init_start,	
-        sd_control				    =>	sd_control_signal,
-        sd_status					    =>	sd_status_signal,
- 
-        block_read_sd_addr	  =>	block_read_sd_addr_signal,
+architecture rtl of microsd_controller is
 		
-        cmd						    =>  cmd_top_signal,
-        sclk					    =>	sclk_top_signal,
-        dat0							=>	dat0_top_signal,
-        dat1							=>	dat1_top_signal,
-        dat2							=>	dat2_top_signal,
-        dat3							=>	dat3_top_signal,
-		  
-		  
-        block_write_sd_addr	            =>  block_write_sd_addr_signal,
-        block_write_data 		            =>  block_write_data_signal,
-        num_blocks_to_write	            =>	num_blocks_to_write_signal,
-		  
-        block_byte_data		            =>  block_byte_data_top,
-        block_byte_wren		            =>  block_byte_wren_top,
-        block_byte_addr		            =>  block_byte_addr_top,
-		  
-        erase_start				      =>  erase_start_signal,
-        erase_end					      =>  erase_end_signal,
-        cmd_write_en				    =>	cmd_write_en_signal,
+  component microsd_controller_dir is
+   generic(
 
-        D0_write_en				        =>	D0_write_en_signal,
-        D1_write_en				        =>	D1_write_en_signal,
-        D2_write_en				        =>	D2_write_en_signal,
-        D3_write_en				        =>	D3_write_en_signal,
-        state_leds				        =>	state_leds_top,
+      CLK_FREQ                :natural    := 50E6;
+      buf_size_g              :natural    := 2048;
+      block_size_g            :natural    := 512;
+      HS_SDR25_MODE           :std_logic  := '1';
+      CLK_DIVIDE              :natural    := 128;
+      signalling_18_en        :std_logic  := '1'
+      );
 
-        ram_read_address	    =>  ram_read_address_top,
-        init_done					    =>  init_done_top,
-        hs_sdr25_mode_en 	    =>  hs_sdr25_mode_en,
-        signalling_18_en		  =>  signalling_18_en,
-        --init_out_sclk_signal     =>  init_sclk_signal_top,
-        vc_18_on              =>  V_1_8_ON_OFF,
-        vc_33_on              =>  V_3_3_ON_OFF,
+      port(
 
-        cmd_signal_in			      =>	cmd_top_signal_in,
-        D0_signal_in				    =>	D0_top_signal_in,
-        D1_signal_in				    =>	D1_top_signal_in,
-        D2_signal_in				    =>	D2_top_signal_in,
-        D3_signal_in				    =>	D3_top_signal_in,
-        
-        restart                 => restart_signal,
+      rst_n                               :in      std_logic;
+      clk                                 :in      std_logic;
+      clock_enable                        :in      std_logic;
 
-        prev_block_write_sd_addr 		    => data_current_block_written,		
-        prev_block_write_sd_addr_pulse  => sd_block_written_internal,	    
 
-        ext_trigger				      => ext_trigger
 
-	);
-	
-	
-i_data_buffer_0: microsd_buffer 
-	generic map (
-		buf_size_g 						  => buf_size_g,
-    block_size_g 						=> block_size_g
-	)
-    port map(
-      rst_n           => rst_n,
-      clk             => clk,            
-      mem_address     => ram_read_address_top,
-      data_out        => block_write_data_signal, 
-      data_input      => data_input,  
-      data_we         => data_we,
-      --data_clk        => data_clk,
-      data_full		    => data_full,        
-      sd_write_rdy    => sd_write_rdy_top,        
+      data_input                          :in      std_logic_vector(7 downto 0);
+     -- data_clk                            :in      std_logic;
+      data_we                             :in      std_logic;
+      data_full                           :out     std_logic;
 
-      sd_write_done				    => sd_write_done_internal,
-      buffer_reinit_done	    => buffer_reinit_done_internal,
-      data_nblocks            => data_nblocks,
-      sd_block_written	      => sd_block_written_internal,
-      buffer_level            => buffer_level,
-      init_start					    => init_start
-  
+
+
+      data_sd_start_address               :in      std_logic_vector(31 downto 0);
+      data_nblocks                        :in      std_logic_vector(31 downto 0);
+
+
+
+      data_current_block_written          :out     std_logic_vector(31 downto 0);
+      sd_block_written_flag               :out     std_logic;
+      buffer_level                        :out     std_logic_vector (natural(trunc(log2(real(buf_size_g/block_size_g)))) downto 0);
+
+
+      sd_clk                               :out     std_logic;
+
+      sd_cmd_in                           : in      std_logic ;
+      sd_cmd_out                          : out     std_logic ;
+      sd_cmd_dir                          : out     std_logic ;
+      sd_dat_in                           : in      std_logic_vector (3 downto 0) ;
+      sd_dat_out                          : out     std_logic_vector (3 downto 0) ;
+      sd_dat_dir                          : out     std_logic_vector (3 downto 0) ;
+
+
+      V_3_3_ON_OFF                        :out     std_logic;
+      V_1_8_ON_OFF                        :out     std_logic;
+
+
+      --Personal Debug for now
+
+      init_start                          :in     std_logic;
+      user_led_n_out                      :out    std_logic_vector(3 downto 0);
+      ext_trigger                         :out    std_logic
+
     );
-	
+  end component microsd_controller_dir;
 
---Read to ram
---read_to_ram  : altsyncram
---	GENERIC MAP (
---		clock_enable_input_a => "BYPASS",
---		clock_enable_output_a => "BYPASS",
---		init_file => "../matlab scripts/512bytecount_zero.mif",
---		intended_device_family => "Cyclone V",
---		lpm_hint => "ENABLE_RUNTIME_MOD=YES,INSTANCE_NAME=DEB",
---		lpm_type => "altsyncram",
---		numwords_a => 512,
---		operation_mode => "SINGLE_PORT",
---		outdata_aclr_a => "NONE",
---		outdata_reg_a => "CLOCK0",
---		power_up_uninitialized => "FALSE",
---		read_during_write_mode_port_a => "DONT_CARE",
---		widthad_a => 9,
---		width_a => 8,
---		width_byteena_a => 1
---	)
---	PORT MAP (
---		address_a => block_byte_addr_top,
---		clock0 => clk_internal,
---		data_a => block_byte_data_top,
---		wren_a => block_byte_wren_top
---		--q_a => sub_wire0 --I never read from the ram again, at least not now. 
---	);
-	
-
-
---Internal Tri-State of all bidirectional lines.
-tri_state_cmd: process(cmd_write_en_signal)
-begin 
-    if (cmd_write_en_signal = '1') then				
-        sd_cmd			        <=      cmd_top_signal;
-        cmd_top_signal_in   <= 		'1'	;
-    else
-        sd_cmd			        <=      'Z';
-        cmd_top_signal_in   <=      sd_cmd	;
-    end if;
-end process; 
-
-
-tri_state_D0: process(D0_write_en_signal)
-begin 
-    if (D0_write_en_signal = '1') then
-        sd_dat(0)		      <=      dat0_top_signal;
-        D0_top_signal_in 	<=      '1';
-    else
-        sd_dat(0)		      <=      'Z';
-        D0_top_signal_in 	<=      sd_dat(0);
-    end if;
-end process; 
-
-
-tri_state_D1: process(D1_write_en_signal)
-begin 
-    if (D1_write_en_signal = '1') then
-        sd_dat(1)		        <=       dat1_top_signal;
-        D1_top_signal_in    <=      '1';
-    else
-        sd_dat(1)		        <=      'Z';
-        D1_top_signal_in    <=  	sd_dat(1);
-    end if;
-end process; 
-
-tri_state_D2: process(D2_write_en_signal)
-begin 
-    if (D2_write_en_signal = '1') then
-        sd_dat(2)		      <= dat2_top_signal;
-        D2_top_signal_in 	<= '1';
-    else
-        sd_dat(2)		        <= 'Z';
-        D2_top_signal_in    <=	sd_dat(2);
-    end if;
-end process; 
-
-tri_state_D3: process(D3_write_en_signal)
-begin 
-    if (D3_write_en_signal = '1') then
-        
-        sd_dat(3)		        <=      dat3_top_signal;
-        D3_top_signal_in    <=      '1';
-    else
-
-        sd_dat(3)		        <=      'Z';
-        D3_top_signal_in    <= 	    sd_dat(3)	;
-    end if;
-end process; 
---data_nblocks scales down to 128 if its over 128. Otherwise data_nblocks is the number of blocks in a multiblock write.
-num_blocks_to_write_signal <= to_integer(unsigned(data_nblocks)) when (to_integer(unsigned(data_nblocks)) < 128) else 128;  
-        
- 
-                           
---Setting this bit makes the CMD6 in the data modes switch into SDR25 mode. 
---This should be on 25Mhz to 50Mhz.
---My finding abouts sending CMD6_HS. @ 25Mhz this should be on for 3.3V and off for 1.8V. 
---Above 25Mhz it can be on. Below 25Mhz leave it off.                										
-hs_sdr25_mode_en				<= HS_SDR25_MODE;                   
-                                                                   
-                                                                    
-block_read_sd_addr_signal <= x"00000000";
-
---This process controls sd_data through use of sd_control_signal. It also handles
---the sync of data between data_buffer and sd_data. 
---The process also is responsible for sampling the start address provided on mem_clk start.
-data_buffer_to_sd_data_handler:process(rst_n, clk)
-begin
-if (rst_n = '0') then
-    stop_write <= '0';
-    sd_write_done_internal <= '0';
-    num_of_blocks_written <= 0;
-    block_write_sd_addr_signal <= x"00000000";
-    sd_control_signal <= x"FF"; 
-    sd_write_done_internal <= '0';
-    mem_clk_started_follower <= '0';
-elsif rising_edge(clk) then
-
-  if (buffer_reinit_done_internal = '1') then
-      stop_write <= '0';
-      sd_write_done_internal <= '0';
-      num_of_blocks_written <= 0;
-
-  end if;
+  --  Translation signals.
   
-  if (mem_clk_started_follower /= mem_clk_started) then
-      mem_clk_started_follower <= mem_clk_started;
-      --On the first rising edge of mem_clk after a buffer reinit (or power on) sample the start address.
-      if (mem_clk_started = '1') then		
-
-          block_write_sd_addr_signal <= data_sd_start_address;
-
-      end if;
-  end if;
-  --If there is data in the buffer, begin
-  if (sd_write_rdy_top = '1') then 	            
-    if (stop_write = '0') then
-        --if in idle state change address and data to write.
-        if (sd_status_signal = x"01") then  
-            --Which mode do we select. Single/m
-            --x"44" is the 4 bit multiblock path
-            sd_control_signal <= x"44";     
-            --Number of single multiblock writes to do.
-            num_of_blocks_written <= num_of_blocks_written + num_blocks_to_write_signal; 
-            --Only send the sd_control_signal once per APP_WAIT.                       
-            stop_write <= '1';              
-            
-        end if;
-    else
-    --We must wait past APP_WAIT of sd_data to change control signal. 
-    --We wait until CMD12_INIT of microsd_data FSM. 
-    --Works for both 1 bit and 4 bit writing. They both rely 
-    --on CMD12 which signifies end of the multiblock write.		
-      if (sd_status_signal = x"48") then	   
-          --In process of writing data_nblock block 
-          if (num_of_blocks_written = to_integer(unsigned(data_nblocks))) then
-          --This system keeps track of how many blocks have been singly written. 
-          --It will halt writing when the counter reaches X number of blocks. 
-                  stop_write <= '1';          
-                  sd_write_done_internal <= '1';
-          else
-                  block_write_sd_addr_signal <= std_logic_vector(unsigned(block_write_sd_addr_signal) + num_blocks_to_write_signal );
-          --Keep writing and update the address to write next numb_blocks_to_write.
-                  stop_write <= '0';	         
-          end if;
-      sd_control_signal <= x"FF"; 
-      end if;
-    end if;
-  end if;
-    
+  signal sd_cmd_in_tr             : std_logic ;
+  signal sd_cmd_out_tr            : std_logic ;
+  signal sd_cmd_dir_tr            : std_logic ;
+  signal sd_dat_in_tr             : std_logic_vector (sd_dat'length-1
+                                                      downto 0) ;
+  signal sd_dat_out_tr            : std_logic_vector (sd_dat'length-1
+                                                      downto 0) ;
+  signal sd_dat_dir_tr            : std_logic_vector (sd_dat'length-1
+                                                      downto 0) ;
   
-end if;
-end process data_buffer_to_sd_data_handler;
+begin
 
+  mc : microsd_controller_dir
+   generic map (
+      CLK_FREQ                    => CLK_FREQ,
+      buf_size_g                  => buf_size_g,
+      block_size_g                => block_size_g,
+      HS_SDR25_MODE               => HS_SDR25_MODE,
+      CLK_DIVIDE                  => CLK_DIVIDE,
+      signalling_18_en            => signalling_18_en
+    )
+    port map (
+      rst_n                       => rst_n,
+      clk                         => clk,
+      clock_enable                => clock_enable,
+      data_input                  => data_input,
+      data_we                     => data_we,
+      data_full                   => data_full,
+      data_sd_start_address       => data_sd_start_address,
+      data_nblocks                => data_nblocks,
+      data_current_block_written  => data_current_block_written,
+      sd_block_written_flag       => sd_block_written_flag,
+      buffer_level                => buffer_level,
+      sd_clk                      => sd_clk,
+      sd_cmd_in                   => sd_cmd_in_tr,
+      sd_cmd_out                  => sd_cmd_out_tr,
+      sd_cmd_dir                  => sd_cmd_dir_tr,
+      sd_dat_in                   => sd_dat_in_tr,
+      sd_dat_out                  => sd_dat_out_tr,
+      sd_dat_dir                  => sd_dat_dir_tr,
+      V_3_3_ON_OFF                => V_3_3_ON_OFF,
+      V_1_8_ON_OFF                => V_1_8_ON_OFF,
+      init_start                  => init_start,
+      user_led_n_out              => user_led_n_out,
+      ext_trigger                 => ext_trigger
+    );
 
--- --Process to test one erase. TURN OFF WHEN NOTE IN USE
--- process(clk,rst_n)
-	-- begin
+  --  Translate in/out signals to and from directed signals.
   
--- if (rst_n = '0') then
-    -- stop_write <= '0';
-    -- sd_control_signal <= x"FF"; 
+  sd_cmd_in_tr      <= sd_cmd ;
+  sd_dat_in_tr      <= sd_dat ;
+  
+  sd_cmd            <= sd_cmd_out when (sd_cmd_dir = '1') else 'Z' ;
+  
+  tr_dat :
+    for i in (sd_dat'length-1 downto 0) generate
+      sd_dat (i)    <= sd_dat_out (i) when (sd_dat_dir (i) = '1') else 'Z' ;
+    end generate tr_dat ;
 
--- elsif rising_edge(clk) then
-						-- if (stop_write = '0') then
-								-- if (sd_status_signal = x"01") then --if in idle state change address and data to write.
-                  -- sd_control_signal <= x"0E"; 
-                  -- erase_start_signal <= std_logic_vector(to_unsigned(0, 32));
-                  -- erase_end_signal <= std_logic_vector(to_unsigned(900000, 32));
-								-- elsif (sd_status_signal = x"E0")then --Inside erase path
-                  -- sd_control_signal <= x"FF"; 
-                  -- stop_write <= '1';
-								-- end if;
-						-- end if;
-		-- end if;
-	-- end process;
-
-
---data_clk rising edge detection mechanism for grabbing first rising edge of any nblock set. 
---This process will fire first time and then every new nblock thereafter, latching address appropriately. 
-buffer_reinit_data_clk_reset:process(rst_n, clk)
-begin
-if (rst_n = '0') then
-mem_clk_started <= '0';
-data_we_active_r <= '0';
-elsif rising_edge(clk) then
-  if(buffer_reinit_done_internal = '1') then
-      mem_clk_started <= '0';
-      data_we_active_r <= '1';
-  elsif (data_we_active = '1') then
-      mem_clk_started <= '1';
-      data_we_active_r <= '0';
-  end if;
-end if;
-end process buffer_reinit_data_clk_reset;
-
-data_clk_sense:process(rst_n, clk)
-begin
-if(rst_n = '0') then
-    data_we_active_r_follower <= '0';
-    data_we_active <= '0';
-elsif rising_edge(clk) then
-	if (data_we = '1') then
-    if (data_we_active_r_follower /= data_we_active_r) then
-    data_we_active_r_follower <= data_we_active_r;	
-        if (data_we_active_r = '1') then
-            data_we_active <= '0';
-        end if;
-    else
-        data_we_active <= '1';
-    end if;
-  end if;
-end if;
-end process data_clk_sense;
-
-
-
---clk_en process
---The internal clk will gate after the sd_data state
---machine returns to APP_WAIT.
-clk_en_process: process(rst_n, clk)			
-begin
-if (rst_n = '0') then
-shut_off <= '0';
-elsif rising_edge(clk) then
-	if(clock_enable = '0') then
-		if (sd_status_signal = x"01") then
-			shut_off <= '1';
-    end if;
-	else
-			shut_off <= '0';
-			
-	end if;
-end if;
-end process clk_en_process;
-		
-
-end Behavioral;
+end rtl;
