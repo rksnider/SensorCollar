@@ -1,15 +1,33 @@
-------------------------------------------------------------------------------
+----------------------------------------------------------------------------
 --
---! @file       $File$
---! @brief      Maintain Magnetic Memory in Relation to an FPGA Dual Port Ram.
---!             This includes both dumping to Magnetic Memory and Populating Dual
---!             Port Ram upon startup.
---! @details   
+--! @file       magmem_controller.vhd
+--! @brief      Magnetic Memory Controller
+--! @details    Maintains and flushes FPGA buffer to teh Magnetic Memory
+--! @author     Chris Casebeer
+--! @date       1_13_2015
 --! @copyright  
---! @author     
---! @version    
 --
-------------------------------------------------------------------------------
+--  This program is free software: you can redistribute it and/or modify
+--  it under the terms of the GNU General Public License as published by
+--  the Free Software Foundation, either version 3 of the License, or
+--  (at your option) any later version.
+--
+--  This program is distributed in the hope that it will be useful,
+--  but WITHOUT ANY WARRANTY; without even the implied warranty of
+--  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+--  GNU General Public License for more details.
+--
+--  You should have received a copy of the GNU General Public License
+--  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--
+--  Chris Casebeer
+--  Electrical and Computer Engineering
+--  Montana State University
+--  610 Cobleigh Hall
+--  Bozeman, MT 59717
+--  christopher.casebee1@msu.montana.edu
+--
+----------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
 --
@@ -18,7 +36,10 @@
 --!   
 --! @param      mag_interval_ms_g     The millisecond interval at which magnetic
 --!                                   memory should be updated. Must be a power
---!                                   of 2.         
+--!                                   of 2.  Reduce for simulation. 
+--! @param      tRDP_sleep_mode_exit_time_us     Time waited in us by the controller
+--!                                   after a wake command is sent to the magmem.
+--!                                   Reduce for simulation.              
 --! @param      buffer_bytes_g        The total number of bytes in the 2 port
 --!                                   ram which is copied to the magnetic 
 --!                                   memory. This is used to determine
@@ -38,12 +59,12 @@
 --!
 --! @param      clk                   System clock which drives entity. 
 --! @param      rst_n                 Active Low reset to reset entity 
---! @param      enable                Command to send to spi slave.
+
 --! @param      startup               '1' causes state machine to fetch data from 
 --!                                   magnetic memory and store it to the 2 port
 --!                                   ram      
 --! @param      startup_finished      The startup fetch has finished.
-                       
+--! @param      mag_ram_clk_a         Clock provided to buffer side A. System Facing.                     
 --! @param      mag_ram_wr_en_a       wr_en A of dual port ram. System Facing.
                          
 --! @param      mag_ram_rd_en_a       rd_en A of dual port ram. System Facing.
@@ -133,6 +154,12 @@
 -- Upon completion of this full buffer read and write into the 2 port ram,
 -- magmem signals startup_finished.
 
+--Investigations of the populated magnetic memory on the powerboard devmonitor
+--has shown that the write_protect line is not needed to write to the
+--magnetic memory. Also of note is that the chip select line should remain 
+--high whenever the chip is on and not being communicated with. The act of
+--lowering the chip select line increases current consumption by 20x+.
+
 
 
 
@@ -154,7 +181,8 @@ entity magmem_controller is
   Generic (
   
   clk_freq_g            :natural  := 50E6;
-  mag_interval_ms_g     : natural := 128;
+  mag_interval_ms_g     : natural := 2;
+  tRDP_sleep_mode_exit_time_us : natural := 2; --Nominally 400.
 
   buffer_bytes_g        : natural := 1024;
   buffer_num_g          : natural := 2;
@@ -171,11 +199,10 @@ entity magmem_controller is
     clk               : in  std_logic ;
     rst_n             : in  std_logic ;
     
-    enable            : in  std_logic; 
-    
+
     startup           : in  std_logic;    
     startup_finished  : out std_logic;  
-    
+    mag_ram_clk_a     : out std_logic;
     mag_ram_wr_en_a   : out std_logic;  
     mag_ram_rd_en_a   : out std_logic;  
     mag_ram_address_a : out std_logic_vector(natural(trunc(log2(real(buffer_bytes_g-1)))) downto 0);
@@ -186,6 +213,7 @@ entity magmem_controller is
      
     ram_mag_q_b       : in std_logic_vector(7 downto 0);
     ram_mag_data_b    : out std_logic_vector(7 downto 0);
+    mag_ram_clk_b     : out std_logic;
     mag_ram_rd_en_b   : out std_logic;  
     mag_ram_wr_en_b   : out std_logic;  
     mag_ram_address_b : out std_logic_vector(natural(trunc(log2(real(buffer_bytes_g-1)))) downto 0);
@@ -214,6 +242,7 @@ architecture behavior of magmem_controller is
     MAG_STATE_COPY_SETUP,
     MAG_STATE_COPY,
     MAG_STATE_COPY_END,
+    MAG_STATE_WRITE_WR_EN,
     MAG_STATE_WRITE_SETUP,
     MAG_STATE_WRITE_COMMAND,
     MAG_STATE_WRITE_PAYLOAD,
@@ -235,6 +264,9 @@ architecture behavior of magmem_controller is
   
   
   
+  
+  
+  
   --Characterize the Mag Mem Programming Interface
   --EVERSPIN Magnetic Memory Specific Constants
   
@@ -247,8 +279,7 @@ architecture behavior of magmem_controller is
   constant  SLEEP_INSTRUCTION   : std_logic_vector  := x"B9";
   constant  WAKE_INSTRUCTION    : std_logic_vector  := x"AB";
 
-  --A delay time is associated with the WAKE instruction.
-  constant tRDP_sleep_mode_exit_time_us : natural := 400;
+
   --I could programatically find the minimum size needed to hold counter
   --An optimization saved for later.
   signal tRDP_cycle_count : natural ; 
@@ -302,6 +333,7 @@ architecture behavior of magmem_controller is
     constant VALID_BUFFER_MEM_LOC : natural := 1024;
     --Magnetic Memory Buffer Structure. 
     constant MAG_BUFFER_BYTES  : natural := 512;
+    constant MAG_BUFFER_SHIFT : natural := natural(log2(real(512)));
     constant MAG_BUFFER_NUM : natural := 2;
     constant MAG_BUFFER_WIDTH : natural := 1;
     
@@ -314,7 +346,8 @@ architecture behavior of magmem_controller is
   signal    active_mag_buffer : unsigned(natural(trunc(log2(real(MAG_BUFFER_NUM-1)))) downto 0);
 --The location of the startup_buffer on magnetic memory from which we will start reading
 --on startup. This signal is filled after reading VALID_BUFFER_MEM_LOC on the magnetic memory.
-  signal    startup_mag_buffer : unsigned(address_width_bytes_g*8 - mag_mem_address'length - 1 downto 0);
+  signal    startup_mag_buffer : unsigned(natural(trunc(log2(real(
+                                  (MAG_BUFFER_NUM)-1)))) downto 0);
 
     
   --Intermediate port mapping signals of the spi_commands entity. These are
@@ -337,6 +370,8 @@ architecture behavior of magmem_controller is
   signal fpga_time_record : GPS_TIME;
   signal fpga_ms_bit : std_logic;
   signal fpga_ms_bit_follower : std_logic;
+  
+
     
   
 
@@ -353,47 +388,58 @@ architecture behavior of magmem_controller is
   
   --Signal state machine to start writing ram to magnetic memory.
   signal mag_update : std_logic;
-
+  signal update_processed_follower : std_logic;
+  signal update_processed : std_logic;
   --Buffer signals
   --Output signals can't be read directly. 
   
   signal mag_ram_rd_en_b_signal : std_logic;
   signal cs_n_siganl            : std_logic;
+  
+  --Startup_Finished Output Buffer
+  signal startup_finished_out : std_logic;
 
 component spi_commands is
-  generic(
-  
+ generic(
+
   command_used_g        : std_logic := '1';
   address_used_g        : std_logic := '1';
   command_width_bytes_g : natural := 1;
-  address_width_bytes_g : natural := 1;
-  data_length_bit_width_g : natural := 10
+  address_width_bytes_g : natural := 3;
+  data_length_bit_width_g : natural := 10;
+  cpol_cpha             : std_logic_vector(1 downto 0) := "00"
   
 );
 	port(
-    clk	            :in	std_logic;	
-    rst_n 	        :in	std_logic;	
+      clk	            :in	std_logic;	
+		  rst_n 	        :in	std_logic;
+      
+      command_in      : in  std_logic_vector(command_width_bytes_g*8-1 downto 0);
+      address_in      : in  std_logic_vector(address_width_bytes_g*8-1 downto 0);
+      address_en_in   : in  std_logic;
+      data_length_in  : in  std_logic_vector(data_length_bit_width_g - 1 downto 0);
+      
+      master_slave_data_in      :in   std_logic_vector(7 downto 0);
+      master_slave_data_rdy_in  :in   std_logic;
+      master_slave_data_ack_out :out  std_logic;
+      command_busy_out          :out  std_logic;
+      command_done              :out  std_logic;
 
-    command_in      : in  std_logic_vector(command_width_bytes_g*8-1 downto 0);
-    address_in      : in  std_logic_vector(address_width_bytes_g*8-1 downto 0);
-    address_en_in   : in  std_logic;
-    data_length_in  : in  std_logic_vector(data_length_bit_width_g - 1 downto 0);   
-    master_slave_data_in :in std_logic_vector(7 downto 0);   
-    master_slave_data_rdy_in : in  std_logic;
-    master_slave_data_ack_out :out  std_logic;
-    command_busy_out  : out std_logic;
-    slave_master_data_out :out std_logic_vector(7 downto 0);
-    slave_master_data_ack_out : out std_logic;
+      slave_master_data_out     : out std_logic_vector(7 downto 0);
+      slave_master_data_ack_out : out std_logic;
 
-    miso 				:in	std_logic;	
-    mosi 				:out  std_logic;	
-    sclk 				:out  std_logic;	
-    cs_n 				:out  std_logic		 
+      miso 				:in	  std_logic;	
+      mosi 				:out  std_logic;	
+      sclk 				:out  std_logic;	
+      cs_n 				:out  std_logic
+		 
 		);
 end component;
 
 
 begin
+
+
 
 spi_commands_slave : spi_commands 
 
@@ -417,6 +463,7 @@ spi_commands_slave : spi_commands
     master_slave_data_rdy_in =>   master_slave_data_rdy_spi_signal,
     master_slave_data_ack_out =>  master_slave_data_ack_spi_signal,
     command_busy_out => command_busy_spi_signal,
+    --command_done =>
     slave_master_data_out => slave_master_data_spi_signal,
     slave_master_data_ack_out => slave_master_data_ack_spi_signal,
 
@@ -428,7 +475,8 @@ spi_commands_slave : spi_commands
 		);
 
 
-    
+mag_ram_clk_a     <= not clk;
+mag_ram_clk_b     <= not clk;
 mag_ram_address_a <=  std_logic_vector(buffer_sel_addr_a) & std_logic_vector(inner_buffer_addr_a);
 mag_ram_address_b <=  std_logic_vector(buffer_sel_addr_b) & std_logic_vector(inner_buffer_addr_b);
 
@@ -444,10 +492,10 @@ fpga_time_record <= TO_GPS_TIME(fpga_time);
 --Here we pick out the correct bit of fpga_time_record to serve as the 
 --milisecond toggle of interest, mag_interval_ms_g
 
-fpga_ms_bit <= fpga_time_record.millisecond_nanosecond(natural(trunc(log2(real(mag_interval_ms_g)))));
+--fpga_ms_bit <= fpga_time_record.millisecond_nanosecond(natural(trunc(log2(real(mag_interval_ms_g)))));
 
 --This is the original design. However it triggers too slowly for testbench use. 
---fpga_ms_bit <= fpga_time_record.week_millisecond(natural(trunc(log2(real(mag_interval_ms_g)))));
+fpga_ms_bit <= fpga_time_record.week_millisecond(natural(trunc(log2(real(mag_interval_ms_g)))));
 
 --The only data I will ever send to mag_ram_data_a is the output of mag_ram_q_b.
 --This happens when I copy one buffer to the other using both ports. 
@@ -456,7 +504,7 @@ mag_ram_data_a <= ram_mag_q_b;
 --Push the active buffer out the entity for concatenation at the address of Port A.
 current_active_ram_buffer <= std_logic_vector(active_buffer);
 
-  
+startup_finished <= startup_finished_out;
 
 
 
@@ -514,13 +562,15 @@ begin
     master_slave_data_ack_spi_signal_follower <= '0';
   
     startup_processed <= '0';
-    startup_finished  <= '0';
+    startup_finished_out  <= '0';
+    
+    update_processed <= '0';
     
     
     --DEBUG RESET
-   
-    tRDP_cycle_count <= clk_freq_g/1E6 * tRDP_sleep_mode_exit_time_us - 10;
-    --tRDP_cycle_count <= 0;
+    --tRDP_cycle_count <= clk_freq_g/1E6 * tRDP_sleep_mode_exit_time_us - 10;
+    --DEBUG RESET
+    tRDP_cycle_count <= 0;
  
   elsif clk'event and clk = '1' then
 
@@ -530,6 +580,10 @@ begin
   
   if (startup_processed = '1' and startup_processed_follower = '1') then
     startup_processed <= '0';
+  end if;
+  
+  if (update_processed = '1' and update_processed_follower = '1') then
+    update_processed <= '0';
   end if;
   
   
@@ -542,10 +596,10 @@ begin
 
         --Keep the follower in sync during the wait state. 
         master_slave_data_ack_spi_signal_follower <= master_slave_data_ack_spi_signal;
-        if mag_update = '1' then
+        if (mag_update = '1' and startup_finished_out = '1') then
           cur_mag_state  <=   MAG_STATE_WAKE;
           next_mag_state <=   MAG_STATE_MEM_LOCK;
-        elsif startup_en = '1' then
+        elsif (startup_en = '1') then
           cur_mag_state  <=  MAG_STATE_WAKE;
           next_mag_state <=     MAG_STATE_STARTUP_LOC_SETUP;
         end if;
@@ -569,9 +623,10 @@ begin
       if ( cs_n_siganl = '1') then
         if (tRDP_cycle_count = clk_freq_g/1E6 * tRDP_sleep_mode_exit_time_us) then
           cur_mag_state <= next_mag_state;
-          --DEBUG
-          tRDP_cycle_count <= clk_freq_g/1E6 * tRDP_sleep_mode_exit_time_us - 10;
-          --tRDP_cycle_count <= 0;
+          --DEBUG RESET
+          --tRDP_cycle_count <= clk_freq_g/1E6 * tRDP_sleep_mode_exit_time_us - 10;
+          --DEBUG RESET
+          tRDP_cycle_count <= 0;
         else
           tRDP_cycle_count <= tRDP_cycle_count + 1;
         end if;
@@ -622,7 +677,7 @@ begin
       cur_mag_state <= MAG_STATE_WRITE_SETUP;
       
       mag_mem_address <= to_unsigned(0,mag_mem_address' length);
-
+      
 
       when MAG_STATE_WRITE_SETUP =>
         --The magmem address only needs first position, after that
@@ -689,6 +744,7 @@ begin
             cur_mag_state <= MAG_STATE_PAUSE;
             next_mag_state <= MAG_STATE_SLEEP ;
             active_mag_buffer <= active_mag_buffer + 1;
+            update_processed <= '1'; 
           end if;
 
       
@@ -745,9 +801,8 @@ begin
       
         if (command_busy_spi_signal = '0') then
           command_spi_signal <= READ_INSTRUCTION;
-          --startup_mag_buffer is not a full 3 byte address. Its a shortened
-          --1 byte address.
-          address_spi_signal <= std_logic_vector(resize(startup_mag_buffer,address_spi_signal'length));
+          --Shift the buffer number left to address correct address. 
+          address_spi_signal <= std_logic_vector(shift_left(resize(startup_mag_buffer,address_spi_signal'length),MAG_BUFFER_SHIFT));
           address_en_spi_signal <= '1';
           data_length_spi_signal <= std_logic_vector(to_unsigned(MAG_BUFFER_BYTES,data_length_spi_signal'length));
           master_slave_data_spi_signal <= x"00";
@@ -762,8 +817,8 @@ begin
 
       
       if(byte_read_count = byte_read_number) then
-      cur_mag_state <= MAG_STATE_SLEEP;
-      startup_finished  <= '1';
+      cur_mag_state <= MAG_STATE_WRITE_WR_EN;
+      startup_finished_out  <= '1';
       elsif (slave_master_data_ack_spi_signal = '1') then
         ram_mag_data_b <= slave_master_data_spi_signal;
         byte_read_count <= byte_read_count + 1;
@@ -781,6 +836,17 @@ begin
       else
       master_slave_data_rdy_spi_signal <= '0';
       end if;
+      
+      when  MAG_STATE_WRITE_WR_EN => 
+        if (command_busy_spi_signal = '0') then
+          command_spi_signal <= WREN_INSTRUCTION;
+          address_en_spi_signal <= '0';
+          data_length_spi_signal <= std_logic_vector(to_unsigned(0,data_length_spi_signal'length));
+          master_slave_data_spi_signal <= x"00";
+          master_slave_data_rdy_spi_signal <= '1';
+          cur_mag_state <= MAG_STATE_SLEEP;
+        end if;
+
       
       
       
@@ -822,6 +888,7 @@ begin
   mem_req_a_out <= '0';
   mag_ram_wr_en_b <= '0';
   mag_ram_rd_en_b_signal <= '0';
+  mag_ram_rd_en_a <= '0';
   
 case cur_mag_state is
   
@@ -838,6 +905,8 @@ case cur_mag_state is
         
     when MAG_STATE_COPY_END =>
     mem_req_a_out <= '1';
+    
+    when  MAG_STATE_WRITE_WR_EN => 
            
     when MAG_STATE_WRITE_SETUP =>
     mag_ram_rd_en_b_signal <= '1';
@@ -889,13 +958,13 @@ end process mag_write_output ;
 
 startup_catch: process (clk, rst_n)
 begin
-  if rst_n = '0' then
+  if (rst_n = '0') then
 
   startup_processed_follower <= '0';
   startup_follower <= '0';
   startup_en <= '0';
 
-  elsif clk'event and clk = '1' then
+  elsif (clk'event and clk = '1') then
 
     if (startup_follower /= startup) then
       startup_follower <= startup;
@@ -927,20 +996,23 @@ end process startup_catch ;
   ----------------------------------------------------------------------------
   time_out:  process (clk, rst_n)
   begin
-    if rst_n = '0' then
+    if (rst_n = '0') then
       mag_update <= '0';
-      fpga_ms_bit <= '0';
       fpga_ms_bit_follower <= '0';
-    elsif clk'event and clk = '1' then
 
-          if(fpga_ms_bit_follower /= fpga_ms_bit) then
-            fpga_ms_bit_follower <= fpga_ms_bit;
-            mag_update <= '1';
-          else
+      update_processed_follower <= '0';
+      
+    elsif (clk'event and clk = '1') then
+
+      if(fpga_ms_bit_follower /= fpga_ms_bit) then
+        fpga_ms_bit_follower <= fpga_ms_bit;
+        mag_update <= '1';
+      elsif(update_processed_follower /= update_processed) then
+        update_processed_follower <= update_processed ;
+          if (update_processed = '1') then
             mag_update <= '0';
           end if;
-           
-           
+      end if;
 
     end if ;
   end process time_out ;
