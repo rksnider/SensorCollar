@@ -1,0 +1,15 @@
+function [avgArr, varArr, varError] = errorRunningAverage(x,e,N)
+    avgArr = [];
+    varArr = [];
+    for i = 1:(length(x)-N)
+        inds = i:(i+N-1);
+        goodinds = find(e(inds) == 0)
+        badinds = setdiff(inds,goodinds(inds));
+        avgArr(i) = 1/N*sum(x(goodinds)); 
+        varArr(i) = var(x(goodinds));
+        if isempty(badinds)
+            varError = varArr(i);
+        else
+            varError = 0;
+        end
+    end

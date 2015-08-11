@@ -1,0 +1,838 @@
+% Clear the previous variables, plots, and screen
+clear
+close all
+clc
+
+% Set the default interpreter
+set(0,'defaulttextinterpreter','latex')
+
+% Alter the formatting
+format long
+format compact
+
+%% Read in the data
+ImportNPreamp
+ImportNPreampOrientation
+ImportPreamp
+ImportPreampOrientation
+
+%% Process the data
+NPre  = size(PreampRSSI,1);
+NNPre = size(NPreampRSSI,1);
+
+% Track the RSSI values
+PreRSSI  = [];
+NPreRssi = [];
+
+% Track the error locations
+PreError  = [];
+NPreError = [];
+
+% Set the day
+Y = 2015;
+D = 24;
+M = 07;
+
+% Pick out the RSSI values and record the error locations
+for i = 1:NPre
+    cellVal = PreampRSSI{i};
+    if size(cellVal,2) <= 4
+        PreRSSI(i) = str2double(cellVal);                   %#ok
+    elseif size(cellVal,2) < 9
+        PreRSSI(i) = str2double(cellVal(2:end));            %#ok
+    elseif size(cellVal,2) < 15
+        PreRSSI(i) = str2double(cellVal(1:end-9));          %#ok
+        PreError = [PreError i];                            %#ok
+    else
+        PreRSSI(i) = str2double(cellVal(end-13:end-9));     %#ok
+        PreError = [PreError i];                            %#ok
+    end
+end
+for i = 1:NNPre
+    cellVal = NPreampRSSI{i};
+    if size(cellVal,2) <= 4
+        NPreRSSI(i) = str2double(cellVal);                  %#ok
+    elseif size(cellVal,2) < 9
+        NPreRSSI(i) = str2double(cellVal(2:end));           %#ok
+    elseif size(cellVal,2) < 15
+        NPreRSSI(i) = str2double(cellVal(1:end-9));         %#ok
+        NPreError = [NPreError i];                          %#ok
+    else
+        NPreRSSI(i) = str2double(cellVal(end-13:end-9));    %#ok
+        NPreError = [NPreError i];                          %#ok
+    end
+end
+
+% Create the error arrays
+PreampError  = zeros(size(PreRSSI));
+NPreampError = zeros(size(NPreRSSI));
+
+PreampError(PreError)   = 1;
+NPreampError(NPreError) = 1;
+
+% Read in the data from the .ubx files (ugh)
+PreampLat = [];
+PreampLon = [];
+NPreampLat = [];
+NPreampLon = [];
+PreampTimeGPS = [];
+NPreampTimeGPS = [];
+
+% Read the data without the preamp
+file = fopen('20150724Data\COM5_150724_190849.ubx');
+line = fgets(file);
+prevTime = 0;
+while ischar(line)
+    if size(line,2) > 13 && strcmp(line(1:6),'$GPGLL')
+        time = datenum(Y,M,D,str2double(line(35:36))-6,str2double(line(37:38)),str2double(line(39:43)));
+        if time > prevTime
+            NPreampLat = [NPreampLat str2double(line(8:9))+str2double(line(10:17))./60];%#ok
+            NPreampLon = [NPreampLon -(str2double(line(21:23))+str2double(line(24:31))./60)];%#ok
+            NPreampTimeGPS = [NPreampTimeGPS time];%#ok
+            prevTime = time;
+        end
+    end
+    line = fgets(file);
+end
+prevTime = 0;
+fclose(file);
+% Read the 
+file = fopen('20150724Data\COM5_150724_203455.ubx');
+line = fgets(file);
+while ischar(line)
+    if size(line,2) > 13 && strcmp(line(1:6),'$GPGLL')
+        time = datenum(Y,M,D,str2double(line(35:36))-6,str2double(line(37:38)),str2double(line(39:43)));
+        if prevTime < time
+            PreampLat = [PreampLat str2double(line(8:9))+str2double(line(10:17))./60];%#ok
+            PreampLon = [PreampLon -(str2double(line(21:23))+str2double(line(24:31))./60)];%#ok
+            PreampTimeGPS = [PreampTimeGPS time];%#ok
+            prevTime = time;
+        end
+    end
+    line = fgets(file);
+end
+fclose(file);
+
+% NOTE: Due to unexplained variability in the time data for the GPS, a new
+% array is created with the correct number of points
+% NPreampTimeGPS = linspace(NPreampTimeGPS(1),NPreampTimeGPS(end),size(NPreampTimeGPS,2));
+% PreampTimeGPS  = linspace(PreampTimeGPS(1),PreampTimeGPS(end),size(PreampTimeGPS,2));
+PreampTImeGPS = sort(PreampTimeGPS);
+
+% Correct the datetime for the preamp/nopreamp data
+file = fopen('20150724Data\07232015_NoPreampActual');
+line = fgets(file);
+i = 1;
+NPreampTime = [];
+PreampTime  = [];
+while ischar(line)
+   NPreampTime(i) = datenum(Y,M,D,str2double(line(1:2)),str2double(line(4:5)),str2double(line(7:12)));%#ok
+   line = fgets(file);
+   i = i + 1;
+end
+fclose(file);
+file = fopen('20150724Data\07232015_preamp');
+line = fgets(file);
+i = 1;
+while ischar(line)
+   PreampTime(i) = datenum(Y,M,D,str2double(line(1:2)),str2double(line(4:5)),str2double(line(7:12)));%#ok
+   line = fgets(file);
+   i = i + 1;
+end
+fclose(file);
+
+% Determine the time intervals for the accelerometer data
+Accstart = datenum([Y,M,D,13,14,58]);
+Accend   = datenum([Y,M,D,14,12,17]);
+NPreampAccTime = linspace(Accstart,Accend,size(NPreampX,1));
+
+%% Trim the data
+PreampStartTime  = max([PreampTime(1) PreampTimeGPS(1)]);
+PreampEndTime    = min([PreampTime(end) PreampTimeGPS(end)]);
+NPreampStartTime = max([NPreampTime(1) Accstart NPreampTimeGPS(1)]);
+NPreampEndTime    = min([NPreampTime(end) Accend NPreampTimeGPS(end)]);
+
+% Trim the Preamp data (RSSI and GPS)
+inds = find(PreampTime <= PreampEndTime & PreampTime >= PreampStartTime);
+PreampTime = PreampTime(inds);
+PreRSSI = PreRSSI(inds);
+inds = find(PreampTimeGPS <= PreampEndTime & PreampTimeGPS >= PreampStartTime);
+PreampTimeGPS = PreampTimeGPS(inds);
+PreampLat = PreampLat(inds);
+PreampLon = PreampLon(inds);
+
+% Trim the data with no preamp (RSSI, GPS, Accelerometer)
+inds = find(NPreampAccTime <= NPreampEndTime & NPreampAccTime >= NPreampStartTime);
+NPreampAccTime = NPreampAccTime(inds);
+NPreampX       = NPreampX(inds);
+NPreampY       = NPreampY(inds);
+NPreampZ       = NPreampZ(inds);
+inds = find(NPreampTimeGPS <= NPreampEndTime & NPreampTimeGPS >= NPreampStartTime);
+NPreampTimeGPS = NPreampTimeGPS(inds);
+NPreampLat     = NPreampLat(inds);
+NPreampLon     = NPreampLon(inds);
+inds = find(NPreampTime <= NPreampEndTime & NPreampTime >= NPreampStartTime);
+NPreampTime = NPreampTime(inds);
+NPreRSSI = NPreRSSI(inds);
+
+% Find the distance
+dPreamp  = haversine_distance(PreampLat,PreampLon,'deg');
+dNPreamp = haversine_distance(NPreampLat,NPreampLon,'deg');
+
+% % Eliminate the same distance points
+% [~,inds,~] = unique(dPreamp);
+% dPreamp = dPreamp(inds);
+% PreampTimeGPS = PreampTimeGPS(inds);
+% 
+% [~,inds,~] = unique(dNPreamp);
+% dNPreamp = dNPreamp(inds);
+% NPreampTimeGPS = NPreampTimeGPS(inds);
+
+%% Interpolate points for all the data
+plotdPreamp = interp1(PreampTimeGPS(1:end-1),dPreamp,PreampTime);
+
+plotNPreampX   = interp1(NPreampAccTime,NPreampX,NPreampTime);
+plotNPreampY   = interp1(NPreampAccTime,NPreampY,NPreampTime);
+plotNPreampZ   = interp1(NPreampAccTime,NPreampZ,NPreampTime);
+plotdNPreamp   = interp1(NPreampTimeGPS(1:end-1),dNPreamp,NPreampTime);
+plotNPreampLat = interp1(NPreampTimeGPS,NPreampLat,NPreampTime);
+plotNPreampLon = interp1(NPreampTimeGPS,NPreampLon,NPreampTime);
+
+%% Pick out the points corrisponding to the orientation of the antenna
+% Take a running average of the data
+N = 5;
+[NewdNPreamp,~]            = runningAverage(plotdNPreamp,N);
+[PreampMean,   PreampVar]  = runningAverage(PreRSSI,N);
+[NPreampMean, NPreampVar]  = runningAverage(NPreRSSI,N);
+[NpreampXmean,NPreampXVar] = runningAverage(plotNPreampX,N);
+[NpreampYmean,NPreampYVar] = runningAverage(plotNPreampY,N);
+[NpreampZmean,NPreampZVar] = runningAverage(plotNPreampZ,N);
+[NPreampPe, ~]             = runningAverage(NPreampError,N);
+[PreampPe,  ~]             = runningAverage(PreampError,N);
+
+gradTol = 10;
+diffTol = 20;
+perp = abs(NpreampXmean-NpreampYmean);
+para = abs(NpreampXmean-NpreampZmean);
+
+perpinds = find(perp < diffTol & abs(gradient(NpreampXmean)) < gradTol ...
+                & abs(gradient(NpreampYmean)) < gradTol & abs(gradient(NpreampZmean)) < gradTol);
+
+parainds = find(para < diffTol & abs(gradient(NpreampXmean)) < gradTol ...
+                & abs(gradient(NpreampYmean)) < gradTol & abs(gradient(NpreampZmean)) < gradTol);
+
+            
+perpinds = sort(perpinds);
+parainds = sort(parainds);
+plotinds = [];
+
+% % Debugging
+% figure(6)
+% plot(plotdNPreamp,NPreRSSI,'k-')
+% figure(7)
+% hold on
+% plot(plotNPreampX,'k-')
+% plot(plotNPreampY,'b-')
+% plot(plotNPreampZ,'g-')
+% hold off
+dperp = [];
+dpara = [];
+dinline = [];
+
+perpmean = [];
+paramean = [];
+inlinemean = [];
+
+perpvar  = [];
+paravar = [];
+inlinevar = [];
+
+perpE = [];
+paraE = [];
+inlineE = [];
+
+perpLat = [];
+perpLon = [];
+
+paraLat = [];
+paraLon = [];
+
+inlineLat = [];
+inlineLon = [];
+
+windowLim = 5;
+tempinds = [];
+
+for i = 1:size(perpinds,2)-1
+    if abs(plotdNPreamp(perpinds(i)) - plotdNPreamp(perpinds(i+1))) < windowLim
+        tempinds = [ tempinds perpinds(i) ]; %#ok
+    else
+        if size(tempinds,2) > 10
+            tempinds = [ tempinds perpinds(i) + 1 ];%#ok
+            perpmean = [ perpmean mean(NPreampMean(tempinds)) ]; %#ok
+            dperp    = [ dperp mean(NewdNPreamp(tempinds)) ]; %#ok
+            perpvar  = [ perpvar var(NPreampMean(tempinds))]; %#ok
+            perpE    = [ perpE 1/size(tempinds,2)*sum(NPreampError(tempinds))]; %#ok
+            perpLat  = [ perpLat mean(plotNPreampLat(tempinds)) ]; %#ok
+            perpLon  = [ perpLon mean(plotNPreampLon(tempinds)) ]; %#ok
+            tempinds = [];
+        end
+    end
+end
+vertinds = setdiff(1:size(NewdNPreamp,2),plotinds);
+tempinds = [];
+for i = 1:size(parainds,2)-1
+    if abs(plotdNPreamp(parainds(i)) - plotdNPreamp(parainds(i+1))) < windowLim
+        tempinds = [ tempinds parainds(i) ]; %#ok
+    else
+        if size(tempinds,2) > 10
+            tempinds = [ tempinds parainds(i) + 1 ];%#ok
+            paramean = [ paramean mean(NPreampMean(tempinds)) ]; %#ok
+            dpara    = [ dpara mean(NewdNPreamp(tempinds)) ]; %#ok
+            paravar  = [ paravar var(NPreampMean(tempinds))];%#ok
+            paraE = [ paraE 1/size(tempinds,2)*sum(NPreampError(tempinds))];%#ok
+            paraLat  = [ paraLat mean(plotNPreampLat(tempinds)) ]; %#ok
+            paraLon  = [ paraLon mean(plotNPreampLon(tempinds)) ]; %#ok
+            tempinds = [];
+        end
+    end
+end
+vertinds = setdiff(vertinds,parainds);
+
+% Find the indices for the inline average
+meanTol = 5;
+inlineinds = find(  abs(abs(NpreampXmean) - 65) < meanTol   & ...
+                    abs(NpreampYmean) < meanTol             & ...
+                    abs(abs(NpreampZmean) - 8) < meanTol    & ...
+                    abs(gradient(NpreampXmean)) < gradTol   & ...
+                    abs(gradient(NpreampYmean)) < gradTol   & ...
+                    abs(gradient(NpreampZmean)) < gradTol);
+vertinds = setdiff(vertinds,inlineinds);  % Traveling indices
+
+tempinds = [];
+for i = 1:size(inlineinds,2)-1
+    if abs(plotdNPreamp(inlineinds(i)) - plotdNPreamp(inlineinds(i+1))) < windowLim
+        tempinds = [ tempinds inlineinds(i) ]; %#ok
+    elseif size(tempinds,2) > 10
+        tempinds = [ tempinds inlineinds(i) + 1 ];%#ok
+        inlinemean = [ inlinemean mean(NPreampMean(tempinds)) ]; %#ok
+        dinline    = [ dinline mean(NewdNPreamp(tempinds)) ]; %#ok
+        inlinevar  = [ inlinevar var(NPreampMean(tempinds)) ]; %#ok
+        inlineE    = [ inlineE 1/size(tempinds,2)*sum(NPreampError(tempinds))];%#ok
+        inlineLat  = [ inlineLat mean(plotNPreampLat(tempinds)) ]; %#ok
+        inlineLon  = [ inlineLon mean(plotNPreampLon(tempinds)) ]; %#ok
+        
+        tempinds = [];
+    end
+end
+
+
+%% ::::::::::::::::::::::: Create plots for data ::::::::::::::::::::::: %%
+
+%% Raw data plots
+% figure('Position',[20,75,800,800])
+% subplot(211)
+% plot(plotdNPreamp,NPreRSSI,'k-')
+% title('RSSI VS Distance w/o Preamp','fontsize',16)
+% xlabel('Distance $[\mathrm{m}]$','interpreter','latex','fontsize',14)
+% ylabel('RSSI $[\mathrm{dBm}]$','interpreter','latex','fontsize',14)
+% subplot(212)
+% plot(plotdPreamp,PreRSSI,'k-')
+% title('RSSI VS Distance w/ Preamp','fontsize',16)
+% xlabel('Distance $[\mathrm{m}]$','interpreter','latex','fontsize',14)
+% ylabel('RSSI $[\mathrm{dBm}]$','interpreter','latex','fontsize',14)
+% 
+figure('Position',[20,75,800,800])
+Nrefined = 20;
+[ NPx, ~] = runningAverage(NewdNPreamp(vertinds),Nrefined);
+[ NPy, NPvy] = runningAverage(NPreampMean(vertinds),Nrefined);
+[ Px,  ~] = runningAverage(plotdPreamp,Nrefined);
+[ Py,  ~] = runningAverage(PreRSSI,Nrefined);
+hold on
+plot(NPx,NPy,'k-')
+plot(Px,Py,'r-')
+hold off
+grid on
+title('RSSI VS Distance w/ Preamp','fontsize',24)
+xlabel('Distance $[\mathrm{m}]$','interpreter','latex','fontsize',18)
+ylabel('RSSI $[\mathrm{dBm}]$','interpreter','latex','fontsize',18)
+plegend = legend('No Preamp','With Preamp');
+set(plegend,'interpreter','latex','fontsize',14)
+% 
+% figure('Position',[20,75,800,800])
+% subplot(211)
+% plot(log10(NPx),NPy,'k-')
+% title('RSSI VS Distance w/o Preamp','fontsize',16)
+% xlabel('Distance $[\mathrm{m}]$','interpreter','latex','fontsize',14)
+% ylabel('RSSI $[\mathrm{dBm}]$','interpreter','latex','fontsize',14)
+
+% subplot(212)
+% dTrim = 1198;
+% plot(log10(Px(dTrim:end)),Py(dTrim:end),'k-')
+% title('RSSI VS Distance w/ Preamp','fontsize',16)
+% xlabel('Distance $[\mathrm{m}]$','interpreter','latex','fontsize',14)
+% ylabel('RSSI $[\mathrm{dBm}]$','interpreter','latex','fontsize',14)
+
+
+% % Interpolate data for the error calculations
+% errordP  = interp1(PreampTimeGPS(1:end-1),dPreamp,PreampTime);
+% errordNP = interp1(NPreampTimeGPS(1:end-1),dNPreamp,NPreampTime);
+
+
+% % Fine the "error running average"
+% Nerror = 20;
+% [xP,~,~]              = errorRunningAverage(errordP,  zeros(size(PreampError)),  Nerror);
+% [yP,   varP, errorP]  = errorRunningAverage(PreRSSI,  PreampError,  Nerror);
+% [xNP,~,~]             = errorRunningAverage(errordNP, zeros(size(NPreampError)), Nerror);
+% [yNP, varNP, errorNP] = errorRunningAverage(NPreRSSI, NPreampError, Nerror);
+% 
+% % ignore the NaNs
+% xP = xP(~isnan(xP));
+% yP = yP(~isnan(xP));
+% xNP = xNP(~isnan(xNP));
+% yNP = yNP(~isnan(xNP));
+% 
+% figure('Position',[20 75 800 800])
+% y_err = [];
+% y_err(1,:,1) = 3*sqrt(sqrt(errorP(~isnan(xP))'));
+% y_err(1,:,2) = 3*sqrt(sqrt(errorP(~isnan(xP))'));
+% lineProps.width = 1;
+% lineProps.edgestyle = '-';
+% lineProps.col = {'b'};
+% mseb(xP, yP,y_err,lineProps);
+% hold on
+% plot(xP,yP,'k-','LineWidth',1.1)
+% hold off
+% grid on
+% title('RSSI VS Distance w/ Preamp','fontsize',24)
+% xlabel('Distance $[\mathrm{m}]$','interpreter','latex','fontsize',18)
+% ylabel('RSSI $[\mathrm{dBm}]$','interpreter','latex','fontsize',18)
+% 
+% figure('Position',[20 75 800 800])
+% y_err = [];
+% y_err(1,:,1) = 3*sqrt(sqrt(errorNP(~isnan(xNP))'));
+% y_err(1,:,2) = 3*sqrt(sqrt(errorNP(~isnan(xNP))'));
+% mseb(xNP, yNP,y_err,lineProps,.1);
+% hold on
+% plot(xNP,yNP,'k-','LineWidth',1.1)
+% hold off
+% grid on
+% title('RSSI VS Distance w/o Preamp','fontsize',24)
+% xlabel('Distance $[\mathrm{m}]$','interpreter','latex','fontsize',18)
+% ylabel('RSSI $[\mathrm{dBm}]$','interpreter','latex','fontsize',18)
+
+% figure('Position',[20 75 800 800])
+% lineProps.col = {'r'};
+% mseb(xNP, yNP,y_err,lineProps,.1);
+% y_err = [];
+% y_err(1,:,1) = 3*sqrt(sqrt(errorP(~isnan(xP))'));
+% y_err(1,:,2) = 3*sqrt(sqrt(errorP(~isnan(xP))'));
+% lineProps.col = {'b'};
+% hold on
+% mseb(xP, yP,y_err,lineProps);
+% plot(xP,yP,'k-','LineWidth',1.1)
+% plot(xNP,yNP,'k-','LineWidth',1.1)
+% hold off
+% title('RSSI VS Distance w/ Preamp','fontsize',24)
+% xlabel('Distance $[\mathrm{m}]$','interpreter','latex','fontsize',18)
+% ylabel('RSSI $[\mathrm{dBm}]$','interpreter','latex','fontsize',18)
+
+
+% % Plot the running average means and variances using colorbars for the Preamp Data (Also mark distances)
+% figure('Position',[20,75,800,800])
+% cmap = jet;
+% Create the axes for the map and route 
+% ax1 = axes;
+% hold on
+% plot(PreampLon,PreampLat,'k-')
+% plot_google_map('MapType','terrain')
+% hold off
+% title('Vertical Orientation w/ Preamp','interpreter','latex','fontsize',20)
+% spacingVal = 50;
+% pointSpacing = 50;
+% for i = 1:size(dPreamp,2)
+%     if dPreamp(i) > spacingVal
+%         t=text(PreampLon(i)-1e-3,PreampLat(i), [sprintf('%.1f',spacingVal) '$\rightarrow$ ']);
+%         set(t,'color','k')
+%         spacingVal = spacingVal+pointSpacing;
+%     end
+% end
+% 
+% ax2 = axes;
+% find the starting and ending coordinates for the colorbar
+% xstart = max(PreampLon) + 3e-4;
+% ystart = max(PreampLat);
+% xend = xstart + 5e-4;
+% yend = min(PreampLat);
+% x = linspace(xstart,xend,2);
+% y = linspace(ystart,yend,size(PreampMean,2))';
+% x = repmat(x,size(y,1),1);
+% y = repmat(y,1,size(x,2));
+% z=repmat(PreampMean,size(x,2),1)';
+% 
+% Find the upper and lower limit as well as setting the number of divisions
+% of the colorbar
+% upper = max(PreampMean);
+% lower = min(PreampMean);
+% 
+% bars = surf(ax2,x,y,z);
+% view(2)
+% set(bars,'EdgeColor','none','LineStyle','none','FaceLighting','phong');
+% Setup the colormaps
+% caxis([lower upper])
+% colormap(ax2,cmap);
+% 
+% ax3 = axes;
+% z = repmat(PreampVar,size(x,2),1)';
+% bars = surf(ax3,x+7.5e-4,y,z);
+% view(2)
+% set(bars,'EdgeColor','none','LineStyle','none','FaceLighting','phong');
+% colormap(ax3,'cool')
+% 
+% ax4 = axes;
+% z = repmat(PreampPe,size(x,2),1)';
+% bars = surf(ax4,x+1.5e-3,y,z);
+% view(2)
+% set(bars,'EdgeColor','none','LineStyle','none','FaceLighting','phong');
+% colormap(ax4,'bone')
+% 
+% linkaxes([ax1 ax2 ax3 ax4])
+% 
+% Hide the top axes
+% ax1.XTick = [];
+% ax1.YTick = [];
+% ax2.Visible = 'off';
+% ax2.XTick = [];
+% ax2.YTick = [];
+% ax3.Visible = 'off';
+% ax3.XTick = [];
+% ax3.YTick = [];
+% ax4.Visible = 'off';
+% ax4.XTick = [];
+% ax4.YTick = [];
+% 
+% spacing = .1;
+% startingx = .075;
+% set([ax1 ax2 ax3 ax4],'Position',[.28 .11 .685 .815]);
+% cb1 = colorbar(ax2,'Position',[startingx .11 .04 .8]);
+% cb2 = colorbar(ax3,'Position',[startingx+spacing .11 .04 .8]);
+% cb3 = colorbar(ax4,'Position',[startingx+2.25*spacing .11 .04 .8]);
+% 
+% cb1.Label.String = 'RSSI Mean';
+% cb1.Label.Interpreter = 'latex';
+% cb1.Label.FontSize = 14;
+% cb2.Label.String = 'RSSI Variance';
+% cb2.Label.Interpreter = 'latex';
+% cb2.Label.FontSize = 14;
+% cb3.Label.String = 'P(E)';
+% cb3.Label.Interpreter = 'latex';
+% cb3.Label.FontSize = 14;
+% 
+% % Create plots for only the orintation data
+% Nplots = 3;
+% dTrim = 4;
+% [perpx, ~] = runningAverage(dperp,Nplots);
+% [perpy, ~] = runningAverage(perpmean,Nplots);
+% [parax, ~] = runningAverage(dpara,Nplots);
+% [paray, ~] = runningAverage(paramean,Nplots);
+% [inlinex, ~] = runningAverage(dinline(dTrim:end),Nplots);
+% [inliney, ~] = runningAverage(inlinemean(dTrim:end),Nplots);
+% 
+% 
+% figure('Position',[20,75,800,800])
+% hold on
+% plot(inlinex,inliney,'k.-','MarkerSize',10)
+% plot(perpx,perpy,'b.-','MarkerSize',10)
+% plot(parax,paray,'r.-','MarkerSize',10)
+% hold off
+% 
+% plegend = legend('Inline With Antenna','Perpendicular','Perpendicular Pointed Away');
+% set(plegend,'interpreter','latex','fontsize',12,'location','northeast')
+% title('Mean RSSI vs Distance For Several Orientations','interpreter','latex','fontsize',20)
+% xlabel('Distance $[\mathrm{m}]$','interpreter','latex','fontsize',16)
+% ylabel('Mean RSSI $[\mathrm{dBm}]$','interpreter','latex','fontsize',16)
+% 
+% figure('Position',[20,75,800,800])
+% hold on
+% plot(log10(inlinex),inliney,'k.-','MarkerSize',10)
+% plot(log10(perpx),perpy,'b.-','MarkerSize',10)
+% plot(log10(parax),paray,'r.-','MarkerSize',10)
+% hold off
+% 
+% plegend = legend('Inline With Antenna','Perpendicular','Perpendicular Pointed Away');
+% set(plegend,'interpreter','latex','fontsize',12,'location','northeast')
+% title('Mean RSSI vs Distance For Several Orientations','interpreter','latex','fontsize',20)
+% xlabel('Distance $[\mathrm{m}]$','interpreter','latex','fontsize',16)
+% ylabel('Mean RSSI $[\mathrm{dBm}]$','interpreter','latex','fontsize',16)
+% 
+% % Plot of the inline path with colorbars
+% cmap = jet;
+% figure('Position',[20,75,800,800])
+% Create the axes for the map and route 
+% ax1 = axes;
+% hold on
+% plot(NPreampLon,NPreampLat,'k-')
+% plot_google_map('MapType','terrain')
+% hold 
+% title('Vertical Orientation w/o Preamp','interpreter','latex','fontsize',20)
+% for i = 1:size(dinline,2)
+%         t=text(inlineLon(i)-.85e-3,inlineLat(i), [sprintf('%.1f',dinline(i)) '$\rightarrow$ ']);
+%         set(t,'color','k')
+% end
+% 
+% ax2 = axes;
+% find the starting and ending coordinates for the colorbar
+% xstart = max(inlineLon) + 3e-4;
+% xend = xstart + 5e-4;
+% x = linspace(xstart,xend,2);
+% y = inlineLat';
+% x = repmat(x,size(y,1),1);
+% y = repmat(y,1,size(x,2));
+% z=repmat(inlinemean,size(x,2),1)';
+% 
+% Find the upper and lower limit as well as setting the number of divisions
+% of the colorbar
+% upper = max(inlinemean);
+% lower = min(inlinemean);
+% 
+% bars = surf(ax2,x,y,z);
+% view(2)
+% set(bars,'EdgeColor','none','LineStyle','none','FaceLighting','phong');
+% Setup the colormaps
+% caxis([lower upper])
+% colormap(ax2,cmap);
+% 
+% ax3 = axes;
+% z = repmat(inlinevar,size(x,2),1)';
+% bars = surf(ax3,x+7.5e-4,y,z);
+% view(2)
+% set(bars,'EdgeColor','none','LineStyle','none','FaceLighting','phong');
+% colormap(ax3,'cool')
+% 
+% ax4 = axes;
+% z = repmat(inlineE,size(x,2),1)';
+% bars = surf(ax4,x+1.5e-3,y,z);
+% view(2)
+% set(bars,'EdgeColor','none','LineStyle','none','FaceLighting','phong');
+% colormap(ax4,'bone')
+% 
+% linkaxes([ax1 ax2 ax3 ax4])
+% 
+% Hide the top axes
+% ax1.XTick = [];
+% ax1.YTick = [];
+% ax2.Visible = 'off';
+% ax2.XTick = [];
+% ax2.YTick = [];
+% ax3.Visible = 'off';
+% ax3.XTick = [];
+% ax3.YTick = [];
+% ax4.Visible = 'off';
+% ax4.XTick = [];
+% ax4.YTick = [];
+% 
+% spacing = .1;
+% startingx = .075;
+% set([ax1 ax2 ax3 ax4],'Position',[.28 .11 .685 .815]);
+% cb1 = colorbar(ax2,'Position',[startingx .11 .04 .8]);
+% cb2 = colorbar(ax3,'Position',[startingx+spacing .11 .04 .8]);
+% cb3 = colorbar(ax4,'Position',[startingx+2.25*spacing .11 .04 .8]);
+% 
+% cb1.Label.String = 'RSSI Mean';
+% cb1.Label.Interpreter = 'latex';
+% cb1.Label.FontSize = 14;
+% cb2.Label.String = 'RSSI Variance';
+% cb2.Label.Interpreter = 'latex';
+% cb2.Label.FontSize = 14;
+% cb3.Label.String = 'P(E)';
+% cb3.Label.Interpreter = 'latex';
+% cb3.Label.FontSize = 14;
+% 
+% 
+% % Plot of the inline path with colorbars
+% cmap = jet;
+% figure('Position',[20,75,800,800])
+% Create the axes for the map and route 
+% ax1 = axes;
+% hold on
+% plot(NPreampLon,NPreampLat,'k-')
+% plot_google_map('MapType','terrain')
+% hold off
+% title('Horizontal Orientation w/o Preamp','interpreter','latex','fontsize',20)
+% spacingVal = 50;
+% for i = 1:size(dperp,2)
+%         t=text(perpLon(i)-.85e-3,perpLat(i), [sprintf('%.1f',dperp(i)) '$\rightarrow$ ']);
+%         set(t,'color','k')
+% end
+% 
+% ax2 = axes;
+% find the starting and ending coordinates for the colorbar
+% xstart = max(perpLon) + 3e-4;
+% ystart = max(perpLat);
+% xend = xstart + 5e-4;
+% yend = min(perpLat);
+% x = linspace(xstart,xend,2);
+% y = perpLat';
+% x = repmat(x,size(y,1),1);
+% y = repmat(y,1,size(x,2));
+% z=repmat(perpmean,size(x,2),1)';
+% 
+% Find the upper and lower limit as well as setting the number of divisions
+% of the colorbar
+% upper = max(perpmean);
+% lower = min(perpmean);
+% 
+% bars = surf(ax2,x,y,z);
+% view(2)
+% set(bars,'EdgeColor','none','LineStyle','none','FaceLighting','phong');
+% Setup the colormaps
+% caxis([lower upper])
+% colormap(ax2,cmap);
+% 
+% ax3 = axes;
+% z = repmat(perpvar,size(x,2),1)';
+% bars = surf(ax3,x+7.5e-4,y,z);
+% view(2)
+% set(bars,'EdgeColor','none','LineStyle','none','FaceLighting','phong');
+% colormap(ax3,'cool')
+% 
+% ax4 = axes;
+% z = repmat(perpE,size(x,2),1)';
+% bars = surf(ax4,x+1.5e-3,y,z);
+% view(2)
+% set(bars,'EdgeColor','none','LineStyle','none','FaceLighting','phong');
+% colormap(ax4,'bone')
+% 
+% linkaxes([ax1 ax2 ax3 ax4])
+% 
+% Hide the top axes
+% ax1.XTick = [];
+% ax1.YTick = [];
+% ax2.Visible = 'off';
+% ax2.XTick = [];
+% ax2.YTick = [];
+% ax3.Visible = 'off';
+% ax3.XTick = [];
+% ax3.YTick = [];
+% ax4.Visible = 'off';
+% ax4.XTick = [];
+% ax4.YTick = [];
+% 
+% spacing = .1;
+% startingx = .075;
+% set([ax1 ax2 ax3 ax4],'Position',[.28 .11 .685 .815]);
+% cb1 = colorbar(ax2,'Position',[startingx .11 .04 .8]);
+% cb2 = colorbar(ax3,'Position',[startingx+spacing .11 .04 .8]);
+% cb3 = colorbar(ax4,'Position',[startingx+2.25*spacing .11 .04 .8]);
+% 
+% cb1.Label.String = 'RSSI Mean';
+% cb1.Label.Interpreter = 'latex';
+% cb1.Label.FontSize = 14;
+% cb2.Label.String = 'RSSI Variance';
+% cb2.Label.Interpreter = 'latex';
+% cb2.Label.FontSize = 14;
+% cb3.Label.String = 'P(E)';
+% cb3.Label.Interpreter = 'latex';
+% cb3.Label.FontSize = 14;
+% 
+% % Plot of the inline path with colorbars
+% cmap = jet;
+% figure('Position',[20,75,800,800])
+% Create the axes for the map and route 
+% ax1 = axes;
+% hold on
+% plot(NPreampLon,NPreampLat,'k-')
+% plot_google_map('MapType','terrain')
+% hold off
+% title('Horizontal (Away) Orientation w/o Preamp','interpreter','latex','fontsize',20)
+% spacingVal = 50;
+% for i = 1:size(dpara,2)
+%         t=text(paraLon(i)-.85e-3,paraLat(i), [sprintf('%.1f',dpara(i)) '$\rightarrow$ ']);
+%         set(t,'color','k')
+% end
+% 
+% ax2 = axes;
+% % find the starting and ending coordinates for the colorbar
+% xstart = max(paraLon) + 3e-4;
+% xend = xstart + 5e-4;
+% x = linspace(xstart,xend,2);
+% y = paraLat';
+% x = repmat(x,size(y,1),1);
+% y = repmat(y,1,size(x,2));
+% z=repmat(paramean,size(x,2),1)';
+% 
+% % Find the upper and lower limit as well as setting the number of divisions
+% of the colorbar
+% upper = max(paramean);
+% lower = min(paramean);
+% Ncb = 20;
+% rnd = 4;
+% 
+% bars = surf(ax2,x,y,z);
+% view(2)
+% set(bars,'EdgeColor','none','LineStyle','none','FaceLighting','phong');
+% Setup the colormaps
+% caxis([lower upper])
+% colormap(ax2,cmap);
+% 
+% ax3 = axes;
+% z = repmat(paravar,size(x,2),1)';
+% bars = surf(ax3,x+7.5e-4,y,z);
+% view(2)
+% set(bars,'EdgeColor','none','LineStyle','none','FaceLighting','phong');
+% colormap(ax3,'cool')
+% 
+% ax4 = axes;
+% z = repmat(paraE,size(x,2),1)';
+% bars = surf(ax4,x+1.5e-3,y,z);
+% view(2)
+% set(bars,'EdgeColor','none','LineStyle','none','FaceLighting','phong');
+% colormap(ax4,'bone')
+% 
+% linkaxes([ax1 ax2 ax3 ax4])
+% 
+% Hide the top axes
+% ax1.XTick = [];
+% ax1.YTick = [];
+% ax2.Visible = 'off';
+% ax2.XTick = [];
+% ax2.YTick = [];
+% ax3.Visible = 'off';
+% ax3.XTick = [];
+% ax3.YTick = [];
+% ax4.Visible = 'off';
+% ax4.XTick = [];
+% ax4.YTick = [];
+% 
+% spacing = .1;
+% startingx = .075;
+% set([ax1 ax2 ax3 ax4],'Position',[.28 .11 .685 .815]);
+% cb1 = colorbar(ax2,'Position',[startingx .11 .04 .8]);
+% cb2 = colorbar(ax3,'Position',[startingx+spacing .11 .04 .8]);
+% cb3 = colorbar(ax4,'Position',[startingx+2.25*spacing .11 .04 .8]);
+% 
+% cb1.Label.String = 'RSSI Mean';
+% cb1.Label.Interpreter = 'latex';
+% cb1.Label.FontSize = 14;
+% cb2.Label.String = 'RSSI Variance';
+% cb2.Label.Interpreter = 'latex';
+% cb2.Label.FontSize = 14;
+% cb3.Label.String = 'P(E)';
+% cb3.Label.Interpreter = 'latex';
+% cb3.Label.FontSize = 14;
+
+% %% Plot P(E) for the three orientations
+% figure('Position',[20,75,800,800])
+% hold on
+% plot(dinline,inlineE,'k.-','MarkerSize',10)
+% plot(dperp,perpE,'b.-','MarkerSize',10)
+% plot(dpara,paraE,'r.-','MarkerSize',10)
+% 
+% plegend = legend('Inline With Antenna','Perpendicular','Perpendicular Pointed Away');
+% set(plegend,'interpreter','latex','fontsize',12,'location','northeast')
+% title('$P(E)$ vs Distance','interpreter','latex','fontsize',20)
+% xlabel('Distance $[\mathrm{m}]$','interpreter','latex','fontsize',16)
+% ylabel('Mean RSSI $[\mathrm{dBm}]$','interpreter','latex','fontsize',16)
+% 
+% format loose
+% format short
