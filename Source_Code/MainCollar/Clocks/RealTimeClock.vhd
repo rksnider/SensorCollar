@@ -53,7 +53,7 @@ USE WORK.COMPILE_START_TIME_PKG.ALL ;
 --!             this value.
 --!
 --! @param      reset             Reset the module.
---! @param      startup_time_in   Time since startup in GPS format.
+--! @param      gps_time_in       GPS time in GPS format.
 --! @param      leap_seconds_in   Number of leap seconds since 2012.
 --! @param      rtc_sec_in        Seconds to set the Real Time Clock to.
 --! @param      rtc_set_in        Set the RTC on rising edge.
@@ -69,7 +69,7 @@ entity RealTimeClock is
 
   Port (
     reset             : in    std_logic ;
-    startup_time_in   : in    std_logic_vector (gps_time_bits_c-1 downto 0) ;
+    gps_time_in       : in    std_logic_vector (gps_time_bits_c-1 downto 0) ;
     leap_seconds_in   : in    unsigned (7 downto 0) ;
     rtc_sec_in        : in    unsigned (epoch70_secbits_c-1 downto 0) ;
     rtc_set_in        : in    std_logic ;
@@ -151,13 +151,13 @@ architecture rtl of RealTimeclock is
   signal rtc_milli_cnt      : unsigned (const_bits (milli_count_c-1)-1
                                         downto 0) ;
   signal milli_clk          : std_logic ;
-  signal startup_time       : GPS_Time ;
+  signal gps_time           : GPS_Time ;
 
 begin
 
-  startup_time              <= TO_GPS_TIME (startup_time_in) ;
+  gps_time                  <= TO_GPS_TIME (gps_time_in) ;
 
-  milli_clk                 <= startup_time.week_millisecond (2) ;
+  milli_clk                 <= gps_time.week_millisecond (2) ;
 
   --  Date/Time converter.
 
