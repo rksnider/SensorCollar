@@ -50,7 +50,7 @@ if {[llength $clk_out_info] > 0} {
 
 #   Generate inverted clock if it is desired.
 
-set clk_out_info                [get_instvalue inv_clk_out]
+set clk_out_info                [get_instvalue clk_inv_out]
 
 if {[llength $clk_out_info] > 0} {
   set clk_out_clock             [lindex $clk_out_info 0]
@@ -102,7 +102,7 @@ if {[llength $clk_out_info] > 0} {
 
 #   Generate inverted gated clock if it is desired.
 
-set clk_out_info                [get_instvalue gated_inv_clk_out]
+set clk_out_info                [get_instvalue gated_clk_inv_out]
 
 if {[llength $clk_out_info] > 0} {
   set clk_out_clock             [lindex $clk_out_info 0]
