@@ -75,7 +75,8 @@ USE WORK.COMPILE_START_TIME_PKG.ALL ;
 --! @param      dst_end_min_g     Minutes into day DST ends.
 --! @param      dst_seconds_g     Number of seconds to add when DST starts.
 --! @param      reset             Reset the module.
---! @param      leap_seconds_in   Number of leap seconds since Jan 1 2012.
+--! @param      leap_seconds_in   Number of leap seconds since start of the
+--!                               Epoch.
 --! @param      epoch70_in        The seconds to convert to date/time
 --!                               format not including leap seconds.
 --! @param      datetime_out      The converted value as a bit vector.
@@ -215,7 +216,6 @@ architecture rtl of FormatSeconds is
   --  the start of the epoch in 1970.
 
   constant start_2012_c           : natural := (42 * 365 + 10) * day_sec_c ;
-  constant leapsec_2012_c         : natural := 24 ;
 
   --  Daylight saving time data.  Months and days start at one which must be
   --  removed.
@@ -317,9 +317,8 @@ begin
 
           --  Start counting from the beginning of 2012.
 
-          to_seconds          <= epoch70_in + leap_seconds_in +
-                                 leapsec_2012_c - start_2012_c +
-                                 timezone_g ;
+          to_seconds          <= epoch70_in + leap_seconds_in -
+                                 start_2012_c + timezone_g ;
 
           to_counter          <= TO_UNSIGNED (12, to_counter'length) ;
           to_dst_start        <= TO_UNSIGNED (dst_start_2012_c *
@@ -557,8 +556,8 @@ begin
           datetime_v            := TO_DATE_TIME (datetime_in) ;
           from_datetime         <= datetime_v ;
 
-          from_seconds          <= start_2012_c - leapsec_2012_c -
-                                   timezone_g - leap_seconds_in ;
+          from_seconds          <= start_2012_c - timezone_g - 
+                                   leap_seconds_in ;
 
           from_counter          <= datetime_v.year - 12 ;
           from_dst_start        <= TO_UNSIGNED (dst_start_day_2012_c,
