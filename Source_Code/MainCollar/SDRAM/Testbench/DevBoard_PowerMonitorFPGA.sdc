@@ -23,6 +23,14 @@ set sdc_log [open "sdc_log.txt" w]
 
 source SDC_Procedures.sdc
 
+#   Build an array of all constants shared between SDC and VHDL.
+
+source sdc_values.tcl
+
+foreach {name type value} $sdc_value_list {
+  set shared_constants($name)     $value
+}
+
 #   Use timings as nanoseconds with three decimal places.
 
 set decplaces     3
@@ -31,7 +39,7 @@ set_time_format -unit ns -decimal_places $decplaces
 
 #   Main system clock.
 
-set master_clk_freq     50.0e6
+set master_clk_freq     $shared_constants(master_clk_freq_c)
 
 set master_clk_period   [expr 1.0e9 / $master_clk_freq]
 set per                 [format "%.*f" $decplaces $master_clk_period]
@@ -39,9 +47,12 @@ set rise                [expr 0]
 set fall                [expr $master_clk_period * 0.5]
 set duty                [format "%.*f %.*f" $decplaces $rise $decplaces $fall]
 
-set master_clk_target   [get_ports CLK_50MHZ_TO_FPGA]
+set master_clk_target   CLK_50MHZ_TO_FPGA
+set master_clk_name     master_clk
 
-create_clock -name master_clk -period $per -waveform $duty $master_clk_target
+create_clock -name $master_clk_name -period $per -waveform $duty \
+                   $master_clk_target
+
 #create_clock -name master_clk -period 20.000 -waveform { 0.000 10.000 } \
 #             [get_ports CLK_50MHZ_TO_FPGA]
 
@@ -59,9 +70,13 @@ create_clock -name master_clk -period $per -waveform $duty $master_clk_target
 set top_level_inst            "SDRAM_ControllerTest_tb:sdram_tb"
 push_instance                 $top_level_inst
 
-set_instvalue                 master_clk      $master_clk_target
-set_instvalue                 sdram_clk       "SDRAM_CLK"
-set_instvalue                 PC_SPI_clk_out  "PC_SPI_CLK"
+set internal_clk_freq         $shared_constants(internal_clk_freq_c)
+
+set_instvalue                 master_clk_freq_g   $master_clk_freq
+set_instvalue                 internal_clk_freq_g $internal_clk_freq
+set_instvalue                 master_clk          $master_clk_name
+set_instvalue                 sdram_clk           "SDRAM_CLK"
+set_instvalue                 PC_SPI_clk_out      "PC_SPI_CLK"
 
 source SDRAM_ControllerTest_tb.sdc
 

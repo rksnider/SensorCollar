@@ -29,9 +29,12 @@
 --
 ----------------------------------------------------------------------------
 
-library IEEE ;                      --! Use standard library.
-use IEEE.STD_LOGIC_1164.ALL ;       --! Use standard logic elements.
-use IEEE.NUMERIC_STD.ALL ;          --! Use numeric standard.
+library IEEE ;                        --! Use standard library.
+use IEEE.STD_LOGIC_1164.ALL ;         --! Use standard logic elements.
+use IEEE.NUMERIC_STD.ALL ;            --! Use numeric standard.
+
+library WORK ;                        --! Local libraries.
+use WORK.SHARED_SDC_VALUES_PKG.ALL ;  --! Values used by SDC as well.
 
 
 ----------------------------------------------------------------------------
@@ -144,8 +147,8 @@ entity DevBoard_PowerMonitorFPGA_TopLevel is
     PC_STATUS_CHG       : in    std_logic ;
     PC_SPI_NCS          : out   std_logic ;
     PC_SPI_CLK          : out   std_logic ;
-    PC_SPI_DIN          : in    std_logic ;
-    PC_SPI_DOUT         : out   std_logic ;
+    PC_SPI_DIN          : out   std_logic ;
+    PC_SPI_DOUT         : in   std_logic ;
 
     --  Voltage Selectable, 1.8V, and 3.3V GPIO
 
@@ -168,7 +171,8 @@ architecture structural of DevBoard_PowerMonitorFPGA_TopLevel is
   component SDRAM_ControllerTest_tb is
 
     Generic (
-      master_clk_freq_g     : natural   := 10e6 ;
+      master_clk_freq_g     : natural   := master_clk_freq_c ;
+      internal_clk_freq_g   : natural   := internal_clk_freq_c ;
       button_cnt_g          : natural   :=  8
     ) ;
     Port (
@@ -208,20 +212,31 @@ architecture structural of DevBoard_PowerMonitorFPGA_TopLevel is
 
   signal clock_out          : std_logic ;
   signal data_out           : std_logic_vector (15 downto 0) ;
+  signal address_out        : std_logic_vector (12 downto 0) ;
+  signal bank_out           : std_logic_vector (1 downto 0) ;
 
 begin
+
+  -- GPIO1P8 (7  downto 0)      <= (others => clock_out) ;
+  -- GPIO3P3 (7  downto 0)      <= (others => clock_out) ;
+  -- GPIOSEL (15 downto 0)      <= (others => clock_out) ;
 
   GPIO1P8 (0)               <= clock_out ;
   GPIOSEL (15)              <= clock_out ;
 
-  GPIO3P3 (2 downto 0)      <= data_out (2 downto 0) ;
-  GPIO3P3 (4 downto 3)      <= data_out (9 downto 8) ;
+  GPIOSEL (14 downto 0)     <= data_out (14 downto 0) ;
+
+  GPIO3P3 (1 downto 0)      <= address_out (1 downto 0) ;
+  GPIO3P3 (2)               <= data_out (0) ;
+  GPIO3P3 (4 downto 3)      <= bank_out ;
+  GPIO3P3 (5)               <= clock_out ;    -- GPIO1P8 (0) is broken
 
 
   sdram_tb : SDRAM_ControllerTest_tb
 
     Generic Map (
-      master_clk_freq_g     => 50e6,
+      master_clk_freq_g     => master_clk_freq_c,
+      internal_clk_freq_g   => internal_clk_freq_c,
       button_cnt_g          => 1
     )
     Port Map (
@@ -239,18 +254,18 @@ begin
 
       PC_StatusChg_in       => PC_STATUS_CHG,
       PC_SPI_clk_out        => PC_SPI_CLK,
-      PC_SPI_mosi_out       => PC_SPI_DOUT,
-      PC_SPI_miso_in        => PC_SPI_DIN,
+      PC_SPI_mosi_out       => PC_SPI_DIN,
+      PC_SPI_miso_in        => PC_SPI_DOUT,
       PC_SPI_cs_n_out       => PC_SPI_NCS,
 
       log_clk_out           => clock_out,
       log_clk_en_out        => GPIO1P8 (1),
       log_command_out       => GPIO1P8 (5 downto 2),
       log_mask_out          => GPIO1P8 (7 downto 6),
-      log_bank_out          => GPIOSEL (14 downto 13),
-      log_addr_out          => GPIOSEL (12 downto 0),
+      log_bank_out          => bank_out,
+      log_addr_out          => address_out,
       log_data_out          => data_out,
-      log_empty_out         => GPIO3P3 (5),
+      -- log_empty_out         => GPIO3P3 (5),
       log_forceout_out      => GPIO3P3 (6),
       log_fail_out          => GPIO3P3 (7)
 
