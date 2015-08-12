@@ -126,7 +126,7 @@ generic(
 
     OUTMEM_BUFFROWS       : natural     := 1 ;
     OUTMEM_BUFFCOUNT      : natural     := 2 ;
-    SDRAM_SPACE           : SDRAM_Capacity  := SDRAM_32_Capacity; 
+    SDRAM_SPACE           : SDRAM_Capacity_t  := SDRAM_32_Capacity_c; 
     
     sdram_outbuf_size_bytes_g : natural := 4096;
     
