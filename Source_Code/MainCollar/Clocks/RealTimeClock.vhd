@@ -50,34 +50,66 @@ USE WORK.COMPILE_START_TIME_PKG.ALL ;
 --! @brief      Maintains the Real Time Clock in seconds.
 --! @details    Loads, stores, and maintains the Real Time Clock (RTC)
 --!             value in seconds.  The local date and time are derived from
---!             this value.
+--!             this value.  The RTC alarm is set here as well.
 --!
---! @param      reset             Reset the module.
---! @param      gps_time_in       GPS time in GPS format.
---! @param      leap_seconds_in   Number of leap seconds since 2012.
---! @param      rtc_sec_in        Seconds to set the Real Time Clock to.
---! @param      rtc_set_in        Set the RTC on rising edge.
---! @param      rtc_sec_out       RTC current value in seconds.
---! @param      rtc_datetime_out  Local time in year-month-day
---!                               hour-minute-second.
---! @param      alarm_time_in     Time to set the RTC alarm to local time.
---! @param      alarm_set_in      Set the alarm on rising edge.
+--! @param      gpsmem_addrbits_g   Number of address bits to read GPS mem.
+--! @param      gpsmem_databits_g   Number of data bits returned by GPS mem.
+--! @param      reset               Reset the module.
+--! @param      startup_time_in     System startup time in GPS time format.
+--! @param      gps_time_out        GPS time in GPS time format calculated
+--!                                 from Timemark info stored in GPS mem.
+--!                                 Note that this value can jump as new
+--!                                 information is obtained from the GPS.
+--! @param      rtc_sec_out         RTC current value in seconds.
+--!                                 Note that this value can jump as new
+--!                                 information is obtained from the GPS.
+--! @param      rtc_datetime_out    Local time in year-month-day
+--!                                 hour-minute-second from RTC current
+--!                                 value.
+--! @param      gpsmem_tmbank_in    Most recent valid Timemark bank in GPS
+--!                                 memory.  Change to it triggers update
+--!                                 of the GPS and RTC Time outputs.
+--! @param      gpsmem_req_out      Request for access to GPS mem.
+--! @param      gpsmem_rcv_in       Access granted to GPS mem.
+--! @param      gpsmem_addr_out     Address to read from in GPS mem.
+--! @param      gpsmem_datafrom_in  Data read from GPS mem.
+--! @param      gpsmem_readen_out   Start a read from GPS mem.
+--! @param      gpsmem_clk_out      Clock to use for GPS mem access.
+--! @param      alarm_time_in       Time to set the RTC alarm in local time.
+--! @param      alarm_set_in        Set the alarm on rising edge.
 --
 ----------------------------------------------------------------------------
 
 entity RealTimeClock is
 
+  Generic (
+    gpsmem_addrbits_g   : natural := 10 ;
+    gpsmem_databits_g   : natural :=  8
+  ) ;
   Port (
-    reset             : in    std_logic ;
-    gps_time_in       : in    std_logic_vector (gps_time_bits_c-1 downto 0) ;
-    leap_seconds_in   : in    unsigned (7 downto 0) ;
-    rtc_sec_in        : in    unsigned (epoch70_secbits_c-1 downto 0) ;
-    rtc_set_in        : in    std_logic ;
-    rtc_sec_out       : out   unsigned (epoch70_secbits_c-1 downto 0) ;
-    rtc_datetime_out  : out   std_logic_vector (dt_totalbits_c-1 downto 0) ;
+    reset               : in    std_logic ;
+    startup_time_in     : in    std_logic_vector (gps_time_bits_c-1
+                                                  downto 0) ;
+    gps_time_out        : out   std_logic_vector (gps_time_bits_c-1
+                                                  downto 0) ;
 
-    alarm_time_in     : in    std_logic_vector (dt_totalbits_c-1 downto 0) ;
-    alarm_set_in      : in    std_logic
+    rtc_sec_out         : out   unsigned (epoch70_secbits_c-1 downto 0) ;
+    rtc_datetime_out    : out   std_logic_vector (dt_totalbits_c-1
+                                                  downto 0) ;
+
+    gpsmem_tmbank_in    : in    std_logic ;
+    gpsmem_req_out      : out   std_logic ;
+    gpsmem_rcv_in       : in    std_logic ;
+    gpsmem_addr_out     : out   std_logic_vector (gpsmem_addrbits_g-1
+                                                downto 0) ;
+    gpsmem_datafrom_in  : in    std_logic_vector (gpsmem_databits_g-1
+                                                  downto 0) ;
+    gpsmem_readen_out   : out   std_logic ;
+    gpsmem_clk_out      : out   std_logic ;
+
+    alarm_time_in       : in    std_logic_vector (dt_totalbits_c-1
+                                                  downto 0) ;
+    alarm_set_in        : in    std_logic
   ) ;
 
 end entity RealTimeClock ;
@@ -151,13 +183,29 @@ architecture rtl of RealTimeclock is
   signal rtc_milli_cnt      : unsigned (const_bits (milli_count_c-1)-1
                                         downto 0) ;
   signal milli_clk          : std_logic ;
-  signal gps_time           : GPS_Time ;
+  signal startup_time       : GPS_Time ;
 
 begin
 
-  gps_time                  <= TO_GPS_TIME (gps_time_in) ;
+  startup_time              <= TO_GPS_TIME (startup_time_in) ;
 
-  milli_clk                 <= gps_time.week_millisecond (2) ;
+  milli_clk                 <= startup_time.week_millisecond (2) ;
+
+  --  Future use values for extracting time information from GPS memory
+  --  and using it to set the RTC clock from.  The GPS time is the startup
+  --  time with addition of the difference between startup and GPS times
+  --  determined from the GPS Timemark information.  Leap seconds are
+  --  also obtained from the GPS.
+  --  NOTE: GPS Memory access must run at a much higher rate than most other
+  --        operations as the memory is shared with other modules and must
+  --        be locked for as short a time as possible.
+
+  gps_time_out              <= startup_time_in ;
+
+  gpsmem_req_out            <= '0' ;
+  gpsmem_addr_out           <= (others => '0') ;
+  gpsmem_readen_out         <= '0' ;
+  gpsmem_clk_out            <= '0' ;
 
   --  Date/Time converter.
 
@@ -177,7 +225,7 @@ begin
     )
     Port Map (
       reset             => reset,
-      leap_seconds_in   => leap_seconds_in,
+      leap_seconds_in   => TO_UNSIGNED (26, 8),   -- as of July 2015
       epoch70_in        => rtc_seconds + 1,
       datetime_out      => date_time,
       to_datetime_clk   => milli_clk,
