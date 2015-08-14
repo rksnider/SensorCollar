@@ -6,7 +6,7 @@
 set sysclk_clock                [get_instvalue sysclk]
 set sdram_clk_port              [get_instvalue sdram_clk_out]
 
-puts $sdc_log "Creating clock based on >$sysclk_clock<\n"
+puts $sdc_log "Creating clock based on $sysclk_clock'\n"
 
 set sysclk_data                 [get_clocks $sysclk_clock]
 set sysclk_source               [get_clock_info -targets $sysclk_data]

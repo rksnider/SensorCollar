@@ -26,10 +26,14 @@ set master_clock_freq       [expr {int(1.0e9 / \
 #   SPI clock.
 
 set collar_spi_clk_name     spi_clk
+set collar_spi_g_clk_name   spi_gated_clk
+set collar_spi_gi_clk_name  spi_gated_inv_clk
 push_instance               "GenClock:spi_clock"
 
 set_instvalue               out_clk_freq_g    $shared_constants(spi_clk_freq_c)
 set_instvalue               clk_out           [list $collar_spi_clk_name]
+set_instvalue               gated_clk_out     [list $collar_spi_g_clk_name]
+set_instvalue               gated_clk_inv_out [list $collar_spi_gi_clk_name]
 
 copy_instvalues             { "master_clk_freq_g,clk_freq_g" \
                               "master_clk,clk" }
@@ -91,7 +95,7 @@ set sdc_file              "microsd_controller_dir.sdc"
 if { [file exists "$sdc_file"] > 0 } {
 
   #   Voltage shifting.
-  
+
   set sd_clk_port         [get_instvalue sd_clk]
 
   push_instance           "microsd_controller_dir:@use_SD:sdcard"
@@ -108,7 +112,7 @@ if { [file exists "$sdc_file"] > 0 } {
   pop_instance
 
   #   Direct connect.
-  
+
   set sdh_clk_port        [get_instvalue sdh_clk]
 
   push_instance           "microsd_controller_dir:@use_SDH:sdcard"

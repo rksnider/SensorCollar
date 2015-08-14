@@ -27,30 +27,34 @@ set fastclk_div                 [expr {int($startup_freq / $fastclk_freq)}]
 #   Timings between the source clock and the generating clock are not
 #   important.
 
-if {[get_collection_size [get_nodes $milliclk_target]] > 0} {
-  puts $sdc_log "Creating clock '$milliclk_name' via '$startup_time' on '$milliclk_target'\n"
+regsub -all "@" "$milliclk_target" "\\" clk_target
+
+if {[get_collection_size [get_nodes $clk_target]] > 0} {
+  puts $sdc_log "Creating clock '$milliclk_name' via '$startup_time' on '$clk_target'\n"
 
   create_generated_clock -source "$startup_source" -name "$milliclk_name" \
-                         -divide_by "$milliclk_div"      "$milliclk_target"
+                         -divide_by "$milliclk_div"      "$clk_target"
 
   set clk_out_data              [get_clocks "$milliclk_name"]
 
   set_false_path -from $startup_data  -to $clk_out_data
   set_false_path -from $clk_out_data  -to $startup_data
 } else {
-  puts $sdc_log "Skipped clock '$milliclk_name' via '$startup_time' on '$milliclk_target'\n"
+  puts $sdc_log "Skipped clock '$milliclk_name' via '$startup_time' on '$clk_target'\n"
 }
 
-if {[get_collection_size [get_nodes $fast_target]] > 0} {
-  puts $sdc_log "Creating clock '$fastclk_name' via '$startup_time' on '$fastclk_target'\n"
+regsub -all "@" "$fastclk_target" "\\" clk_target
+
+if {[get_collection_size [get_nodes $clk_target]] > 0} {
+  puts $sdc_log "Creating clock '$fastclk_name' via '$startup_time' on '$clk_target'\n"
 
   create_generated_clock -source "$startup_source" -name "$fastclk_name" \
-                         -divide_by "$fastclk_div"      "$fastclk_target"
+                         -divide_by "$fastclk_div"      "$clk_target"
 
   set clk_out_data              [get_clocks "$fastclk_name"]
 
   set_false_path -from $startup_data  -to $clk_out_data
   set_false_path -from $clk_out_data  -to $startup_data
 } else {
-  puts $sdc_log "Skipped clock '$fastclk_name' via '$startup_time' on '$fastclk_target'\n"
+  puts $sdc_log "Skipped clock '$fastclk_name' via '$startup_time' on '$clk_target'\n"
 }

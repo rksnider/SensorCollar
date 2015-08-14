@@ -37,18 +37,20 @@ if {[llength $clk_out_info] > 0} {
     set clk_out_target          "$genclk_inst|out_clk"
   }
 
-  if {[get_collection_size [get_nodes $clk_out_target]] > 0} {
-    puts $sdc_log "Creating clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
+  regsub -all "@" "$clk_out_target" "\\" clk_target
+
+  if {[get_collection_size [get_nodes $clk_target]] > 0} {
+    puts $sdc_log "Creating clock '$clk_out_clock' via '$sysclk_clock' on '$clk_target' from '$clk_out_info'\n"
 
     create_generated_clock -source "$sysclk_source" -name "$clk_out_clock" \
-                           -divide_by "$clk_div"          "$clk_out_target"
+                           -divide_by "$clk_div"          "$clk_target"
 
     set clk_out_data              [get_clocks "$clk_out_clock"]
 
     set_false_path -from $sysclk_data  -to $clk_out_data
     set_false_path -from $clk_out_data -to $sysclk_data
   } else {
-    puts $sdc_log "Skipped clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
+    puts $sdc_log "Skipped clock '$clk_out_clock' via '$sysclk_clock' on '$clk_target' from '$clk_out_info'\n"
   }
 }
 
@@ -67,18 +69,20 @@ if {[llength $clk_out_info] > 0} {
     set clk_out_target          "$genclk_inst|out_inv_clk"
   }
 
-  if {[get_collection_size [get_nodes $clk_out_target]] > 0} {
-    puts $sdc_log "Creating clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
+  regsub -all "@" "$clk_out_target" "\\" clk_target
+
+  if {[get_collection_size [get_nodes $clk_target]] > 0} {
+    puts $sdc_log "Creating clock '$clk_out_clock' via '$sysclk_clock' on '$clk_target' from '$clk_out_info'\n"
 
     create_generated_clock -source "$sysclk_source" -name "$clk_out_clock" \
-                           -divide_by "$clk_div" -invert  "$clk_out_target"
+                           -divide_by "$clk_div"          "$clk_target"
 
     set clk_out_data              [get_clocks "$clk_out_clock"]
 
     set_false_path -from $sysclk_data  -to $clk_out_data
     set_false_path -from $clk_out_data -to $sysclk_data
   } else {
-    puts $sdc_log "Skipped clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
+    puts $sdc_log "Skipped clock '$clk_out_clock' via '$sysclk_clock' on '$clk_target' from '$clk_out_info'\n"
   }
 }
 
@@ -97,18 +101,20 @@ if {[llength $clk_out_info] > 0} {
     set clk_out_target          "$genclk_inst|out_gated_clk"
   }
 
-  if {[get_collection_size [get_nodes $clk_out_target]] > 0} {
-    puts $sdc_log "Creating clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
+  regsub -all "@" "$clk_out_target" "\\" clk_target
+
+  if {[get_collection_size [get_nodes $clk_target]] > 0} {
+    puts $sdc_log "Creating clock '$clk_out_clock' via '$sysclk_clock' on '$clk_target' from '$clk_out_info'\n"
 
     create_generated_clock -source "$sysclk_source" -name "$clk_out_clock" \
-                           -divide_by "$clk_div"          "$clk_out_target"
+                           -divide_by "$clk_div"          "$clk_target"
 
     set clk_out_data              [get_clocks "$clk_out_clock"]
 
     set_false_path -from $sysclk_data  -to $clk_out_data
     set_false_path -from $clk_out_data -to $sysclk_data
   } else {
-    puts $sdc_log "Skipped clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
+    puts $sdc_log "Skipped clock '$clk_out_clock' via '$sysclk_clock' on '$clk_target' from '$clk_out_info'\n"
   }
 }
 
@@ -127,17 +133,19 @@ if {[llength $clk_out_info] > 0} {
     set clk_out_target          "$genclk_inst|out_inv_gated_clk"
   }
 
-  if {[get_collection_size [get_nodes $clk_out_target]] > 0} {
-    puts $sdc_log "Creating clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
+  regsub -all "@" "$clk_out_target" "\\" clk_target
+
+  if {[get_collection_size [get_nodes $clk_target]] > 0} {
+    puts $sdc_log "Creating clock '$clk_out_clock' via '$sysclk_clock' on '$clk_target' from '$clk_out_info'\n"
 
     create_generated_clock -source "$sysclk_source" -name "$clk_out_clock" \
-                           -divide_by "$clk_div" -invert  "$clk_out_target"
+                           -divide_by "$clk_div"          "$clk_target"
 
     set clk_out_data              [get_clocks "$clk_out_clock"]
 
     set_false_path -from $sysclk_data  -to $clk_out_data
     set_false_path -from $clk_out_data -to $sysclk_data
   } else {
-    puts $sdc_log "Skipped clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
+    puts $sdc_log "Skipped clock '$clk_out_clock' via '$sysclk_clock' on '$clk_target' from '$clk_out_info'\n"
   }
 }
