@@ -129,6 +129,49 @@ architecture rtl of RealTimeclock is
   signal calc_alarm_start     : std_logic ;
   signal calc_alarm_done      : std_logic ;
 
+  --  Calculate differences between Real Time Clock and Timemark time
+  --  and Startup Time to keep continuing RTC Seconds and GPS Time.
+
+  constant gps_secbits_c      : natural := gps_time_weekbits_c +
+                                           gps_time_millibits_c ;
+
+  signal load_time            : GPS_Time ;
+
+  signal rtc_loaded           : unsigned (gps_secbits_c-1 downto 0) ;
+  alias rtc_loaded_high       : unsigned (gps_secbits_c-epoch70_secbits_c-1
+                                          downto 0) is
+                                  rtc_loaded (gps_secbits_c-1 downto
+                                              epoch70_secbits_c) ;
+  alias rtc_loaded_low        : unsigned (epoch70_secbits_c-1 downto 0) is
+                                  rtc_loaded (epoch70_secbits_c-1
+                                              downto 0) ;
+
+
+  signal rtc_secs             : unsigned (gps_secbits_c-1 downto 0) ;
+  alias rtc_secs_week         : unsigned (gps_time_weekbits_c-1
+                                          downto 0) is
+                                    rtc_secs (gps_secbits_c-1 downto
+                                              gps_time_millibits_c) ;
+  alias rtc_secs_milli        : unsigned (gps_time_millibits_c-1
+                                          downto 0) is
+                                    rtc_secs (gps_time_millibits_c-1
+                                              downto 0) ;
+
+  signal rtc_secs_carry       : std_logic ;
+  signal rtc_week             : unsigned (gps_time_weekbits_c-1 downto 0) ;
+  signal rtc_milli            : unsigned (gps_time_millibits_c downto 0) ;
+
+  signal rtc_borrow           : std_logic ;
+  signal rtc_gps_weekdiff     : unsigned (gps_time_weekbits_c-1 downto 0) ;
+  signal rtc_gps_millidiff    : unsigned (gps_time_millibits_c-1 downto 0) ;
+
+  signal gps_carry            : std_logic ;
+  signal gps_weekdiff         : unsigned (gps_time_weekbits_c-1 downto 0) ;
+  signal gps_millidiff        : unsigned (gps_time_millibits_c-1 downto 0) ;
+  signal gps_nanodiff         : unsigned (gps_time_nanobits_c-1 downto 0) ;
+
+  signal gps_timerec          : GPS_Time ;
+
   --  Epoch since 1970 seconds to/from local broken down time converter.
 
   component FormatSeconds is
@@ -185,11 +228,15 @@ architecture rtl of RealTimeclock is
   signal milli_clk          : std_logic ;
   signal startup_time       : GPS_Time ;
 
+  signal fast_clk           : std_logic ;
+
+  attribute keep                : boolean ;
+  attribute keep of milli_clk   : signal is true ;
+  attribute keep of fast_clk    : signal is true ;
+
 begin
 
   startup_time              <= TO_GPS_TIME (startup_time_in) ;
-
-  milli_clk                 <= startup_time.week_millisecond (2) ;
 
   --  Future use values for extracting time information from GPS memory
   --  and using it to set the RTC clock from.  The GPS time is the startup
@@ -200,12 +247,55 @@ begin
   --        operations as the memory is shared with other modules and must
   --        be locked for as short a time as possible.
 
-  gps_time_out              <= startup_time_in ;
-
   gpsmem_req_out            <= '0' ;
   gpsmem_addr_out           <= (others => '0') ;
   gpsmem_readen_out         <= '0' ;
   gpsmem_clk_out            <= '0' ;
+
+  --  Convert the last received RTC seconds into the difference between
+  --  GPS Time and Startup Time.  Multiplying by 1000 is reduced to 3 adds
+  --  by multiplying by 1024 (1 bit set) then subtracting the result of
+  --  multiplying by 24 (2 bits set).
+
+  rtc_loaded_low        <= TO_UNSIGNED (compile_timestamp_c,
+                                        rtc_seconds'length) ;
+  rtc_loaded_high       <= (others => '0') ;
+  rtc_secs              <= rtc_loaded * 1024 - rtc_loaded * 24 ;
+
+  rtc_secs_carry        <= '1'  when (rtc_secs_milli >= millisec_week_c) else
+                           '0' ;
+
+  rtc_week              <= rtc_secs_week  when (rtc_secs_carry = '0') else
+                           rtc_secs_week + 1 ;
+  rtc_milli             <= rtc_secs_milli when (rtc_secs_carry = '0') else
+                           rtc_secs_milli - millisec_week_c ;
+
+  --  Calculate the difference between the RTC Time and Startup Time at
+  --  RTC load.
+
+  rtc_borrow            <= '1'
+                           when (unsigned (load_time.week_millisecond) >
+                                 rtc_milli) else
+                           '0' ;
+
+  rtc_gps_weekdiff      <= rtc_week - unsigned (load_time.week_number)
+                                when (rtc_borrow = '0') else
+                           rtc_week - unsigned (load_time.week_number) - 1 ;
+  rtc_gps_millidiff     <= rtc_milli - unsigned (load_time.week_millisecond)
+                                when (rtc_borrow = '0') else
+                           rtc_milli + millisec_week_c -
+                           unsigned (load_time.week_millisecond) ;
+
+  --  Use the most recently loaded time (RTC or GPS) to determine the
+  --  difference to generated GPS time.
+
+  gps_weekdiff          <= rtc_gps_weekdiff ;
+  gps_millidiff         <= RESIZE (rtc_gps_millidiff, gps_millidiff'length) ;
+  gps_nanodiff          <= (others => '0') ;
+
+  --  Derive second counting clock from the GPS time.
+
+  milli_clk             <= gps_timerec.week_millisecond (2) ;
 
   --  Date/Time converter.
 
@@ -276,6 +366,71 @@ begin
       end if ;
     end if ;
   end process upd_sec ;
+
+  --------------------------------------------------------------------------
+  --  Add the difference between Startup Time and GPS time to the Startup
+  --  Time to determine the GPS time.
+  --------------------------------------------------------------------------
+
+  gps_time_out              <= TO_STD_LOGIC_VECTOR (gps_timerec) ;
+
+  fast_clk                  <= startup_time_in (8) ;
+
+  gps_tm : process (fast_clk)
+    variable nanosec_v      : unsigned (gps_time_nanobits_c downto 0) ;
+    variable millisec_v     : unsigned (gps_time_millibits_c downto 0) ;
+    variable week_carry_v   : std_logic ;
+  begin
+    nanosec_v                             :=
+        RESIZE (unsigned (startup_time.millisecond_nanosecond) +
+                gps_nanodiff, nanosec_v'length) ;
+    millisec_v                            :=
+        RESIZE (unsigned (startup_time.week_millisecond) +
+                gps_millidiff, millisec_v'length) ;
+
+    if (nanosec_v >= 1000000) then
+      gps_timerec.millisecond_nanosecond  <=
+            std_logic_vector (RESIZE (nanosec_v - 1000000,
+                                      gps_time_nanobits_c)) ;
+
+      if (millisec_v >= millisec_week_c - 1) then
+        week_carry_v                      := '1' ;
+        gps_timerec.week_millisecond      <=
+            std_logic_vector (RESIZE (millisec_v - (millisec_week_c - 1),
+                                      gps_time_millibits_c)) ;
+      else
+        week_carry_v                      := '0' ;
+        gps_timerec.week_millisecond      <=
+            std_logic_vector (RESIZE (millisec_v + 1,
+                                      gps_time_millibits_c)) ;
+      end if ;
+
+    else
+      gps_timerec.millisecond_nanosecond  <=
+            std_logic_vector (RESIZE (nanosec_v, gps_time_nanobits_c)) ;
+
+      if (millisec_v >= millisec_week_c) then
+        week_carry_v                      := '1' ;
+        gps_timerec.week_millisecond      <=
+            std_logic_vector (RESIZE (millisec_v - millisec_week_c,
+                                      gps_time_millibits_c)) ;
+      else
+        week_carry_v                      := '0' ;
+        gps_timerec.week_millisecond      <=
+            std_logic_vector (RESIZE (millisec_v, gps_time_millibits_c)) ;
+      end if ;
+    end if ;
+
+    if (week_carry_v = '1') then
+      gps_timerec.week_number             <=
+            std_logic_vector (gps_weekdiff +
+                              unsigned (startup_time.week_number) + 1) ;
+    else
+      gps_timerec.week_number             <=
+            std_logic_vector (gps_weekdiff +
+                              unsigned (startup_time.week_number)) ;
+    end if ;
+  end process gps_tm ;
 
 
 end rtl ;
