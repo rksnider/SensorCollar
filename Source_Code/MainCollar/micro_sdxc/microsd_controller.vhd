@@ -336,11 +336,12 @@ begin
   sd_cmd_in_tr      <= sd_cmd ;
   sd_dat_in_tr      <= sd_dat ;
   
-  sd_cmd            <= sd_cmd_out when (sd_cmd_dir = '1') else 'Z' ;
+  sd_cmd            <= sd_cmd_out_tr when (sd_cmd_dir_tr = '1') else 'Z' ;
   
   tr_dat :
-    for i in (sd_dat'length-1 downto 0) generate
-      sd_dat (i)    <= sd_dat_out (i) when (sd_dat_dir (i) = '1') else 'Z' ;
+    for i in 0 to sd_dat'length-1 generate
+      sd_dat (i)    <= sd_dat_out_tr (i) when (sd_dat_dir_tr (i) = '1')
+                                         else 'Z' ;
     end generate tr_dat ;
 
 end rtl;

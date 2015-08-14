@@ -35,18 +35,20 @@ use IEEE.STD_LOGIC_1164.ALL ;   --! Use standard logic elements.
 
 package Collar_Control_pkg is
 
-  constant Collar_Control_useStrClk_c       : std_logic := '0' ;
+  constant Collar_Control_useStrClk_c       : std_logic := '1' ;
   constant Collar_Control_useI2C_c          : std_logic := '0' ;
   constant Collar_Control_usePC_c           : std_logic := '1' ;
-  constant Collar_Control_useSDRAM_c        : std_logic := '0' ;
+  constant Collar_Control_useEventLogging_c : std_logic := '1' ;
+  constant Collar_Control_useSDRAM_c        : std_logic := '1' ;
   constant Collar_Control_useSD_c           : std_logic := '0' ;
-  constant Collar_Control_useSDH_c          : std_logic := '0' ;
-  constant Collar_Control_useGPS_c          : std_logic := '0' ;
-  constant Collar_Control_useGPSRAM_c       : std_logic := '0' ;
-  constant Collar_Control_useInertial_c     : std_logic := '0' ;
-  constant Collar_Control_useMagMem_c       : std_logic := '0' ;
-  constant Collar_Control_useMagMemBuffer_c : std_logic := '0' ;
-  constant Collar_Control_usePDMmic_c       : std_logic := '0' ;
+  constant Collar_Control_useSDH_c          : std_logic := '1' ;
+  constant Collar_Control_useGPS_c          : std_logic := '1' ;
+  constant Collar_Control_useGPSRAM_c       : std_logic := '1' ;
+  constant Collar_Control_useInertial_c     : std_logic := '1' ;
+  constant Collar_Control_useMagMem_c       : std_logic := '1' ;
+  constant Collar_Control_useMagMemBuffer_c : std_logic := '1' ;
+  constant Collar_Control_usePDMmic_c       : std_logic := '1' ;
   constant Collar_Control_useRadio_c        : std_logic := '0' ;
+  constant Collar_Control_useFlashBlock_c   : std_logic := '1' ;
 
 end package Collar_Control_pkg ;

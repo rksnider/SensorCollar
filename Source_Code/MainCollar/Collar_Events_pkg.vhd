@@ -32,8 +32,49 @@
 package Collar_Events_pkg is
 
   type Collar_Events is (
-    AUDIO_CAPTURE_ERROR,
-    AUDIO_OUTPUT_ERROR
+  
+    --  Power On/Off events.
+    
+    CE_MainPowerSwitchOn_e,
+    CE_MainPowerSwitchOff_e,
+    CE_RechargeSwitchOn_e,
+    CE_RechargeSwitchOff_e,
+    CE_SolarCtlShutdownOn_e,
+    CE_SolarCtlShutdownOff_e,
+    CE_LevelShifter3p3On_e,
+    CE_LevelShifter3p3Off_e,
+    CE_LevelShifter1p8On_e,
+    CE_LevelShifter1p8Off_e,
+    CE_InertialOn1p8_e,
+    CE_InertialOff2p5_e,
+    CE_MicLeftOn_e,
+    CE_MicLeftOff_e,
+    CE_MicRightOn_e,
+    CE_MicRightOff_e,
+    CE_SDRAM_On_e,
+    CE_SDRAM_Off_e,
+    CE_SDCardOn_e,
+    CE_SDCardOff_e,
+    CE_GPS_On_e,
+    CE_GPS_Off_e,
+    CE_DataTX_On_e,
+    CE_DataTX_Off_e,
+
+    --  Power Controller Status events.
+    
+    CE_BatteryGoodOn_e,
+    CE_BatteryGoodOff_e,
+    CE_SolarCtlOn_e,
+    CE_SolarCtlOff_e,
+    CE_BattMonLowOn_e,
+    CE_BattMonLowOff_e,
+    CE_ForceStartupOn_e,
+    CE_ForceStartupOff_e,
+    CE_PwrGood2p5On_e,
+    CE_PwrGood2p5Off_e,
+    CE_PwrGood3p3On_e,
+    CE_PwrGood3p3Off_e
+
   ) ;
 
   constant collar_event_cnt_c     : natural :=

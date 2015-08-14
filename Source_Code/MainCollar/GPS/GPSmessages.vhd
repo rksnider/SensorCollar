@@ -65,6 +65,9 @@ use WORK.msg_ubx_tim_tm2_pkg.all ;
 --! @param      curtime_in            Time since reset in GPS time format.
 --! @param      pollinterval_in       Number of seconds between message
 --!                                   polls.
+--! @param      datavalid_out         The bank of memory with the newest
+--!                                   valid data if two banks are available,
+--!                                   otherwise set when data is valid.
 --! @param      gpsmem_clk_out        Clock used to drive the memory from
 --!                                   port A.
 --! @param      gpsmem_addr_out       Address to read from memory port A.
@@ -94,6 +97,9 @@ entity GPSmessages is
     curtime_in            : in    std_logic_vector (gps_time_bits_c-1
                                                     downto 0) ;
     pollinterval_in       : in    unsigned (13 downto 0) ;
+    datavalid_out         : out   std_logic_vector (msg_ram_blocks_c-1
+                                                    downto 0) ;
+    
     gpsmem_clk_out        : out   std_logic ;
     gpsmem_addr_out       : out   std_logic_vector (mem_addrbits_g-1
                                                     downto 0) ;
@@ -511,6 +517,8 @@ begin
   gpsmem_read_en_out          <= memread_en ;
   gpsmem_write_en_out         <= memwrite_en ;
   gpsmem_writeto_out          <= memwrite_to ;
+
+  datavalid_out               <= databank ;
 
   --  Generated clocks used by the GPS components.
 

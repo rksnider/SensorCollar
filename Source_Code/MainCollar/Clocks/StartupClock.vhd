@@ -82,14 +82,11 @@ architecture rtl of StartupClock is
   signal time_since_reset   : GPS_Time ;
 
   signal time_bytes         : std_logic_vector (gps_time_bytes_c*8-1
-                                                downto 0) ;
+                                                downto 0) :=
+                                                    (others => '0') ;
   alias reset_time          : std_logic_vector (gps_time_bits_c-1
                                                 downto 0) is
-        reset_time_bytes (gps_time_bits_c-1 downto 0) ;
-
-  alias reset_time_padding  : std_logic_vector (gps_time_bytes_c*8-1
-                                                downto gps_time_bits_c) := 
-                                                    (others => '0') ;
+        time_bytes (gps_time_bits_c-1 downto 0) ;
 
   --  Number of clock ticks in a millisecond and nanoseconds in a
   --  clock tick.

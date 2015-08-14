@@ -37,15 +37,19 @@ if {[llength $clk_out_info] > 0} {
     set clk_out_target          "$genclk_inst|out_clk"
   }
 
-  puts $sdc_log "Creating clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
+  if {[get_collection_size [get_nodes $clk_out_target]] > 0} {
+    puts $sdc_log "Creating clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
 
-  create_generated_clock -source "$sysclk_source" -name "$clk_out_clock" \
-                         -divide_by "$clk_div"          "$clk_out_target"
+    create_generated_clock -source "$sysclk_source" -name "$clk_out_clock" \
+                           -divide_by "$clk_div"          "$clk_out_target"
 
-  set clk_out_data              [get_clocks "$clk_out_clock"]
+    set clk_out_data              [get_clocks "$clk_out_clock"]
 
-  set_false_path -from $sysclk_data  -to $clk_out_data
-  set_false_path -from $clk_out_data -to $sysclk_data
+    set_false_path -from $sysclk_data  -to $clk_out_data
+    set_false_path -from $clk_out_data -to $sysclk_data
+  } else {
+    puts $sdc_log "Skipped clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
+  }
 }
 
 #   Generate inverted clock if it is desired.
@@ -63,15 +67,19 @@ if {[llength $clk_out_info] > 0} {
     set clk_out_target          "$genclk_inst|out_inv_clk"
   }
 
-  puts $sdc_log "Creating clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
+  if {[get_collection_size [get_nodes $clk_out_target]] > 0} {
+    puts $sdc_log "Creating clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
 
-  create_generated_clock -source "$sysclk_source" -name "$clk_out_clock" \
-                         -divide_by "$clk_div" -invert  "$clk_out_target"
+    create_generated_clock -source "$sysclk_source" -name "$clk_out_clock" \
+                           -divide_by "$clk_div" -invert  "$clk_out_target"
 
-  set clk_out_data              [get_clocks "$clk_out_clock"]
+    set clk_out_data              [get_clocks "$clk_out_clock"]
 
-  set_false_path -from $sysclk_data  -to $clk_out_data
-  set_false_path -from $clk_out_data -to $sysclk_data
+    set_false_path -from $sysclk_data  -to $clk_out_data
+    set_false_path -from $clk_out_data -to $sysclk_data
+  } else {
+    puts $sdc_log "Skipped clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
+  }
 }
 
 #   Generate gated clock if it is desired.
@@ -89,15 +97,19 @@ if {[llength $clk_out_info] > 0} {
     set clk_out_target          "$genclk_inst|out_gated_clk"
   }
 
-  puts $sdc_log "Creating clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
+  if {[get_collection_size [get_nodes $clk_out_target]] > 0} {
+    puts $sdc_log "Creating clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
 
-  create_generated_clock -source "$sysclk_source" -name "$clk_out_clock" \
-                         -divide_by "$clk_div"          "$clk_out_target"
+    create_generated_clock -source "$sysclk_source" -name "$clk_out_clock" \
+                           -divide_by "$clk_div"          "$clk_out_target"
 
-  set clk_out_data              [get_clocks "$clk_out_clock"]
+    set clk_out_data              [get_clocks "$clk_out_clock"]
 
-  set_false_path -from $sysclk_data  -to $clk_out_data
-  set_false_path -from $clk_out_data -to $sysclk_data
+    set_false_path -from $sysclk_data  -to $clk_out_data
+    set_false_path -from $clk_out_data -to $sysclk_data
+  } else {
+    puts $sdc_log "Skipped clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
+  }
 }
 
 #   Generate inverted gated clock if it is desired.
@@ -115,13 +127,17 @@ if {[llength $clk_out_info] > 0} {
     set clk_out_target          "$genclk_inst|out_inv_gated_clk"
   }
 
-  puts $sdc_log "Creating clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
+  if {[get_collection_size [get_nodes $clk_out_target]] > 0} {
+    puts $sdc_log "Creating clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
 
-  create_generated_clock -source "$sysclk_source" -name "$clk_out_clock" \
-                         -divide_by "$clk_div" -invert  "$clk_out_target"
+    create_generated_clock -source "$sysclk_source" -name "$clk_out_clock" \
+                           -divide_by "$clk_div" -invert  "$clk_out_target"
 
-  set clk_out_data              [get_clocks "$clk_out_clock"]
+    set clk_out_data              [get_clocks "$clk_out_clock"]
 
-  set_false_path -from $sysclk_data  -to $clk_out_data
-  set_false_path -from $clk_out_data -to $sysclk_data
+    set_false_path -from $sysclk_data  -to $clk_out_data
+    set_false_path -from $clk_out_data -to $sysclk_data
+  } else {
+    puts $sdc_log "Skipped clock '$clk_out_clock' via '$sysclk_clock' on '$clk_out_target' from '$clk_out_info'\n"
+  }
 }

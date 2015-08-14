@@ -94,7 +94,12 @@ proc get_instvalue { key } {
 
   set cur_instance              [lindex $instance_stack 0]
   set full_key                  "$cur_instance|$key"
-  return $inst_mapping($full_key)
+  
+  if {[llength [array names inst_mapping $full_key]] > 0} {
+    return $inst_mapping($full_key)
+  } else {
+    return { }
+  }
 }
 
 
@@ -155,5 +160,10 @@ proc get_keyvalue { key } {
   global inst_mapping
 
   set full_key                  "$key"
-  return $inst_mapping($full_key)
+
+  if {[llength [array names inst_mapping $full_key]] > 0} {
+    return $inst_mapping($full_key)
+  } else {
+    return { }
+  }
 }

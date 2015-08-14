@@ -35,6 +35,7 @@ use IEEE.NUMERIC_STD.ALL ;            --! Use numeric standard.
 
 library WORK ;                        --! Local libraries.
 use WORK.SHARED_SDC_VALUES_PKG.ALL ;  --! Values used by SDC as well.
+use WORK.SDRAM_INFORMATION_PKG.ALL ;  --! SDRAM chip information.
 
 
 ----------------------------------------------------------------------------
@@ -178,7 +179,7 @@ entity DevBoard_PowerMonitorFPGA_TopLevel is
 
     MRAM_SCLK_TO_FPGA           : out   std_logic;
     MRAM_SI_TO_FPGA             : out   std_logic;
-    MRAM_SO_TO_FPGA             : in    std_logic;
+    MRAM_SO_TO_FPGA             : inout std_logic;
     MRAM_CS_N_TO_FPGA           : out   std_logic;
     MRAM_WP_N_TO_FPGA           : out   std_logic;
 
@@ -195,8 +196,8 @@ entity DevBoard_PowerMonitorFPGA_TopLevel is
     --   Microphone Connections
 
     MIC_CLK                     : out   std_logic;
-    MIC_DATA_R                  : in    std_logic;
-    MIC_DATA_L                  : in    std_logic;
+    MIC_DATA_R                  : inout std_logic;
+    MIC_DATA_L                  : inout std_logic;
 
     --   Inertial Module 1
 
@@ -208,22 +209,22 @@ entity DevBoard_PowerMonitorFPGA_TopLevel is
 
     --   Inertial Module 2
 
-    IM2_INT_M                   : in    std_logic ;
+    IM2_INT_M                   : inout std_logic ;
     IM2_CS_AG                   : out   std_logic ;
-    IM2_INT1_AG                 : in    std_logic ;
-    IM2_SDO_M                   : in    std_logic ;
+    IM2_INT1_AG                 : inout std_logic ;
+    IM2_SDO_M                   : inout std_logic ;
     IM2_CS_M                    : out   std_logic ;
     IM2_SPI_SDI                 : out   std_logic ;
-    IM2_DRDY_M                  : in    std_logic ;
-    IM2_SDO_AG                  : in    std_logic ;
-    IM2_INT2_AG                 : in    std_logic ;
+    IM2_DRDY_M                  : inout std_logic ;
+    IM2_SDO_AG                  : inout std_logic ;
+    IM2_INT2_AG                 : inout std_logic ;
     IM2_SPI_SCLK                : out   std_logic ;
 
     --   GPS
 
     RXD_GPS_TO_FPGA             : out   std_logic;
-    TXD_GPS_TO_FPGA             : in    std_logic;
-    TIMEPULSE_GPS_TO_FPGA       : in    std_logic;
+    TXD_GPS_TO_FPGA             : inout std_logic;
+    TIMEPULSE_GPS_TO_FPGA       : inout std_logic;
     EXTINT_GPS_TO_FPGA          : out   std_logic;
 
     -- Voltage Selectable GPIO
@@ -254,8 +255,10 @@ architecture structural of DevBoard_PowerMonitorFPGA_TopLevel is
   component Collar is
 
     Generic (
-      master_clk_freq_g     : natural   := 10e6 ;
-      button_cnt_g          : natural   :=  8
+      master_clk_freq_g     : natural           := 10e6 ;
+      button_cnt_g          : natural           :=  8 ;
+      sdram_space_g         : SDRAM_Capacity_t  := SDRAM_32_Capacity_c ;
+      sdram_times_g         : SDRAM_Timing_t    := SDRAM_75_2_Timing_c
     ) ;
     Port (
       master_clk            : in    std_logic ;
@@ -290,15 +293,15 @@ architecture structural of DevBoard_PowerMonitorFPGA_TopLevel is
       sd_clk                : out   std_logic ;
       sd_cmd_io             : inout std_logic ;
       sd_data_io            : inout std_logic_vector (3 downto 0) ;
-      sd_vsw_out            : out   std_logic_vector (1 downto 0) ;
 
       sdh_clk               : out   std_logic ;
       sdh_cmd_io            : inout std_logic ;
       sdh_data_io           : inout std_logic_vector (3 downto 0) ;
 
-      gps_rx_in             : in    std_logic ;
+      gps_rx_io             : inout std_logic ;
       gps_tx_out            : out   std_logic ;
       gps_timemark_out      : out   std_logic ;
+      gps_timepulse_io      : inout std_logic ;
 
       ms_clk                : out   std_logic ;
       ms_cs_out             : out   std_logic ;
@@ -307,24 +310,24 @@ architecture structural of DevBoard_PowerMonitorFPGA_TopLevel is
       --ms_int_in             : in    std_logic ;
 
       ms_cs_accgyro_out     : out   std_logic ;
-      ms_miso_accgyro_in    : in    std_logic ;
-      ms_int1_accgyro_in    : in    std_logic ;
-      ms_int2_accgyro_in    : in    std_logic ;
+      ms_miso_accgyro_io    : inout std_logic ;
+      ms_int1_accgyro_io    : inout std_logic ;
+      ms_int2_accgyro_io    : inout std_logic ;
 
       ms_cs_mag_out         : out   std_logic ;
-      ms_miso_mag_in        : in    std_logic ;
-      ms_int_mag_in         : in    std_logic ;
-      ms_drdy_mag_in        : in    std_logic ;
+      ms_miso_mag_io        : inout std_logic ;
+      ms_int_mag_io         : inout std_logic ;
+      ms_drdy_mag_io        : inout std_logic ;
 
       magram_clk            : out   std_logic ;
       magram_cs_out         : out   std_logic ;
       magram_mosi_out       : out   std_logic ;
-      magram_miso_in        : in    std_logic ;
+      magram_miso_io        : inout std_logic ;
       magram_writeprot_out  : out   std_logic ;
 
       mic_clk               : out   std_logic ;
-      mic_right_in          : in    std_logic ;
-      mic_left_in           : in    std_logic ;
+      mic_right_io          : inout std_logic ;
+      mic_left_io           : inout std_logic ;
 
       radio_clk             : out   std_logic ;
       radio_data_io         : inout std_logic_vector (3 downto 0)
@@ -345,7 +348,9 @@ begin
   C : Collar
     Generic Map(
       master_clk_freq_g         => master_clk_freq_c,
-      button_cnt_g              => 8
+      button_cnt_g              => 8,
+      sdram_space_g             => SDRAM_16_Capacity_c,
+      sdram_times_g             => SDRAM_75_3_Timing_c
     )
     Port Map(
       master_clk                => CLK_50MHZ_TO_FPGA,
@@ -358,7 +363,7 @@ begin
       i2c_data_io               => SCL_TO_FPGA_CPLD,
 
       pc_statchg_in             => PC_STATUS_CHG,
-      pc_spi_clk                => PC_SPI_CLK ,
+      pc_spi_clk                => PC_SPI_CLK,
       pc_spi_cs_out             => PC_SPI_NCS,
       pc_spi_mosi_out           => PC_SPI_DIN,
       pc_spi_miso_in            => PC_SPI_DOUT,
@@ -368,8 +373,8 @@ begin
       pc_flash_data_io          => PC_FLASH_DATA,
       pc_flash_dir_out          => PC_FLASH_DIR,
 
-      sdram_clk                 => SDRAM_CLK ,
-      sdram_clk_en_out          => SDRAM_CKE ,
+      sdram_clk                 => SDRAM_CLK,
+      sdram_clk_en_out          => SDRAM_CKE,
       sdram_command_out         => SDRAM_command,
       sdram_mask_out            => SDRAM_mask,
       sdram_bank_out            => SDRAM_bank,
@@ -378,38 +383,39 @@ begin
 
       sd_clk                    => SDCARD_CLK_TO_FPGA,
       sd_cmd_io                 => SDCARD_CMD_TO_FPGA,
-      sd_data_io                => SDCARD_DAT_TO_FPGA(3 downto 0),
+      sd_data_io                => SDCARD_DAT_TO_FPGA (3 downto 0),
 
       sdh_clk                   => SDCARD_DI_CLK_TO_FPGA,
       sdh_cmd_io                => SDCARD_DI_CMD_TO_FPGA,
-      sdh_data_io               => SDCARD_DI_DAT_TO_FPGA(3 downto 0),
+      sdh_data_io               => SDCARD_DI_DAT_TO_FPGA (3 downto 0),
 
-      gps_rx_in                 => TXD_GPS_TO_FPGA,
+      gps_rx_io                 => TXD_GPS_TO_FPGA,
       gps_tx_out                => RXD_GPS_TO_FPGA,
       gps_timemark_out          => EXTINT_GPS_TO_FPGA,
+      gps_timepulse_io          => TIMEPULSE_GPS_TO_FPGA,
 
       ms_clk                    => IM2_SPI_SCLK,
       ms_mosi_out               => IM2_SPI_SDI,
 
       ms_cs_accgyro_out         => IM2_CS_AG,
-      ms_miso_accgyro_in        => IM2_SDO_AG,
-      ms_int1_accgyro_in        => IM2_INT1_AG,
-      ms_int2_accgyro_in        => IM2_INT2_AG,
+      ms_miso_accgyro_io        => IM2_SDO_AG,
+      ms_int1_accgyro_io        => IM2_INT1_AG,
+      ms_int2_accgyro_io        => IM2_INT2_AG,
 
       ms_cs_mag_out             => IM2_CS_M,
-      ms_miso_mag_in            => IM2_SDO_M,
-      ms_int_mag_in             => IM2_INT_M,
-      ms_drdy_mag_in            => IM2_DRDY_M,
+      ms_miso_mag_io            => IM2_SDO_M,
+      ms_int_mag_io             => IM2_INT_M,
+      ms_drdy_mag_io            => IM2_DRDY_M,
 
       magram_clk                => MRAM_SCLK_TO_FPGA,
       magram_cs_out             => MRAM_CS_N_TO_FPGA,
       magram_mosi_out           => MRAM_SI_TO_FPGA,
-      magram_miso_in            => MRAM_SO_TO_FPGA,
+      magram_miso_io            => MRAM_SO_TO_FPGA,
       magram_writeprot_out      => MRAM_WP_N_TO_FPGA,
 
       mic_clk                   => MIC_CLK,
-      mic_right_in              => MIC_DATA_R,
-      mic_left_in               => MIC_DATA_L,
+      mic_right_io              => MIC_DATA_R,
+      mic_left_io               => MIC_DATA_L,
 
       radio_clk                 => DATA_TX_DAT_TO_FPGA(0),
       radio_data_io             => DATA_TX_DAT_TO_FPGA(4 downto 1)
