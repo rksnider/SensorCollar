@@ -79,7 +79,7 @@ constant TIM_TM2_flags_Check_c      : unsigned (7 downto 0) :=
             or TIM_TM2_flags_time_c ;
 
 constant TIM_TM2_flags_OK_c         : unsigned (7 downto 0) :=
-               TIM_TM2_flags_TB_UTC_c
+               TIM_TM2_flags_TB_GPS_c
             or TIM_TM2_flags_utc_c
             or TIM_TM2_flags_time_c ;
 
