@@ -4,7 +4,8 @@
 
 set microsd_inst              [get_instance]
 
-# regsub -all {[A-Za-z0-9_]+:} $microsd_inst "" microsd_inst_name
+# regsub -all {^[A-Za-z0-9_]+:|(\|)[A-Za-z0-9_]+:} $microsd_inst \
+#             {\1} microsd_inst_name
 
 #   Find information about the entity's clock.
 

@@ -2,7 +2,8 @@
 
 # set spicmd_inst             [get_instance]
 
-# regsub -all {[A-Za-z0-9_]+:} $spicmd_inst "" spicmd_inst_name
+# regsub -all {^[A-Za-z0-9_]+:|(\|)[A-Za-z0-9_]+:} $spicmd_inst \
+#             {\1} spicmd_inst_name
 
 
 #   Process SDC file for SPI abstract.  Push the new instance onto the

@@ -2,7 +2,8 @@
 
 # set statctl_spi_inst        [get_instance]
 
-# regsub -all {[A-Za-z0-9_]+:} $statctl_spi_inst "" statctl_spi_inst_name
+# regsub -all {^[A-Za-z0-9_]+:|(\|)[A-Za-z0-9_]+:} $statctl_spi_inst \
+#             {\1} statctl_spi_inst_name
 
 
 #   Process SDC file for SPI command.  Push the new instance onto the
