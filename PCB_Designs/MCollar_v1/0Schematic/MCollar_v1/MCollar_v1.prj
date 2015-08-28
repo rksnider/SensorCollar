@@ -23,6 +23,7 @@ KEY NumberingType "INDEPTH"
 KEY OrderFileName ".\"
 KEY HdlUtilsConfigFile "hdlutils.ini"
 KEY PartListerCfg "C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1\PartLister.ipl"
+KEY PropertyDefinitions "%SDD_HOME%\standard\netlist.prp"
 ENDSECTION
 SECTION FlowSettings
 KEY FlowType "NETLIST"

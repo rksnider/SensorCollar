@@ -363,3 +363,6 @@
 [2015-07-07 14.07.10] Successfully created [AutoSave] backup [2015-07-07 14.07.08 - auto.zip] requested by [ECEROSSLAB01:j82t579].
 [2015-07-07 14.07.10] Removing excessive [AutoSave] backup file [C:\Users\kyler.callahan\Documents\work\MCollar_v1\0Schematic\MCollar_v1\ProjectBackup\backups\2015-07-06 10.07.14 - auto.zip].
 [2015-07-07 14.07.10] [AutoSave] backup file [MCollar_v1\ProjectBackup\backups\2015-07-06 10.07.14 - auto.zip] removed.
+[2015-08-27 12.55.21] Successfully created [Constraints Definition Upgrade] backup [2015-08-27 12.55.21 - consDefUpgr.zip] requested by [BZ-ECE-CB508-01:s58p233].
+[2015-08-27 12.55.21] Migrated iCDB content backup file [cdbback\2015-08-27 12.55.20-5864.zip] removed.
+[2015-08-27 12.55.26] Successfully created [AutoSave] backup [2015-08-27 12.55.21 - auto.zip] requested by [BZ-ECE-CB508-01:s58p233].
