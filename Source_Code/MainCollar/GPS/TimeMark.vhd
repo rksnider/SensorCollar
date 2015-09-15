@@ -64,10 +64,9 @@ USE WORK.MSG_UBX_NAV_SOL_PKG.ALL ;  --  Navagation Solution message.
 --! @param      memrcv_in             Request for the memory bus is granted.
 --! @param      memaddr_out           Address of the byte of memory to read.
 --! @param      memdata_in            Data byte of memory that is addressed.
---! @param      memoutput_out         Byte to write to memory.
 --! @param      memread_en_out        Enable the memory for reading.
---! @param      memwrite_en_out       Enable the memory for writing.
 --! @param      marker_out            Time marker external signal.
+--! @param      marker_time_out       Time marker was lowered.
 --! @param      req_position_out      Request a new position fix be
 --!                                   obtained.
 --! @param      req_timemark_out      Request a new time mark msg be
@@ -95,10 +94,10 @@ entity TimeMark is
     memaddr_out           : out   std_logic_vector (memaddr_bits_g-1
                                                     downto 0) ;
     memdata_in            : in    std_logic_vector (7 downto 0) ;
-    memoutput_out         : out   std_logic_vector (7 downto 0) ;
     memread_en_out        : out   std_logic ;
-    memwrite_en_out       : out   std_logic ;
     marker_out            : out   std_logic ;
+    marker_time_out       : out   std_logic_vector (gps_time_bits_c-1
+                                                    downto 0) ;
     req_position_out      : out   std_logic ;
     req_timemark_out      : out   std_logic
   ) ;
@@ -126,7 +125,6 @@ architecture rtl of TimeMark is
 
   type TimeMarkState is   (
     MARK_STATE_BYTE_LOAD,
-    MARK_STATE_BYTE_SAVE,
     MARK_STATE_REQMEM,
     MARK_STATE_RCVMEM,
     MARK_STATE_CHECK,
@@ -137,7 +135,6 @@ architecture rtl of TimeMark is
     MARK_STATE_CHK_ACCURACY,
     MARK_STATE_SUCCESS,
     MARK_STATE_END,
-    MARK_STATE_LOGMARK,
     MARK_STATE_DONE
   ) ;
 
@@ -198,10 +195,6 @@ architecture rtl of TimeMark is
                         gps_time_bits_c-1
                         downto
                         byte_buffer_bytes_c*8 - gps_time_bytes_c*8) ;
-
-  alias  marker_time_bits       :
-      std_logic_vector (gps_time_bits_c-1 downto 0) is
-      byte_buffer      (gps_time_bits_c-1 downto 0) ;
 
   alias  posacc                 :
       std_logic_vector (MUNSol_pAcc_size_c*8-1 downto 0) is
@@ -289,19 +282,15 @@ begin
       memreq_out                <= '0' ;
       mem_address               <= (others => '0') ;
       memread_en_out            <= '0' ;
-      memwrite_en_out           <= '0' ;
       time_mark_target          <= (others => '0') ;
       marker_out                <= '0' ;
+      marker_time_out           <= (others => '0') ;
       last_posbank              <= '0' ;
       last_tmbank               <= '0' ;
       req_position_out          <= '0' ;
       cur_state                 <= MARK_STATE_POS_WAIT ;
 
     elsif (rising_edge (gated_clk)) then
-
-      --  Write enable is set for only one clock cycle.
-
-      memwrite_en_out           <= '0' ;
 
       --  Start a new time mark generation sequence.
 
@@ -340,25 +329,6 @@ begin
               cur_state     <= MARK_STATE_BYTE_LOAD ;
             else
               cur_state     <= return_state ;
-            end if ;
-
-          --  Subroutine like state to save a value into memory from a bit
-          --  vector.  Address must start one byte before the first byte to
-          --  be written.
-
-          when MARK_STATE_BYTE_SAVE     =>
-            if (byte_count > 0) then
-              memoutput_out   <= byte_buffer (7 downto 0) ;
-
-              byte_buffer (byte_buffer'length-8-1 downto 0)   <=
-                      byte_buffer (byte_buffer'length-1 downto 8) ;
-
-              byte_count      <= byte_count - 1 ;
-              mem_address     <= mem_address + 1 ;
-              memwrite_en_out <= '1' ;
-              cur_state       <= MARK_STATE_BYTE_SAVE ;
-            else
-              cur_state       <= return_state ;
             end if ;
 
         --  Check how current the GPS position is.  It must always be less
@@ -445,7 +415,7 @@ begin
           when MARK_STATE_END           =>
             if (last_millibit = curtime.week_millisecond (0)) then
               marker_out        <= '0' ;
-              marker_time_bits  <= TO_STD_LOGIC_VECTOR (curtime) ;
+              marker_time_out   <= TO_STD_LOGIC_VECTOR (curtime) ;
 
               if (unsigned (curtime.week_millisecond) >=
                   millisec_week_c - time_mark_interval_g) then
@@ -458,30 +428,12 @@ begin
                                      time_mark_interval_g ;
               end if ;
 
-              memreq_out          <= '1' ;
-              cur_state           <= MARK_STATE_LOGMARK ;
+              cur_state           <= MARK_STATE_DONE ;
             else
               cur_state           <= MARK_STATE_END ;
             end if ;
 
-          --  Log the time the timemark was made to memory.
-
-          when MARK_STATE_LOGMARK       =>
-            if (memrcv_in = '1') then
-              mem_address         <=
-                  TO_UNSIGNED (msg_ram_base_c +
-                               msg_ram_marktime_addr_c - 1,
-                               mem_address'length) ;
-              byte_count          <= TO_UNSIGNED (gps_time_bytes_c,
-                                                  byte_count'length) ;
-              cur_state           <= MARK_STATE_BYTE_SAVE ;
-              return_state        <= MARK_STATE_DONE ;
-            else
-              cur_state           <= MARK_STATE_LOGMARK ;
-            end if ;
-
           when MARK_STATE_DONE          =>
-            memreq_out            <= '0' ;
             time_mark_pending     <= '0' ;
 
             last_tmbank           <= tmbank_in ;

@@ -99,7 +99,7 @@ entity GPSmessages is
     pollinterval_in       : in    unsigned (13 downto 0) ;
     datavalid_out         : out   std_logic_vector (msg_ram_blocks_c-1
                                                     downto 0) ;
-    
+
     gpsmem_clk_out        : out   std_logic ;
     gpsmem_addr_out       : out   std_logic_vector (mem_addrbits_g-1
                                                     downto 0) ;
@@ -213,6 +213,8 @@ architecture structural of GPSmessages is
       reset           : in    std_logic ;
       clk             : in    std_logic ;
       curtime_in      : in    std_logic_vector (gps_time_bits_c-1
+                                                downto 0) ;
+      markertime_in   : in    std_logic_vector (gps_time_bits_c-1
                                                 downto 0) ;
       inbyte_in       : in    std_logic_vector (7 downto 0) ;
       inready_in      : in    std_logic ;
@@ -338,9 +340,9 @@ architecture structural of GPSmessages is
       memaddr_out           : out   std_logic_vector (memaddr_bits_g-1
                                                       downto 0) ;
       memread_en_out        : out   std_logic ;
-      memwrite_en_out       : out   std_logic ;
-      memoutput_out         : out   std_logic_vector (7 downto 0) ;
       marker_out            : out   std_logic ;
+      marker_time_out       : out   std_logic_vector (gps_time_bits_c-1
+                                                      downto 0) ;
       req_position_out      : out   std_logic ;
       req_timemark_out      : out   std_logic
     ) ;
@@ -430,9 +432,6 @@ architecture structural of GPSmessages is
 
   signal memaddr_timemark     : std_logic_vector (mem_addrbits_g-1
                                                   downto 0) ;
-  signal memwrite_to_timemark : std_logic_vector (mem_databits_g-1
-                                                  downto 0) ;
-  signal memwrite_en_timemark : std_logic ;
   signal memread_en_timemark  : std_logic ;
   signal memctl_timemark      : std_logic_vector (mem_io_bits_c-1
                                                   downto 0) ;
@@ -487,6 +486,8 @@ architecture structural of GPSmessages is
 
   signal tm_req_position      : std_logic ;
   signal tm_req_timemark      : std_logic ;
+  signal tm_marker_time       : std_logic_vector (gps_time_bits_c-1
+                                                  downto 0) ;
 
   --  Clock generation information.
   --  The UART receiver requires 16 clock cycles to process a bit.  There
@@ -608,6 +609,7 @@ begin
       reset                   => reset,
       clk                     => parse_clk,
       curtime_in              => curtime_in,
+      markertime_in           => tm_marker_time,
       inbyte_in               => rx_data,
       inready_in              => rx_ready,
       inreceived_out          => rx_received,
@@ -748,16 +750,15 @@ begin
       memreq_out              => memrequesters (memreq_timemark_c),
       memaddr_out             => memaddr_timemark,
       memread_en_out          => memread_en_timemark,
-      memwrite_en_out         => memwrite_en_timemark,
-      memoutput_out           => memwrite_to_timemark,
       marker_out              => timemarker_out,
+      marker_time_out         => tm_marker_time,
       req_position_out        => tm_req_position,
       req_timemark_out        => tm_req_timemark
     ) ;
 
-  memctl_timemark             <= memwrite_en_timemark &
+  memctl_timemark             <= memwrite_en_none_c &
                                  memread_en_timemark &
-                                 memwrite_to_timemark & memaddr_timemark ;
+                                 memwrite_to_none_c & memaddr_timemark ;
 
   set2D_element (memreq_timemark_c, memctl_timemark, meminput_tbl) ;
 

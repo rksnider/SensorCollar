@@ -58,6 +58,7 @@ use WORK.msg_ubx_tim_tm2_pkg.all ;
 --! @param      clk             Clock used to move throuth states in the
 --!                             entity and its components.
 --! @param      curtime_in      The GPS Time to use for logging events at.
+--! @param      markertime_in   The time the last Time Marker generated.
 --! @param      inbyte_in       Byte received to add to message to parse.
 --! @param      inready_in      The byte is ready to be parsed.
 --! @param      inreceived_out  The byte has been received for parsing.
@@ -90,6 +91,7 @@ entity GPSmessageParser is
     reset           : in    std_logic ;
     clk             : in    std_logic ;
     curtime_in      : in    std_logic_vector (gps_time_bits_c-1 downto 0) ;
+    markertime_in   : in    std_logic_vector (gps_time_bits_c-1 downto 0) ;
     inbyte_in       : in    std_logic_vector (7 downto 0) ;
     inready_in      : in    std_logic ;
     inreceived_out  : out   std_logic ;
@@ -737,9 +739,9 @@ begin
 
           elsif (m_number = msg_ubx_tim_tm2_number_c) then
 
-            --  Log the time the timemark message was received at.
+            --  Log the time the timemark message was generated at.
 
-            log_time                <= curtime_in ;
+            log_time                <= markertime_in ;
             byte_count              <= TO_UNSIGNED (gps_time_bytes_c,
                                                     byte_count'length) ;
             msg_memaddr             <=
