@@ -79,22 +79,21 @@ end entity FastConstCounter ;
 architecture rtl of FastConstCounter is
 
   --  Constants and signals used by non-subdivided adds and divided adds
-  --  both.
+  --  both.  The number of bits added per period is reduced slightly to
+  --  avoid round up.
 
   constant CountConstBits_c   : natural := const_bits (CounterConstant_g) ;
-  constant CountMaxBits_c     : natural := const_bits (CounterLimit_g-1) ;
+  constant CountLimitBits_c   : natural :=
+              const_bits (CounterLimit_g + CounterConstant_g - 1) ;
 
   constant AddBitsPerPeriod_c : natural :=
               natural (trunc (real (AddBitsPerUsec_g) /
-                              real (clk_freq_g) * 1.0e6)) ;
+                              real (clk_freq_g) * 1.0e6 * 0.99)) ;
 
 
-  constant CounterMax_c       : natural :=
-              natural (trunc (real (CounterLimit_g) /
-                                    real (CounterConstant_g) - 1.0) *
-                                    real (CounterConstant_g)) ;
+  signal result               : unsigned (CountLimitBits_c-1 downto 0) ;
 
-  signal result               : unsigned (CountMaxBits_c-1 downto 0) ;
+  signal carry_next           : std_logic ;
 
 begin
 
@@ -102,30 +101,28 @@ begin
   --  Don't subdivide the counting if not needed.
   --------------------------------------------------------------------------
 
-  nonsubdiv : if (AddBitsPerPeriod_c >= CountMaxBits_c) generate
+  nonsubdiv : if (AddBitsPerPeriod_c >= CountLimitBits_c) generate
 
     begin
 
       counter: process (reset, clk)
-        variable diff         : signed (CountMaxBits_c downto 0) ;
+        variable diff         : signed (CountLimitBits_c downto 0) ;
       begin
-        --  Calculate the result of the first clock cycle and set the
-        --  carry apropriately.
+        --  Calculate the result of the first clock cycle.  Counting will
+        --  not start until the second rising clock edge.
 
         if (reset = '1') then
+          result              <= preset_in ;
           result_out          <= preset_in ;
+          carry_out           <= '0' ;
+          carry_next          <= '0' ;
 
-          diff                := signed (RESIZE (preset_in, diff'length)) -
-                                 (CounterLimit_g - CounterConstant_g) ;
+        --  The carry signal is set one half clock cycle before rollover
+        --  and cleared one half clock cycle after.  This allows synchronous
+        --  carry chains.
 
-          if (diff (diff'length-1) = '1') then
-            result            <= preset_in + CounterConstant_g ;
-            carry_out         <= '0' ;
-          else
-            result            <= unsigned (diff (CountMaxBits_c-1
-                                                 downto 0)) ;
-            carry_out         <= '1' ;
-          end if ;
+        elsif (falling_edge (clk)) then
+          carry_out           <= carry_next ;
 
         --  Output the result of the clock cycle and calculate the value
         --  to use for the next one.  Carry is set for the next clock
@@ -135,15 +132,14 @@ begin
           result_out          <= result ;
 
           diff                := signed (RESIZE (result, diff'length)) -
-                                 (CounterLimit_g - CounterConstant_g) ;
+                                 CounterLimit_g + CounterConstant_g ;
 
           if (diff (diff'length-1) = '1') then
             result            <= result + CounterConstant_g ;
-            carry_out         <= '0' ;
+            carry_next        <= '0' ;
           else
-            result            <= unsigned (diff (CountMaxBits_c-1
-                                                 downto 0)) ;
-            carry_out         <= '1' ;
+            result            <= RESIZE (unsigned (diff), result'length) ;
+            carry_next        <= '1' ;
           end if ;
         end if ;
       end process counter ;
@@ -155,31 +151,41 @@ begin
   --  clock cycle.
   --------------------------------------------------------------------------
 
-  subdiv : if (AddBitsPerPeriod_c < CountMaxBits_c) generate
+  subdiv : if (AddBitsPerPeriod_c < CountLimitBits_c) generate
 
       --  Adder bits.
 
       constant LowBitCnt_c    : natural := AddBitsPerPeriod_c ;
-      constant HighBitCnt_c   : natural := CountMaxBits_c -
+      constant HighBitCnt_c   : natural := CountLimitBits_c -
                                            AddBitsPerPeriod_c ;
+
+      constant CounterLimit_full_c  : unsigned (CountLimitBits_c-1
+                                                downto 0) :=
+                  TO_UNSIGNED (CounterLimit_g, CountLimitBits_c) ;
+      constant CounterLimit_low_c   : unsigned (LowBitCnt_c-1 downto 0) :=
+                  RESIZE (CounterLimit_full_c, LowBitCnt_c) ;
+      constant CounterLimit_high_c  : unsigned (HighBitCnt_c-1 downto 0) :=
+                  RESIZE (SHIFT_RIGHT (CounterLimit_full_c, LowBitCnt_c),
+                          HighBitCnt_c) ;
 
       signal low_bits         : unsigned (LowBitCnt_c-1 downto 0) ;
       signal high_bits        : unsigned (HighBitCnt_c-1 downto 0) ;
       signal pre_high_bits    : unsigned (HighBitCnt_c-1 downto 0) ;
+      signal pre_high_reset   : unsigned (HighBitCnt_c-1 downto 0) ;
 
       signal preset_low       : unsigned (LowBitCnt_c-1 downto 0) ;
       signal preset_high      : unsigned (HighBitCnt_c-1 downto 0) ;
 
       signal counter_reset    : std_logic ;
-      signal carry_next       : std_logic ;
 
       signal high_clk         : std_logic ;
 
     begin
 
-      preset_low              <= preset_in (LowBitCnt_c-1 downto 0) ;
-      preset_high             <= preset_in (CountMaxBits_c-1
-                                            downto LowBitCnt_c) ;
+      preset_low              <= RESIZE (preset_in, LowBitCnt_c) ;
+      preset_high             <= RESIZE (SHIFT_RIGHT (preset_in,
+                                                      LowBitCnt_c),
+                                         HighBitCnt_c) ;
 
       result                  <= high_bits & low_bits ;
 
@@ -190,83 +196,87 @@ begin
       ----------------------------------------------------------------------
 
       low_counter: process (reset, clk)
-        variable diff         : signed (low_bits'length downto 0) ;
+        variable diff_low       : signed (low_bits'length downto 0) ;
+        variable diff_limit     : signed (low_bits'length downto 0) ;
+        variable high_bits_new  : unsigned (high_bits'length-1 downto 0) ;
       begin
-        --  Calculate the result of the first clock cycle and set the
-        --  carry apropriately.
+        --  Calculate the result of the first clock cycle.  Counting will
+        --  not start until the second rising clock edge.
 
         if (reset = '1') then
           counter_reset       <= '0' ;
           carry_next          <= '0' ;
+          carry_out           <= '0' ;
+          high_clk            <= '0' ;
+          result_out          <= preset_in ;
 
-          if (preset_in = CounterMax_c) then
-            low_bits          <= (others => '0') ;
-            high_bits         <= (others => '0') ;
-            high_clk          <= '0' ;
-            result_out        <= (others => '0') ;
-            carry_out         <= '1' ;
-          else
-            result_out        <= preset_in ;
-            carry_out         <= '0' ;
+          low_bits            <= preset_low ;
+          high_bits           <= preset_high ;
 
-            diff              := signed (RESIZE (preset_low, diff'length)) -
-                                 ((2 ** low_bits'length) -
-                                  CounterConstant_g) ;
-
-            if (diff (diff'length-1) = '1') then
-              low_bits        <= preset_low + CounterConstant_g ;
-              high_clk        <= '0' ;
-            else
-              low_bits        <= unsigned (diff (low_bits'length-1
-                                                 downto 0)) ;
-              high_bits       <= TO_UNSIGNED (1, high_bits'length) ;
-              high_clk        <= '1' ;
-            end if ;
-          end if ;
-
-        --  Determine if the next rising edge will result in rollover.
         --  The carry signal is set one half clock cycle before rollover
         --  and cleared one half clock cycle after.  This allows synchronous
         --  carry chains.
 
         elsif (falling_edge (clk)) then
-          high_clk            <= '0' ;
-
-          if (result = CounterMax_c) then
-            carry_next        <= '1' ;
-            carry_out         <= '1' ;
-          else
-            carry_next        <= '0' ;
-            carry_out         <= '0' ;
-          end if ;
+          carry_out           <= carry_next ;
 
         --  Output the result of the clock cycle and calculate the value
-        --  to use for the next one.
+        --  to use for the next one.  Rollover of both the lower bit
+        --  counter and the counter as a whole is done here.
 
         elsif (rising_edge (clk)) then
           result_out          <= result ;
 
-          if (carry_next = '1') then
-            counter_reset     <= '1' ;
-            low_bits          <= (others => '0') ;
-            high_bits         <= (others => '0') ;
-            high_clk          <= '1' ;
-          else
-            counter_reset     <= '0' ;
+          counter_reset       <= '0' ;
+          carry_next          <= '0' ;
 
-            diff              := signed (RESIZE (low_bits, diff'length)) -
+          --  Determine if low bit counter roll over has occured.  This
+          --  is indicated by a non negative value from the subtraction
+          --  (sign bit is clear).
+
+          diff_low            := signed (RESIZE (low_bits,
+                                                 diff_low'length)) -
                                  ((2 ** low_bits'length) -
                                   CounterConstant_g) ;
 
-            if (diff (diff'length-1) = '1') then
-              low_bits        <= low_bits + CounterConstant_g ;
-              high_clk        <= '0' ;
-            else
-              low_bits        <= unsigned (diff (low_bits'length-1
-                                                 downto 0)) ;
-              high_bits       <= pre_high_bits ;
-              high_clk        <= '1' ;
-            end if ;
+          if (diff_low (diff_low'length-1) = '1') then
+            low_bits          <= low_bits + CounterConstant_g ;
+            high_bits_new     := high_bits ;
+            high_clk          <= '0' ;
+
+            diff_limit        := signed (RESIZE (low_bits,
+                                                 diff_limit'length)) +
+                                 (CounterConstant_g -
+                                  signed (RESIZE (CounterLimit_low_c,
+                                                  diff_limit'length))) ;
+          else
+            low_bits          <= RESIZE (unsigned (diff_low),
+                                         low_bits'length) ;
+            high_bits_new     := pre_high_bits ;
+            high_bits         <= pre_high_bits ;
+            high_clk          <= '1' ;
+
+            diff_limit        := signed (RESIZE (low_bits,
+                                                 diff_limit'length)) -
+                                 ((2 ** low_bits'length) -
+                                  CounterConstant_g +
+                                  signed (RESIZE (CounterLimit_low_c,
+                                                  diff_limit'length))) ;
+          end if ;
+
+          --  Determine if full counter roll over has occured.  This is
+          --  indicated when the low bit counter has rolled over (sign
+          --  bit clear) and the high bit counter has reached the maximum
+          --  value.
+
+          if (high_bits_new = CounterLimit_high_c and
+              diff_limit (diff_limit'length-1) = '0') then
+
+            low_bits          <= RESIZE (unsigned (diff_limit),
+                                         low_bits'length) ;
+            high_bits         <= (others => '0') ;
+            counter_reset     <= '1' ;
+            carry_next        <= '1' ;
           end if ;
         end if ;
       end process low_counter ;
@@ -276,20 +286,21 @@ begin
       --  High Counter Bits.
       ----------------------------------------------------------------------
 
-      high_counter : process (reset, high_clk)
+      pre_high_reset        <=
+                preset_high + 1
+                    when (preset_high /= CounterLimit_high_c) else
+                (others => '0') ;
+
+      high_counter : process (reset, clk)
       begin
         if (reset = '1') then
-          if (preset_in = CounterMax_c) then
-            pre_high_bits   <= TO_UNSIGNED (1, pre_high_bits'length) ;
-          else
-            pre_high_bits   <= preset_high + 1 ;
-          end if ;
+          pre_high_bits     <= pre_high_reset ;
 
-        elsif (rising_edge (high_clk)) then
+        elsif (rising_edge (clk)) then
           if (counter_reset = '1') then
             pre_high_bits   <= TO_UNSIGNED (1, pre_high_bits'length) ;
 
-          else
+          elsif (high_clk = '1') then
             pre_high_bits   <= pre_high_bits + 1 ;
           end if ;
         end if ;

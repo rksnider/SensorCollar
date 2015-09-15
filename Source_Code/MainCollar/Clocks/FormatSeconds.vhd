@@ -215,7 +215,7 @@ architecture rtl of FormatSeconds is
   --  Base year is 2012.  It is a leap year.  This year is 42 years since
   --  the start of the epoch in 1970.
 
-  constant start_2012_c           : natural := (42 * 365 + 10) * day_sec_c ;
+  constant start_2012_c           : integer := (42 * 365 + 10) * day_sec_c ;
 
   --  Daylight saving time data.  Months and days start at one which must be
   --  removed.
@@ -296,6 +296,7 @@ begin
   to_dt : process (reset, to_datetime_clk)
     variable time_sec_size_v  : unsigned (const_bits (366 * day_sec_c)-1
                                           downto 0) ;
+    variable cur_state_v      : DateTimeStates_t ;
   begin
     if (reset = '1') then
       datetime_out            <= (others => '0') ;
@@ -318,7 +319,8 @@ begin
           --  Start counting from the beginning of 2012.
 
           to_seconds          <= epoch70_in + leap_seconds_in -
-                                 start_2012_c + timezone_g ;
+                                 const_unsigned (start_2012_c -
+                                                 timezone_g) ;
 
           to_counter          <= TO_UNSIGNED (12, to_counter'length) ;
           to_dst_start        <= TO_UNSIGNED (dst_start_2012_c *
@@ -348,8 +350,11 @@ begin
                          time_sec_size_v'length) ;
 
         if (to_seconds < time_sec_size_v) then
-          to_cur_state        <= to_next_state ;
+          cur_state_v         := to_next_state ;
+          to_cur_state        <= cur_state_v ;
         else
+          cur_state_v         := to_cur_state ;
+
           to_seconds          <= to_seconds - time_sec_size_v ;
           to_time_diff_index  <= to_time_diff_index + 1 ;
           to_counter          <= to_counter + 1 ;
@@ -398,7 +403,7 @@ begin
         --  Break the time into year, month, month day, hour, minute, and
         --  seconds.
 
-        case (to_cur_state) is
+        case (cur_state_v) is
 
           --  Count years from one leap year to the next.
 
@@ -420,12 +425,12 @@ begin
           --  Count months.
 
           when dtst_month_e         =>
-            to_datetime.year    <= to_counter ;
+            to_datetime.year    <= RESIZE (to_counter, dt_yearbits_c) ;
             to_counter          <= TO_UNSIGNED (1, to_counter'length) ;
 
-            --  Adjust for daylight savings time in the northern hemisphere
-            --  (starts and ends in the same year) and southern hemisphere
-            --  (starts in one year and ends in the next).
+            --  Adjust for daylight savings time in the northern
+            --  hemisphere (starts and ends in the same year) and southern
+            --  hemisphere (starts in one year and ends in the next).
 
             if (use_dst_g = '1') then
               if ((dst_start_mth_g < dst_end_mth_g      and
@@ -459,47 +464,52 @@ begin
           --  Count days in the current month.
 
           when dtst_mday_e          =>
-            to_datetime.month   <= to_counter ;
+            to_datetime.month   <= RESIZE (to_counter, dt_monthbits_c) ;
             to_counter          <= TO_UNSIGNED (1, to_counter'length) ;
-            to_time_diff_index  <= TO_UNSIGNED (day_times_start_c,
-                                                to_time_diff_index'length) ;
+            to_time_diff_index  <=
+                TO_UNSIGNED (day_times_start_c,
+                             to_time_diff_index'length) ;
             to_next_state       <= dtst_hour_e ;
             to_cur_state        <= dtst_samediff_e ;
 
           --  Count hours in the current day.
 
           when dtst_hour_e          =>
-            to_datetime.mday    <= to_counter ;
+            to_datetime.mday    <= RESIZE (to_counter, dt_mdaybits_c) ;
             to_counter          <= TO_UNSIGNED (0, to_counter'length) ;
-            to_time_diff_index  <= TO_UNSIGNED (hour_times_start_c,
-                                                to_time_diff_index'length) ;
+            to_time_diff_index  <=
+                TO_UNSIGNED (hour_times_start_c,
+                             to_time_diff_index'length) ;
             to_next_state       <= dtst_fourmin_e ;
             to_cur_state        <= dtst_samediff_e ;
 
           --  Count four minute sections in the current hour.
 
           when dtst_fourmin_e       =>
-            to_datetime.hour    <= to_counter ;
+            to_datetime.hour    <= RESIZE (to_counter, dt_hourbits_c) ;
             to_counter          <= TO_UNSIGNED (0, to_counter'length) ;
-            to_time_diff_index  <= TO_UNSIGNED (fourmin_times_start_c,
-                                                to_time_diff_index'length) ;
+            to_time_diff_index  <=
+                TO_UNSIGNED (fourmin_times_start_c,
+                             to_time_diff_index'length) ;
             to_next_state       <= dtst_minute_e ;
             to_cur_state        <= dtst_samediff_e ;
 
           --  Count minutes in the current hour.
 
           when dtst_minute_e        =>
-            to_counter          <= to_counter * 4 ;
-            to_time_diff_index  <= TO_UNSIGNED (minute_times_start_c,
-                                                to_time_diff_index'length) ;
+            to_counter          <= RESIZE (to_counter * 4,
+                                           to_counter'length) ;
+            to_time_diff_index  <=
+                TO_UNSIGNED (minute_times_start_c,
+                             to_time_diff_index'length) ;
             to_next_state       <= dtst_second_e ;
             to_cur_state        <= dtst_samediff_e ;
 
           --  Store the remaining seconds.
 
           when dtst_second_e        =>
-            to_datetime.minute  <= to_counter ;
-            to_datetime.second  <= to_seconds ;
+            to_datetime.minute  <= RESIZE (to_counter, dt_minbits_c) ;
+            to_datetime.second  <= RESIZE (to_seconds, dt_secbits_c) ;
             to_cur_state        <= dtst_done_e ;
             to_next_state       <= dtst_done_e ;
 
@@ -532,6 +542,7 @@ begin
                                              downto 0) ;
     variable dst_start_passed_v : boolean ;
     variable dst_end_passed_v   : boolean ;
+    variable cur_state_v      : DateTimeStates_t ;
   begin
     if (reset = '1') then
       epoch70_out               <= (others => '0') ;
@@ -556,10 +567,13 @@ begin
           datetime_v            := TO_DATE_TIME (datetime_in) ;
           from_datetime         <= datetime_v ;
 
-          from_seconds          <= start_2012_c - timezone_g - 
-                                   leap_seconds_in ;
+          from_seconds          <= const_unsigned (start_2012_c -
+                                                   timezone_g) -
+                                   RESIZE (leap_seconds_in,
+                                           from_seconds'length) ;
 
-          from_counter          <= datetime_v.year - 12 ;
+          from_counter          <= RESIZE (datetime_v.year - 12,
+                                           from_counter'length) ;
           from_dst_start        <= TO_UNSIGNED (dst_start_day_2012_c,
                                                 from_dst_start'length) ;
           from_dst_end          <= TO_UNSIGNED (dst_end_day_2012_c,
@@ -582,8 +596,11 @@ begin
                          time_sec_size_v'length) ;
 
         if (from_counter = 0) then
-          from_cur_state        <= from_next_state ;
+          cur_state_v           := from_next_state ;
+          from_cur_state        <= cur_state_v ;
         else
+          cur_state_v           := from_cur_state ;
+
           from_seconds          <= from_seconds + time_sec_size_v ;
           from_time_diff_index  <= from_time_diff_index + 1 ;
           from_counter          <= from_counter - 1 ;
@@ -625,10 +642,10 @@ begin
           end if ;
         end if ;
 
-        --  Combine the time from year, month, month day, hour, minute, and
-        --  seconds into seconds since Jan 1, 1970 Midnight GMT.
+        --  Combine the time from year, month, month day, hour, minute,
+        --  and seconds into seconds since Jan 1, 1970 Midnight GMT.
 
-        case (from_cur_state) is
+        case (cur_state_v) is
 
           --  Count years from one leap year to the next.
 
@@ -650,11 +667,12 @@ begin
           --  Count months.
 
           when dtst_month_e         =>
-            from_counter          <= from_datetime.month - 1 ;
+            from_counter          <= RESIZE (from_datetime.month - 1,
+                                             from_counter'length) ;
 
-            --  Adjust for daylight savings time in the northern hemisphere
-            --  (starts and ends in the same year) and southern hemisphere
-            --  (starts in one year and ends in the next).
+            --  Adjust for daylight savings time in the northern
+            --  hemisphere (starts and ends in the same year) and southern
+            --  hemisphere (starts in one year and ends in the next).
 
             if (use_dst_g = '1') then
               dst_start_passed_v  :=
@@ -704,7 +722,8 @@ begin
           --  Count days in the current month.
 
           when dtst_mday_e          =>
-            from_counter          <= from_datetime.mday - 1 ;
+            from_counter          <= RESIZE (from_datetime.mday - 1,
+                                             from_counter'length) ;
             from_time_diff_index  <=
                       TO_UNSIGNED (day_times_start_c,
                                    from_time_diff_index'length) ;
@@ -714,7 +733,8 @@ begin
           --  Count hours in the current day.
 
           when dtst_hour_e          =>
-            from_counter          <= from_datetime.hour ;
+            from_counter          <= RESIZE (from_datetime.hour,
+                                             from_counter'length) ;
             from_time_diff_index  <=
                       TO_UNSIGNED (hour_times_start_c,
                                    from_time_diff_index'length) ;
@@ -725,7 +745,7 @@ begin
 
           when dtst_fourmin_e       =>
             from_counter          <=
-                      SHIFT_RIGHT_LL (from_datetime.minute, 2)  ;
+                      SHIFT_RIGHT (from_datetime.minute, 2) ;
             from_time_diff_index  <=
                       TO_UNSIGNED (fourmin_times_start_c,
                                    from_time_diff_index'length) ;
@@ -735,8 +755,10 @@ begin
           --  Count minutes in the current hour.
 
           when dtst_minute_e        =>
-            from_counter          <= from_datetime.minute and
-                      TO_UNSIGNED (2 ** 2 - 1, dt_minbits_c) ;
+            from_counter          <= RESIZE (from_datetime.minute and
+                                             TO_UNSIGNED (2 ** 2 - 1,
+                                                          dt_minbits_c),
+                                             from_counter'length);
             from_time_diff_index  <=
                       TO_UNSIGNED (minute_times_start_c,
                                    from_time_diff_index'length) ;
