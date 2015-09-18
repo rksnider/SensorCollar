@@ -1,0 +1,141 @@
+[2015.09.15 11:31:40] [0000m.00s.030ms] [0] WELCOME
+[2015.09.15 11:31:40] [0000m.00s.030ms] [1] iCDB Server ver.1.094, vt40T8RtWJOG2cE2Nlvc5A, build:535943 created 2013-01-08 09:09:26, sources stamp:vt40T8RtWJOG2cE2Nlvc5A
+[2015.09.15 11:31:40] [0000m.00s.030ms] [1] Copyright 2013 Mentor Graphics Corporation. All Rights Reserved.
+[2015.09.15 11:31:40] [0000m.00s.030ms] [1] Base flow version [7.9.4]
+[2015.09.15 11:31:40] [0000m.00s.040ms] [1] GBS Install Id [27413], Flow Id [PADS 9.5], Full Flow Name [PADS 9.5], Exact Access Date [Jun 1 2012]
+[2015.09.15 11:31:40] [0000m.00s.040ms] [1] UPDATE Install Info, GBS Install Id [29618], UPDATE Name [PADS 9.5 Update 1]
+[2015.09.15 11:31:40] [0000m.00s.040ms] [1] Machine [BZ-ECE-CB508-01]  User [s58p233]  PID [7688]
+[2015.09.15 11:31:40] [0000m.00s.040ms] [1] Operating system [Microsoft Windows 7 Enterprise Edition, 64-bit Service Pack 1 (build 7601)]
+[2015.09.15 11:31:40] [0000m.00s.040ms] [1] Current working dir [C:\Users\s58p233\Desktop\Old Work Computer Docs\Sumer Work 2015\Interface Board\0Schematic\Interface Board]
+[2015.09.15 11:31:40] [0000m.00s.040ms] [1] PATH [C:\MentorGraphics\9.5PADS\SDD_HOME\wv\win32\bin;C:\MentorGraphics\9.5PADS\SDD_HOME\common\win32\bin;C:\MentorGraphics\9.5PADS\SDD_HOME\common\win32\lib;C:\MentorGraphics\9.5PADS\MGC_HOME.ixn\bin;C:\MentorGraphics\9.5PADS\MGC_HOME.ixn\lib;C:\MentorGraphics\9.5PADS\MGC_HOME.ixn\bin;C:\MentorGraphics\9.5PADS\MGC_HOME.ixn\lib;C:\Program Files (x86)\AMD APP\bin\x86_64;C:\Program Files (x86)\AMD APP\bin\x86;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;C:\MATLAB\R2015a\runtime\win64;C:\MATLAB\R2015a\bin;C:\Program Files (x86)\MiKTeX 2.9\miktex\bin\;C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Bin\;C:\Program Files\IVI Foundation\VISA\Win64\Bin\;C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Bin;]
+[2015.09.15 11:31:40] [0000m.00s.040ms] [1] SDD_HOME [C:\MentorGraphics\9.5PADS\SDD_HOME] on file system [NTFS]
+[2015.09.15 11:31:40] [0000m.00s.040ms] [1] SDD_PLATFORM [win32]
+[2015.09.15 11:31:40] [0000m.00s.040ms] [1] WDIR [C:\PADS Projects;C:\MentorGraphics\9.5PADS\SDD_HOME\standard]
+[2015.09.15 11:31:40] [0000m.00s.040ms] [1] Local iCDB working dir [C:\PADS Projects\iCDB] on file system [NTFS]
+[2015.09.15 11:31:40] [0000m.00s.040ms] [2] S: Loading config files
+[2015.09.15 11:31:40] [0000m.00s.040ms] [1] Config file [C:\Users\s58p233\Desktop\Old Work Computer Docs\Sumer Work 2015\Interface Board\0Schematic\Interface Board\database\cdbsvr\Server.cfg] not found
+[2015.09.15 11:31:40] [0000m.00s.050ms] [3] S: Config loaded
+[2015.09.15 11:31:40] [0000m.00s.071ms] [0] S: Project path [C:\Users\s58p233\Desktop\Old Work Computer Docs\Sumer Work 2015\Interface Board\0Schematic\Interface Board\database] on file system [NTFS]
+[2015.09.15 11:31:40] [0000m.00s.072ms] [0] S: Project file (.prj) path [C:\Users\s58p233\Desktop\Old Work Computer Docs\Sumer Work 2015\Interface Board\0Schematic\Interface Board\Interface Board.prj] on file system [NTFS]
+[2015.09.15 11:31:40] [0000m.00s.072ms] [1] S: WARNING: Database auto-repair support DISABLED
+[2015.09.15 11:31:40] [0000m.00s.072ms] [0] S: Single-user mode (auto)
+[2015.09.15 11:31:40] [0000m.00s.072ms] [0] S: Event polling mode autodetection
+[2015.09.15 11:31:40] [0000m.00s.081ms] [0] S: Started up automatically by iCDB Client: BZ-ECE-CB508-01:s58p233:2216
+[2015.09.15 11:31:40] [0000m.00s.081ms] [0] S: Auto close mode
+[2015.09.15 11:31:40] [0000m.00s.081ms] [0] S: Database ID [3230-7331-d67a-8edd-4945-8f59-9458-f550-98f4-6fa2-234f-cb2c]
+[2015.09.15 11:31:40] [0000m.00s.081ms] [0] PathTranslator: BEGIN dumping
+[2015.09.15 11:31:40] [0000m.00s.082ms] [0] PathTranslator: Local -> global path prefix list
+[2015.09.15 11:31:40] [0000m.00s.082ms] [0] PathTranslator: [Z:\] -> [\\opal.msu.montana.edu\s\s58p233\]
+[2015.09.15 11:31:40] [0000m.00s.082ms] [0] PathTranslator: Global -> local path prefix list
+[2015.09.15 11:31:40] [0000m.00s.082ms] [0] PathTranslator: [\\opal.msu.montana.edu\s\s58p233\] -> [Z:\]
+[2015.09.15 11:31:40] [0000m.00s.082ms] [0] PathTranslator: END dumping
+[2015.09.15 11:31:40] [0000m.00s.082ms] [0] S: START
+[2015.09.15 11:31:40] [0000m.00s.082ms] [0] S: Server startup lock file created
+[2015.09.15 11:31:40] [0000m.00s.083ms] [0] S: Listening for client connections on port [10001]
+[2015.09.15 11:31:40] [0000m.00s.085ms] [0] S: Server network ID [bz-ece-cb508-01:153.90.122.18,bz-ece-cb508-01,bz-ece-cb508-01.coe.montana.edu:10001]
+[2015.09.15 11:31:40] [0000m.00s.085ms] [0] S: Server GUID [6328-2d21-8c37-c96b-cf55-8f51-0658-f550-5936-6fa2-234f-cb2c]
+[2015.09.15 11:31:40] [0000m.00s.085ms] [0] S: Project GUID [3230-7331-d67a-8edd-4945-8f59-9458-f550-98f4-6fa2-234f-cb2c]
+[2015.09.15 11:31:40] [0000m.00s.105ms] [0] S: Wrote data to server address file
+[2015.09.15 11:31:40] [0000m.00s.105ms] [0] S: Server startup lock file removed
+[2015.09.15 11:31:40] [0000m.00s.105ms] [1] ProjectBackupManager: Setting project file (.prj) path: [C:\Users\s58p233\Desktop\Old Work Computer Docs\Sumer Work 2015\Interface Board\0Schematic\Interface Board\Interface Board.prj]
+[2015.09.15 11:31:40] [0000m.00s.145ms] [0] S: Plugins loaded: [PIM] [ENetGen70] 
+[2015.09.15 11:31:40] [0000m.00s.145ms] [0] S: Local disc access time: 57 us
+[2015.09.15 11:31:40] [0000m.00s.145ms] [0] S: File server access time: 60 us
+[2015.09.15 11:31:40] [0000m.00s.147ms] [0] Single file [C:\Users\s58p233\Desktop\Old Work Computer Docs\Sumer Work 2015\Interface Board\0Schematic\Interface Board\database\icdb.dat] size [87872 (85.8 kB)]
+[2015.09.15 11:31:40] [0000m.00s.147ms] [1] Single file [C:\Users\s58p233\Desktop\Old Work Computer Docs\Sumer Work 2015\Interface Board\0Schematic\Interface Board\database\icdb.dat] opened in read-write mode
+[2015.09.15 11:31:40] [0000m.00s.147ms] [0] SingleFile: [0000-0000-0000-0000] SFI header version check [1009] [1009]
+[2015.09.15 11:31:40] [0000m.00s.147ms] [0] Database GUARD OK: [87872]
+[2015.09.15 11:31:40] [0000m.00s.148ms] [0] SingleFile: [0000-0000-0000-0000] SFI header version check [1009] [1009]
+[2015.09.15 11:31:40] [0000m.00s.148ms] [0] Database GUARD OK: [87872]
+[2015.09.15 11:31:40] [0000m.00s.148ms] [0] SingleFile: [047a-524d-8e02-506a] SFI version check [1009] [1009]
+[2015.09.15 11:31:40] [0000m.00s.149ms] [0] SingleFile: [047a-524d-8e02-506a] Database SFI header has been read in [1ms 472us]
+[2015.09.15 11:31:40] [0000m.00s.153ms] [0] iCDB Server PI: Server & plugin session [272]
+[2015.09.15 11:31:40] [0000m.00s.153ms] [0] iCDB Server PI: Opening database [C:\Users\s58p233\Desktop\Old Work Computer Docs\Sumer Work 2015\Interface Board\0Schematic\Interface Board\database]
+[2015.09.15 11:31:40] [0000m.00s.153ms] [0] iCDB Server PI: Database [C:\Users\s58p233\Desktop\Old Work Computer Docs\Sumer Work 2015\Interface Board\0Schematic\Interface Board\database] opened
+[2015.09.15 11:31:40] [0000m.00s.176ms] [0] iCDB Database: Checking existence of constraint definitions
+[2015.09.15 11:31:40] [0000m.00s.176ms] [0] iCDB Database: Checking constraint definitions version
+[2015.09.15 11:31:40] [0000m.00s.229ms] [1] iCDB Database: Constraint definitions version [ce_ee.cns=7.10.24;user.cns=8a0a-ca53-eaf8-b89d-81d5-fd5d-1d5f-d550-5066-6fa2-234f-cb2c] up to date
+[2015.09.15 11:31:41] [0000m.00s.436ms] [0] iCDB Server PI: Initializing plugins
+[2015.09.15 11:31:41] [0000m.00s.437ms] [0] iCDB Server PI: Plugins initialized
+[2015.09.15 11:31:41] [0000m.00s.437ms] [0] S: iCDB database loaded
+[2015.09.15 11:31:41] [0000m.00s.438ms] [0] S: Starting threads
+[2015.09.15 11:31:41] [0000m.00s.438ms] [0] BT: Listening for broadcast messages on port [10000]
+[2015.09.15 11:31:41] [0000m.00s.439ms] [1] CMT: There are no clients - waiting [10 seconds]
+[2015.09.15 11:31:41] [0000m.00s.441ms] [0] IT: Session [273] for host [bz-ece-cb508-01] user [s58p233] with process ID [2216] created
+[2015.09.15 11:31:41] [0000m.00s.444ms] [1] SC[273]: Registered sub-client [DxD] with ID [1] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:41] [0000m.00s.461ms] [1] SC[273]: Registered sub-client [TransactionRollbackSubClient] with ID [2] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:41] [0000m.00s.464ms] [1] SC[273]: Registered sub-client [xprob] with ID [3] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:41] [0000m.00s.539ms] [1] CMT: There are [1] clients now: 273
+[2015.09.15 11:31:41] [0000m.00s.558ms] [1] SC[273]: Registered sub-client [SelectionHolder] with ID [4] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:41] [0000m.00s.613ms] [1] SC[273]: Registered sub-client [SymbolEditor] with ID [5] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:41] [0000m.01s.210ms] [1] SC[273]: Registered sub-client [HdlProject] with ID [6] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:41] [0000m.01s.210ms] [1] SC[273]: Registered sub-client [Navigator] with ID [7] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:41] [0000m.01s.220ms] [1] SC[273]: Registered sub-client [OutputWindow] with ID [8] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:41] [0000m.01s.230ms] [1] SC[273]: Registered sub-client [PlaceDevice] with ID [9] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:41] [0000m.01s.240ms] [1] SC[273]: Registered sub-client [SAE] with ID [10] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:41] [0000m.01s.260ms] [1] SC[273]: Registered sub-client [DxConstraints] with ID [11] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:41] [0000m.01s.260ms] [1] SC[273]: Registered sub-client [CCZAddin] with ID [12] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:41] [0000m.01s.270ms] [1] SC[273]: Registered sub-client [DxThumbnails] with ID [13] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:41] [0000m.01s.320ms] [1] SC[273]: Registered sub-client [SheetConnectorsCacheDxD:1442338301] with ID [14] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:41] [0000m.01s.330ms] [1] SC[273]: Registered sub-client [NetsNamesCollectorDxD:1442338301] with ID [15] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:42] [0000m.01s.570ms] [1] SC[273]: Registered sub-client [ObjectHolder_320741768] with ID [16] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:42] [0000m.01s.580ms] [1] SC[273]: Registered sub-client [BlockCacheDxD:320138976] with ID [17] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:42] [0000m.01s.600ms] [1] SC[273]: Registered sub-client [GlobalNetAliasUpdater_320741944] with ID [18] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:42] [0000m.01s.600ms] [1] SC[273]: Registered sub-client [IcdbNetProcessorSubClientDxD:318767720] with ID [19] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:42] [0000m.01s.980ms] [1] SC[273]: Registered sub-client [DxDbSearch] with ID [20] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:42] [0000m.02s.030ms] [1] SC[273]: Registered sub-client [LDD_ECO_IMPORT] with ID [21] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:42] [0000m.02s.040ms] [1] SC[273]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [21] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:43] [0000m.02s.682ms] [1] SC[273]: Registered sub-client [LDD_ECO_IMPORT] with ID [22] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:43] [0000m.02s.682ms] [1] SC[273]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [22] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:44] [0000m.03s.699ms] [1] SC[273]: Registered sub-client [LDD_ECO_IMPORT] with ID [23] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:44] [0000m.03s.699ms] [1] SC[273]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [23] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:45] [0000m.04s.710ms] [1] SC[273]: Registered sub-client [LDD_ECO_IMPORT] with ID [24] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:45] [0000m.04s.710ms] [1] SC[273]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [24] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:46] [0000m.05s.720ms] [1] SC[273]: Registered sub-client [LDD_ECO_IMPORT] with ID [25] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:46] [0000m.05s.720ms] [1] SC[273]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [25] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:47] [0000m.06s.743ms] [1] SC[273]: Registered sub-client [LDD_ECO_IMPORT] with ID [26] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:47] [0000m.06s.743ms] [1] SC[273]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [26] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:48] [0000m.07s.754ms] [1] SC[273]: Registered sub-client [LDD_ECO_IMPORT] with ID [27] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:48] [0000m.07s.754ms] [1] SC[273]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [27] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:49] [0000m.08s.764ms] [1] SC[273]: Registered sub-client [LDD_ECO_IMPORT] with ID [28] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:49] [0000m.08s.764ms] [1] SC[273]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [28] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:50] [0000m.09s.766ms] [1] SC[273]: Registered sub-client [LDD_ECO_IMPORT] with ID [29] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:50] [0000m.09s.778ms] [1] SC[273]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [29] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:50] [0000m.10s.065ms] [1] SC[273]: UnRegistered sub-client [GlobalNetAliasUpdater_320741944] with ID [18] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:50] [0000m.10s.065ms] [1] SC[273]: UnRegistered sub-client [BlockCacheDxD:320138976] with ID [17] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:50] [0000m.10s.065ms] [1] SC[273]: UnRegistered sub-client [ObjectHolder_320741768] with ID [16] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:50] [0000m.10s.065ms] [1] SC[273]: UnRegistered sub-client [IcdbNetProcessorSubClientDxD:318767720] with ID [19] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:50] [0000m.10s.065ms] [1] SC[273]: UnRegistered sub-client [SelectionHolder] with ID [4] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:50] [0000m.10s.065ms] [1] SC[273]: UnRegistered sub-client [SheetConnectorsCacheDxD:1442338301] with ID [14] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:50] [0000m.10s.065ms] [1] SC[273]: UnRegistered sub-client [NetsNamesCollectorDxD:1442338301] with ID [15] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:50] [0000m.10s.065ms] [1] SC[273]: UnRegistered sub-client [TransactionRollbackSubClient] with ID [2] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:50] [0000m.10s.065ms] [1] SC[273]: UnRegistered sub-client [DxD] with ID [1] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:50] [0000m.10s.095ms] [1] SC[273]: UnRegistered sub-client [xprob] with ID [3] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:50] [0000m.10s.095ms] [1] SC[273]: UnRegistered sub-client [SymbolEditor] with ID [5] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:50] [0000m.10s.125ms] [1] SC[273]: UnRegistered sub-client [Navigator] with ID [7] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:50] [0000m.10s.135ms] [1] SC[273]: UnRegistered sub-client [OutputWindow] with ID [8] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:50] [0000m.10s.135ms] [1] SC[273]: UnRegistered sub-client [DxDbSearch] with ID [20] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:50] [0000m.10s.145ms] [1] SC[273]: UnRegistered sub-client [SAE] with ID [10] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:50] [0000m.10s.175ms] [1] SC[273]: UnRegistered sub-client [CCZAddin] with ID [12] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:50] [0000m.10s.185ms] [1] SC[273]: UnRegistered sub-client [DxThumbnails] with ID [13] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:50] [0000m.10s.285ms] [1] SC[273]: UnRegistered sub-client [DxConstraints] with ID [11] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:53] [0000m.12s.934ms] [1] SC[273]: UnRegistered sub-client [PlaceDevice] with ID [9] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:53] [0000m.12s.944ms] [1] SC[273]: UnRegistered sub-client [HdlProject] with ID [6] for session ID [273] host [bz-ece-cb508-01] user [s58p233] process ID [2216]
+[2015.09.15 11:31:53] [0000m.12s.984ms] [1] CMT: Removed client [273]
+[2015.09.15 11:31:53] [0000m.12s.984ms] [1] CMT: There are no clients left - waiting [1 seconds]
+[2015.09.15 11:31:55] [0000m.14s.485ms] [0] CMT: Starting server auto-close
+[2015.09.15 11:31:55] [0000m.14s.525ms] [0] S: Closing server
+[2015.09.15 11:31:55] [0000m.14s.615ms] [0] iCDB Server PI: Closing plugins
+[2015.09.15 11:31:55] [0000m.14s.615ms] [0] iCDB Server PI: Plugins closed
+[2015.09.15 11:31:55] [0000m.14s.615ms] [0] iCDB Server PI: Unloading database
+[2015.09.15 11:31:55] [0000m.14s.615ms] [0] iCDB Server PI: Saving storage
+[2015.09.15 11:31:55] [0000m.14s.615ms] [0] iCDB Server PI: Closing database
+[2015.09.15 11:31:55] [0000m.14s.645ms] [1] iCDB Server PI: Stats: Database defragmentation: max[3] avg[1] holes[0%] data[97%]
+[2015.09.15 11:31:55] [0000m.14s.645ms] [1] iCDB Server PI: Stats: Database file size [87992 (85.9 kB)]
+[2015.09.15 11:31:55] [0000m.14s.695ms] [0] iCDB Server PI: Database closed
+[2015.09.15 11:31:55] [0000m.14s.695ms] [1] iCDB Server PI: Stats: Total iCDB execution time: [856] ticks
+[2015.09.15 11:31:55] [0000m.14s.695ms] [1] iCDB Server PI: Stats: Total iCDB execution time: [292] microseconds
+[2015.09.15 11:31:55] [0000m.14s.695ms] [1] iCDB Server PI: Stats: Total iCDB commands count: [5]
+[2015.09.15 11:31:55] [0000m.14s.695ms] [1] iCDB Server PI: Stats: Average iCDB speed:        [17069] commands per second
+[2015.09.15 11:31:55] [0000m.14s.695ms] [0] Single file [C:\Users\s58p233\Desktop\Old Work Computer Docs\Sumer Work 2015\Interface Board\0Schematic\Interface Board\database\icdb.dat] closed with size [87992 (85.9 kB)]
+[2015.09.15 11:31:55] [0000m.14s.825ms] [0] S: STOP
