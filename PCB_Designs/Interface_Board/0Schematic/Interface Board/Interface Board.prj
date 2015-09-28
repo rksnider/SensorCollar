@@ -1,9 +1,9 @@
 SECTION DesignInfo
 LIST IndependentLibraries
 VALUE "DIR [W] . (Interface_Board)"
-VALUE "DIR [W] C:\Users\tyler.davis5\Documents\Sumer Work 2015\Librarys\DxDesigner Common Parts (DxDesigner_Common_Parts)"
-VALUE "DIR [W] C:\Users\tyler.davis5\Documents\Sumer Work 2015\Librarys\DxDesigner Library (DxDesigner_Library)"
 VALUE "DIR [R] C:\MentorGraphics\9.5PADS\SDD_HOME\Libraries\common (common)"
+VALUE "DIR [W] C:\Users\s58p233\Documents\Marmoset PCB\Librarys\DxDesigner Common Parts (DxDesigner_Common_Parts)"
+VALUE "DIR [W] C:\Users\s58p233\Documents\Marmoset PCB\Librarys\DxDesigner Library (DxDesigner_Library)"
 ENDLIST
 KEY BorderSymbols "./borders.ini"
 KEY Bus_Contents "./busconts.ini"

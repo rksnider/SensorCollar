@@ -1,6 +1,6 @@
 
 (pcb
- "C:\Users\tyler.davis5\Documents\Sumer Work 2015\Interface Board\0Schematic\Interface Board\Interface Board.Schematic1_PADS95.Schematic1.db"
+ "C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board\Interface Board.Schematic1_PADS95.Schematic1.db"
 	(version "5.0.0")
 	(units "basic")
 	(config_properties
@@ -89,7 +89,7 @@
  "TWO_BIT_BI_TRANSLATOR_TXS0102__TWO_BIT_BI_TRANSLATOR_TXS0102_1"
 					(attributes
 						(attval "DEVICE" "TWO_BIT_BI_TRANSLATOR_TXS0102")
-						(attval "Part Number" "TXS0102DCUT")
+						(attval "Part Number" "TXS0102DCTR")
 						(attval "PKG_GRP" "8-VFSOP")
 						(attval "PKG_TYPE" "TWO_BIT_BI_TRANSLATOR_TXS0102")
 						(attval "REFDES" "U?"))))
@@ -163,6 +163,26 @@
  "S_BIT_UNI_TRANSLATOR_FXLP34__S_BIT_UNI_TRANSLATOR_FXLP34_1" 0 "GND" 0)
 			(pin 2  3
  "S_BIT_UNI_TRANSLATOR_FXLP34__S_BIT_UNI_TRANSLATOR_FXLP34_1" 0 "A" 0))
+		(part "SWITCH_DUAL_SIP32414")
+		(logical_part_mapping "SWITCH_DUAL_SIP32414"
+			(comp "S1"))
+		(logical_part "SWITCH_DUAL_SIP32414"
+			(slots
+				(slot "SWITCH_DUAL_SIP32414__SWITCH_DUAL_SIP32414_1"
+					(attributes
+						(attval "DEVICE" "SWITCH_DUAL_SIP32414")
+						(attval "Part Number" "SIP32414")
+						(attval "PKG_TYPE" "VISHNAY_DUAL_LOAD_SWITCH")
+						(attval "REFDES" "S?"))))
+			(pin 9  3 "SWITCH_DUAL_SIP32414__SWITCH_DUAL_SIP32414_1" 0 "TERMAL_PAD" 0)
+			(pin 5  5 "SWITCH_DUAL_SIP32414__SWITCH_DUAL_SIP32414_1" 0 "OUT2" 0)
+			(pin 8  5 "SWITCH_DUAL_SIP32414__SWITCH_DUAL_SIP32414_1" 0 "OUT1" 0)
+			(pin 4  5 "SWITCH_DUAL_SIP32414__SWITCH_DUAL_SIP32414_1" 0 "IN2" 0)
+			(pin 1  5 "SWITCH_DUAL_SIP32414__SWITCH_DUAL_SIP32414_1" 0 "IN1" 0)
+			(pin 7  5 "SWITCH_DUAL_SIP32414__SWITCH_DUAL_SIP32414_1" 0 "GND7" 0)
+			(pin 6  5 "SWITCH_DUAL_SIP32414__SWITCH_DUAL_SIP32414_1" 0 "GND6" 0)
+			(pin 3  5 "SWITCH_DUAL_SIP32414__SWITCH_DUAL_SIP32414_1" 0 "CNTRL2" 0)
+			(pin 2  5 "SWITCH_DUAL_SIP32414__SWITCH_DUAL_SIP32414_1" 0 "CNTRL1" 0))
 		(part "SPST_SLIDE_SWITCH")
 		(logical_part_mapping "SPST_SLIDE_SWITCH"
 			(comp "J7"))
@@ -269,6 +289,22 @@
 			(pin 8  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "D+" 0)
 			(pin 3  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "CTL" 0)
 			(pin 5  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "CLK" 0))
+		(part "CAP_4P7UF_0402")
+		(logical_part_mapping "CAP_4P7UF_0402"
+			(comp "C6"))
+		(logical_part "CAP_4P7UF_0402"
+			(slots
+				(slot "CAP_4P7UF_0402__CAP_4P7UF_0402_1"
+					(attributes
+						(attval "DEVICE" "CAP_4P7UF_0402")
+						(attval "Part Number" "CL05A475MP5NRNC")
+						(attval "PINSWAP" "[(1,2)]")
+						(attval "PKG_TYPE" "0402_MY")
+						(attval "REFDES" "C?")
+						(attval "Tolerance" "")
+						(attval "Value" "4.7UF"))))
+			(pin 2  5 "CAP_4P7UF_0402__CAP_4P7UF_0402_1" 0 "2" 0)
+			(pin 1  5 "CAP_4P7UF_0402__CAP_4P7UF_0402_1" 0 "1" 0))
 		(part "CAP_1UF_0402")
 		(logical_part_mapping "CAP_1UF_0402"
 			(comp "C4" "C3" "C2" "C1"))
@@ -287,7 +323,7 @@
 			(pin 1  5 "CAP_1UF_0402__CAP_1UF_0402_1" 0 "1" 0))
 		(part "CAP_0P1UF_0402")
 		(logical_part_mapping "CAP_0P1UF_0402"
-			(comp "C10" "C9"))
+			(comp "C10" "C9" "C5"))
 		(logical_part "CAP_0P1UF_0402"
 			(slots
 				(slot "CAP_0P1UF_0402__CAP_0P1UF_0402_1"
@@ -394,7 +430,7 @@
 				(comp_pin "4" 0.0 0.0 "IN")
 				(comp_pin "5" 0.0 0.0 "IN"))
 			(attributes
-				(attval "Part Number" "TXS0102DCUT")
+				(attval "Part Number" "TXS0102DCTR")
 				(attval "PKG_GRP" "8-VFSOP")
 				(attval "DEVICE" "TWO_BIT_BI_TRANSLATOR_TXS0102")
 				(attval "REFDES" "U7")))
@@ -470,6 +506,21 @@
 				(attval "PKG_GRP" "SC-74A")
 				(attval "DEVICE" "3P3_LDOREG_TLV702")
 				(attval "REFDES" "U1")))
+		(component "VISHNAY_DUAL_LOAD_SWITCH"
+			(place "S1" 0.0 0.0 top 0.0
+				(comp_pin "9" 0.0 0.0 "IN")
+				(comp_pin "5" 0.0 0.0 "BI")
+				(comp_pin "8" 0.0 0.0 "BI")
+				(comp_pin "4" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI")
+				(comp_pin "7" 0.0 0.0 "BI")
+				(comp_pin "6" 0.0 0.0 "BI")
+				(comp_pin "3" 0.0 0.0 "BI")
+				(comp_pin "2" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "SIP32414")
+				(attval "DEVICE" "SWITCH_DUAL_SIP32414")
+				(attval "REFDES" "S1")))
 		(component "USB3P0_LAND"
 			(place "J8" 0.0 0.0 top 0.0
 				(comp_pin "10" 0.0 0.0 "IN")
@@ -590,6 +641,26 @@
 				(attval "DEVICE" "CAP_0P1UF_0402")
 				(attval "REFDES" "C9")))
 		(component "0402_MY"
+			(place "C6" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "CL05A475MP5NRNC")
+				(attval "Tolerance" "")
+				(attval "Value" "4.7UF")
+				(attval "DEVICE" "CAP_4P7UF_0402")
+				(attval "REFDES" "C6")))
+		(component "0402_MY"
+			(place "C5" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "CL05A104KA5NNNC")
+				(attval "Tolerance" "")
+				(attval "Value" "0.1UF")
+				(attval "DEVICE" "CAP_0P1UF_0402")
+				(attval "REFDES" "C5")))
+		(component "0402_MY"
 			(place "C4" 0.0 0.0 top 0.0
 				(comp_pin "2" 0.0 0.0 "BI")
 				(comp_pin "1" 0.0 0.0 "BI"))
@@ -640,6 +711,7 @@
 		(func "$2I1" "" "U3" 1)
 		(func "$1I41" "" "U2" 1)
 		(func "$1I55" "" "U1" 1)
+		(func "$2I141" "" "S1" 1)
 		(func "$4I210" "" "J8" 1)
 		(func "$5I45" "" "J7" 1)
 		(func "$5I6" "" "J6" 1)
@@ -650,6 +722,8 @@
 		(func "$4I102" "" "J1" 1)
 		(func "$3I20" "" "C10" 1)
 		(func "$3I16" "" "C9" 1)
+		(func "$2I160" "" "C6" 1)
+		(func "$2I168" "" "C5" 1)
 		(func "$1I291" "" "C4" 1)
 		(func "$1I70" "" "C3" 1)
 		(func "$1I287" "" "C2" 1)
@@ -658,8 +732,8 @@
 		(net "$5N32"
 			(pins J5-3 J5-2))
 		(net "GND"
-			(pins U7-2 J1-3 U1-2 U9-5 U10-5 U2-2 C9-2 J6-4 J8-6 C3-2 U3-3 U4-3 U5-3 U6-3
- J2-10 J2-2 J3-10 J3-2 J5-5 J4-6 U8-7 C1-2 C2-2 C4-2))
+			(pins U7-2 J1-3 U1-2 U9-5 U10-5 U2-2 C5-2 C9-2 C10-2 J6-4 J8-6 C1-2 C2-2 C4-2
+ C3-2 U3-3 U4-3 U5-3 U6-3 S1-7 S1-9 J2-10 J2-2 C6-2 J3-10 J3-2 J5-5 J4-6 U8-7))
 		(net "I2C_JUMPER_TO_SPI_PIN1"
 			(pins J2-1 U8-2))
 		(net "I2C_JUMPER_TO_SPI_PIN3"
@@ -688,6 +762,8 @@
 			(pins U10-10 J8-1 U6-2 J3-3 J4-1))
 		(net "SERIAL_TCLK"
 			(pins J8-4 J3-1 J4-4))
+		(net "SPI_PIN4_TO_VISHAY_PWR"
+			(pins S1-2 J2-4))
 		(net "SPI_PIN7_TO_LT"
 			(pins U9-2 U4-2 J2-7))
 		(net "SPI_PIN8_TO_LT"
@@ -697,13 +773,18 @@
 		(net "SWITCH_TO_FS"
 			(pins J8-7 J7-1 J4-7))
 		(net "USB_VCC"
-			(pins U1-3 U1-1 U10-1 U2-3 U2-1 J8-10 J5-1 J4-10 C1-1 C2-1))
+			(pins U1-3 U1-1 U10-1 U2-3 U2-1 J8-10 C1-1 C2-1 J5-1 J4-10))
 		(net "VCC1P8"
-			(pins U7-6 U7-3 U10-2 U2-5 C10-1 J7-3 U3-5 U4-5 U5-5 U6-1 J3-4 C4-1))
+			(pins U7-6 U7-3 U10-2 U2-5 C10-1 C4-1 J7-3 S1-1 C6-1 J3-4))
+		(net "VCC1P8_VISHAY_OUT"
+			(pins C5-1 U3-5 U4-5 U5-5 U6-1 S1-8))
 		(net "VCC3P3"
 			(pins U7-7 U1-5 C9-1 C3-1 U3-1 U4-1 U5-1 U6-5)))
 	(network_electrical
 		(net_scalar "VCC3P3"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "VCC1P8_VISHAY_OUT"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "VCC1P8"
@@ -722,6 +803,9 @@
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "SPI_PIN7_TO_LT"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SPI_PIN4_TO_VISHAY_PWR"
 			(constraints
 				(cnsval "SCHEDULED" "FALSE")))
 		(net_scalar "SERIAL_TCLK"

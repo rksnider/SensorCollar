@@ -1,0 +1,768 @@
+[2015.09.15 10:14:15] [0000m.00s.040ms] [0] WELCOME
+[2015.09.15 10:14:15] [0000m.00s.040ms] [1] iCDB Server ver.1.094, a0HSsGQ+3llE3aODnNgIUw, build:515009 created 2012-08-09 08:10:43, sources stamp:a0HSsGQ+3llE3aODnNgIUw
+[2015.09.15 10:14:15] [0000m.00s.040ms] [1] Copyright 2012 Mentor Graphics Corporation. All Rights Reserved.
+[2015.09.15 10:14:15] [0000m.00s.040ms] [1] Base flow version [7.9.4]
+[2015.09.15 10:14:15] [0000m.00s.040ms] [1] GBS Install Id [27413], Flow Id [PADS 9.5], Full Flow Name [PADS 9.5], Exact Access Date [Jun 1 2012]
+[2015.09.15 10:14:15] [0000m.00s.040ms] [1] Machine [BZ-ECE-CB508-01]  User [s58p233]  PID [2200]
+[2015.09.15 10:14:15] [0000m.00s.040ms] [1] Operating system [Microsoft Windows 7 Enterprise Edition, 64-bit Service Pack 1 (build 7601)]
+[2015.09.15 10:14:15] [0000m.00s.040ms] [1] Current working dir [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor]
+[2015.09.15 10:14:15] [0000m.00s.040ms] [1] PATH [C:\MentorGraphics\9.5PADS\SDD_HOME\wv\win32\bin;C:\MentorGraphics\9.5PADS\SDD_HOME\common\win32\bin;C:\MentorGraphics\9.5PADS\SDD_HOME\common\win32\lib;C:\MentorGraphics\9.5PADS\MGC_HOME.ixn\bin;C:\MentorGraphics\9.5PADS\MGC_HOME.ixn\lib;C:\Program Files (x86)\AMD APP\bin\x86_64;C:\Program Files (x86)\AMD APP\bin\x86;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;C:\MATLAB\R2015a\runtime\win64;C:\MATLAB\R2015a\bin;C:\Program Files (x86)\MiKTeX 2.9\miktex\bin\;C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Bin\;C:\Program Files\IVI Foundation\VISA\Win64\Bin\;C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Bin]
+[2015.09.15 10:14:15] [0000m.00s.040ms] [1] SDD_HOME [C:\MentorGraphics\9.5PADS\SDD_HOME] on file system [NTFS]
+[2015.09.15 10:14:15] [0000m.00s.040ms] [1] SDD_PLATFORM [win32]
+[2015.09.15 10:14:15] [0000m.00s.040ms] [1] WDIR [C:\PADS Projects;C:\MentorGraphics\9.5PADS\SDD_HOME\standard]
+[2015.09.15 10:14:15] [0000m.00s.040ms] [1] Local iCDB working dir [C:\PADS Projects\iCDB] on file system [NTFS]
+[2015.09.15 10:14:15] [0000m.00s.040ms] [2] S: Loading config files
+[2015.09.15 10:14:15] [0000m.00s.050ms] [1] Config file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\cdbsvr\Server.cfg] not found
+[2015.09.15 10:14:15] [0000m.00s.050ms] [3] S: Config loaded
+[2015.09.15 10:14:15] [0000m.00s.060ms] [0] S: Project path [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database] on file system [NTFS]
+[2015.09.15 10:14:15] [0000m.00s.060ms] [0] S: Project file (.prj) path [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\DevBoard_PowerMonitor.prj] on file system [NTFS]
+[2015.09.15 10:14:15] [0000m.00s.060ms] [1] S: WARNING: Database auto-repair support DISABLED
+[2015.09.15 10:14:15] [0000m.00s.060ms] [0] S: Single-user mode (auto)
+[2015.09.15 10:14:15] [0000m.00s.060ms] [0] S: Event polling mode autodetection
+[2015.09.15 10:14:15] [0000m.00s.070ms] [0] S: Started up automatically by iCDB Client: BZ-ECE-CB508-01:s58p233:6840
+[2015.09.15 10:14:15] [0000m.00s.070ms] [0] S: Auto close mode
+[2015.09.15 10:14:15] [0000m.00s.070ms] [0] S: Database ID [ff5d-dcc2-3543-361e-7d34-8f5c-d348-f550-5ae5-6fa2-234f-cb2c]
+[2015.09.15 10:14:15] [0000m.00s.070ms] [0] PathTranslator: BEGIN dumping
+[2015.09.15 10:14:15] [0000m.00s.070ms] [0] PathTranslator: Local -> global path prefix list
+[2015.09.15 10:14:15] [0000m.00s.070ms] [0] PathTranslator: [Z:\] -> [\\opal.msu.montana.edu\s\s58p233\]
+[2015.09.15 10:14:15] [0000m.00s.070ms] [0] PathTranslator: Global -> local path prefix list
+[2015.09.15 10:14:15] [0000m.00s.070ms] [0] PathTranslator: [\\opal.msu.montana.edu\s\s58p233\] -> [Z:\]
+[2015.09.15 10:14:15] [0000m.00s.070ms] [0] PathTranslator: END dumping
+[2015.09.15 10:14:15] [0000m.00s.070ms] [0] S: START
+[2015.09.15 10:14:15] [0000m.00s.070ms] [0] S: Server startup lock file created
+[2015.09.15 10:14:15] [0000m.00s.070ms] [0] S: Listening for client connections on port [10000]
+[2015.09.15 10:14:15] [0000m.00s.070ms] [0] S: Server network ID [bz-ece-cb508-01:153.90.122.18,bz-ece-cb508-01,bz-ece-cb508-01.coe.montana.edu:10000]
+[2015.09.15 10:14:15] [0000m.00s.070ms] [0] S: Server GUID [d0a6-7857-3bae-8b4a-7d34-8f5c-d348-f550-def5-6fa2-234f-cb2c]
+[2015.09.15 10:14:15] [0000m.00s.070ms] [0] S: Project GUID [ff5d-dcc2-3543-361e-7d34-8f5c-d348-f550-5ae5-6fa2-234f-cb2c]
+[2015.09.15 10:14:15] [0000m.00s.097ms] [0] S: Wrote data to server address file
+[2015.09.15 10:14:15] [0000m.00s.098ms] [0] S: Server startup lock file removed
+[2015.09.15 10:14:15] [0000m.00s.098ms] [1] ProjectBackupManager: Setting project file (.prj) path: [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\DevBoard_PowerMonitor.prj]
+[2015.09.15 10:14:15] [0000m.00s.127ms] [0] PrjBackupMgr: Migrating iCDB upgrade backups from directory [DevBoard_PowerMonitor\database\cdbback] to Project Backup format.
+[2015.09.15 10:14:15] [0000m.00s.127ms] [0] PrjBackupMgr: WARNING: Ignoring iCDB backup file [2014-06-17 14.51.17-4220-d.zip] - will not be migrated.
+[2015.09.15 10:14:15] [0000m.00s.161ms] [0] S: Plugins loaded: [PIM] [ENetGen70] 
+[2015.09.15 10:14:15] [0000m.00s.161ms] [0] S: Local disc access time: 57 us
+[2015.09.15 10:14:15] [0000m.00s.162ms] [0] S: File server access time: 61 us
+[2015.09.15 10:14:15] [0000m.00s.172ms] [0] Single file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\icdb.dat] size [1846792 (1.8 MB)]
+[2015.09.15 10:14:15] [0000m.00s.172ms] [1] Single file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\icdb.dat] opened in read-write mode
+[2015.09.15 10:14:15] [0000m.00s.172ms] [0] SingleFile: [0000-0000-0000-0000] SFI header version check [1009] [1009]
+[2015.09.15 10:14:15] [0000m.00s.172ms] [0] Database GUARD OK: [1846792]
+[2015.09.15 10:14:15] [0000m.00s.182ms] [0] SingleFile: [0000-0000-0000-0000] SFI header version check [1009] [1009]
+[2015.09.15 10:14:15] [0000m.00s.182ms] [0] Database GUARD OK: [1846792]
+[2015.09.15 10:14:15] [0000m.00s.182ms] [0] SingleFile: [b787-cbd1-3cca-f79a] SFI version check [1009] [1009]
+[2015.09.15 10:14:16] [0000m.00s.322ms] [0] SingleFile: [b787-cbd1-3cca-f79a] Database SFI header has been read in [142ms 690us]
+[2015.09.15 10:14:16] [0000m.00s.322ms] [0] iCDB Server PI: Server & plugin session [2165]
+[2015.09.15 10:14:16] [0000m.00s.322ms] [0] iCDB Server PI: Opening database [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database]
+[2015.09.15 10:14:16] [0000m.00s.322ms] [0] iCDB Server PI: Database [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database] opened
+[2015.09.15 10:14:16] [0000m.00s.342ms] [0] iCDB Database: Checking existence of constraint definitions
+[2015.09.15 10:14:16] [0000m.00s.342ms] [0] iCDB Database: Checking constraint definitions version
+[2015.09.15 10:14:16] [0000m.00s.402ms] [0] iCDB Database: Creating database content backup before upgrade
+[2015.09.15 10:14:16] [0000m.00s.402ms] [1] iCDB Storage Server: Database backup: ProjectPath[C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database]
+[2015.09.15 10:14:16] [0000m.00s.475ms] [0] iCDB Storage Server Backup Thread: Database backup: BackupPath[C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\cdbback\2015-09-15 10.14.16-2200.zip]
+[2015.09.15 10:14:16] [0000m.00s.924ms] [0] iCDB Storage Server Backup Thread: Backup database DONE: Result[ Succeeded[TRUE]] BackupPath[C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\cdbback\2015-09-15 10.14.16-2200.zip]
+[2015.09.15 10:14:16] [0000m.00s.934ms] [0] iCDB Database: Database content backed up to [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\cdbback\2015-09-15 10.14.16-2200.zip] of size [1 535 687 bytes (1.5 MB)]  in [525ms 430us]
+[2015.09.15 10:14:16] [0000m.01s.034ms] [1] iCDB Database: Temporary snapshot [70] [clipboard_j82t579] was removed
+[2015.09.15 10:14:16] [0000m.01s.034ms] [0] iCDB Database: Upgrading constraint definitions from version [ce_ee.cns=7.10.24;user.cns=6511-058a-3b8d-3fc9-52d0-853a-2d08-5350-b506-e263-212d-1dbc]
+[2015.09.15 10:14:16] [0000m.01s.044ms] [0] iCDB Database: Loading snapshot [1:DxD] version [2709]
+[2015.09.15 10:14:16] [0000m.01s.066ms] [0] iCDB Database: Snapshot [1:DxD] loaded in [35ms 492us]
+[2015.09.15 10:14:16] [0000m.01s.066ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [1:DxD]
+[2015.09.15 10:14:16] [0000m.01s.072ms] [0] iCDB Database: Constraint definitions for snapshot [1:DxD] upgraded in [6ms 80us]
+[2015.09.15 10:14:16] [0000m.01s.072ms] [0] iCDB Database: Saving snapshot [1:DxD]
+[2015.09.15 10:14:16] [0000m.01s.146ms] [0] iCDB Database: Snapshot [1:DxD] saved in [73ms 870us]
+[2015.09.15 10:14:16] [0000m.01s.160ms] [1] Diagnostic: Warning: {[Bus] [1] } --> UID does not exist
+[2015.09.15 10:14:16] [0000m.01s.160ms] [1] Diagnostic: Warning: {[Bus] [2] } --> UID does not exist
+[2015.09.15 10:14:16] [0000m.01s.160ms] [1] Diagnostic: Warning: {[Bus Joint] [754] } --> joint points to index that does not exist in ICDB
+[2015.09.15 10:14:16] [0000m.01s.161ms] [1] Diagnostic: Warning: {[Bus] [3] } --> UID does not exist
+[2015.09.15 10:14:16] [0000m.01s.161ms] [1] Diagnostic: Warning: {[Bus Joint] [758] } --> joint points to index that does not exist in ICDB
+[2015.09.15 10:14:16] [0000m.01s.161ms] [1] Diagnostic: Warning: {[Bus] [4] } --> UID does not exist
+[2015.09.15 10:14:16] [0000m.01s.161ms] [1] Diagnostic: Warning: {[Bus Joint] [766] } --> joint points to index that does not exist in ICDB
+[2015.09.15 10:14:16] [0000m.01s.161ms] [1] Diagnostic: Warning: {[Bus] [5] } --> UID does not exist
+[2015.09.15 10:14:16] [0000m.01s.161ms] [1] Diagnostic: Warning: {[Bus Joint] [774] } --> joint points to index that does not exist in ICDB
+[2015.09.15 10:14:16] [0000m.01s.161ms] [1] Diagnostic: Warning: {[Bus] [6] } --> UID does not exist
+[2015.09.15 10:14:16] [0000m.01s.161ms] [1] Diagnostic: Warning: {[Bus Joint] [782] } --> joint points to index that does not exist in ICDB
+[2015.09.15 10:14:16] [0000m.01s.162ms] [1] Diagnostic: Check failed on Block: S1
+[2015.09.15 10:14:16] [0000m.01s.216ms] [1] Diagnostic: Snapshot [1:DxD] integrity check FAILED
+[2015.09.15 10:14:16] [0000m.01s.216ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s1\cdbblks\4000000010000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:16] [0000m.01s.216ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s1\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:16] [0000m.01s.216ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s1\cdbcmps\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:16] [0000m.01s.216ms] [0] iCDB Database: Loading snapshot [2:_savepoint[SCH][288230380446679044][4971974005796896811][18:22:32_6-2-14][1401733373]] version [2709]
+[2015.09.15 10:14:16] [0000m.01s.226ms] [0] iCDB Database: Snapshot [2:_savepoint[SCH][288230380446679044][4971974005796896811][18:22:32_6-2-14][1401733373]] loaded in [6ms 660us]
+[2015.09.15 10:14:16] [0000m.01s.226ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [2:_savepoint[SCH][288230380446679044][4971974005796896811][18:22:32_6-2-14][1401733373]]
+[2015.09.15 10:14:16] [0000m.01s.226ms] [0] iCDB Database: Constraint definitions for snapshot [2:_savepoint[SCH][288230380446679044][4971974005796896811][18:22:32_6-2-14][1401733373]] upgraded in [1ms 114us]
+[2015.09.15 10:14:16] [0000m.01s.226ms] [0] iCDB Database: Saving snapshot [2:_savepoint[SCH][288230380446679044][4971974005796896811][18:22:32_6-2-14][1401733373]]
+[2015.09.15 10:14:16] [0000m.01s.236ms] [0] iCDB Database: Snapshot [2:_savepoint[SCH][288230380446679044][4971974005796896811][18:22:32_6-2-14][1401733373]] saved in [2ms 827us]
+[2015.09.15 10:14:16] [0000m.01s.236ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s2\cdbblks\b700000050000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:16] [0000m.01s.236ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s2\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:16] [0000m.01s.236ms] [0] iCDB Database: Loading snapshot [3:_savepoint[SCH][288230380446679044][4971973992911994977][18:22:12_6-2-14][1401733386]] version [2709]
+[2015.09.15 10:14:16] [0000m.01s.237ms] [0] iCDB Database: Snapshot [3:_savepoint[SCH][288230380446679044][4971973992911994977][18:22:12_6-2-14][1401733386]] loaded in [6ms 98us]
+[2015.09.15 10:14:16] [0000m.01s.237ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [3:_savepoint[SCH][288230380446679044][4971973992911994977][18:22:12_6-2-14][1401733386]]
+[2015.09.15 10:14:16] [0000m.01s.237ms] [0] iCDB Database: Constraint definitions for snapshot [3:_savepoint[SCH][288230380446679044][4971973992911994977][18:22:12_6-2-14][1401733386]] upgraded in [1ms 130us]
+[2015.09.15 10:14:16] [0000m.01s.237ms] [0] iCDB Database: Saving snapshot [3:_savepoint[SCH][288230380446679044][4971973992911994977][18:22:12_6-2-14][1401733386]]
+[2015.09.15 10:14:16] [0000m.01s.237ms] [0] iCDB Database: Snapshot [3:_savepoint[SCH][288230380446679044][4971973992911994977][18:22:12_6-2-14][1401733386]] saved in [2ms 277us]
+[2015.09.15 10:14:16] [0000m.01s.237ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s3\cdbblks\b700000060000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:16] [0000m.01s.237ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s3\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:16] [0000m.01s.237ms] [0] iCDB Database: Loading snapshot [4:_savepoint[SCH][288230380446679044][4971974005796896811][21:44:40_6-2-14][1401745526]] version [2709]
+[2015.09.15 10:14:16] [0000m.01s.242ms] [0] iCDB Database: Snapshot [4:_savepoint[SCH][288230380446679044][4971974005796896811][21:44:40_6-2-14][1401745526]] loaded in [6ms 230us]
+[2015.09.15 10:14:16] [0000m.01s.242ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [4:_savepoint[SCH][288230380446679044][4971974005796896811][21:44:40_6-2-14][1401745526]]
+[2015.09.15 10:14:16] [0000m.01s.243ms] [0] iCDB Database: Constraint definitions for snapshot [4:_savepoint[SCH][288230380446679044][4971974005796896811][21:44:40_6-2-14][1401745526]] upgraded in [1ms 76us]
+[2015.09.15 10:14:16] [0000m.01s.243ms] [0] iCDB Database: Saving snapshot [4:_savepoint[SCH][288230380446679044][4971974005796896811][21:44:40_6-2-14][1401745526]]
+[2015.09.15 10:14:16] [0000m.01s.246ms] [0] iCDB Database: Snapshot [4:_savepoint[SCH][288230380446679044][4971974005796896811][21:44:40_6-2-14][1401745526]] saved in [2ms 646us]
+[2015.09.15 10:14:16] [0000m.01s.250ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s4\cdbblks\b700000070000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:16] [0000m.01s.250ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s4\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:16] [0000m.01s.250ms] [0] iCDB Database: Loading snapshot [5:_savepoint[SCH][288230380446679044][4971973992911994977][21:06:54_6-2-14][1401745552]] version [2709]
+[2015.09.15 10:14:16] [0000m.01s.256ms] [0] iCDB Database: Snapshot [5:_savepoint[SCH][288230380446679044][4971973992911994977][21:06:54_6-2-14][1401745552]] loaded in [5ms 860us]
+[2015.09.15 10:14:16] [0000m.01s.256ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [5:_savepoint[SCH][288230380446679044][4971973992911994977][21:06:54_6-2-14][1401745552]]
+[2015.09.15 10:14:16] [0000m.01s.257ms] [0] iCDB Database: Constraint definitions for snapshot [5:_savepoint[SCH][288230380446679044][4971973992911994977][21:06:54_6-2-14][1401745552]] upgraded in [1ms 118us]
+[2015.09.15 10:14:16] [0000m.01s.258ms] [0] iCDB Database: Saving snapshot [5:_savepoint[SCH][288230380446679044][4971973992911994977][21:06:54_6-2-14][1401745552]]
+[2015.09.15 10:14:16] [0000m.01s.260ms] [0] iCDB Database: Snapshot [5:_savepoint[SCH][288230380446679044][4971973992911994977][21:06:54_6-2-14][1401745552]] saved in [2ms 457us]
+[2015.09.15 10:14:16] [0000m.01s.264ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s5\cdbblks\b700000080000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:16] [0000m.01s.264ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s5\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:16] [0000m.01s.264ms] [0] iCDB Database: Loading snapshot [6:_savepoint[SCH][288230380446679044][4971973992911994977][21:52:25_6-2-14][1401745986]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.270ms] [0] iCDB Database: Snapshot [6:_savepoint[SCH][288230380446679044][4971973992911994977][21:52:25_6-2-14][1401745986]] loaded in [5ms 684us]
+[2015.09.15 10:14:17] [0000m.01s.270ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [6:_savepoint[SCH][288230380446679044][4971973992911994977][21:52:25_6-2-14][1401745986]]
+[2015.09.15 10:14:17] [0000m.01s.271ms] [0] iCDB Database: Constraint definitions for snapshot [6:_savepoint[SCH][288230380446679044][4971973992911994977][21:52:25_6-2-14][1401745986]] upgraded in [1ms 138us]
+[2015.09.15 10:14:17] [0000m.01s.271ms] [0] iCDB Database: Saving snapshot [6:_savepoint[SCH][288230380446679044][4971973992911994977][21:52:25_6-2-14][1401745986]]
+[2015.09.15 10:14:17] [0000m.01s.274ms] [0] iCDB Database: Snapshot [6:_savepoint[SCH][288230380446679044][4971973992911994977][21:52:25_6-2-14][1401745986]] saved in [2ms 262us]
+[2015.09.15 10:14:17] [0000m.01s.277ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s6\cdbblks\b700000090000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.277ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s6\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.278ms] [0] iCDB Database: Loading snapshot [7:_savepoint[SCH][288230380446679044][4971973992911995031][19:40:45_6-5-14][1402001277]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.284ms] [0] iCDB Database: Snapshot [7:_savepoint[SCH][288230380446679044][4971973992911995031][19:40:45_6-5-14][1402001277]] loaded in [6ms 201us]
+[2015.09.15 10:14:17] [0000m.01s.284ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [7:_savepoint[SCH][288230380446679044][4971973992911995031][19:40:45_6-5-14][1402001277]]
+[2015.09.15 10:14:17] [0000m.01s.285ms] [0] iCDB Database: Constraint definitions for snapshot [7:_savepoint[SCH][288230380446679044][4971973992911995031][19:40:45_6-5-14][1402001277]] upgraded in [1ms 46us]
+[2015.09.15 10:14:17] [0000m.01s.285ms] [0] iCDB Database: Saving snapshot [7:_savepoint[SCH][288230380446679044][4971973992911995031][19:40:45_6-5-14][1402001277]]
+[2015.09.15 10:14:17] [0000m.01s.289ms] [0] iCDB Database: Snapshot [7:_savepoint[SCH][288230380446679044][4971973992911995031][19:40:45_6-5-14][1402001277]] saved in [3ms 314us]
+[2015.09.15 10:14:17] [0000m.01s.292ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s7\cdbblks\9900000010000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.292ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s7\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.293ms] [0] iCDB Database: Loading snapshot [8:_savepoint[SCH][288230380446679044][4971973992911995033][20:44:17_6-5-14][1402001281]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.299ms] [0] iCDB Database: Snapshot [8:_savepoint[SCH][288230380446679044][4971973992911995033][20:44:17_6-5-14][1402001281]] loaded in [6ms 492us]
+[2015.09.15 10:14:17] [0000m.01s.299ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [8:_savepoint[SCH][288230380446679044][4971973992911995033][20:44:17_6-5-14][1402001281]]
+[2015.09.15 10:14:17] [0000m.01s.301ms] [0] iCDB Database: Constraint definitions for snapshot [8:_savepoint[SCH][288230380446679044][4971973992911995033][20:44:17_6-5-14][1402001281]] upgraded in [1ms 142us]
+[2015.09.15 10:14:17] [0000m.01s.301ms] [0] iCDB Database: Saving snapshot [8:_savepoint[SCH][288230380446679044][4971973992911995033][20:44:17_6-5-14][1402001281]]
+[2015.09.15 10:14:17] [0000m.01s.306ms] [0] iCDB Database: Snapshot [8:_savepoint[SCH][288230380446679044][4971973992911995033][20:44:17_6-5-14][1402001281]] saved in [5ms 92us]
+[2015.09.15 10:14:17] [0000m.01s.310ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s8\cdbblks\9900000020000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.310ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s8\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.310ms] [0] iCDB Database: Loading snapshot [9:_savepoint[SCH][288230380446679044][4971974005796896811][17:47:10_6-5-14][1402001308]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.316ms] [0] iCDB Database: Snapshot [9:_savepoint[SCH][288230380446679044][4971974005796896811][17:47:10_6-5-14][1402001308]] loaded in [5ms 409us]
+[2015.09.15 10:14:17] [0000m.01s.316ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [9:_savepoint[SCH][288230380446679044][4971974005796896811][17:47:10_6-5-14][1402001308]]
+[2015.09.15 10:14:17] [0000m.01s.317ms] [0] iCDB Database: Constraint definitions for snapshot [9:_savepoint[SCH][288230380446679044][4971974005796896811][17:47:10_6-5-14][1402001308]] upgraded in [1ms 76us]
+[2015.09.15 10:14:17] [0000m.01s.317ms] [0] iCDB Database: Saving snapshot [9:_savepoint[SCH][288230380446679044][4971974005796896811][17:47:10_6-5-14][1402001308]]
+[2015.09.15 10:14:17] [0000m.01s.320ms] [0] iCDB Database: Snapshot [9:_savepoint[SCH][288230380446679044][4971974005796896811][17:47:10_6-5-14][1402001308]] saved in [2ms 883us]
+[2015.09.15 10:14:17] [0000m.01s.324ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s9\cdbblks\9900000030000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.324ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s9\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.324ms] [0] iCDB Database: Loading snapshot [10:_savepoint[SCH][288230380446679044][4971973992911994977][18:02:58_6-5-14][1402001318]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.330ms] [0] iCDB Database: Snapshot [10:_savepoint[SCH][288230380446679044][4971973992911994977][18:02:58_6-5-14][1402001318]] loaded in [6ms 349us]
+[2015.09.15 10:14:17] [0000m.01s.331ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [10:_savepoint[SCH][288230380446679044][4971973992911994977][18:02:58_6-5-14][1402001318]]
+[2015.09.15 10:14:17] [0000m.01s.332ms] [0] iCDB Database: Constraint definitions for snapshot [10:_savepoint[SCH][288230380446679044][4971973992911994977][18:02:58_6-5-14][1402001318]] upgraded in [1ms 802us]
+[2015.09.15 10:14:17] [0000m.01s.333ms] [0] iCDB Database: Saving snapshot [10:_savepoint[SCH][288230380446679044][4971973992911994977][18:02:58_6-5-14][1402001318]]
+[2015.09.15 10:14:17] [0000m.01s.335ms] [0] iCDB Database: Snapshot [10:_savepoint[SCH][288230380446679044][4971973992911994977][18:02:58_6-5-14][1402001318]] saved in [2ms 174us]
+[2015.09.15 10:14:17] [0000m.01s.338ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s10\cdbblks\9900000040000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.338ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s10\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.339ms] [0] iCDB Database: Loading snapshot [11:_savepoint[SCH][288230380446679044][4971974031566700667][17:47:48_6-5-14][1402001324]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.344ms] [0] iCDB Database: Snapshot [11:_savepoint[SCH][288230380446679044][4971974031566700667][17:47:48_6-5-14][1402001324]] loaded in [5ms 467us]
+[2015.09.15 10:14:17] [0000m.01s.344ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [11:_savepoint[SCH][288230380446679044][4971974031566700667][17:47:48_6-5-14][1402001324]]
+[2015.09.15 10:14:17] [0000m.01s.345ms] [0] iCDB Database: Constraint definitions for snapshot [11:_savepoint[SCH][288230380446679044][4971974031566700667][17:47:48_6-5-14][1402001324]] upgraded in [954us]
+[2015.09.15 10:14:17] [0000m.01s.345ms] [0] iCDB Database: Saving snapshot [11:_savepoint[SCH][288230380446679044][4971974031566700667][17:47:48_6-5-14][1402001324]]
+[2015.09.15 10:14:17] [0000m.01s.347ms] [0] iCDB Database: Snapshot [11:_savepoint[SCH][288230380446679044][4971974031566700667][17:47:48_6-5-14][1402001324]] saved in [1ms 396us]
+[2015.09.15 10:14:17] [0000m.01s.350ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s11\cdbblks\9900000050000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.350ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s11\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.351ms] [0] iCDB Database: Loading snapshot [12:_savepoint[SCH][288230380446679044][4971973992911995031][18:33:46_6-9-14][1402338833]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.357ms] [0] iCDB Database: Snapshot [12:_savepoint[SCH][288230380446679044][4971973992911995031][18:33:46_6-9-14][1402338833]] loaded in [6ms 369us]
+[2015.09.15 10:14:17] [0000m.01s.357ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [12:_savepoint[SCH][288230380446679044][4971973992911995031][18:33:46_6-9-14][1402338833]]
+[2015.09.15 10:14:17] [0000m.01s.359ms] [0] iCDB Database: Constraint definitions for snapshot [12:_savepoint[SCH][288230380446679044][4971973992911995031][18:33:46_6-9-14][1402338833]] upgraded in [1ms 725us]
+[2015.09.15 10:14:17] [0000m.01s.359ms] [0] iCDB Database: Saving snapshot [12:_savepoint[SCH][288230380446679044][4971973992911995031][18:33:46_6-9-14][1402338833]]
+[2015.09.15 10:14:17] [0000m.01s.363ms] [0] iCDB Database: Snapshot [12:_savepoint[SCH][288230380446679044][4971973992911995031][18:33:46_6-9-14][1402338833]] saved in [3ms 814us]
+[2015.09.15 10:14:17] [0000m.01s.367ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s12\cdbblks\bc00000010000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.367ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s12\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.368ms] [0] iCDB Database: Loading snapshot [13:_savepoint[SCH][288230380446679044][4971973992911995031][22:04:53_6-9-14][1402351502]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.375ms] [0] iCDB Database: Snapshot [13:_savepoint[SCH][288230380446679044][4971973992911995031][22:04:53_6-9-14][1402351502]] loaded in [7ms 359us]
+[2015.09.15 10:14:17] [0000m.01s.375ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [13:_savepoint[SCH][288230380446679044][4971973992911995031][22:04:53_6-9-14][1402351502]]
+[2015.09.15 10:14:17] [0000m.01s.377ms] [0] iCDB Database: Constraint definitions for snapshot [13:_savepoint[SCH][288230380446679044][4971973992911995031][22:04:53_6-9-14][1402351502]] upgraded in [1ms 702us]
+[2015.09.15 10:14:17] [0000m.01s.377ms] [0] iCDB Database: Saving snapshot [13:_savepoint[SCH][288230380446679044][4971973992911995031][22:04:53_6-9-14][1402351502]]
+[2015.09.15 10:14:17] [0000m.01s.383ms] [0] iCDB Database: Snapshot [13:_savepoint[SCH][288230380446679044][4971973992911995031][22:04:53_6-9-14][1402351502]] saved in [5ms 561us]
+[2015.09.15 10:14:17] [0000m.01s.387ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s13\cdbblks\bc00000020000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.388ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s13\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.388ms] [0] iCDB Database: Loading snapshot [14:_savepoint[SCH][288230380446679044][4971973992911995031][22:09:48_6-9-14][1402351912]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.396ms] [0] iCDB Database: Snapshot [14:_savepoint[SCH][288230380446679044][4971973992911995031][22:09:48_6-9-14][1402351912]] loaded in [7ms 552us]
+[2015.09.15 10:14:17] [0000m.01s.396ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [14:_savepoint[SCH][288230380446679044][4971973992911995031][22:09:48_6-9-14][1402351912]]
+[2015.09.15 10:14:17] [0000m.01s.397ms] [0] iCDB Database: Constraint definitions for snapshot [14:_savepoint[SCH][288230380446679044][4971973992911995031][22:09:48_6-9-14][1402351912]] upgraded in [1ms 576us]
+[2015.09.15 10:14:17] [0000m.01s.398ms] [0] iCDB Database: Saving snapshot [14:_savepoint[SCH][288230380446679044][4971973992911995031][22:09:48_6-9-14][1402351912]]
+[2015.09.15 10:14:17] [0000m.01s.403ms] [0] iCDB Database: Snapshot [14:_savepoint[SCH][288230380446679044][4971973992911995031][22:09:48_6-9-14][1402351912]] saved in [5ms 460us]
+[2015.09.15 10:14:17] [0000m.01s.408ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s14\cdbblks\bc00000030000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.408ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s14\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.408ms] [0] iCDB Database: Loading snapshot [15:_savepoint[SCH][288230380446679044][4971973992911995031][21:58:06_6-16-14][1402955912]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.416ms] [0] iCDB Database: Snapshot [15:_savepoint[SCH][288230380446679044][4971973992911995031][21:58:06_6-16-14][1402955912]] loaded in [7ms 341us]
+[2015.09.15 10:14:17] [0000m.01s.416ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [15:_savepoint[SCH][288230380446679044][4971973992911995031][21:58:06_6-16-14][1402955912]]
+[2015.09.15 10:14:17] [0000m.01s.426ms] [0] iCDB Database: Constraint definitions for snapshot [15:_savepoint[SCH][288230380446679044][4971973992911995031][21:58:06_6-16-14][1402955912]] upgraded in [9ms 958us]
+[2015.09.15 10:14:17] [0000m.01s.426ms] [0] iCDB Database: Saving snapshot [15:_savepoint[SCH][288230380446679044][4971973992911995031][21:58:06_6-16-14][1402955912]]
+[2015.09.15 10:14:17] [0000m.01s.432ms] [0] iCDB Database: Snapshot [15:_savepoint[SCH][288230380446679044][4971973992911995031][21:58:06_6-16-14][1402955912]] saved in [6ms 126us]
+[2015.09.15 10:14:17] [0000m.01s.439ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s15\cdbblks\5e00000010000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.439ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s15\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.439ms] [0] iCDB Database: Loading snapshot [16:_savepoint[SCH][288230380446679044][4971973992911995125][22:00:48_6-18-14][1403128858]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.446ms] [0] iCDB Database: Snapshot [16:_savepoint[SCH][288230380446679044][4971973992911995125][22:00:48_6-18-14][1403128858]] loaded in [6ms 255us]
+[2015.09.15 10:14:17] [0000m.01s.446ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [16:_savepoint[SCH][288230380446679044][4971973992911995125][22:00:48_6-18-14][1403128858]]
+[2015.09.15 10:14:17] [0000m.01s.447ms] [0] iCDB Database: Constraint definitions for snapshot [16:_savepoint[SCH][288230380446679044][4971973992911995125][22:00:48_6-18-14][1403128858]] upgraded in [1ms 205us]
+[2015.09.15 10:14:17] [0000m.01s.447ms] [0] iCDB Database: Saving snapshot [16:_savepoint[SCH][288230380446679044][4971973992911995125][22:00:48_6-18-14][1403128858]]
+[2015.09.15 10:14:17] [0000m.01s.450ms] [0] iCDB Database: Snapshot [16:_savepoint[SCH][288230380446679044][4971973992911995125][22:00:48_6-18-14][1403128858]] saved in [2ms 747us]
+[2015.09.15 10:14:17] [0000m.01s.455ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s16\cdbblks\ef00000010000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.455ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s16\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.456ms] [0] iCDB Database: Loading snapshot [17:_savepoint[SCH][288230380446679044][4971974005796896811][22:17:02_6-18-14][1403129853]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.462ms] [0] iCDB Database: Snapshot [17:_savepoint[SCH][288230380446679044][4971974005796896811][22:17:02_6-18-14][1403129853]] loaded in [6ms 302us]
+[2015.09.15 10:14:17] [0000m.01s.462ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [17:_savepoint[SCH][288230380446679044][4971974005796896811][22:17:02_6-18-14][1403129853]]
+[2015.09.15 10:14:17] [0000m.01s.463ms] [0] iCDB Database: Constraint definitions for snapshot [17:_savepoint[SCH][288230380446679044][4971974005796896811][22:17:02_6-18-14][1403129853]] upgraded in [1ms 162us]
+[2015.09.15 10:14:17] [0000m.01s.463ms] [0] iCDB Database: Saving snapshot [17:_savepoint[SCH][288230380446679044][4971974005796896811][22:17:02_6-18-14][1403129853]]
+[2015.09.15 10:14:17] [0000m.01s.466ms] [0] iCDB Database: Snapshot [17:_savepoint[SCH][288230380446679044][4971974005796896811][22:17:02_6-18-14][1403129853]] saved in [3ms 11us]
+[2015.09.15 10:14:17] [0000m.01s.471ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s17\cdbblks\ef00000020000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.471ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s17\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.472ms] [0] iCDB Database: Loading snapshot [18:_savepoint[SCH][288230380446679044][4971973992911995123][18:09:02_6-25-14][1403719751]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.478ms] [0] iCDB Database: Snapshot [18:_savepoint[SCH][288230380446679044][4971973992911995123][18:09:02_6-25-14][1403719751]] loaded in [6ms 210us]
+[2015.09.15 10:14:17] [0000m.01s.478ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [18:_savepoint[SCH][288230380446679044][4971973992911995123][18:09:02_6-25-14][1403719751]]
+[2015.09.15 10:14:17] [0000m.01s.479ms] [0] iCDB Database: Constraint definitions for snapshot [18:_savepoint[SCH][288230380446679044][4971973992911995123][18:09:02_6-25-14][1403719751]] upgraded in [1ms 179us]
+[2015.09.15 10:14:17] [0000m.01s.480ms] [0] iCDB Database: Saving snapshot [18:_savepoint[SCH][288230380446679044][4971973992911995123][18:09:02_6-25-14][1403719751]]
+[2015.09.15 10:14:17] [0000m.01s.483ms] [0] iCDB Database: Snapshot [18:_savepoint[SCH][288230380446679044][4971973992911995123][18:09:02_6-25-14][1403719751]] saved in [3ms 44us]
+[2015.09.15 10:14:17] [0000m.01s.486ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s18\cdbblks\f410000010000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.487ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s18\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.487ms] [0] iCDB Database: Loading snapshot [19:_savepoint[SCH][288230380446679044][4971974001501929807][0:00:47_6-27-14][1403827261]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.493ms] [0] iCDB Database: Snapshot [19:_savepoint[SCH][288230380446679044][4971974001501929807][0:00:47_6-27-14][1403827261]] loaded in [6ms 184us]
+[2015.09.15 10:14:17] [0000m.01s.493ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [19:_savepoint[SCH][288230380446679044][4971974001501929807][0:00:47_6-27-14][1403827261]]
+[2015.09.15 10:14:17] [0000m.01s.494ms] [0] iCDB Database: Constraint definitions for snapshot [19:_savepoint[SCH][288230380446679044][4971974001501929807][0:00:47_6-27-14][1403827261]] upgraded in [1ms 135us]
+[2015.09.15 10:14:17] [0000m.01s.495ms] [0] iCDB Database: Saving snapshot [19:_savepoint[SCH][288230380446679044][4971974001501929807][0:00:47_6-27-14][1403827261]]
+[2015.09.15 10:14:17] [0000m.01s.497ms] [0] iCDB Database: Snapshot [19:_savepoint[SCH][288230380446679044][4971974001501929807][0:00:47_6-27-14][1403827261]] saved in [2ms 305us]
+[2015.09.15 10:14:17] [0000m.01s.501ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s19\cdbblks\e610000010000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.501ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s19\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.501ms] [0] iCDB Database: Loading snapshot [20:_savepoint[SCH][288230380446679044][4971973992911995123][18:47:22_7-1-14][1404240451]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.508ms] [0] iCDB Database: Snapshot [20:_savepoint[SCH][288230380446679044][4971973992911995123][18:47:22_7-1-14][1404240451]] loaded in [6ms 849us]
+[2015.09.15 10:14:17] [0000m.01s.508ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [20:_savepoint[SCH][288230380446679044][4971973992911995123][18:47:22_7-1-14][1404240451]]
+[2015.09.15 10:14:17] [0000m.01s.510ms] [0] iCDB Database: Constraint definitions for snapshot [20:_savepoint[SCH][288230380446679044][4971973992911995123][18:47:22_7-1-14][1404240451]] upgraded in [1ms 306us]
+[2015.09.15 10:14:17] [0000m.01s.510ms] [0] iCDB Database: Saving snapshot [20:_savepoint[SCH][288230380446679044][4971973992911995123][18:47:22_7-1-14][1404240451]]
+[2015.09.15 10:14:17] [0000m.01s.514ms] [0] iCDB Database: Snapshot [20:_savepoint[SCH][288230380446679044][4971973992911995123][18:47:22_7-1-14][1404240451]] saved in [4ms 97us]
+[2015.09.15 10:14:17] [0000m.01s.518ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s20\cdbblks\a910000010000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.518ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s20\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.519ms] [0] iCDB Database: Loading snapshot [21:_savepoint[SCH][288230380446679044][4971973992911995179][18:22:13_7-1-14][1404240459]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.525ms] [0] iCDB Database: Snapshot [21:_savepoint[SCH][288230380446679044][4971973992911995179][18:22:13_7-1-14][1404240459]] loaded in [5ms 844us]
+[2015.09.15 10:14:17] [0000m.01s.525ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [21:_savepoint[SCH][288230380446679044][4971973992911995179][18:22:13_7-1-14][1404240459]]
+[2015.09.15 10:14:17] [0000m.01s.526ms] [0] iCDB Database: Constraint definitions for snapshot [21:_savepoint[SCH][288230380446679044][4971973992911995179][18:22:13_7-1-14][1404240459]] upgraded in [1ms 50us]
+[2015.09.15 10:14:17] [0000m.01s.526ms] [0] iCDB Database: Saving snapshot [21:_savepoint[SCH][288230380446679044][4971973992911995179][18:22:13_7-1-14][1404240459]]
+[2015.09.15 10:14:17] [0000m.01s.528ms] [0] iCDB Database: Snapshot [21:_savepoint[SCH][288230380446679044][4971973992911995179][18:22:13_7-1-14][1404240459]] saved in [1ms 844us]
+[2015.09.15 10:14:17] [0000m.01s.531ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s21\cdbblks\a910000020000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.531ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s21\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.532ms] [0] iCDB Database: Loading snapshot [22:_savepoint[SCH][288230380446679044][4971973997206962475][18:22:13_7-1-14][1404240467]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.538ms] [0] iCDB Database: Snapshot [22:_savepoint[SCH][288230380446679044][4971973997206962475][18:22:13_7-1-14][1404240467]] loaded in [6ms 178us]
+[2015.09.15 10:14:17] [0000m.01s.538ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [22:_savepoint[SCH][288230380446679044][4971973997206962475][18:22:13_7-1-14][1404240467]]
+[2015.09.15 10:14:17] [0000m.01s.539ms] [0] iCDB Database: Constraint definitions for snapshot [22:_savepoint[SCH][288230380446679044][4971973997206962475][18:22:13_7-1-14][1404240467]] upgraded in [1ms 131us]
+[2015.09.15 10:14:17] [0000m.01s.539ms] [0] iCDB Database: Saving snapshot [22:_savepoint[SCH][288230380446679044][4971973997206962475][18:22:13_7-1-14][1404240467]]
+[2015.09.15 10:14:17] [0000m.01s.542ms] [0] iCDB Database: Snapshot [22:_savepoint[SCH][288230380446679044][4971973997206962475][18:22:13_7-1-14][1404240467]] saved in [2ms 305us]
+[2015.09.15 10:14:17] [0000m.01s.545ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s22\cdbblks\a910000030000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.545ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s22\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.546ms] [0] iCDB Database: Loading snapshot [23:_savepoint[SCH][288230380446679044][4971974001501929807][18:22:13_7-1-14][1404240474]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.552ms] [0] iCDB Database: Snapshot [23:_savepoint[SCH][288230380446679044][4971974001501929807][18:22:13_7-1-14][1404240474]] loaded in [5ms 966us]
+[2015.09.15 10:14:17] [0000m.01s.552ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [23:_savepoint[SCH][288230380446679044][4971974001501929807][18:22:13_7-1-14][1404240474]]
+[2015.09.15 10:14:17] [0000m.01s.553ms] [0] iCDB Database: Constraint definitions for snapshot [23:_savepoint[SCH][288230380446679044][4971974001501929807][18:22:13_7-1-14][1404240474]] upgraded in [1ms 296us]
+[2015.09.15 10:14:17] [0000m.01s.553ms] [0] iCDB Database: Saving snapshot [23:_savepoint[SCH][288230380446679044][4971974001501929807][18:22:13_7-1-14][1404240474]]
+[2015.09.15 10:14:17] [0000m.01s.556ms] [0] iCDB Database: Snapshot [23:_savepoint[SCH][288230380446679044][4971974001501929807][18:22:13_7-1-14][1404240474]] saved in [2ms 473us]
+[2015.09.15 10:14:17] [0000m.01s.559ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s23\cdbblks\a910000040000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.560ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s23\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.560ms] [0] iCDB Database: Loading snapshot [24:_savepoint[SCH][288230380446679044][4971973992911995288][22:03:37_7-1-14][1404421303]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.566ms] [0] iCDB Database: Snapshot [24:_savepoint[SCH][288230380446679044][4971973992911995288][22:03:37_7-1-14][1404421303]] loaded in [5ms 999us]
+[2015.09.15 10:14:17] [0000m.01s.566ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [24:_savepoint[SCH][288230380446679044][4971973992911995288][22:03:37_7-1-14][1404421303]]
+[2015.09.15 10:14:17] [0000m.01s.567ms] [0] iCDB Database: Constraint definitions for snapshot [24:_savepoint[SCH][288230380446679044][4971973992911995288][22:03:37_7-1-14][1404421303]] upgraded in [1ms 121us]
+[2015.09.15 10:14:17] [0000m.01s.567ms] [0] iCDB Database: Saving snapshot [24:_savepoint[SCH][288230380446679044][4971973992911995288][22:03:37_7-1-14][1404421303]]
+[2015.09.15 10:14:17] [0000m.01s.570ms] [0] iCDB Database: Snapshot [24:_savepoint[SCH][288230380446679044][4971973992911995288][22:03:37_7-1-14][1404421303]] saved in [2ms 203us]
+[2015.09.15 10:14:17] [0000m.01s.573ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s24\cdbblks\cb100000a0000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.573ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s24\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.574ms] [0] iCDB Database: Loading snapshot [25:_savepoint[SCH][288230380446679044][4971973992911995123][23:06:05_7-1-14][1404412758]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.581ms] [0] iCDB Database: Snapshot [25:_savepoint[SCH][288230380446679044][4971973992911995123][23:06:05_7-1-14][1404412758]] loaded in [6ms 727us]
+[2015.09.15 10:14:17] [0000m.01s.581ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [25:_savepoint[SCH][288230380446679044][4971973992911995123][23:06:05_7-1-14][1404412758]]
+[2015.09.15 10:14:17] [0000m.01s.582ms] [0] iCDB Database: Constraint definitions for snapshot [25:_savepoint[SCH][288230380446679044][4971973992911995123][23:06:05_7-1-14][1404412758]] upgraded in [1ms 274us]
+[2015.09.15 10:14:17] [0000m.01s.582ms] [0] iCDB Database: Saving snapshot [25:_savepoint[SCH][288230380446679044][4971973992911995123][23:06:05_7-1-14][1404412758]]
+[2015.09.15 10:14:17] [0000m.01s.586ms] [0] iCDB Database: Snapshot [25:_savepoint[SCH][288230380446679044][4971973992911995123][23:06:05_7-1-14][1404412758]] saved in [4ms 7us]
+[2015.09.15 10:14:17] [0000m.01s.590ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s25\cdbblks\cb10000010000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.591ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s25\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.591ms] [0] iCDB Database: Loading snapshot [26:_savepoint[SCH][288230380446679044][4971973997206962475][18:22:13_7-1-14][1404421039]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.597ms] [0] iCDB Database: Snapshot [26:_savepoint[SCH][288230380446679044][4971973997206962475][18:22:13_7-1-14][1404421039]] loaded in [6ms 349us]
+[2015.09.15 10:14:17] [0000m.01s.597ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [26:_savepoint[SCH][288230380446679044][4971973997206962475][18:22:13_7-1-14][1404421039]]
+[2015.09.15 10:14:17] [0000m.01s.599ms] [0] iCDB Database: Constraint definitions for snapshot [26:_savepoint[SCH][288230380446679044][4971973997206962475][18:22:13_7-1-14][1404421039]] upgraded in [1ms 198us]
+[2015.09.15 10:14:17] [0000m.01s.599ms] [0] iCDB Database: Saving snapshot [26:_savepoint[SCH][288230380446679044][4971973997206962475][18:22:13_7-1-14][1404421039]]
+[2015.09.15 10:14:17] [0000m.01s.601ms] [0] iCDB Database: Snapshot [26:_savepoint[SCH][288230380446679044][4971973997206962475][18:22:13_7-1-14][1404421039]] saved in [2ms 406us]
+[2015.09.15 10:14:17] [0000m.01s.605ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s26\cdbblks\cb10000020000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.605ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s26\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.605ms] [0] iCDB Database: Loading snapshot [27:_savepoint[SCH][288230380446679044][4971973992911995123][20:37:24_7-3-14][1404421051]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.612ms] [0] iCDB Database: Snapshot [27:_savepoint[SCH][288230380446679044][4971973992911995123][20:37:24_7-3-14][1404421051]] loaded in [6ms 507us]
+[2015.09.15 10:14:17] [0000m.01s.612ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [27:_savepoint[SCH][288230380446679044][4971973992911995123][20:37:24_7-3-14][1404421051]]
+[2015.09.15 10:14:17] [0000m.01s.613ms] [0] iCDB Database: Constraint definitions for snapshot [27:_savepoint[SCH][288230380446679044][4971973992911995123][20:37:24_7-3-14][1404421051]] upgraded in [1ms 238us]
+[2015.09.15 10:14:17] [0000m.01s.613ms] [0] iCDB Database: Saving snapshot [27:_savepoint[SCH][288230380446679044][4971973992911995123][20:37:24_7-3-14][1404421051]]
+[2015.09.15 10:14:17] [0000m.01s.617ms] [0] iCDB Database: Snapshot [27:_savepoint[SCH][288230380446679044][4971973992911995123][20:37:24_7-3-14][1404421051]] saved in [3ms 914us]
+[2015.09.15 10:14:17] [0000m.01s.621ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s27\cdbblks\cb10000030000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.622ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s27\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.622ms] [0] iCDB Database: Loading snapshot [28:_savepoint[SCH][288230380446679044][4971973992911995123][20:37:24_7-3-14][1404421111]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.629ms] [0] iCDB Database: Snapshot [28:_savepoint[SCH][288230380446679044][4971973992911995123][20:37:24_7-3-14][1404421111]] loaded in [6ms 749us]
+[2015.09.15 10:14:17] [0000m.01s.629ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [28:_savepoint[SCH][288230380446679044][4971973992911995123][20:37:24_7-3-14][1404421111]]
+[2015.09.15 10:14:17] [0000m.01s.630ms] [0] iCDB Database: Constraint definitions for snapshot [28:_savepoint[SCH][288230380446679044][4971973992911995123][20:37:24_7-3-14][1404421111]] upgraded in [1ms 272us]
+[2015.09.15 10:14:17] [0000m.01s.630ms] [0] iCDB Database: Saving snapshot [28:_savepoint[SCH][288230380446679044][4971973992911995123][20:37:24_7-3-14][1404421111]]
+[2015.09.15 10:14:17] [0000m.01s.634ms] [0] iCDB Database: Snapshot [28:_savepoint[SCH][288230380446679044][4971973992911995123][20:37:24_7-3-14][1404421111]] saved in [3ms 611us]
+[2015.09.15 10:14:17] [0000m.01s.638ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s28\cdbblks\cb10000040000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.638ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s28\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.639ms] [0] iCDB Database: Loading snapshot [29:_savepoint[SCH][288230380446679044][4971973992911995179][18:22:13_7-1-14][1404421125]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.645ms] [0] iCDB Database: Snapshot [29:_savepoint[SCH][288230380446679044][4971973992911995179][18:22:13_7-1-14][1404421125]] loaded in [5ms 803us]
+[2015.09.15 10:14:17] [0000m.01s.645ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [29:_savepoint[SCH][288230380446679044][4971973992911995179][18:22:13_7-1-14][1404421125]]
+[2015.09.15 10:14:17] [0000m.01s.646ms] [0] iCDB Database: Constraint definitions for snapshot [29:_savepoint[SCH][288230380446679044][4971973992911995179][18:22:13_7-1-14][1404421125]] upgraded in [1ms 183us]
+[2015.09.15 10:14:17] [0000m.01s.646ms] [0] iCDB Database: Saving snapshot [29:_savepoint[SCH][288230380446679044][4971973992911995179][18:22:13_7-1-14][1404421125]]
+[2015.09.15 10:14:17] [0000m.01s.648ms] [0] iCDB Database: Snapshot [29:_savepoint[SCH][288230380446679044][4971973992911995179][18:22:13_7-1-14][1404421125]] saved in [1ms 904us]
+[2015.09.15 10:14:17] [0000m.01s.651ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s29\cdbblks\cb10000050000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.651ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s29\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.652ms] [0] iCDB Database: Loading snapshot [30:_savepoint[SCH][288230380446679044][4971973997206962475][18:22:13_7-1-14][1404421148]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.658ms] [0] iCDB Database: Snapshot [30:_savepoint[SCH][288230380446679044][4971973997206962475][18:22:13_7-1-14][1404421148]] loaded in [6ms 168us]
+[2015.09.15 10:14:17] [0000m.01s.658ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [30:_savepoint[SCH][288230380446679044][4971973997206962475][18:22:13_7-1-14][1404421148]]
+[2015.09.15 10:14:17] [0000m.01s.659ms] [0] iCDB Database: Constraint definitions for snapshot [30:_savepoint[SCH][288230380446679044][4971973997206962475][18:22:13_7-1-14][1404421148]] upgraded in [1ms 135us]
+[2015.09.15 10:14:17] [0000m.01s.659ms] [0] iCDB Database: Saving snapshot [30:_savepoint[SCH][288230380446679044][4971973997206962475][18:22:13_7-1-14][1404421148]]
+[2015.09.15 10:14:17] [0000m.01s.662ms] [0] iCDB Database: Snapshot [30:_savepoint[SCH][288230380446679044][4971973997206962475][18:22:13_7-1-14][1404421148]] saved in [2ms 337us]
+[2015.09.15 10:14:17] [0000m.01s.671ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s30\cdbblks\cb10000060000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.671ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s30\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.671ms] [0] iCDB Database: Loading snapshot [31:_savepoint[SCH][288230380446679044][4971974001501929807][18:22:13_7-1-14][1404421161]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.677ms] [0] iCDB Database: Snapshot [31:_savepoint[SCH][288230380446679044][4971974001501929807][18:22:13_7-1-14][1404421161]] loaded in [6ms 119us]
+[2015.09.15 10:14:17] [0000m.01s.678ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [31:_savepoint[SCH][288230380446679044][4971974001501929807][18:22:13_7-1-14][1404421161]]
+[2015.09.15 10:14:17] [0000m.01s.679ms] [0] iCDB Database: Constraint definitions for snapshot [31:_savepoint[SCH][288230380446679044][4971974001501929807][18:22:13_7-1-14][1404421161]] upgraded in [1ms 237us]
+[2015.09.15 10:14:17] [0000m.01s.679ms] [0] iCDB Database: Saving snapshot [31:_savepoint[SCH][288230380446679044][4971974001501929807][18:22:13_7-1-14][1404421161]]
+[2015.09.15 10:14:17] [0000m.01s.681ms] [0] iCDB Database: Snapshot [31:_savepoint[SCH][288230380446679044][4971974001501929807][18:22:13_7-1-14][1404421161]] saved in [2ms 447us]
+[2015.09.15 10:14:17] [0000m.01s.685ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s31\cdbblks\cb10000070000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.685ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s31\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.686ms] [0] iCDB Database: Loading snapshot [32:_savepoint[SCH][288230380446679044][4971974001501929807][18:22:29_7-10-14][1405016556]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.692ms] [0] iCDB Database: Snapshot [32:_savepoint[SCH][288230380446679044][4971974001501929807][18:22:29_7-10-14][1405016556]] loaded in [6ms 217us]
+[2015.09.15 10:14:17] [0000m.01s.692ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [32:_savepoint[SCH][288230380446679044][4971974001501929807][18:22:29_7-10-14][1405016556]]
+[2015.09.15 10:14:17] [0000m.01s.693ms] [0] iCDB Database: Constraint definitions for snapshot [32:_savepoint[SCH][288230380446679044][4971974001501929807][18:22:29_7-10-14][1405016556]] upgraded in [1ms 219us]
+[2015.09.15 10:14:17] [0000m.01s.693ms] [0] iCDB Database: Saving snapshot [32:_savepoint[SCH][288230380446679044][4971974001501929807][18:22:29_7-10-14][1405016556]]
+[2015.09.15 10:14:17] [0000m.01s.696ms] [0] iCDB Database: Snapshot [32:_savepoint[SCH][288230380446679044][4971974001501929807][18:22:29_7-10-14][1405016556]] saved in [2ms 727us]
+[2015.09.15 10:14:17] [0000m.01s.703ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s32\cdbblks\c020000010000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.703ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s32\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.704ms] [0] iCDB Database: Loading snapshot [33:_savepoint[SCH][288230380446679044][4971973997206962475][20:22:13_7-11-14][1405118043]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.710ms] [0] iCDB Database: Snapshot [33:_savepoint[SCH][288230380446679044][4971973997206962475][20:22:13_7-11-14][1405118043]] loaded in [6ms 378us]
+[2015.09.15 10:14:17] [0000m.01s.710ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [33:_savepoint[SCH][288230380446679044][4971973997206962475][20:22:13_7-11-14][1405118043]]
+[2015.09.15 10:14:17] [0000m.01s.711ms] [0] iCDB Database: Constraint definitions for snapshot [33:_savepoint[SCH][288230380446679044][4971973997206962475][20:22:13_7-11-14][1405118043]] upgraded in [1ms 212us]
+[2015.09.15 10:14:17] [0000m.01s.711ms] [0] iCDB Database: Saving snapshot [33:_savepoint[SCH][288230380446679044][4971973997206962475][20:22:13_7-11-14][1405118043]]
+[2015.09.15 10:14:17] [0000m.01s.714ms] [0] iCDB Database: Snapshot [33:_savepoint[SCH][288230380446679044][4971973997206962475][20:22:13_7-11-14][1405118043]] saved in [2ms 732us]
+[2015.09.15 10:14:17] [0000m.01s.718ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s33\cdbblks\e120000010000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.718ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s33\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.719ms] [0] iCDB Database: Loading snapshot [34:_savepoint[SCH][288230380446679044][4971973992911995125][19:21:14_7-11-14][1405118051]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.725ms] [0] iCDB Database: Snapshot [34:_savepoint[SCH][288230380446679044][4971973992911995125][19:21:14_7-11-14][1405118051]] loaded in [6ms 618us]
+[2015.09.15 10:14:17] [0000m.01s.888ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [34:_savepoint[SCH][288230380446679044][4971973992911995125][19:21:14_7-11-14][1405118051]]
+[2015.09.15 10:14:17] [0000m.01s.898ms] [0] iCDB Database: Constraint definitions for snapshot [34:_savepoint[SCH][288230380446679044][4971973992911995125][19:21:14_7-11-14][1405118051]] upgraded in [1ms 420us]
+[2015.09.15 10:14:17] [0000m.01s.898ms] [0] iCDB Database: Saving snapshot [34:_savepoint[SCH][288230380446679044][4971973992911995125][19:21:14_7-11-14][1405118051]]
+[2015.09.15 10:14:17] [0000m.01s.898ms] [0] iCDB Database: Snapshot [34:_savepoint[SCH][288230380446679044][4971973992911995125][19:21:14_7-11-14][1405118051]] saved in [3ms 437us]
+[2015.09.15 10:14:17] [0000m.01s.898ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s34\cdbblks\e120000020000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.898ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s34\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.908ms] [0] iCDB Database: Loading snapshot [35:_savepoint[SCH][288230380446679044][4971973992911995099][18:19:40_7-11-14][1405118056]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.908ms] [0] iCDB Database: Snapshot [35:_savepoint[SCH][288230380446679044][4971973992911995099][18:19:40_7-11-14][1405118056]] loaded in [5ms 319us]
+[2015.09.15 10:14:17] [0000m.01s.908ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [35:_savepoint[SCH][288230380446679044][4971973992911995099][18:19:40_7-11-14][1405118056]]
+[2015.09.15 10:14:17] [0000m.01s.908ms] [0] iCDB Database: Constraint definitions for snapshot [35:_savepoint[SCH][288230380446679044][4971973992911995099][18:19:40_7-11-14][1405118056]] upgraded in [984us]
+[2015.09.15 10:14:17] [0000m.01s.908ms] [0] iCDB Database: Saving snapshot [35:_savepoint[SCH][288230380446679044][4971973992911995099][18:19:40_7-11-14][1405118056]]
+[2015.09.15 10:14:17] [0000m.01s.908ms] [0] iCDB Database: Snapshot [35:_savepoint[SCH][288230380446679044][4971973992911995099][18:19:40_7-11-14][1405118056]] saved in [1ms 139us]
+[2015.09.15 10:14:17] [0000m.01s.918ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s35\cdbblks\e120000030000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.918ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s35\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.918ms] [0] iCDB Database: Loading snapshot [36:_savepoint[SCH][288230380446679044][4971973992911995031][20:20:32_7-11-14][1405118061]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.918ms] [0] iCDB Database: Snapshot [36:_savepoint[SCH][288230380446679044][4971973992911995031][20:20:32_7-11-14][1405118061]] loaded in [7ms 303us]
+[2015.09.15 10:14:17] [0000m.01s.918ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [36:_savepoint[SCH][288230380446679044][4971973992911995031][20:20:32_7-11-14][1405118061]]
+[2015.09.15 10:14:17] [0000m.01s.928ms] [0] iCDB Database: Constraint definitions for snapshot [36:_savepoint[SCH][288230380446679044][4971973992911995031][20:20:32_7-11-14][1405118061]] upgraded in [1ms 625us]
+[2015.09.15 10:14:17] [0000m.01s.928ms] [0] iCDB Database: Saving snapshot [36:_savepoint[SCH][288230380446679044][4971973992911995031][20:20:32_7-11-14][1405118061]]
+[2015.09.15 10:14:17] [0000m.01s.928ms] [0] iCDB Database: Snapshot [36:_savepoint[SCH][288230380446679044][4971973992911995031][20:20:32_7-11-14][1405118061]] saved in [5ms 679us]
+[2015.09.15 10:14:17] [0000m.01s.929ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s36\cdbblks\e120000040000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.929ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s36\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.929ms] [0] iCDB Database: Loading snapshot [37:_savepoint[SCH][288230380446679044][4971974031566700667][18:49:55_7-11-14][1405118066]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.929ms] [0] iCDB Database: Snapshot [37:_savepoint[SCH][288230380446679044][4971974031566700667][18:49:55_7-11-14][1405118066]] loaded in [5ms 342us]
+[2015.09.15 10:14:17] [0000m.01s.929ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [37:_savepoint[SCH][288230380446679044][4971974031566700667][18:49:55_7-11-14][1405118066]]
+[2015.09.15 10:14:17] [0000m.01s.929ms] [0] iCDB Database: Constraint definitions for snapshot [37:_savepoint[SCH][288230380446679044][4971974031566700667][18:49:55_7-11-14][1405118066]] upgraded in [970us]
+[2015.09.15 10:14:17] [0000m.01s.929ms] [0] iCDB Database: Saving snapshot [37:_savepoint[SCH][288230380446679044][4971974031566700667][18:49:55_7-11-14][1405118066]]
+[2015.09.15 10:14:17] [0000m.01s.930ms] [0] iCDB Database: Snapshot [37:_savepoint[SCH][288230380446679044][4971974031566700667][18:49:55_7-11-14][1405118066]] saved in [1ms 605us]
+[2015.09.15 10:14:17] [0000m.01s.933ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s37\cdbblks\e120000050000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.933ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s37\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.934ms] [0] iCDB Database: Loading snapshot [38:_savepoint[SCH][288230380446679044][4971974005796896811][19:25:21_7-11-14][1405118094]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.940ms] [0] iCDB Database: Snapshot [38:_savepoint[SCH][288230380446679044][4971974005796896811][19:25:21_7-11-14][1405118094]] loaded in [6ms 422us]
+[2015.09.15 10:14:17] [0000m.01s.940ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [38:_savepoint[SCH][288230380446679044][4971974005796896811][19:25:21_7-11-14][1405118094]]
+[2015.09.15 10:14:17] [0000m.01s.942ms] [0] iCDB Database: Constraint definitions for snapshot [38:_savepoint[SCH][288230380446679044][4971974005796896811][19:25:21_7-11-14][1405118094]] upgraded in [1ms 100us]
+[2015.09.15 10:14:17] [0000m.01s.942ms] [0] iCDB Database: Saving snapshot [38:_savepoint[SCH][288230380446679044][4971974005796896811][19:25:21_7-11-14][1405118094]]
+[2015.09.15 10:14:17] [0000m.01s.944ms] [0] iCDB Database: Snapshot [38:_savepoint[SCH][288230380446679044][4971974005796896811][19:25:21_7-11-14][1405118094]] saved in [2ms 756us]
+[2015.09.15 10:14:17] [0000m.01s.948ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s38\cdbblks\e120000060000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.948ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s38\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.949ms] [0] iCDB Database: Loading snapshot [39:_savepoint[SCH][288230380446679044][4971974001501929807][20:22:13_7-11-14][1405118101]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.955ms] [0] iCDB Database: Snapshot [39:_savepoint[SCH][288230380446679044][4971974001501929807][20:22:13_7-11-14][1405118101]] loaded in [6ms 526us]
+[2015.09.15 10:14:17] [0000m.01s.955ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [39:_savepoint[SCH][288230380446679044][4971974001501929807][20:22:13_7-11-14][1405118101]]
+[2015.09.15 10:14:17] [0000m.01s.957ms] [0] iCDB Database: Constraint definitions for snapshot [39:_savepoint[SCH][288230380446679044][4971974001501929807][20:22:13_7-11-14][1405118101]] upgraded in [1ms 217us]
+[2015.09.15 10:14:17] [0000m.01s.957ms] [0] iCDB Database: Saving snapshot [39:_savepoint[SCH][288230380446679044][4971974001501929807][20:22:13_7-11-14][1405118101]]
+[2015.09.15 10:14:17] [0000m.01s.959ms] [0] iCDB Database: Snapshot [39:_savepoint[SCH][288230380446679044][4971974001501929807][20:22:13_7-11-14][1405118101]] saved in [2ms 799us]
+[2015.09.15 10:14:17] [0000m.01s.963ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s39\cdbblks\e120000070000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.963ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s39\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.964ms] [0] iCDB Database: Loading snapshot [40:_savepoint[SCH][288230380446679044][4971973992911994977][19:18:03_7-11-14][1405118105]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.970ms] [0] iCDB Database: Snapshot [40:_savepoint[SCH][288230380446679044][4971973992911994977][19:18:03_7-11-14][1405118105]] loaded in [6ms 54us]
+[2015.09.15 10:14:17] [0000m.01s.970ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [40:_savepoint[SCH][288230380446679044][4971973992911994977][19:18:03_7-11-14][1405118105]]
+[2015.09.15 10:14:17] [0000m.01s.971ms] [0] iCDB Database: Constraint definitions for snapshot [40:_savepoint[SCH][288230380446679044][4971973992911994977][19:18:03_7-11-14][1405118105]] upgraded in [1ms 119us]
+[2015.09.15 10:14:17] [0000m.01s.971ms] [0] iCDB Database: Saving snapshot [40:_savepoint[SCH][288230380446679044][4971973992911994977][19:18:03_7-11-14][1405118105]]
+[2015.09.15 10:14:17] [0000m.01s.973ms] [0] iCDB Database: Snapshot [40:_savepoint[SCH][288230380446679044][4971973992911994977][19:18:03_7-11-14][1405118105]] saved in [2ms 268us]
+[2015.09.15 10:14:17] [0000m.01s.977ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s40\cdbblks\e120000080000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.977ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s40\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.977ms] [0] iCDB Database: Loading snapshot [41:_savepoint[SCH][288230380446679044][4971973997206962395][22:30:57_7-11-14][1405118108]] version [2709]
+[2015.09.15 10:14:17] [0000m.01s.984ms] [0] iCDB Database: Snapshot [41:_savepoint[SCH][288230380446679044][4971973997206962395][22:30:57_7-11-14][1405118108]] loaded in [6ms 791us]
+[2015.09.15 10:14:17] [0000m.01s.984ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [41:_savepoint[SCH][288230380446679044][4971973997206962395][22:30:57_7-11-14][1405118108]]
+[2015.09.15 10:14:17] [0000m.01s.986ms] [0] iCDB Database: Constraint definitions for snapshot [41:_savepoint[SCH][288230380446679044][4971973997206962395][22:30:57_7-11-14][1405118108]] upgraded in [1ms 52us]
+[2015.09.15 10:14:17] [0000m.01s.986ms] [0] iCDB Database: Saving snapshot [41:_savepoint[SCH][288230380446679044][4971973997206962395][22:30:57_7-11-14][1405118108]]
+[2015.09.15 10:14:17] [0000m.01s.990ms] [0] iCDB Database: Snapshot [41:_savepoint[SCH][288230380446679044][4971973997206962395][22:30:57_7-11-14][1405118108]] saved in [3ms 992us]
+[2015.09.15 10:14:17] [0000m.01s.994ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s41\cdbblks\e120000090000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.994ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s41\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.01s.994ms] [0] iCDB Database: Loading snapshot [42:_savepoint[SCH][288230380446679044][4971973992911995288][21:38:19_7-11-14][1405118112]] version [2709]
+[2015.09.15 10:14:17] [0000m.02s.000ms] [0] iCDB Database: Snapshot [42:_savepoint[SCH][288230380446679044][4971973992911995288][21:38:19_7-11-14][1405118112]] loaded in [6ms 49us]
+[2015.09.15 10:14:17] [0000m.02s.000ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [42:_savepoint[SCH][288230380446679044][4971973992911995288][21:38:19_7-11-14][1405118112]]
+[2015.09.15 10:14:17] [0000m.02s.002ms] [0] iCDB Database: Constraint definitions for snapshot [42:_savepoint[SCH][288230380446679044][4971973992911995288][21:38:19_7-11-14][1405118112]] upgraded in [1ms 328us]
+[2015.09.15 10:14:17] [0000m.02s.002ms] [0] iCDB Database: Saving snapshot [42:_savepoint[SCH][288230380446679044][4971973992911995288][21:38:19_7-11-14][1405118112]]
+[2015.09.15 10:14:17] [0000m.02s.004ms] [0] iCDB Database: Snapshot [42:_savepoint[SCH][288230380446679044][4971973992911995288][21:38:19_7-11-14][1405118112]] saved in [2ms 318us]
+[2015.09.15 10:14:17] [0000m.02s.008ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s42\cdbblks\e1200000a0000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.008ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s42\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.008ms] [0] iCDB Database: Loading snapshot [43:_savepoint[SCH][288230380446679044][4971973992911995363][21:40:57_7-11-14][1405118119]] version [2709]
+[2015.09.15 10:14:17] [0000m.02s.015ms] [0] iCDB Database: Snapshot [43:_savepoint[SCH][288230380446679044][4971973992911995363][21:40:57_7-11-14][1405118119]] loaded in [7ms 8us]
+[2015.09.15 10:14:17] [0000m.02s.015ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [43:_savepoint[SCH][288230380446679044][4971973992911995363][21:40:57_7-11-14][1405118119]]
+[2015.09.15 10:14:17] [0000m.02s.017ms] [0] iCDB Database: Constraint definitions for snapshot [43:_savepoint[SCH][288230380446679044][4971973992911995363][21:40:57_7-11-14][1405118119]] upgraded in [1ms 421us]
+[2015.09.15 10:14:17] [0000m.02s.017ms] [0] iCDB Database: Saving snapshot [43:_savepoint[SCH][288230380446679044][4971973992911995363][21:40:57_7-11-14][1405118119]]
+[2015.09.15 10:14:17] [0000m.02s.021ms] [0] iCDB Database: Snapshot [43:_savepoint[SCH][288230380446679044][4971973992911995363][21:40:57_7-11-14][1405118119]] saved in [4ms 218us]
+[2015.09.15 10:14:17] [0000m.02s.026ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s43\cdbblks\e1200000b0000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.026ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s43\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.026ms] [0] iCDB Database: Loading snapshot [44:_savepoint[SCH][288230380446679044][4971973992911995123][18:50:52_7-11-14][1405118140]] version [2709]
+[2015.09.15 10:14:17] [0000m.02s.033ms] [0] iCDB Database: Snapshot [44:_savepoint[SCH][288230380446679044][4971973992911995123][18:50:52_7-11-14][1405118140]] loaded in [6ms 941us]
+[2015.09.15 10:14:17] [0000m.02s.033ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [44:_savepoint[SCH][288230380446679044][4971973992911995123][18:50:52_7-11-14][1405118140]]
+[2015.09.15 10:14:17] [0000m.02s.035ms] [0] iCDB Database: Constraint definitions for snapshot [44:_savepoint[SCH][288230380446679044][4971973992911995123][18:50:52_7-11-14][1405118140]] upgraded in [1ms 405us]
+[2015.09.15 10:14:17] [0000m.02s.035ms] [0] iCDB Database: Saving snapshot [44:_savepoint[SCH][288230380446679044][4971973992911995123][18:50:52_7-11-14][1405118140]]
+[2015.09.15 10:14:17] [0000m.02s.039ms] [0] iCDB Database: Snapshot [44:_savepoint[SCH][288230380446679044][4971973992911995123][18:50:52_7-11-14][1405118140]] saved in [4ms 489us]
+[2015.09.15 10:14:17] [0000m.02s.044ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s44\cdbblks\e1200000c0000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.044ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s44\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.044ms] [0] iCDB Database: Loading snapshot [45:_savepoint[SCH][288230380446679044][4971973997206962458][17:59:16_7-11-14][1405118144]] version [2709]
+[2015.09.15 10:14:17] [0000m.02s.060ms] [0] iCDB Database: Snapshot [45:_savepoint[SCH][288230380446679044][4971973997206962458][17:59:16_7-11-14][1405118144]] loaded in [15ms 755us]
+[2015.09.15 10:14:17] [0000m.02s.060ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [45:_savepoint[SCH][288230380446679044][4971973997206962458][17:59:16_7-11-14][1405118144]]
+[2015.09.15 10:14:17] [0000m.02s.062ms] [0] iCDB Database: Constraint definitions for snapshot [45:_savepoint[SCH][288230380446679044][4971973997206962458][17:59:16_7-11-14][1405118144]] upgraded in [1ms 256us]
+[2015.09.15 10:14:17] [0000m.02s.062ms] [0] iCDB Database: Saving snapshot [45:_savepoint[SCH][288230380446679044][4971973997206962458][17:59:16_7-11-14][1405118144]]
+[2015.09.15 10:14:17] [0000m.02s.064ms] [0] iCDB Database: Snapshot [45:_savepoint[SCH][288230380446679044][4971973997206962458][17:59:16_7-11-14][1405118144]] saved in [2ms 112us]
+[2015.09.15 10:14:17] [0000m.02s.067ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s45\cdbblks\e1200000d0000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.068ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s45\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.068ms] [0] iCDB Database: Loading snapshot [46:_savepoint[SCH][288230380446679044][4971973992911995033][18:20:33_7-11-14][1405118148]] version [2709]
+[2015.09.15 10:14:17] [0000m.02s.077ms] [0] iCDB Database: Snapshot [46:_savepoint[SCH][288230380446679044][4971973992911995033][18:20:33_7-11-14][1405118148]] loaded in [9ms 156us]
+[2015.09.15 10:14:17] [0000m.02s.077ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [46:_savepoint[SCH][288230380446679044][4971973992911995033][18:20:33_7-11-14][1405118148]]
+[2015.09.15 10:14:17] [0000m.02s.079ms] [0] iCDB Database: Constraint definitions for snapshot [46:_savepoint[SCH][288230380446679044][4971973992911995033][18:20:33_7-11-14][1405118148]] upgraded in [1ms 81us]
+[2015.09.15 10:14:17] [0000m.02s.079ms] [0] iCDB Database: Saving snapshot [46:_savepoint[SCH][288230380446679044][4971973992911995033][18:20:33_7-11-14][1405118148]]
+[2015.09.15 10:14:17] [0000m.02s.084ms] [0] iCDB Database: Snapshot [46:_savepoint[SCH][288230380446679044][4971973992911995033][18:20:33_7-11-14][1405118148]] saved in [5ms 569us]
+[2015.09.15 10:14:17] [0000m.02s.090ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s46\cdbblks\e1200000e0000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.090ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s46\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.091ms] [0] iCDB Database: Loading snapshot [47:_savepoint[SCH][288230380446679044][4971974018681798809][22:17:06_6-9-14][1405118151]] version [2709]
+[2015.09.15 10:14:17] [0000m.02s.098ms] [0] iCDB Database: Snapshot [47:_savepoint[SCH][288230380446679044][4971974018681798809][22:17:06_6-9-14][1405118151]] loaded in [7ms 30us]
+[2015.09.15 10:14:17] [0000m.02s.098ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [47:_savepoint[SCH][288230380446679044][4971974018681798809][22:17:06_6-9-14][1405118151]]
+[2015.09.15 10:14:17] [0000m.02s.099ms] [0] iCDB Database: Constraint definitions for snapshot [47:_savepoint[SCH][288230380446679044][4971974018681798809][22:17:06_6-9-14][1405118151]] upgraded in [996us]
+[2015.09.15 10:14:17] [0000m.02s.099ms] [0] iCDB Database: Saving snapshot [47:_savepoint[SCH][288230380446679044][4971974018681798809][22:17:06_6-9-14][1405118151]]
+[2015.09.15 10:14:17] [0000m.02s.104ms] [0] iCDB Database: Snapshot [47:_savepoint[SCH][288230380446679044][4971974018681798809][22:17:06_6-9-14][1405118151]] saved in [4ms 825us]
+[2015.09.15 10:14:17] [0000m.02s.108ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s47\cdbblks\e1200000f0000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.108ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s47\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.108ms] [0] iCDB Database: Loading snapshot [48:_savepoint[SCH][288230380446679044][4971973992911995179][17:47:44_7-11-14][1405118155]] version [2709]
+[2015.09.15 10:14:17] [0000m.02s.115ms] [0] iCDB Database: Snapshot [48:_savepoint[SCH][288230380446679044][4971973992911995179][17:47:44_7-11-14][1405118155]] loaded in [6ms 379us]
+[2015.09.15 10:14:17] [0000m.02s.115ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [48:_savepoint[SCH][288230380446679044][4971973992911995179][17:47:44_7-11-14][1405118155]]
+[2015.09.15 10:14:17] [0000m.02s.116ms] [0] iCDB Database: Constraint definitions for snapshot [48:_savepoint[SCH][288230380446679044][4971973992911995179][17:47:44_7-11-14][1405118155]] upgraded in [1ms 96us]
+[2015.09.15 10:14:17] [0000m.02s.116ms] [0] iCDB Database: Saving snapshot [48:_savepoint[SCH][288230380446679044][4971973992911995179][17:47:44_7-11-14][1405118155]]
+[2015.09.15 10:14:17] [0000m.02s.118ms] [0] iCDB Database: Snapshot [48:_savepoint[SCH][288230380446679044][4971973992911995179][17:47:44_7-11-14][1405118155]] saved in [2ms 60us]
+[2015.09.15 10:14:17] [0000m.02s.122ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s48\cdbblks\e120000001000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.122ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s48\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.122ms] [0] iCDB Database: Loading snapshot [49:_savepoint[SCH][288230380446679044][4971973992911995033][21:54:25_7-23-14][1406152480]] version [2709]
+[2015.09.15 10:14:17] [0000m.02s.129ms] [0] iCDB Database: Snapshot [49:_savepoint[SCH][288230380446679044][4971973992911995033][21:54:25_7-23-14][1406152480]] loaded in [7ms 95us]
+[2015.09.15 10:14:17] [0000m.02s.129ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [49:_savepoint[SCH][288230380446679044][4971973992911995033][21:54:25_7-23-14][1406152480]]
+[2015.09.15 10:14:17] [0000m.02s.131ms] [0] iCDB Database: Constraint definitions for snapshot [49:_savepoint[SCH][288230380446679044][4971973992911995033][21:54:25_7-23-14][1406152480]] upgraded in [1ms 109us]
+[2015.09.15 10:14:17] [0000m.02s.131ms] [0] iCDB Database: Saving snapshot [49:_savepoint[SCH][288230380446679044][4971973992911995033][21:54:25_7-23-14][1406152480]]
+[2015.09.15 10:14:17] [0000m.02s.136ms] [0] iCDB Database: Snapshot [49:_savepoint[SCH][288230380446679044][4971973992911995033][21:54:25_7-23-14][1406152480]] saved in [5ms 481us]
+[2015.09.15 10:14:17] [0000m.02s.141ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s49\cdbblks\d730000010000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.141ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s49\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.141ms] [0] iCDB Database: Loading snapshot [50:_savepoint[SCH][288230380446679044][4971973992911995363][18:16:58_7-24-14][1406225822]] version [2709]
+[2015.09.15 10:14:17] [0000m.02s.148ms] [0] iCDB Database: Snapshot [50:_savepoint[SCH][288230380446679044][4971973992911995363][18:16:58_7-24-14][1406225822]] loaded in [6ms 975us]
+[2015.09.15 10:14:17] [0000m.02s.148ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [50:_savepoint[SCH][288230380446679044][4971973992911995363][18:16:58_7-24-14][1406225822]]
+[2015.09.15 10:14:17] [0000m.02s.150ms] [0] iCDB Database: Constraint definitions for snapshot [50:_savepoint[SCH][288230380446679044][4971973992911995363][18:16:58_7-24-14][1406225822]] upgraded in [1ms 387us]
+[2015.09.15 10:14:17] [0000m.02s.150ms] [0] iCDB Database: Saving snapshot [50:_savepoint[SCH][288230380446679044][4971973992911995363][18:16:58_7-24-14][1406225822]]
+[2015.09.15 10:14:17] [0000m.02s.154ms] [0] iCDB Database: Snapshot [50:_savepoint[SCH][288230380446679044][4971973992911995363][18:16:58_7-24-14][1406225822]] saved in [4ms 409us]
+[2015.09.15 10:14:17] [0000m.02s.159ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s50\cdbblks\3a30000010000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.159ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s50\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.159ms] [0] iCDB Database: Loading snapshot [51:_savepoint[SCH][288230380446679044][4971974005796896811][23:35:27_7-28-14][1406657209]] version [2709]
+[2015.09.15 10:14:17] [0000m.02s.166ms] [0] iCDB Database: Snapshot [51:_savepoint[SCH][288230380446679044][4971974005796896811][23:35:27_7-28-14][1406657209]] loaded in [6ms 725us]
+[2015.09.15 10:14:17] [0000m.02s.166ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [51:_savepoint[SCH][288230380446679044][4971974005796896811][23:35:27_7-28-14][1406657209]]
+[2015.09.15 10:14:17] [0000m.02s.168ms] [0] iCDB Database: Constraint definitions for snapshot [51:_savepoint[SCH][288230380446679044][4971974005796896811][23:35:27_7-28-14][1406657209]] upgraded in [1ms 280us]
+[2015.09.15 10:14:17] [0000m.02s.168ms] [0] iCDB Database: Saving snapshot [51:_savepoint[SCH][288230380446679044][4971974005796896811][23:35:27_7-28-14][1406657209]]
+[2015.09.15 10:14:17] [0000m.02s.171ms] [0] iCDB Database: Snapshot [51:_savepoint[SCH][288230380446679044][4971974005796896811][23:35:27_7-28-14][1406657209]] saved in [3ms 309us]
+[2015.09.15 10:14:17] [0000m.02s.175ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s51\cdbblks\9640000010000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.175ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s51\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.175ms] [0] iCDB Database: Loading snapshot [52:_savepoint[SCH][288230380446679044][4971974005796896811][18:20:12_7-29-14][1406658025]] version [2709]
+[2015.09.15 10:14:17] [0000m.02s.182ms] [0] iCDB Database: Snapshot [52:_savepoint[SCH][288230380446679044][4971974005796896811][18:20:12_7-29-14][1406658025]] loaded in [6ms 446us]
+[2015.09.15 10:14:17] [0000m.02s.182ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [52:_savepoint[SCH][288230380446679044][4971974005796896811][18:20:12_7-29-14][1406658025]]
+[2015.09.15 10:14:17] [0000m.02s.183ms] [0] iCDB Database: Constraint definitions for snapshot [52:_savepoint[SCH][288230380446679044][4971974005796896811][18:20:12_7-29-14][1406658025]] upgraded in [1ms 287us]
+[2015.09.15 10:14:17] [0000m.02s.184ms] [0] iCDB Database: Saving snapshot [52:_savepoint[SCH][288230380446679044][4971974005796896811][18:20:12_7-29-14][1406658025]]
+[2015.09.15 10:14:17] [0000m.02s.187ms] [0] iCDB Database: Snapshot [52:_savepoint[SCH][288230380446679044][4971974005796896811][18:20:12_7-29-14][1406658025]] saved in [3ms 483us]
+[2015.09.15 10:14:17] [0000m.02s.191ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s52\cdbblks\9640000020000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.191ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s52\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.192ms] [0] iCDB Database: Loading snapshot [53:_savepoint[SCH][288230380446679044][4971974031566700667][18:20:54_7-29-14][1406658055]] version [2709]
+[2015.09.15 10:14:17] [0000m.02s.198ms] [0] iCDB Database: Snapshot [53:_savepoint[SCH][288230380446679044][4971974031566700667][18:20:54_7-29-14][1406658055]] loaded in [6ms 95us]
+[2015.09.15 10:14:17] [0000m.02s.198ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [53:_savepoint[SCH][288230380446679044][4971974031566700667][18:20:54_7-29-14][1406658055]]
+[2015.09.15 10:14:17] [0000m.02s.199ms] [0] iCDB Database: Constraint definitions for snapshot [53:_savepoint[SCH][288230380446679044][4971974031566700667][18:20:54_7-29-14][1406658055]] upgraded in [1ms 120us]
+[2015.09.15 10:14:17] [0000m.02s.199ms] [0] iCDB Database: Saving snapshot [53:_savepoint[SCH][288230380446679044][4971974031566700667][18:20:54_7-29-14][1406658055]]
+[2015.09.15 10:14:17] [0000m.02s.201ms] [0] iCDB Database: Snapshot [53:_savepoint[SCH][288230380446679044][4971974031566700667][18:20:54_7-29-14][1406658055]] saved in [1ms 859us]
+[2015.09.15 10:14:17] [0000m.02s.205ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s53\cdbblks\9640000030000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.205ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s53\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.205ms] [0] iCDB Database: Loading snapshot [54:_savepoint[SCH][288230380446679044][4971974031566700667][18:22:28_7-29-14][1406658160]] version [2709]
+[2015.09.15 10:14:17] [0000m.02s.211ms] [0] iCDB Database: Snapshot [54:_savepoint[SCH][288230380446679044][4971974031566700667][18:22:28_7-29-14][1406658160]] loaded in [5ms 841us]
+[2015.09.15 10:14:17] [0000m.02s.211ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [54:_savepoint[SCH][288230380446679044][4971974031566700667][18:22:28_7-29-14][1406658160]]
+[2015.09.15 10:14:17] [0000m.02s.212ms] [0] iCDB Database: Constraint definitions for snapshot [54:_savepoint[SCH][288230380446679044][4971974031566700667][18:22:28_7-29-14][1406658160]] upgraded in [1ms 66us]
+[2015.09.15 10:14:17] [0000m.02s.212ms] [0] iCDB Database: Saving snapshot [54:_savepoint[SCH][288230380446679044][4971974031566700667][18:22:28_7-29-14][1406658160]]
+[2015.09.15 10:14:17] [0000m.02s.215ms] [0] iCDB Database: Snapshot [54:_savepoint[SCH][288230380446679044][4971974031566700667][18:22:28_7-29-14][1406658160]] saved in [2ms 189us]
+[2015.09.15 10:14:17] [0000m.02s.218ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s54\cdbblks\9640000040000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.218ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s54\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.218ms] [0] iCDB Database: Loading snapshot [55:_savepoint[SCH][288230380446679044][4971973992911994977][18:25:15_7-29-14][1406658325]] version [2709]
+[2015.09.15 10:14:17] [0000m.02s.225ms] [0] iCDB Database: Snapshot [55:_savepoint[SCH][288230380446679044][4971973992911994977][18:25:15_7-29-14][1406658325]] loaded in [6ms 247us]
+[2015.09.15 10:14:17] [0000m.02s.225ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [55:_savepoint[SCH][288230380446679044][4971973992911994977][18:25:15_7-29-14][1406658325]]
+[2015.09.15 10:14:17] [0000m.02s.226ms] [0] iCDB Database: Constraint definitions for snapshot [55:_savepoint[SCH][288230380446679044][4971973992911994977][18:25:15_7-29-14][1406658325]] upgraded in [1ms 126us]
+[2015.09.15 10:14:17] [0000m.02s.226ms] [0] iCDB Database: Saving snapshot [55:_savepoint[SCH][288230380446679044][4971973992911994977][18:25:15_7-29-14][1406658325]]
+[2015.09.15 10:14:17] [0000m.02s.229ms] [0] iCDB Database: Snapshot [55:_savepoint[SCH][288230380446679044][4971973992911994977][18:25:15_7-29-14][1406658325]] saved in [2ms 780us]
+[2015.09.15 10:14:17] [0000m.02s.232ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s55\cdbblks\9640000050000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.233ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s55\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.233ms] [0] iCDB Database: Loading snapshot [56:_savepoint[SCH][288230380446679044][4971973992911995031][18:27:38_7-29-14][1406658465]] version [2709]
+[2015.09.15 10:14:17] [0000m.02s.241ms] [0] iCDB Database: Snapshot [56:_savepoint[SCH][288230380446679044][4971973992911995031][18:27:38_7-29-14][1406658465]] loaded in [7ms 860us]
+[2015.09.15 10:14:17] [0000m.02s.241ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [56:_savepoint[SCH][288230380446679044][4971973992911995031][18:27:38_7-29-14][1406658465]]
+[2015.09.15 10:14:17] [0000m.02s.243ms] [0] iCDB Database: Constraint definitions for snapshot [56:_savepoint[SCH][288230380446679044][4971973992911995031][18:27:38_7-29-14][1406658465]] upgraded in [1ms 708us]
+[2015.09.15 10:14:17] [0000m.02s.243ms] [0] iCDB Database: Saving snapshot [56:_savepoint[SCH][288230380446679044][4971973992911995031][18:27:38_7-29-14][1406658465]]
+[2015.09.15 10:14:17] [0000m.02s.250ms] [0] iCDB Database: Snapshot [56:_savepoint[SCH][288230380446679044][4971973992911995031][18:27:38_7-29-14][1406658465]] saved in [6ms 561us]
+[2015.09.15 10:14:17] [0000m.02s.255ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s56\cdbblks\9640000060000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.255ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s56\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.255ms] [0] iCDB Database: Loading snapshot [57:_savepoint[SCH][288230380446679044][4971973992911995099][18:29:42_7-29-14][1406658594]] version [2709]
+[2015.09.15 10:14:17] [0000m.02s.261ms] [0] iCDB Database: Snapshot [57:_savepoint[SCH][288230380446679044][4971973992911995099][18:29:42_7-29-14][1406658594]] loaded in [5ms 782us]
+[2015.09.15 10:14:17] [0000m.02s.261ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [57:_savepoint[SCH][288230380446679044][4971973992911995099][18:29:42_7-29-14][1406658594]]
+[2015.09.15 10:14:17] [0000m.02s.262ms] [0] iCDB Database: Constraint definitions for snapshot [57:_savepoint[SCH][288230380446679044][4971973992911995099][18:29:42_7-29-14][1406658594]] upgraded in [1ms 70us]
+[2015.09.15 10:14:17] [0000m.02s.262ms] [0] iCDB Database: Saving snapshot [57:_savepoint[SCH][288230380446679044][4971973992911995099][18:29:42_7-29-14][1406658594]]
+[2015.09.15 10:14:17] [0000m.02s.265ms] [0] iCDB Database: Snapshot [57:_savepoint[SCH][288230380446679044][4971973992911995099][18:29:42_7-29-14][1406658594]] saved in [2ms 57us]
+[2015.09.15 10:14:17] [0000m.02s.268ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s57\cdbblks\9640000070000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.268ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s57\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:17] [0000m.02s.268ms] [0] iCDB Database: Loading snapshot [58:_savepoint[SCH][288230380446679044][4971973992911995125][18:41:56_7-29-14][1406659319]] version [2709]
+[2015.09.15 10:14:18] [0000m.02s.276ms] [0] iCDB Database: Snapshot [58:_savepoint[SCH][288230380446679044][4971973992911995125][18:41:56_7-29-14][1406659319]] loaded in [7ms 798us]
+[2015.09.15 10:14:18] [0000m.02s.276ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [58:_savepoint[SCH][288230380446679044][4971973992911995125][18:41:56_7-29-14][1406659319]]
+[2015.09.15 10:14:18] [0000m.02s.278ms] [0] iCDB Database: Constraint definitions for snapshot [58:_savepoint[SCH][288230380446679044][4971973992911995125][18:41:56_7-29-14][1406659319]] upgraded in [1ms 637us]
+[2015.09.15 10:14:18] [0000m.02s.278ms] [0] iCDB Database: Saving snapshot [58:_savepoint[SCH][288230380446679044][4971973992911995125][18:41:56_7-29-14][1406659319]]
+[2015.09.15 10:14:18] [0000m.02s.285ms] [0] iCDB Database: Snapshot [58:_savepoint[SCH][288230380446679044][4971973992911995125][18:41:56_7-29-14][1406659319]] saved in [6ms 507us]
+[2015.09.15 10:14:18] [0000m.02s.290ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s58\cdbblks\d840000010000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.290ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s58\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.291ms] [0] iCDB Database: Loading snapshot [59:_savepoint[SCH][288230380446679044][4971973997206962458][18:46:15_7-29-14][1406659581]] version [2709]
+[2015.09.15 10:14:18] [0000m.02s.297ms] [0] iCDB Database: Snapshot [59:_savepoint[SCH][288230380446679044][4971973997206962458][18:46:15_7-29-14][1406659581]] loaded in [6ms 179us]
+[2015.09.15 10:14:18] [0000m.02s.297ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [59:_savepoint[SCH][288230380446679044][4971973997206962458][18:46:15_7-29-14][1406659581]]
+[2015.09.15 10:14:18] [0000m.02s.298ms] [0] iCDB Database: Constraint definitions for snapshot [59:_savepoint[SCH][288230380446679044][4971973997206962458][18:46:15_7-29-14][1406659581]] upgraded in [1ms 236us]
+[2015.09.15 10:14:18] [0000m.02s.298ms] [0] iCDB Database: Saving snapshot [59:_savepoint[SCH][288230380446679044][4971973997206962458][18:46:15_7-29-14][1406659581]]
+[2015.09.15 10:14:18] [0000m.02s.301ms] [0] iCDB Database: Snapshot [59:_savepoint[SCH][288230380446679044][4971973997206962458][18:46:15_7-29-14][1406659581]] saved in [2ms 213us]
+[2015.09.15 10:14:18] [0000m.02s.304ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s59\cdbblks\d840000020000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.304ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s59\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.304ms] [0] iCDB Database: Loading snapshot [60:_savepoint[SCH][288230380446679044][4971973997206962395][18:49:47_7-29-14][1406659795]] version [2709]
+[2015.09.15 10:14:18] [0000m.02s.313ms] [0] iCDB Database: Snapshot [60:_savepoint[SCH][288230380446679044][4971973997206962395][18:49:47_7-29-14][1406659795]] loaded in [8ms 110us]
+[2015.09.15 10:14:18] [0000m.02s.313ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [60:_savepoint[SCH][288230380446679044][4971973997206962395][18:49:47_7-29-14][1406659795]]
+[2015.09.15 10:14:18] [0000m.02s.315ms] [0] iCDB Database: Constraint definitions for snapshot [60:_savepoint[SCH][288230380446679044][4971973997206962395][18:49:47_7-29-14][1406659795]] upgraded in [1ms 797us]
+[2015.09.15 10:14:18] [0000m.02s.315ms] [0] iCDB Database: Saving snapshot [60:_savepoint[SCH][288230380446679044][4971973997206962395][18:49:47_7-29-14][1406659795]]
+[2015.09.15 10:14:18] [0000m.02s.322ms] [0] iCDB Database: Snapshot [60:_savepoint[SCH][288230380446679044][4971973997206962395][18:49:47_7-29-14][1406659795]] saved in [6ms 786us]
+[2015.09.15 10:14:18] [0000m.02s.327ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s60\cdbblks\d840000030000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.327ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s60\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.327ms] [0] iCDB Database: Loading snapshot [61:_savepoint[SCH][288230380446679044][4971973992911995033][18:53:07_7-29-14][1406659995]] version [2709]
+[2015.09.15 10:14:18] [0000m.02s.336ms] [0] iCDB Database: Snapshot [61:_savepoint[SCH][288230380446679044][4971973992911995033][18:53:07_7-29-14][1406659995]] loaded in [8ms 261us]
+[2015.09.15 10:14:18] [0000m.02s.336ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [61:_savepoint[SCH][288230380446679044][4971973992911995033][18:53:07_7-29-14][1406659995]]
+[2015.09.15 10:14:18] [0000m.02s.337ms] [0] iCDB Database: Constraint definitions for snapshot [61:_savepoint[SCH][288230380446679044][4971973992911995033][18:53:07_7-29-14][1406659995]] upgraded in [1ms 238us]
+[2015.09.15 10:14:18] [0000m.02s.337ms] [0] iCDB Database: Saving snapshot [61:_savepoint[SCH][288230380446679044][4971973992911995033][18:53:07_7-29-14][1406659995]]
+[2015.09.15 10:14:18] [0000m.02s.345ms] [0] iCDB Database: Snapshot [61:_savepoint[SCH][288230380446679044][4971973992911995033][18:53:07_7-29-14][1406659995]] saved in [7ms 733us]
+[2015.09.15 10:14:18] [0000m.02s.351ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s61\cdbblks\d840000040000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.351ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s61\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.351ms] [0] iCDB Database: Loading snapshot [62:_savepoint[SCH][288230380446679044][4971974018681798809][18:55:12_7-29-14][1406660133]] version [2709]
+[2015.09.15 10:14:18] [0000m.02s.361ms] [0] iCDB Database: Snapshot [62:_savepoint[SCH][288230380446679044][4971974018681798809][18:55:12_7-29-14][1406660133]] loaded in [9ms 365us]
+[2015.09.15 10:14:18] [0000m.02s.361ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [62:_savepoint[SCH][288230380446679044][4971974018681798809][18:55:12_7-29-14][1406660133]]
+[2015.09.15 10:14:18] [0000m.02s.363ms] [0] iCDB Database: Constraint definitions for snapshot [62:_savepoint[SCH][288230380446679044][4971974018681798809][18:55:12_7-29-14][1406660133]] upgraded in [1ms 643us]
+[2015.09.15 10:14:18] [0000m.02s.363ms] [0] iCDB Database: Saving snapshot [62:_savepoint[SCH][288230380446679044][4971974018681798809][18:55:12_7-29-14][1406660133]]
+[2015.09.15 10:14:18] [0000m.02s.367ms] [0] iCDB Database: Snapshot [62:_savepoint[SCH][288230380446679044][4971974018681798809][18:55:12_7-29-14][1406660133]] saved in [4ms 767us]
+[2015.09.15 10:14:18] [0000m.02s.374ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s62\cdbblks\d840000050000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.374ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s62\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.374ms] [0] iCDB Database: Loading snapshot [63:_savepoint[SCH][288230380446679044][4971973992911995123][18:58:29_7-29-14][1406660313]] version [2709]
+[2015.09.15 10:14:18] [0000m.02s.385ms] [0] iCDB Database: Snapshot [63:_savepoint[SCH][288230380446679044][4971973992911995123][18:58:29_7-29-14][1406660313]] loaded in [10ms 682us]
+[2015.09.15 10:14:18] [0000m.02s.385ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [63:_savepoint[SCH][288230380446679044][4971973992911995123][18:58:29_7-29-14][1406660313]]
+[2015.09.15 10:14:18] [0000m.02s.387ms] [0] iCDB Database: Constraint definitions for snapshot [63:_savepoint[SCH][288230380446679044][4971973992911995123][18:58:29_7-29-14][1406660313]] upgraded in [1ms 557us]
+[2015.09.15 10:14:18] [0000m.02s.387ms] [0] iCDB Database: Saving snapshot [63:_savepoint[SCH][288230380446679044][4971973992911995123][18:58:29_7-29-14][1406660313]]
+[2015.09.15 10:14:18] [0000m.02s.392ms] [0] iCDB Database: Snapshot [63:_savepoint[SCH][288230380446679044][4971973992911995123][18:58:29_7-29-14][1406660313]] saved in [4ms 733us]
+[2015.09.15 10:14:18] [0000m.02s.396ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s63\cdbblks\d840000060000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.397ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s63\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.397ms] [0] iCDB Database: Loading snapshot [64:_savepoint[SCH][288230380446679044][4971973992911995179][19:00:15_7-29-14][1406660421]] version [2709]
+[2015.09.15 10:14:18] [0000m.02s.403ms] [0] iCDB Database: Snapshot [64:_savepoint[SCH][288230380446679044][4971973992911995179][19:00:15_7-29-14][1406660421]] loaded in [5ms 988us]
+[2015.09.15 10:14:18] [0000m.02s.403ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [64:_savepoint[SCH][288230380446679044][4971973992911995179][19:00:15_7-29-14][1406660421]]
+[2015.09.15 10:14:18] [0000m.02s.404ms] [0] iCDB Database: Constraint definitions for snapshot [64:_savepoint[SCH][288230380446679044][4971973992911995179][19:00:15_7-29-14][1406660421]] upgraded in [1ms 197us]
+[2015.09.15 10:14:18] [0000m.02s.404ms] [0] iCDB Database: Saving snapshot [64:_savepoint[SCH][288230380446679044][4971973992911995179][19:00:15_7-29-14][1406660421]]
+[2015.09.15 10:14:18] [0000m.02s.407ms] [0] iCDB Database: Snapshot [64:_savepoint[SCH][288230380446679044][4971973992911995179][19:00:15_7-29-14][1406660421]] saved in [2ms 333us]
+[2015.09.15 10:14:18] [0000m.02s.410ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s64\cdbblks\d840000070000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.410ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s64\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.411ms] [0] iCDB Database: Loading snapshot [65:_savepoint[SCH][288230380446679044][4971973997206962475][19:01:57_7-29-14][1406660526]] version [2709]
+[2015.09.15 10:14:18] [0000m.02s.417ms] [0] iCDB Database: Snapshot [65:_savepoint[SCH][288230380446679044][4971973997206962475][19:01:57_7-29-14][1406660526]] loaded in [6ms 347us]
+[2015.09.15 10:14:18] [0000m.02s.417ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [65:_savepoint[SCH][288230380446679044][4971973997206962475][19:01:57_7-29-14][1406660526]]
+[2015.09.15 10:14:18] [0000m.02s.418ms] [0] iCDB Database: Constraint definitions for snapshot [65:_savepoint[SCH][288230380446679044][4971973997206962475][19:01:57_7-29-14][1406660526]] upgraded in [1ms 192us]
+[2015.09.15 10:14:18] [0000m.02s.418ms] [0] iCDB Database: Saving snapshot [65:_savepoint[SCH][288230380446679044][4971973997206962475][19:01:57_7-29-14][1406660526]]
+[2015.09.15 10:14:18] [0000m.02s.422ms] [0] iCDB Database: Snapshot [65:_savepoint[SCH][288230380446679044][4971973997206962475][19:01:57_7-29-14][1406660526]] saved in [3ms 225us]
+[2015.09.15 10:14:18] [0000m.02s.425ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s65\cdbblks\d840000080000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.426ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s65\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.426ms] [0] iCDB Database: Loading snapshot [66:_savepoint[SCH][288230380446679044][4971974001501929807][19:03:38_7-29-14][1406660624]] version [2709]
+[2015.09.15 10:14:18] [0000m.02s.434ms] [0] iCDB Database: Snapshot [66:_savepoint[SCH][288230380446679044][4971974001501929807][19:03:38_7-29-14][1406660624]] loaded in [7ms 695us]
+[2015.09.15 10:14:18] [0000m.02s.434ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [66:_savepoint[SCH][288230380446679044][4971974001501929807][19:03:38_7-29-14][1406660624]]
+[2015.09.15 10:14:18] [0000m.02s.435ms] [0] iCDB Database: Constraint definitions for snapshot [66:_savepoint[SCH][288230380446679044][4971974001501929807][19:03:38_7-29-14][1406660624]] upgraded in [1ms 283us]
+[2015.09.15 10:14:18] [0000m.02s.435ms] [0] iCDB Database: Saving snapshot [66:_savepoint[SCH][288230380446679044][4971974001501929807][19:03:38_7-29-14][1406660624]]
+[2015.09.15 10:14:18] [0000m.02s.439ms] [0] iCDB Database: Snapshot [66:_savepoint[SCH][288230380446679044][4971974001501929807][19:03:38_7-29-14][1406660624]] saved in [3ms 358us]
+[2015.09.15 10:14:18] [0000m.02s.442ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s66\cdbblks\d840000090000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.443ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s66\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.443ms] [0] iCDB Database: Loading snapshot [67:_savepoint[SCH][288230380446679044][4971973992911995288][19:04:44_7-29-14][1406660842]] version [2709]
+[2015.09.15 10:14:18] [0000m.02s.449ms] [0] iCDB Database: Snapshot [67:_savepoint[SCH][288230380446679044][4971973992911995288][19:04:44_7-29-14][1406660842]] loaded in [6ms 29us]
+[2015.09.15 10:14:18] [0000m.02s.449ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [67:_savepoint[SCH][288230380446679044][4971973992911995288][19:04:44_7-29-14][1406660842]]
+[2015.09.15 10:14:18] [0000m.02s.451ms] [0] iCDB Database: Constraint definitions for snapshot [67:_savepoint[SCH][288230380446679044][4971973992911995288][19:04:44_7-29-14][1406660842]] upgraded in [1ms 272us]
+[2015.09.15 10:14:18] [0000m.02s.451ms] [0] iCDB Database: Saving snapshot [67:_savepoint[SCH][288230380446679044][4971973992911995288][19:04:44_7-29-14][1406660842]]
+[2015.09.15 10:14:18] [0000m.02s.453ms] [0] iCDB Database: Snapshot [67:_savepoint[SCH][288230380446679044][4971973992911995288][19:04:44_7-29-14][1406660842]] saved in [2ms 591us]
+[2015.09.15 10:14:18] [0000m.02s.457ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s67\cdbblks\d8400000a0000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.457ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s67\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.457ms] [0] iCDB Database: Loading snapshot [68:_savepoint[SCH][288230380446679044][4971973992911995363][19:10:12_7-29-14][1406661019]] version [2709]
+[2015.09.15 10:14:18] [0000m.02s.464ms] [0] iCDB Database: Snapshot [68:_savepoint[SCH][288230380446679044][4971973992911995363][19:10:12_7-29-14][1406661019]] loaded in [7ms 49us]
+[2015.09.15 10:14:18] [0000m.02s.465ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [68:_savepoint[SCH][288230380446679044][4971973992911995363][19:10:12_7-29-14][1406661019]]
+[2015.09.15 10:14:18] [0000m.02s.466ms] [0] iCDB Database: Constraint definitions for snapshot [68:_savepoint[SCH][288230380446679044][4971973992911995363][19:10:12_7-29-14][1406661019]] upgraded in [1ms 398us]
+[2015.09.15 10:14:18] [0000m.02s.466ms] [0] iCDB Database: Saving snapshot [68:_savepoint[SCH][288230380446679044][4971973992911995363][19:10:12_7-29-14][1406661019]]
+[2015.09.15 10:14:18] [0000m.02s.471ms] [0] iCDB Database: Snapshot [68:_savepoint[SCH][288230380446679044][4971973992911995363][19:10:12_7-29-14][1406661019]] saved in [4ms 777us]
+[2015.09.15 10:14:18] [0000m.02s.475ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s68\cdbblks\d8400000b0000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.476ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s68\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.476ms] [0] iCDB Database: Loading snapshot [69:_savepoint[SCH][288230380446679044][4971973992911995031][17:09:02_8-12-14][1407863386]] version [2709]
+[2015.09.15 10:14:18] [0000m.02s.484ms] [0] iCDB Database: Snapshot [69:_savepoint[SCH][288230380446679044][4971973992911995031][17:09:02_8-12-14][1407863386]] loaded in [7ms 668us]
+[2015.09.15 10:14:18] [0000m.02s.484ms] [0] iCDB Database: Upgrading constraint definitions for snapshot [69:_savepoint[SCH][288230380446679044][4971973992911995031][17:09:02_8-12-14][1407863386]]
+[2015.09.15 10:14:18] [0000m.02s.485ms] [0] iCDB Database: Constraint definitions for snapshot [69:_savepoint[SCH][288230380446679044][4971973992911995031][17:09:02_8-12-14][1407863386]] upgraded in [1ms 670us]
+[2015.09.15 10:14:18] [0000m.02s.485ms] [0] iCDB Database: Saving snapshot [69:_savepoint[SCH][288230380446679044][4971973992911995031][17:09:02_8-12-14][1407863386]]
+[2015.09.15 10:14:18] [0000m.02s.492ms] [0] iCDB Database: Snapshot [69:_savepoint[SCH][288230380446679044][4971973992911995031][17:09:02_8-12-14][1407863386]] saved in [6ms 842us]
+[2015.09.15 10:14:18] [0000m.02s.497ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s69\cdbblks\cb50000010000050.blk\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.498ms] [1] iCDB Storage Server: WARNING: Unloading CHANGED file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\s69\cdbcmpcache\dxdatl.v] - auto-saving it
+[2015.09.15 10:14:18] [0000m.02s.498ms] [0] iCDB Database: Constraint definitions upgraded to version [ce_ee.cns=7.10.24;user.cns=8a0a-ca53-eaf8-b89d-81d5-fd5d-1d5f-d550-5066-6fa2-234f-cb2c]
+[2015.09.15 10:14:18] [0000m.03s.040ms] [0] iCDB Server PI: Initializing plugins
+[2015.09.15 10:14:18] [0000m.03s.040ms] [0] iCDB Server PI: Plugins initialized
+[2015.09.15 10:14:18] [0000m.03s.040ms] [0] S: iCDB database loaded
+[2015.09.15 10:14:19] [0000m.03s.317ms] [1] PrjBackupMgr: Successfully created Project Backup [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2015-09-15 10.14.18 - consDefUpgr.zip] with GUID [c9b6-9c92-2ab7-9971-ad34-8f5f-d348-f550-def5-6fa2-234f-cb2c]
+[2015.09.15 10:14:19] [0000m.03s.317ms] [1] PrjBackupMgr: Migrated iCDB content backup file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\cdbback\2015-09-15 10.14.16-2200.zip] removed
+[2015.09.15 10:14:19] [0000m.03s.317ms] [0] S: Starting threads
+[2015.09.15 10:14:19] [0000m.03s.317ms] [0] BT: Listening for broadcast messages on port [10000]
+[2015.09.15 10:14:19] [0000m.03s.337ms] [1] CMT: There are no clients - waiting [10 seconds]
+[2015.09.15 10:14:19] [0000m.03s.347ms] [0] IT: Session [2166] for host [bz-ece-cb508-01] user [s58p233] with process ID [6840] created
+[2015.09.15 10:14:19] [0000m.03s.421ms] [1] CMT: There are [1] clients now: 2166
+[2015.09.15 10:14:19] [0000m.03s.424ms] [1] SC[2166]: Registered sub-client [DxD] with ID [1] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:19] [0000m.03s.521ms] [1] SC[2166]: Registered sub-client [TransactionRollbackSubClient] with ID [2] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:19] [0000m.03s.581ms] [1] SC[2166]: Registered sub-client [xprob] with ID [3] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:20] [0000m.05s.142ms] [1] PrjBackupMgr: Successfully created Project Backup [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2015-09-15 10.14.19 - auto.zip] with GUID [2536-9752-d864-b2ac-bd34-8f50-e348-f550-1536-6fa2-234f-cb2c]
+[2015.09.15 10:14:20] [0000m.05s.142ms] [0] PrjBackupEngine: Successfully created backup:  BackupGUID[2536-9752-d864-b2ac-bd34-8f50-e348-f550-1536-6fa2-234f-cb2c] CreationTime[Tuesday, September 15, 2015 16:14:19] Type[Autosave] Creator[iCDB Server (2015-09-15 10.14.15-2200)] ApplicationName[iCDB Server (2015-09-15 10.14.15-2200)] UserName[s58p233] MachineName[BZ-ECE-CB508-01] Description[Autosave] FullFlowName[PADS 9.5] FlowId[PADS 9.5] GBSInstallId[27413] GBSBuildId[515009] IcdbVersion[2709] ReferenceLogFilePath[] BackupFilePath[C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\ProjectBackup\backups\2015-09-15 10.14.19 - auto.zip] BackupFileSize[3619842] Persistent[FALSE]
+[2015.09.15 10:14:20] [0000m.05s.202ms] [1] SC[2166]: Registered sub-client [SelectionHolder] with ID [4] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:21] [0000m.05s.269ms] [1] SC[2166]: Registered sub-client [SymbolEditor] with ID [5] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:21] [0000m.05s.684ms] [1] SC[2166]: Registered sub-client [HdlProject] with ID [6] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:21] [0000m.05s.691ms] [1] SC[2166]: Registered sub-client [Navigator] with ID [7] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:21] [0000m.05s.712ms] [1] SC[2166]: Registered sub-client [OutputWindow] with ID [8] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:21] [0000m.05s.718ms] [1] SC[2166]: Registered sub-client [PlaceDevice] with ID [9] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:21] [0000m.05s.735ms] [1] SC[2166]: Registered sub-client [SAE] with ID [10] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:21] [0000m.05s.761ms] [1] SC[2166]: Registered sub-client [DxConstraints] with ID [11] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:21] [0000m.05s.765ms] [1] SC[2166]: Registered sub-client [CCZAddin] with ID [12] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:21] [0000m.05s.769ms] [1] SC[2166]: Registered sub-client [DxThumbnails] with ID [13] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:21] [0000m.06s.006ms] [1] SC[2166]: Registered sub-client [SheetConnectorsCacheDxD:1442333661] with ID [14] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:21] [0000m.06s.025ms] [1] SC[2166]: Registered sub-client [NetsNamesCollectorDxD:1442333661] with ID [15] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:21] [0000m.06s.106ms] [1] SC[2166]: Registered sub-client [DxDbSearch] with ID [16] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:21] [0000m.06s.157ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [17] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:21] [0000m.06s.178ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [17] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:22] [0000m.06s.326ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [18] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:22] [0000m.06s.329ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [18] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:23] [0000m.07s.327ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [19] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:23] [0000m.07s.327ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [19] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:24] [0000m.08s.343ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [20] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:24] [0000m.08s.343ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [20] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:25] [0000m.09s.350ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [21] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:25] [0000m.09s.350ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [21] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:26] [0000m.10s.370ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [22] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:26] [0000m.10s.370ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [22] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:27] [0000m.11s.368ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [23] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:27] [0000m.11s.368ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [23] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:28] [0000m.12s.395ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [24] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:28] [0000m.12s.395ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [24] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:29] [0000m.13s.412ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [25] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:29] [0000m.13s.412ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [25] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:30] [0000m.14s.405ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [26] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:30] [0000m.14s.408ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [26] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:31] [0000m.15s.438ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [27] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:31] [0000m.15s.438ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [27] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:32] [0000m.16s.446ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [28] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:32] [0000m.16s.446ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [28] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:33] [0000m.17s.463ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [29] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:33] [0000m.17s.463ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [29] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:34] [0000m.18s.483ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [30] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:34] [0000m.18s.483ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [30] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:35] [0000m.19s.488ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [31] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:35] [0000m.19s.488ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [31] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:36] [0000m.20s.506ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [32] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:36] [0000m.20s.506ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [32] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:37] [0000m.21s.518ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [33] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:37] [0000m.21s.518ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [33] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:38] [0000m.22s.533ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [34] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:38] [0000m.22s.533ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [34] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:38] [0000m.23s.063ms] [1] SC[2166]: Registered sub-client [ObjectHolder_148021944] with ID [35] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:38] [0000m.23s.063ms] [1] SC[2166]: Registered sub-client [BlockCacheDxD:151735448] with ID [36] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:38] [0000m.23s.073ms] [1] SC[2166]: Registered sub-client [GlobalNetAliasUpdater_148022120] with ID [37] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:38] [0000m.23s.073ms] [1] SC[2166]: Registered sub-client [IcdbNetProcessorSubClientDxD:148113384] with ID [38] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:38] [0000m.23s.103ms] [0] DFAMT: File server access time: 68 us
+[2015.09.15 10:14:39] [0000m.23s.589ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [39] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:39] [0000m.23s.589ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [39] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:40] [0000m.24s.559ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [40] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:40] [0000m.24s.559ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [40] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:41] [0000m.25s.579ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [41] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:41] [0000m.25s.579ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [41] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:42] [0000m.26s.589ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [42] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:42] [0000m.26s.589ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [42] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:43] [0000m.27s.609ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [43] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:43] [0000m.27s.609ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [43] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:44] [0000m.28s.619ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [44] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:44] [0000m.28s.619ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [44] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:45] [0000m.29s.636ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [45] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:45] [0000m.29s.636ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [45] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:46] [0000m.30s.643ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [46] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:46] [0000m.30s.643ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [46] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:47] [0000m.31s.664ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [47] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:47] [0000m.31s.664ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [47] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:48] [0000m.32s.554ms] [1] SC[2166]: UnRegistered sub-client [GlobalNetAliasUpdater_148022120] with ID [37] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:48] [0000m.32s.554ms] [1] SC[2166]: UnRegistered sub-client [BlockCacheDxD:151735448] with ID [36] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:48] [0000m.32s.554ms] [1] SC[2166]: UnRegistered sub-client [ObjectHolder_148021944] with ID [35] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:48] [0000m.32s.554ms] [1] SC[2166]: UnRegistered sub-client [IcdbNetProcessorSubClientDxD:148113384] with ID [38] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:48] [0000m.32s.674ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [48] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:48] [0000m.32s.674ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [48] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:49] [0000m.33s.685ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [49] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:49] [0000m.33s.685ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [49] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:50] [0000m.34s.702ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [50] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:50] [0000m.34s.702ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [50] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:51] [0000m.35s.719ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [51] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:51] [0000m.35s.719ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [51] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:52] [0000m.36s.733ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [52] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:52] [0000m.36s.733ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [52] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:53] [0000m.37s.749ms] [1] SC[2166]: Registered sub-client [LDD_ECO_IMPORT] with ID [53] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:53] [0000m.37s.749ms] [1] SC[2166]: UnRegistered sub-client [LDD_ECO_IMPORT] with ID [53] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:54] [0000m.38s.371ms] [1] SC[2166]: UnRegistered sub-client [Navigator] with ID [7] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:54] [0000m.38s.371ms] [1] SC[2166]: UnRegistered sub-client [OutputWindow] with ID [8] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:54] [0000m.38s.372ms] [1] SC[2166]: UnRegistered sub-client [PlaceDevice] with ID [9] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:54] [0000m.38s.372ms] [1] SC[2166]: UnRegistered sub-client [DxDbSearch] with ID [16] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:54] [0000m.38s.373ms] [1] SC[2166]: UnRegistered sub-client [SAE] with ID [10] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:54] [0000m.38s.373ms] [1] SC[2166]: UnRegistered sub-client [DxConstraints] with ID [11] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:54] [0000m.38s.374ms] [1] SC[2166]: UnRegistered sub-client [CCZAddin] with ID [12] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:54] [0000m.38s.374ms] [1] SC[2166]: UnRegistered sub-client [DxThumbnails] with ID [13] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:54] [0000m.38s.375ms] [1] SC[2166]: UnRegistered sub-client [HdlProject] with ID [6] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:54] [0000m.38s.375ms] [1] SC[2166]: UnRegistered sub-client [SelectionHolder] with ID [4] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:54] [0000m.38s.375ms] [1] SC[2166]: UnRegistered sub-client [SheetConnectorsCacheDxD:1442333661] with ID [14] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:54] [0000m.38s.375ms] [1] SC[2166]: UnRegistered sub-client [NetsNamesCollectorDxD:1442333661] with ID [15] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:54] [0000m.38s.412ms] [1] SC[2166]: UnRegistered sub-client [TransactionRollbackSubClient] with ID [2] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:54] [0000m.38s.412ms] [1] SC[2166]: UnRegistered sub-client [DxD] with ID [1] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:54] [0000m.38s.458ms] [1] SC[2166]: UnRegistered sub-client [xprob] with ID [3] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:54] [0000m.38s.468ms] [1] SC[2166]: UnRegistered sub-client [SymbolEditor] with ID [5] for session ID [2166] host [bz-ece-cb508-01] user [s58p233] process ID [6840]
+[2015.09.15 10:14:54] [0000m.38s.488ms] [1] CMT: Removed client [2166]
+[2015.09.15 10:14:54] [0000m.38s.488ms] [1] CMT: There are no clients left - waiting [1 seconds]
+[2015.09.15 10:14:56] [0000m.40s.299ms] [0] CMT: Starting server auto-close
+[2015.09.15 10:14:56] [0000m.40s.379ms] [0] S: Closing server
+[2015.09.15 10:14:56] [0000m.40s.419ms] [0] iCDB Server PI: Closing plugins
+[2015.09.15 10:14:56] [0000m.40s.419ms] [0] iCDB Server PI: Plugins closed
+[2015.09.15 10:14:56] [0000m.40s.419ms] [0] iCDB Server PI: Unloading database
+[2015.09.15 10:14:56] [0000m.40s.419ms] [0] iCDB Server PI: Saving storage
+[2015.09.15 10:14:56] [0000m.40s.419ms] [0] iCDB Server PI: Closing database
+[2015.09.15 10:14:56] [0000m.40s.459ms] [1] iCDB Server PI: Stats: Database defragmentation: max[3] avg[1] holes[8%] data[94%]
+[2015.09.15 10:14:56] [0000m.40s.459ms] [1] iCDB Server PI: Stats: Database file size [2003584 (1.9 MB)]
+[2015.09.15 10:14:56] [0000m.40s.519ms] [0] iCDB Server PI: Database closed
+[2015.09.15 10:14:56] [0000m.40s.519ms] [1] iCDB Server PI: Stats: Total iCDB execution time: [270439] ticks
+[2015.09.15 10:14:56] [0000m.40s.519ms] [1] iCDB Server PI: Stats: Total iCDB execution time: [92540] microseconds
+[2015.09.15 10:14:56] [0000m.40s.519ms] [1] iCDB Server PI: Stats: Total iCDB commands count: [4]
+[2015.09.15 10:14:56] [0000m.40s.519ms] [1] iCDB Server PI: Stats: Average iCDB speed:        [43] commands per second
+[2015.09.15 10:14:56] [0000m.40s.519ms] [0] Single file [C:\Users\s58p233\Documents\GitHub\SensorCollar\PCB_Designs\DevBoard_PowerMonitor\0Schematic\DevBoard_PowerMonitor\database\icdb.dat] closed with size [2003584 (1.9 MB)]
+[2015.09.15 10:14:56] [0000m.40s.609ms] [0] S: STOP

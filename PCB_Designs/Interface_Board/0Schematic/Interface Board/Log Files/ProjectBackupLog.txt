@@ -38,3 +38,9 @@
 [2015-07-02 09.13.03] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-06-22 09.42.40 - auto.zip] removed.
 [2015-09-15 11.25.43] Successfully created [Constraints Definition Upgrade] backup [2015-09-15 11.25.43 - consDefUpgr.zip] requested by [BZ-ECE-CB508-01:s58p233].
 [2015-09-15 11.25.43] Migrated iCDB content backup file [cdbback\2015-09-15 11.25.42-4860.zip] removed.
+[2015-09-18 14.16.56] Successfully created [AutoSave] backup [2015-09-18 14.16.53 - auto.zip] requested by [BZ-ECE-CB508-01:s58p233].
+[2015-09-18 14.16.56] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board\ProjectBackup\backups\2015-06-22 13.42.40 - auto.zip].
+[2015-09-18 14.16.56] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-06-22 13.42.40 - auto.zip] removed.
+[2015-09-28 08.11.28] Successfully created [AutoSave] backup [2015-09-28 08.11.22 - auto.zip] requested by [BZ-ECE-CB508-01:s58p233].
+[2015-09-28 08.11.28] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board\ProjectBackup\backups\2015-06-22 17.42.40 - auto.zip].
+[2015-09-28 08.11.28] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-06-22 17.42.40 - auto.zip] removed.
