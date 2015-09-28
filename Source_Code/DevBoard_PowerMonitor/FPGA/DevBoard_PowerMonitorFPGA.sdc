@@ -18,6 +18,11 @@
 #   with a clock.  Either a virtual input clock or generated output clock.
 
 set sdc_log [open "output_files/sdc_log.txt" w]
+puts $sdc_log "name of executable is $::quartus(nameofexecutable)\n"
+puts $sdc_log "sdc log file open at [clock format [clock seconds]] \n"
+
+#if { 1 != [info exists instance_stack]} {
+  
 
 #   Read in all procedures used by SDC files.
 
@@ -87,14 +92,43 @@ set_instvalue                 radio_clk         "DATA_TX_CLK_TO_FPGA"
 
 source Collar.sdc
 
-#   Set the I/O port delays for all devices.
 
-foreach sdc_file    [glob *_dev.sdc] {
+# Breaking all paths between asynchronous signals (*_a) and
+# synchronous counterparts (*_s)
 
-    source $sdc_file
+
+set sync_list  [get_registers {*_s}] 
+
+if {[get_collection_size $sync_list] > 0} {
+
+
+  foreach_in_collection reg $sync_list {
+
+    set sync_name [get_object_info -name $reg]
+
+    regsub -all {^[A-Za-z0-9_]+:|(\|)[A-Za-z0-9_]+:} "$sync_name" {\1} cell_path
+    set sync [get_cells $cell_path]
+    
+    if {[get_collection_size $sync] > 0} {
+      set_false_path -through $sync
+      puts $sdc_log "Breaking async paths $sync_name\n"
+    } else {
+      puts $sdc_log "$cell_path missing\n"
+    }
+    
+    
+  }
+
 }
 
-#   Log any other information.
+#   Set the I/O port delays for all devices.
+
+# foreach sdc_file    [glob *_dev.sdc] {
+    # puts $sdc_log "Processing $sdc_file\n"
+    # source $sdc_file
+# }
+
+# #   Log any other information.
 
 # puts $sdc_log "All clocks:"
 # foreach_in_collection clk [all_clocks] {
@@ -144,5 +178,8 @@ foreach sdc_file    [glob *_dev.sdc] {
   # puts $sdc_log "[get_node_info -name $node] : [get_node_info -type $node] : $node"
 # }
 
+# }
+
+puts $sdc_log "done at [clock format [clock seconds]] \n"
 
 close $sdc_log
