@@ -1,7 +1,46 @@
 *PADS-ECO-V9.5-MILS*
-*REMARK*  old file: C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\1Working Version\MCollar_INTERFACE_working04.asc
+*REMARK*  old file: C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\1Working Version\MCollar_INTERFACE_working03.asc
 *REMARK*  new file: C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board\Schematic1.asc
-*REMARK*  created by ECOGEN (Version 6.4v) on 9/28/2015 8:41:54 AM
+*REMARK*  created by ECOGEN (Version 6.4v) on 9/29/2015 1:09:49 PM
+*DELPIN*
+J4.1  SERIAL_OUT
+J4.10  USB_VCC
+J4.2  SERIAL_IN
+J4.3  SERIAL_CTL
+J4.4  SERIAL_TCLK
+J4.5  SERIAL_CLK
+J4.6  GND
+J4.7  SWITCH_TO_FS
+J4.8  SERIAL_DPLUS
+J4.9  SERIAL_DMINUS
+*CHGPART*
+J4  EXT_SERIAL  RIBBON_USB
+*PART*
+J10  EXT_SERIAL
+J9  RIBBON_USB
+*NET*
+*SIGNAL*  GND
+J4.5  J9.5  J10.5
+*SIGNAL*  SERIAL_CLK
+J4.6  J9.6  J10.6
+*SIGNAL*  SERIAL_CTL
+J4.8  J9.8  J10.8
+*SIGNAL*  SERIAL_DMINUS
+J4.2  J9.2  J10.2
+*SIGNAL*  SERIAL_DPLUS
+J4.3  J9.3  J10.3
+*SIGNAL*  SERIAL_IN
+J4.9  J9.9  J10.9
+*SIGNAL*  SERIAL_OUT
+J4.10  J9.10  J10.10
+*SIGNAL*  SERIAL_TCLK
+J4.7  J9.7  J10.7
+*SIGNAL*  SWITCH_TO_FS
+J4.4  J9.4  J10.4
+*SIGNAL*  USB_VCC
+J4.1  J9.1  J10.1
+*DEL_ATTRIBUTE*	PCB	DEFAULT
+"CAM.Apply Oversize To All Pads"
 *DEL_ATTRIBUTE*	PART	U2
 "Geometry.Height"
 *DEL_ATTRIBUTE*	PART	U1
@@ -22,6 +61,12 @@
 "Geometry.Height"
 *DEL_ATTRIBUTE*	PART	J5
 "Geometry.Height"
+*SET_ATTRIBUTE*	PART	J4
+"PKG_TYPE"	RIBBON_USB
+*SET_ATTRIBUTE*	PART	J10
+"PKG_TYPE"	EXT_SERIAL
+*SET_ATTRIBUTE*	PART	J9
+"PKG_TYPE"	RIBBON_USB
 
 *MODIFY_GENERAL_RULES*	ROUTING
 
@@ -39,5 +84,5 @@ VALID_LAYER	1
 VALID_LAYER	2
 VALID_VIA_TYPE	*USE_CURRENT*
 
-*REMARK*  Deleted pins: 0,  Added pins: 0
+*REMARK*  Deleted pins: 10,  Added pins: 30
 *END*

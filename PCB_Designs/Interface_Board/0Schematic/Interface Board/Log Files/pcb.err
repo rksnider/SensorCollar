@@ -20,6 +20,9 @@ pcb: Warning 6094: Schematic1 pin $2I141.IN2: Pin not connected
 pcb: Warning 6094: Schematic1 pin $2I141.OUT2: Pin not connected
 pcb: Warning 6094: Schematic1 pin $1I55.NC: Pin not connected
 pcb: Warning 6094: Schematic1 pin $1I41.NC: Pin not connected
+pcb: Note 5854: Instance value (REFDES=J10) was added to instance ($4I266) on (SCHEMATIC1).
+pcb: Note 5854: Instance value (REFDES=J4) was added to instance ($4I279) on (SCHEMATIC1).
+pcb: Note 5854: Instance value (REFDES=J9) was added to instance ($4I291) on (SCHEMATIC1).
 pcb: Note 5626: Summary of Log Files/pcb.err
-Status 0, Notes 1, Warnings 21
+Status 0, Notes 4, Warnings 21
 Errors 0, Failures 0, Fatals 0, Internals 0

@@ -44,3 +44,6 @@
 [2015-09-28 08.11.28] Successfully created [AutoSave] backup [2015-09-28 08.11.22 - auto.zip] requested by [BZ-ECE-CB508-01:s58p233].
 [2015-09-28 08.11.28] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board\ProjectBackup\backups\2015-06-22 17.42.40 - auto.zip].
 [2015-09-28 08.11.28] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-06-22 17.42.40 - auto.zip] removed.
+[2015-09-29 11.56.01] Successfully created [AutoSave] backup [2015-09-29 11.55.56 - auto.zip] requested by [BZ-ECE-CB508-01:s58p233].
+[2015-09-29 11.56.01] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board\ProjectBackup\backups\2015-07-02 09.13.02 - auto.zip].
+[2015-09-29 11.56.01] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-07-02 09.13.02 - auto.zip] removed.

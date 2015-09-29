@@ -231,6 +231,26 @@
 			(pin 3  3 "SM_BUS__SM_BUS_1" 0 "PIN3" 0)
 			(pin 2  3 "SM_BUS__SM_BUS_1" 0 "PIN2" 0)
 			(pin 1  3 "SM_BUS__SM_BUS_1" 0 "PIN1" 0))
+		(part "RIBBON_USB")
+		(logical_part_mapping "RIBBON_USB"
+			(comp "J9" "J4"))
+		(logical_part "RIBBON_USB"
+			(slots
+				(slot "RIBBON_USB__RIBBON_USB_1"
+					(attributes
+						(attval "DEVICE" "RIBBON_USB")
+						(attval "PKG_TYPE" "RIBBON_USB")
+						(attval "REFDES" "J?"))))
+			(pin 1  3 "RIBBON_USB__RIBBON_USB_1" 0 "VCC" 0)
+			(pin 7  3 "RIBBON_USB__RIBBON_USB_1" 0 "TCLK" 0)
+			(pin 10  3 "RIBBON_USB__RIBBON_USB_1" 0 "OUT" 0)
+			(pin 9  3 "RIBBON_USB__RIBBON_USB_1" 0 "IN" 0)
+			(pin 5  3 "RIBBON_USB__RIBBON_USB_1" 0 "GND" 0)
+			(pin 4  3 "RIBBON_USB__RIBBON_USB_1" 0 "FS" 0)
+			(pin 2  3 "RIBBON_USB__RIBBON_USB_1" 0 "D-" 0)
+			(pin 3  3 "RIBBON_USB__RIBBON_USB_1" 0 "D+" 0)
+			(pin 8  3 "RIBBON_USB__RIBBON_USB_1" 0 "CTL" 0)
+			(pin 6  3 "RIBBON_USB__RIBBON_USB_1" 0 "CLK" 0))
 		(part "JUMPER_8PIN_100MIL")
 		(logical_part_mapping "JUMPER_8PIN_100MIL"
 			(comp "U8"))
@@ -271,7 +291,7 @@
 			(pin 10  3 "JTAG_HEADER__JTAG_HEADER_1" 0 "GND_10" 0))
 		(part "EXT_SERIAL")
 		(logical_part_mapping "EXT_SERIAL"
-			(comp "J4"))
+			(comp "J10"))
 		(logical_part "EXT_SERIAL"
 			(slots
 				(slot "EXT_SERIAL__EXT_SERIAL_1"
@@ -279,16 +299,16 @@
 						(attval "DEVICE" "EXT_SERIAL")
 						(attval "PKG_TYPE" "EXT_SERIAL")
 						(attval "REFDES" "J?"))))
-			(pin 10  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "VCC" 0)
-			(pin 4  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "TCLK" 0)
-			(pin 1  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "OUT" 0)
-			(pin 2  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "IN" 0)
-			(pin 6  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "GND" 0)
-			(pin 7  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "FS" 0)
-			(pin 9  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "D-" 0)
-			(pin 8  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "D+" 0)
-			(pin 3  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "CTL" 0)
-			(pin 5  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "CLK" 0))
+			(pin 1  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "VCC" 0)
+			(pin 7  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "TCLK" 0)
+			(pin 10  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "OUT" 0)
+			(pin 9  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "IN" 0)
+			(pin 5  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "GND" 0)
+			(pin 4  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "FS" 0)
+			(pin 2  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "D-" 0)
+			(pin 3  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "D+" 0)
+			(pin 8  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "CTL" 0)
+			(pin 6  3 "EXT_SERIAL__EXT_SERIAL_1" 0 "CLK" 0))
 		(part "CAP_4P7UF_0402")
 		(logical_part_mapping "CAP_4P7UF_0402"
 			(comp "C6"))
@@ -521,6 +541,36 @@
 				(attval "Part Number" "SIP32414")
 				(attval "DEVICE" "SWITCH_DUAL_SIP32414")
 				(attval "REFDES" "S1")))
+		(component "EXT_SERIAL"
+			(place "J10" 0.0 0.0 top 0.0
+				(comp_pin "1" 0.0 0.0 "IN")
+				(comp_pin "7" 0.0 0.0 "IN")
+				(comp_pin "10" 0.0 0.0 "IN")
+				(comp_pin "9" 0.0 0.0 "IN")
+				(comp_pin "5" 0.0 0.0 "IN")
+				(comp_pin "4" 0.0 0.0 "IN")
+				(comp_pin "2" 0.0 0.0 "IN")
+				(comp_pin "3" 0.0 0.0 "IN")
+				(comp_pin "8" 0.0 0.0 "IN")
+				(comp_pin "6" 0.0 0.0 "IN"))
+			(attributes
+				(attval "DEVICE" "EXT_SERIAL")
+				(attval "REFDES" "J10")))
+		(component "RIBBON_USB"
+			(place "J9" 0.0 0.0 top 0.0
+				(comp_pin "1" 0.0 0.0 "IN")
+				(comp_pin "7" 0.0 0.0 "IN")
+				(comp_pin "10" 0.0 0.0 "IN")
+				(comp_pin "9" 0.0 0.0 "IN")
+				(comp_pin "5" 0.0 0.0 "IN")
+				(comp_pin "4" 0.0 0.0 "IN")
+				(comp_pin "2" 0.0 0.0 "IN")
+				(comp_pin "3" 0.0 0.0 "IN")
+				(comp_pin "8" 0.0 0.0 "IN")
+				(comp_pin "6" 0.0 0.0 "IN"))
+			(attributes
+				(attval "DEVICE" "RIBBON_USB")
+				(attval "REFDES" "J9")))
 		(component "USB3P0_LAND"
 			(place "J8" 0.0 0.0 top 0.0
 				(comp_pin "10" 0.0 0.0 "IN")
@@ -565,20 +615,20 @@
 				(attval "Part Number" "10118194-0001LF")
 				(attval "DEVICE" "USB_FCI_PWR_RECEPTACLE")
 				(attval "REFDES" "J5")))
-		(component "EXT_SERIAL"
+		(component "RIBBON_USB"
 			(place "J4" 0.0 0.0 top 0.0
-				(comp_pin "10" 0.0 0.0 "IN")
-				(comp_pin "4" 0.0 0.0 "IN")
 				(comp_pin "1" 0.0 0.0 "IN")
-				(comp_pin "2" 0.0 0.0 "IN")
-				(comp_pin "6" 0.0 0.0 "IN")
 				(comp_pin "7" 0.0 0.0 "IN")
+				(comp_pin "10" 0.0 0.0 "IN")
 				(comp_pin "9" 0.0 0.0 "IN")
-				(comp_pin "8" 0.0 0.0 "IN")
+				(comp_pin "5" 0.0 0.0 "IN")
+				(comp_pin "4" 0.0 0.0 "IN")
+				(comp_pin "2" 0.0 0.0 "IN")
 				(comp_pin "3" 0.0 0.0 "IN")
-				(comp_pin "5" 0.0 0.0 "IN"))
+				(comp_pin "8" 0.0 0.0 "IN")
+				(comp_pin "6" 0.0 0.0 "IN"))
 			(attributes
-				(attval "DEVICE" "EXT_SERIAL")
+				(attval "DEVICE" "RIBBON_USB")
 				(attval "REFDES" "J4")))
 		(component "JTAG_HEADER"
 			(place "J3" 0.0 0.0 top 0.0
@@ -712,11 +762,13 @@
 		(func "$1I41" "" "U2" 1)
 		(func "$1I55" "" "U1" 1)
 		(func "$2I141" "" "S1" 1)
+		(func "$4I266" "" "J10" 1)
+		(func "$4I291" "" "J9" 1)
 		(func "$4I210" "" "J8" 1)
 		(func "$5I45" "" "J7" 1)
 		(func "$5I6" "" "J6" 1)
 		(func "$5I54" "" "J5" 1)
-		(func "$4I160" "" "J4" 1)
+		(func "$4I279" "" "J4" 1)
 		(func "$4I73" "" "J3" 1)
 		(func "$4I31" "" "J2" 1)
 		(func "$4I102" "" "J1" 1)
@@ -733,7 +785,8 @@
 			(pins J5-3 J5-2))
 		(net "GND"
 			(pins U7-2 J1-3 U1-2 U9-5 U10-5 U2-2 C5-2 C9-2 C10-2 J6-4 J8-6 C1-2 C2-2 C4-2
- C3-2 U3-3 U4-3 U5-3 U6-3 S1-7 S1-9 J2-10 J2-2 C6-2 J3-10 J3-2 J5-5 J4-6 U8-7))
+ C3-2 U3-3 U4-3 U5-3 U6-3 S1-7 S1-9 J2-10 J2-2 C6-2 J3-10 J3-2 J5-5 U8-7 J4-5
+ J9-5 J10-5))
 		(net "I2C_JUMPER_TO_SPI_PIN1"
 			(pins J2-1 U8-2))
 		(net "I2C_JUMPER_TO_SPI_PIN3"
@@ -749,19 +802,19 @@
 		(net "LT_TO_SPI_PIN5"
 			(pins U9-1 U6-4 J2-5))
 		(net "SERIAL_CLK"
-			(pins U10-3 J8-5 U4-4 J4-5))
+			(pins U10-3 J8-5 U4-4 J4-6 J9-6 J10-6))
 		(net "SERIAL_CTL"
-			(pins U10-4 J8-3 U3-4 J3-5 J4-3))
+			(pins U10-4 J8-3 U3-4 J3-5 J4-8 J9-8 J10-8))
 		(net "SERIAL_DMINUS"
-			(pins J6-2 J8-9 J4-9))
+			(pins J6-2 J8-9 J4-2 J9-2 J10-2))
 		(net "SERIAL_DPLUS"
-			(pins J6-3 J8-8 J4-8))
+			(pins J6-3 J8-8 J4-3 J9-3 J10-3))
 		(net "SERIAL_IN"
-			(pins U10-9 J8-2 U5-4 J3-9 J4-2))
+			(pins U10-9 J8-2 U5-4 J3-9 J4-9 J9-9 J10-9))
 		(net "SERIAL_OUT"
-			(pins U10-10 J8-1 U6-2 J3-3 J4-1))
+			(pins U10-10 J8-1 U6-2 J3-3 J4-10 J9-10 J10-10))
 		(net "SERIAL_TCLK"
-			(pins J8-4 J3-1 J4-4))
+			(pins J8-4 J3-1 J4-7 J9-7 J10-7))
 		(net "SPI_PIN4_TO_VISHAY_PWR"
 			(pins S1-2 J2-4))
 		(net "SPI_PIN7_TO_LT"
@@ -771,9 +824,9 @@
 		(net "SPI_PIN9_TO_LT"
 			(pins U9-3 U3-2 J2-9))
 		(net "SWITCH_TO_FS"
-			(pins J8-7 J7-1 J4-7))
+			(pins J8-7 J7-1 J4-4 J9-4 J10-4))
 		(net "USB_VCC"
-			(pins U1-3 U1-1 U10-1 U2-3 U2-1 J8-10 C1-1 C2-1 J5-1 J4-10))
+			(pins U1-3 U1-1 U10-1 U2-3 U2-1 J8-10 C1-1 C2-1 J5-1 J4-1 J9-1 J10-1))
 		(net "VCC1P8"
 			(pins U7-6 U7-3 U10-2 U2-5 C10-1 C4-1 J7-3 S1-1 C6-1 J3-4))
 		(net "VCC1P8_VISHAY_OUT"
