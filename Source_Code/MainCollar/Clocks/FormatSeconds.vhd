@@ -194,7 +194,36 @@ architecture rtl of FormatSeconds is
     --  4 one minute sections to used few clock cycles to count them.
 
     60 * 4,
-    60
+    60,
+
+    --  Days up to the start of each month.  The first for non-leap years
+    --  the second for leap years.
+
+      0,
+     31,
+     59,
+     90,
+    120,
+    151,
+    181,
+    212,
+    243,
+    273,
+    304,
+    334,
+
+      0,
+     31,
+     60,
+     91,
+    121,
+    152,
+    182,
+    213,
+    244,
+    274,
+    305,
+    335
 
   ) ;
 
@@ -205,7 +234,8 @@ architecture rtl of FormatSeconds is
   constant hour_times_start_c     : natural := day_times_start_c     +  1 ;
   constant fourmin_times_start_c  : natural := hour_times_start_c    +  1 ;
   constant minute_times_start_c   : natural := fourmin_times_start_c +  1 ;
-  constant second_times_start_c   : natural := minute_times_start_c  +  1 ;
+  constant month_days_start_c     : natural := minute_times_start_c  +  1 ;
+  constant leap_days_start_c      : natural := month_days_start_c    + 12 ;
 
   signal to_time_diff_index       :
             unsigned (const_bits (time_diff_tbl_c'length)-1 downto 0) ;
@@ -425,12 +455,15 @@ begin
           --  Count months.
 
           when dtst_month_e         =>
+            to_datetime.lyear   <= to_leap_year ;
             to_datetime.year    <= RESIZE (to_counter, dt_yearbits_c) ;
             to_counter          <= TO_UNSIGNED (1, to_counter'length) ;
 
             --  Adjust for daylight savings time in the northern
             --  hemisphere (starts and ends in the same year) and southern
             --  hemisphere (starts in one year and ends in the next).
+
+            to_datetime.indst   <= '0' ;
 
             if (use_dst_g = '1') then
               if ((dst_start_mth_g < dst_end_mth_g      and
@@ -441,6 +474,7 @@ begin
                     to_seconds    <= to_dst_end))) then
 
                 to_seconds        <= to_seconds + dst_seconds_g ;
+                to_datetime.indst <= '1' ;
               end if ;
             end if ;
 
@@ -464,6 +498,18 @@ begin
           --  Count days in the current month.
 
           when dtst_mday_e          =>
+            if (to_leap_year = '0') then
+              to_datetime.yday  <=
+                  TO_UNSIGNED (time_diff_tbl_c (TO_INTEGER (to_counter) +
+                                                month_days_start_c - 1),
+                               to_datetime.yday'length) ;
+            else
+              to_datetime.yday  <=
+                  TO_UNSIGNED (time_diff_tbl_c (TO_INTEGER (to_counter) +
+                                                leap_days_start_c - 1),
+                               to_datetime.yday'length) ;
+            end if ;
+
             to_datetime.month   <= RESIZE (to_counter, dt_monthbits_c) ;
             to_counter          <= TO_UNSIGNED (1, to_counter'length) ;
             to_time_diff_index  <=
@@ -475,6 +521,7 @@ begin
           --  Count hours in the current day.
 
           when dtst_hour_e          =>
+            to_datetime.yday    <= to_datetime.yday + to_counter - 1 ;
             to_datetime.mday    <= RESIZE (to_counter, dt_mdaybits_c) ;
             to_counter          <= TO_UNSIGNED (0, to_counter'length) ;
             to_time_diff_index  <=
