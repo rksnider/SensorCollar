@@ -1,9 +1,9 @@
 ----------------------------------------------------------------------------
 --
---! @file       RealTimeClock.vhd
---! @brief      Handles the time to and from the Real Time Clock.
---! @details    The Real Time Clock time is the number of seconds since
---!             Midnight January 1, 1970 GMT.
+--! @file       SystemTime.vhd
+--! @brief      Maintains the main time clocks.
+--! @details    Maintains time in the system from the RTC, the GPS, and
+--!             others.
 --! @author     Emery Newlon
 --! @date       August 2015
 --! @copyright  Copyright (C) 2015 Ross K. Snider and Emery L. Newlon
