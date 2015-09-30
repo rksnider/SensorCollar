@@ -1,11 +1,12 @@
 #   System Information
 
+
 set_global_assignment -name FAMILY "MAX V"
 set_global_assignment -name DEVICE 5M570ZM100I5
 set_global_assignment -name TOP_LEVEL_ENTITY AudioRecordingCollarCPLD_TopLevel
 set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
-set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
-set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
+set_global_assignment -name MIN_CORE_JUNCTION_TEMP "-40"
+set_global_assignment -name MAX_CORE_JUNCTION_TEMP 125
 set_global_assignment -name DEVICE_FILTER_PIN_COUNT 100
 set_global_assignment -name DEVICE_FILTER_SPEED_GRADE 5
 set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR "-1"
@@ -71,13 +72,13 @@ set_location_assignment PIN_K3  -to FPGA_DATA0
 # set_location_assignment PIN_H9  -to PC_FLASH_IO5
 # set_location_assignment PIN_H3  -to PC_FLASH_IO6
 
-set_location_assignment PIN_C6  -to PC_FLASH_CLK
-set_location_assignment PIN_F9  -to PC_FLASH_CS_N
-set_location_assignment PIN_J6  -to PC_FLASH_DATA[0]
-set_location_assignment PIN_F3  -to PC_FLASH_DATA[1]
-set_location_assignment PIN_D9  -to PC_FLASH_DATA[2]
-set_location_assignment PIN_H9  -to PC_FLASH_DATA[3]
-set_location_assignment PIN_H3  -to PC_FLASH_DIR
+# set_location_assignment PIN_C6  -to PC_FLASH_CLK
+# set_location_assignment PIN_F9  -to PC_FLASH_CS_N
+# set_location_assignment PIN_J6  -to PC_FLASH_DATA[0]
+# set_location_assignment PIN_F3  -to PC_FLASH_DATA[1]
+# set_location_assignment PIN_D9  -to PC_FLASH_DATA[2]
+# set_location_assignment PIN_H9  -to PC_FLASH_DATA[3]
+# set_location_assignment PIN_H3  -to PC_FLASH_DIR
 
 #   FPGA Status and SPI Connections
 
@@ -108,7 +109,7 @@ set_location_assignment PIN_L6  -to VCC1P8_AUX_CTRL
 
 set_location_assignment PIN_B4  -to OBUFFER_ENABLE_OUT_TO_CPLD
 
-# (please refer to documentation)
+# Sensor Board Connections (please refer to documentation)
 
 #set_location_assignment PIN_C2  -to M_CPLD_00
 #set_location_assignment PIN_E1  -to M_CPLD_01
@@ -119,35 +120,52 @@ set_location_assignment PIN_B4  -to OBUFFER_ENABLE_OUT_TO_CPLD
 #set_location_assignment PIN_B3  -to M_CPLD_06
 #set_location_assignment PIN_A1  -to M_CPLD_07
 #set_location_assignment PIN_A2  -to M_CPLD_08
-
-set_location_assignment PIN_C2  -to GPS_CNTRL_TO_CPLD
-set_location_assignment PIN_E1  -to MRAM_CNTRL_TO_CPLD
-set_location_assignment PIN_D1  -to MIC_R_CNTRL_TO_CPLD
-set_location_assignment PIN_C1  -to MIC_L_CNTRL_TO_CPLD
-set_location_assignment PIN_B1  -to DATA_TX_CNTRL_TO_CPLD
-set_location_assignment PIN_B2  -to SDCARD_CNTRL_TO_CPLD
-set_location_assignment PIN_B3  -to LS_1P8V_CNTRL_TO_CPLD
-set_location_assignment PIN_A1  -to LS_3P3V_CNTRL_TO_CPLD
-set_location_assignment PIN_A2  -to IM_ON_TO_CPLD
+#set_location_assignment PIN_A3  -to M_CPLD_09
+#set_location_assignment PIN_A5  -to M_CPLD_10
 
 
-#   Battery Control Connections (please refer to documentation)
+
+set_location_assignment PIN_C2  -to IM_1P8V_TO_CPLD
+set_location_assignment PIN_E1  -to IM_2P5V_TO_CPLD
+set_location_assignment PIN_D1  -to BAT_HIGH_TO_CPLD
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to BAT_HIGH_TO_CPLD
+set_location_assignment PIN_C1  -to DROP_CTRL_TO_CPLD
+set_location_assignment PIN_B1  -to BATT_GD_N_TO_CPLD
+set_location_assignment PIN_B2  -to RTC_ALARM_TO_CPLD
+set_location_assignment PIN_B3  -to BAT_LOW_TO_CPLD
+set_location_assignment PIN_A1  -to DATA_TX_CNTRL_TO_CPLD
+set_location_assignment PIN_A2  -to GPS_CNTRL_TO_CPLD
+set_location_assignment PIN_A3  -to SOLAR_CTRL_ON_TO_CPLD
+set_location_assignment PIN_A5  -to RTC_ALARM_TO_CPLD
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to RTC_ALARM_TO_CPLD
+
+
+#  Sensor Board Connections (please refer to documentation)
 
 
 #set_location_assignment PIN_A6  -to M_CPLD_11
 #set_location_assignment PIN_A7  -to M_CPLD_12
 #set_location_assignment PIN_A8  -to M_CPLD_13
 #set_location_assignment PIN_A9  -to M_CPLD_14
-#set_location_assignment PIN_L4  -to CPLDON_02_TO_CPLD
-#set_location_assignment PIN_L5  -to CPLDON_01_TO_CPLD
+#set_location_assignment PIN_A10 -to M_CPLD_15
 
-set_location_assignment PIN_L4  -to MAIN_ON_TO_CPLD
-set_location_assignment PIN_L5  -to RECHARGE_EN_TO_CPLD
-set_location_assignment PIN_A6  -to BAT_HIGH_TO_CPLD
-set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to BAT_HIGH_TO_CPLD
-set_location_assignment PIN_A7  -to BAT_HIGH_TO_FPGA
-set_location_assignment PIN_A8  -to BAT_LOW_TO_CPLD
-set_location_assignment PIN_A9  -to BATT_GD_N_TO_CPLD
+#set_location_assignment PIN_L1  -to CPLDON_00_TO_CPLD
+#set_location_assignment PIN_L5  -to CPLDON_01_TO_CPLD
+#set_location_assignment PIN_L4  -to CPLDON_02_TO_CPLD
+
+
+set_location_assignment PIN_A6  -to SDCARD_CNTRL_TO_CPLD
+set_location_assignment PIN_A7  -to MRAM_CNTRL_TO_CPLD
+set_location_assignment PIN_A8  -to SOLAR_PGOOD_TO_CPLD
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to SOLAR_PGOOD_TO_CPLD
+set_location_assignment PIN_A9  -to MIC_A_CTRL
+set_location_assignment PIN_A10 -to MIC_B_CNTRL
+
+set_location_assignment PIN_L1  -to MAIN_ON
+set_location_assignment PIN_L5  -to RECHARGE_EN
+set_location_assignment PIN_L4  -to SOLAR_CTRL_CHDN_N
+
+
 
 #   Power Supply Control Connections
 
@@ -159,24 +177,7 @@ set_location_assignment PIN_A11  -to PWR_GOOD_2P5_TO_CPLD
 set_location_assignment PIN_H2   -to PWR_GOOD_3P3_TO_CPLD
 set_location_assignment PIN_G2   -to BUCK_PWM_TO_CPLD
 
-#   Solar Controller Connections (please refer to documentation)
 
-#set_location_assignment PIN_A3  -to M_CPLD_09
-
-set_location_assignment PIN_A3  -to SOLAR_PGOOD_TO_CPLD
-set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to SOLAR_PGOOD_TO_CPLD
-
-#set_location_assignment PIN_A10  -to M_CPLD_15
-#set_location_assignment PIN_L1  -to CPLDON_00_TO_CPLD
-
-set_location_assignment PIN_A10  -to SOLAR_CTRL_ON_TO_CPLD
-set_location_assignment PIN_L1  -to SOLAR_CTRL_SHDN_N_TO_CPLD
-
-#   Real Time Clock Connections (please refer to documentation)
-#set_location_assignment PIN_A5  -to M_CPLD_10
-
-set_location_assignment PIN_A5  -to RTC_ALARM_TO_CPLD
-set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to RTC_ALARM_TO_CPLD
 
 #   Off Board Connections
 set_location_assignment PIN_K4  -to ESH_FORCE_STARTUP
