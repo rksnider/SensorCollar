@@ -39,8 +39,8 @@ constant msg_ram_marktime_addr_c        : natural :=
       msg_ram_postime_addr_c + msg_ram_postime_size_c * msg_ram_banks_c ;
 constant msg_ram_marktime_size_c        : natural := gps_time_bytes_c ;
 
-contant msg_ram_msgbuff_addr_c         : natural :=
-      msg_ram_marktime_addr_c + msg_ram_marktime_size_c ;
+constant msg_ram_msgbuff_addr_c         : natural :=
+      msg_ram_marktime_addr_c + msg_ram_marktime_size_c * msg_ram_banks_c ;
 constant msg_ram_msgbuff_size_c         : natural := 40 ;
 
 constant msg_ram_end_c                  : natural :=
