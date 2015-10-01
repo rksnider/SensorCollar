@@ -35,17 +35,20 @@ use IEEE.NUMERIC_STD.ALL ;          --! Use numeric standard.
 
 entity AudioRecordingCollarCPLDInit_TopLevel is
 
-  Port (
+    Port (
 
     --  Flash Connections
 
-    FLASH_C                     : out   std_logic ;
+    FLASH_C                     : inout std_logic ;
     FLASH_PFL                   : inout std_logic_vector (3 downto 0) ;
-    FLASH_S_N                   : out   std_logic ;
+    FLASH_FPGA                  : inout std_logic_vector (3 downto 0) ;
+    FLASH_S_N                   : inout std_logic ;
 
     --  Clocks
 
     CLK_50MHZ                   : in    std_logic ;
+    CLK_50MHZ_TO_FPGA           : out   std_logic ;
+
     --  FPGA Configuration Connections
 
     FPGA_DCLK                   : out   std_logic ;
@@ -55,20 +58,39 @@ entity AudioRecordingCollarCPLDInit_TopLevel is
     FPGA_NCONFIG                : out   std_logic ;
     FPGA_DATA0                  : out   std_logic ;
 
+    --  FPGA Flash Connections
+
+    PC_FLASH_CLK                : inout std_logic ;
+    PC_FLASH_CS_N               : inout std_logic ;
+--    PC_FLASH_DATA               : inout std_logic_vector (3 downto 0) ;
+--    PC_FLASH_DIR                : inout std_logic ;
+
+    --  FPGA Status and SPI Connections
+
+    PC_STATUS_CHANGED           : out   std_logic ;
+    PC_SPI_CLK                  : inout std_logic ;
+    PC_SPI_DIN                  : inout std_logic ;
+    PC_SPI_DOUT                 : out   std_logic ;
+    PC_SPI_NCS                  : inout std_logic ;
+
+    --  I2C Bus Connections
+
+    I2C_SDA            : inout std_logic ;
+    I2C_SCL            : inout std_logic ;
+
     --  Device Power Control Connections
 
     GPS_CNTRL_TO_CPLD           : out   std_logic ;
     SDRAM_CNTRL_TO_CPLD         : out   std_logic ;
     MRAM_CNTRL_TO_CPLD          : out   std_logic ;
-    MIC_R_CNTRL_TO_CPLD         : out   std_logic ;
-    MIC_L_CNTRL_TO_CPLD         : out   std_logic ;
+    MIC_B_CNTRL                 : out   std_logic ;
+    MIC_A_CTRL                  : out   std_logic ;
     CLOCK_CNTRL_TO_CPLD         : out   std_logic ;
     DATA_TX_CNTRL_TO_CPLD       : out   std_logic ;
     SDCARD_CNTRL_TO_CPLD        : out   std_logic ;
-    LS_1P8V_CNTRL_TO_CPLD       : out   std_logic ;
-    LS_3P3V_CNTRL_TO_CPLD       : out   std_logic ;
     FPGA_ON_TO_CPLD             : out   std_logic ;
-    IM_ON_TO_CPLD               : out   std_logic ;
+    IM_2P5V_TO_CPLD             : out   std_logic ;
+    IM_1P8V_TO_CPLD             : out   std_logic ;
 
     OBUFFER_ENABLE_OUT_TO_CPLD  : out   std_logic ;
 
@@ -76,6 +98,10 @@ entity AudioRecordingCollarCPLDInit_TopLevel is
 
     MAIN_ON_TO_CPLD             : out   std_logic ;
     RECHARGE_EN_TO_CPLD         : out   std_logic ;
+    BAT_HIGH_TO_CPLD            : in    std_logic ;
+    BAT_HIGH_TO_FPGA            : inout std_logic ;
+    BAT_LOW_TO_CPLD             : in    std_logic ;
+    BATT_GD_N_TO_CPLD           : in    std_logic ;
 
     --  Power Supply Control Connections
 
@@ -85,7 +111,22 @@ entity AudioRecordingCollarCPLDInit_TopLevel is
     PWR_GOOD_1P1_TO_CPLD        : in    std_logic ;
     PWR_GOOD_2P5_TO_CPLD        : in    std_logic ;
     PWR_GOOD_3P3_TO_CPLD        : in    std_logic ;
-    BUCK_PWM_TO_CPLD            : out   std_logic
+    BUCK_PWM_TO_CPLD            : out   std_logic ;
+
+    --  Solar Controller Connections
+
+    SOLAR_PGOOD_TO_CPLD         : in    std_logic ;
+    SOLAR_CTRL_ON_TO_CPLD       : in    std_logic ;
+    SOLAR_CTRL_SHDN_N_TO_CPLD   : out   std_logic ;
+
+    --  Real Time Clock Connections
+
+    RTC_ALARM_TO_CPLD           : in    std_logic ;
+
+    --  Off Board Connections
+
+    ESH_FORCE_STARTUP      : in    std_logic ;
+    ESH_FORCE_STARTUP_TO_FPGA      : inout std_logic 
 
   ) ;
 
@@ -187,14 +228,14 @@ begin
       pwr_fpga_out          => FPGA_ON_TO_CPLD,
       pwr_sdram_out         => SDRAM_CNTRL_TO_CPLD,
       pwr_mram_out          => MRAM_CNTRL_TO_CPLD,
-      pwr_im_out            => IM_ON_TO_CPLD,
+      pwr_im_out            => IM_2P5V_TO_CPLD,
       pwr_gps_out           => GPS_CNTRL_TO_CPLD,
       pwr_datatx_out        => DATA_TX_CNTRL_TO_CPLD,
-      pwr_micR_out          => MIC_R_CNTRL_TO_CPLD,
-      pwr_micL_out          => MIC_L_CNTRL_TO_CPLD,
-      pwr_sdcard_out        => SDCARD_CNTRL_TO_CPLD,
-      pwr_ls_1p8_out        => LS_1P8V_CNTRL_TO_CPLD,
-      pwr_ls_3p3_out        => LS_3P3V_CNTRL_TO_CPLD
+      pwr_micR_out          => MIC_B_CNTRL,
+      pwr_micL_out          => MIC_A_CTRL,
+      pwr_sdcard_out        => SDCARD_CNTRL_TO_CPLD
+      --pwr_ls_1p8_out        => LS_1P8V_CNTRL_TO_CPLD,
+      --pwr_ls_3p3_out        => LS_3P3V_CNTRL_TO_CPLD
 
     ) ;
 

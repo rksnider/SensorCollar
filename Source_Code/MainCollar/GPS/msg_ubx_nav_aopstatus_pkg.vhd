@@ -11,12 +11,12 @@ use WORK.gps_message_ctl_pkg.ALL ;
 
 package msg_ubx_nav_aopstatus_pkg is
 
-constant msg_ubx_nav_aopstatus_class_c    : natural := 16#01# ;
-constant msg_ubx_nav_aopstatus_id_c       : natural := 16#60# ;
-constant msg_ubx_nav_aopstatus_number_c   : natural := 1 ;
+constant msg_ubx_nav_aopstatus_class_c  : natural := 16#01# ;
+constant msg_ubx_nav_aopstatus_id_c     : natural := 16#60# ;
+constant msg_ubx_nav_aopstatus_number_c : natural := 1 ;
 
-constant msg_ubx_nav_aopstatus_romaddr_c  : natural := 18 ;
-constant msg_ubx_nav_aopstatus_ramused_c  : natural := 10 ;
+constant msg_ubx_nav_aopstatus_romaddr_c : natural := 18 ;
+constant msg_ubx_nav_aopstatus_ramused_c : natural := 10 ;
 constant msg_ubx_nav_aopstatus_fieldcnt_c : natural := 8 ;
 constant msg_ubx_nav_aopstatus_fieldbits_c : natural :=
             natural (trunc (log2 (real (msg_ubx_nav_aopstatus_fieldcnt_c - 1)))) + 1 ;

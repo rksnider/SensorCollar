@@ -46,30 +46,39 @@ package FormatSeconds_pkg is
   --  second of minute (0-60 supports leap seconds).
 
   constant dt_yearbits_c        : natural := 5 ;
+  constant dt_ydaybits_c        : natural := 9 ;
   constant dt_monthbits_c       : natural := 4 ;
   constant dt_mdaybits_c        : natural := 5 ;
   constant dt_hourbits_c        : natural := 5 ;
   constant dt_minbits_c         : natural := 6 ;
   constant dt_secbits_c         : natural := 6 ;
+  constant dt_lyearbits_c       : natural := 1 ;
+  constant dt_indstbits_c       : natural := 1 ;
 
-  constant dt_maxbits_c         : natural := 6 ;
+  constant dt_maxbits_c         : natural := 9 ;
 
   constant dt_totalbits_c       : natural := dt_yearbits_c    +
+                                             dt_ydaybits_c    +
                                              dt_monthbits_c   +
                                              dt_mdaybits_c    +
                                              dt_hourbits_c    +
                                              dt_minbits_c     +
-                                             dt_secbits_c     ;
+                                             dt_secbits_c     +
+                                             dt_lyearbits_c   +
+                                             dt_indstbits_c   ;
 
   --  Date/Time struture.
 
   type DateTime_t is record
     year          : unsigned (dt_yearbits_c-1  downto 0) ;
+    yday          : unsigned (dt_ydaybits_c-1  downto 0) ;
     month         : unsigned (dt_monthbits_c-1 downto 0) ;
     mday          : unsigned (dt_mdaybits_c-1  downto 0) ;
     hour          : unsigned (dt_hourbits_c-1  downto 0) ;
     minute        : unsigned (dt_minbits_c-1   downto 0) ;
     second        : unsigned (dt_secbits_c-1   downto 0) ;
+    lyear         : std_logic ;
+    indst         : std_logic ;
   end record ;
 
   --  Concatinate the Date/Time fields into a bit vector.
@@ -94,11 +103,14 @@ package body FormatSeconds_pkg is
     variable result_v : std_logic_vector (dt_totalbits_c-1 downto 0) ;
   begin
     result_v :=   std_logic_vector (a.year)
+                & std_logic_vector (a.yday)
                 & std_logic_vector (a.month)
                 & std_logic_vector (a.mday)
                 & std_logic_vector (a.hour)
                 & std_logic_vector (a.minute)
-                & std_logic_vector (a.second) ;
+                & std_logic_vector (a.second)
+                & a.lyear
+                & a.indst ;
     return result_v ;
   end ;
 
@@ -111,24 +123,31 @@ package body FormatSeconds_pkg is
     variable strbit_v : natural ;
     variable endbit_v : natural ;
   begin
-    strbit_v        := dt_totalbits_c ;
-    endbit_v        := strbit_v - dt_yearbits_c ;
-    result_v.year   := unsigned (a (strbit_v-1 downto endbit_v)) ;
-    strbit_v        := endbit_v ;
-    endbit_v        := endbit_v - dt_monthbits_c ;
-    result_v.month  := unsigned (a (strbit_v-1 downto endbit_v)) ;
-    strbit_v        := endbit_v ;
-    endbit_v        := endbit_v - dt_mdaybits_c ;
-    result_v.mday   := unsigned (a (strbit_v-1 downto endbit_v)) ;
-    strbit_v        := endbit_v ;
-    endbit_v        := endbit_v - dt_hourbits_c ;
-    result_v.hour   := unsigned (a (strbit_v-1 downto endbit_v)) ;
-    strbit_v        := endbit_v ;
-    endbit_v        := endbit_v - dt_minbits_c ;
-    result_v.minute := unsigned (a (strbit_v-1 downto endbit_v)) ;
-    strbit_v        := endbit_v ;
-    endbit_v        := endbit_v - dt_secbits_c ;
-    result_v.second := unsigned (a (strbit_v-1 downto endbit_v)) ;
+    strbit_v          := dt_totalbits_c ;
+    endbit_v          := strbit_v - dt_yearbits_c ;
+    result_v.year     := unsigned (a (strbit_v-1 downto endbit_v)) ;
+    strbit_v          := endbit_v ;
+    endbit_v          := endbit_v - dt_ydaybits_c ;
+    result_v.yday     := unsigned (a (strbit_v-1 downto endbit_v)) ;
+    strbit_v          := endbit_v ;
+    endbit_v          := endbit_v - dt_monthbits_c ;
+    result_v.month    := unsigned (a (strbit_v-1 downto endbit_v)) ;
+    strbit_v          := endbit_v ;
+    endbit_v          := endbit_v - dt_mdaybits_c ;
+    result_v.mday     := unsigned (a (strbit_v-1 downto endbit_v)) ;
+    strbit_v          := endbit_v ;
+    endbit_v          := endbit_v - dt_hourbits_c ;
+    result_v.hour     := unsigned (a (strbit_v-1 downto endbit_v)) ;
+    strbit_v          := endbit_v ;
+    endbit_v          := endbit_v - dt_minbits_c ;
+    result_v.minute   := unsigned (a (strbit_v-1 downto endbit_v)) ;
+    strbit_v          := endbit_v ;
+    endbit_v          := endbit_v - dt_secbits_c ;
+    result_v.second   := unsigned (a (strbit_v-1 downto endbit_v)) ;
+    endbit_v          := endbit_v - dt_lyearbits_c ;
+    result_v.lyear    := a (endbit_v) ;
+    endbit_v          := endbit_v - dt_indstbits_c ;
+    result_v.indst    := a (endbit_v) ;
     return result_v ;
   end ;
 

@@ -4,8 +4,8 @@
 --! @brief      Mapping from CPLD pin names to Power Controller signals.
 --! @details    Map CPLD pins to Power Controller Signals.
 --! @author     Emery Newlon
---! @date       October 2014
---! @copyright  Copyright (C) 2014 Ross K. Snider and Emery L. Newlon
+--! @date       September 2015
+--! @copyright  Copyright (C) 2015 Ross K. Snider and Emery L. Newlon
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -83,22 +83,21 @@ entity AudioRecordingCollarCPLD_TopLevel is
     GPS_CNTRL_TO_CPLD           : out   std_logic ;
     SDRAM_CNTRL_TO_CPLD         : out   std_logic ;
     MRAM_CNTRL_TO_CPLD          : out   std_logic ;
-    MIC_R_CNTRL_TO_CPLD         : out   std_logic ;
-    MIC_L_CNTRL_TO_CPLD         : out   std_logic ;
+    MIC_B_CNTRL                 : out   std_logic ;
+    MIC_A_CTRL                  : out   std_logic ;
     CLOCK_CNTRL_TO_CPLD         : out   std_logic ;
     DATA_TX_CNTRL_TO_CPLD       : out   std_logic ;
     SDCARD_CNTRL_TO_CPLD        : out   std_logic ;
-    LS_1P8V_CNTRL_TO_CPLD       : out   std_logic ;
-    LS_3P3V_CNTRL_TO_CPLD       : out   std_logic ;
     FPGA_ON_TO_CPLD             : out   std_logic ;
-    IM_ON_TO_CPLD               : out   std_logic ;
+    IM_2P5V_TO_CPLD             : out   std_logic ;
+    IM_1P8V_TO_CPLD             : out   std_logic ;
 
     OBUFFER_ENABLE_OUT_TO_CPLD  : out   std_logic ;
 
     --  Battery Control Connections
 
-    MAIN_ON_TO_CPLD             : out   std_logic ;
-    RECHARGE_EN_TO_CPLD         : out   std_logic ;
+    MAIN_ON                     : out   std_logic ;
+    RECHARGE_EN                 : out   std_logic ;
     BAT_HIGH_TO_CPLD            : in    std_logic ;
     BAT_HIGH_TO_FPGA            : inout std_logic ;
     BAT_LOW_TO_CPLD             : in    std_logic ;
@@ -204,7 +203,7 @@ architecture structural of AudioRecordingCollarCPLD_TopLevel is
       gpio_2                : out   std_logic ;
       gpio_3                : out   std_logic ;
       gpio_4                : out   std_logic ;
-      gpio_5                : in    std_logic ;
+      gpio_5                : out    std_logic ;
       gpio_6                : out   std_logic ;
       gpio_7                : out   std_logic ;
       gpio_8                : out   std_logic ;
@@ -222,15 +221,13 @@ architecture structural of AudioRecordingCollarCPLD_TopLevel is
   signal pwr_drive_not    : std_logic ;
   signal solar_run_not    : std_logic ;
 
-  --  Logic of the CNTRL1/SW1 of the SiP32413 is inverted.
-
-  signal ls_1p8v_cntrl_to_cpld_not : std_logic;
+  signal imu_power        : std_logic;
 
 begin
 
-  --  Logic of the CNTRL1/SW1 of the SiP32413 is inverted.
 
-  LS_1P8V_CNTRL_TO_CPLD      <= not ls_1p8v_cntrl_to_cpld_not ;
+
+
 
   --  Invert output signals between the power controller and the outside
   --  world.
@@ -239,6 +236,10 @@ begin
   SOLAR_CTRL_SHDN_N_TO_CPLD   <= not solar_run_not ;
 
   --  Mapping between pins and power controller port signals.
+  
+  IM_2P5V_TO_CPLD <= imu_power;
+  IM_1P8V_TO_CPLD <= imu_power;
+  
 
   PC : PowerController
 
@@ -274,8 +275,8 @@ begin
       i2c_clk_io            => I2C_SCL,
       i2c_data_io           => I2C_SDA,
 
-      bat_power_out         => MAIN_ON_TO_CPLD,
-      bat_recharge_out      => RECHARGE_EN_TO_CPLD,
+      bat_power_out         => MAIN_ON,
+      bat_recharge_out      => RECHARGE_EN,
       bat_int_in            => BAT_HIGH_TO_CPLD,
       bat_int_fpga_out      => BAT_HIGH_TO_FPGA,
       bat_low_in            => BAT_LOW_TO_CPLD,
@@ -294,21 +295,21 @@ begin
       pwr_fpga_out          => FPGA_ON_TO_CPLD,
       pwr_sdram_out         => SDRAM_CNTRL_TO_CPLD,
       pwr_mram_out          => MRAM_CNTRL_TO_CPLD,
-      pwr_im_out            => IM_ON_TO_CPLD,
+      pwr_im_out            => imu_power,
       pwr_gps_out           => GPS_CNTRL_TO_CPLD,
       pwr_datatx_out        => DATA_TX_CNTRL_TO_CPLD,
-      pwr_micR_out          => MIC_R_CNTRL_TO_CPLD,
-      pwr_micL_out          => MIC_L_CNTRL_TO_CPLD,
+      pwr_micR_out          => MIC_B_CNTRL,
+      pwr_micL_out          => MIC_A_CTRL,
       pwr_sdcard_out        => SDCARD_CNTRL_TO_CPLD,
-      pwr_ls_1p8_out        => ls_1p8v_cntrl_to_cpld_not,
-      pwr_ls_3p3_out        => LS_3P3V_CNTRL_TO_CPLD,
+      --pwr_ls_1p8_out        => ls_1p8v_cntrl_to_cpld_not,
+      --pwr_ls_3p3_out        => LS_3P3V_CNTRL_TO_CPLD,
 
       solar_max_in          => SOLAR_PGOOD_TO_CPLD,
       solar_on_in           => SOLAR_CTRL_ON_TO_CPLD,
       solar_run_out         => solar_run_not,
 
 
-      gpio_5                => '0',
+      --gpio_5                => '0',
 
 
       forced_start_in       => ESH_FORCE_STARTUP,

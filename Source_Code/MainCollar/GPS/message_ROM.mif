@@ -1,11 +1,11 @@
-DEPTH =    512 ;
+DEPTH =    187 ;
 WIDTH = 8 ;
 ADDRESS_RADIX = DEC ;
 DATA_RADIX = HEX ;
 CONTENT
 BEGIN
 
---  Message MSG_UBX_NAV_SOL
+--  Message msg_ubx_nav_sol
 
 0      : 11 ;  --  Message 0, 17 fields
 1      : 09 ;  --  iTOW         4 bytes store
@@ -26,7 +26,7 @@ BEGIN
 16     : 03 ;  --  numSV        1 bytes store
 17     : 08 ;  --  res2         4 bytes discard
 
---  Message MSG_UBX_NAV_AOPSTATUS
+--  Message msg_ubx_nav_aopstatus
 
 18     : 08 ;  --  Message 1, 8 fields
 19     : 09 ;  --  iTOW         4 bytes store
@@ -38,7 +38,7 @@ BEGIN
 25     : 08 ;  --  res2         4 bytes discard
 26     : 08 ;  --  res3         4 bytes discard
 
---  Message MSG_UBX_TIM_TM2
+--  Message msg_ubx_tim_tm2
 
 27     : 0A ;  --  Message 2, 10 fields
 28     : 02 ;  --  ch           1 bytes discard
@@ -52,4 +52,256 @@ BEGIN
 36     : 09 ;  --  towSubMsF    4 bytes store
 37     : 09 ;  --  accEst       4 bytes store
 
-END
+--  Text Tree Nodes.
+
+38     : 7F ;  --  "$7F" ! 0 offset
+39     : 07 ;
+40     : 01 ;  --  "$01" + 2 offset
+41     : 16 ;
+42     : 0D ;  --  "$0D" ! 3 offset
+43     : 1F ;
+44     : 06 ;  --  "$06" + 0 offset, string 0
+45     : 00 ;
+46     : 60 ;  --  "`" ! 0 offset, string 1
+47     : 03 ;
+48     : 03 ;  --  "$03" ! 0 offset, string 2
+49     : 05 ;
+
+--  Message Extraction Addresses per Message Number.
+
+50     : 00 ;  --  Message Number 0    
+51     : 12 ;  --  Message Number 1    
+52     : 1B ;  --  Message Number 2    
+
+--  Message Number to UBX Class/ID Translation.
+
+53     : 01 ;  --  Message Number 0    
+54     : 06 ;
+55     : 01 ;  --  Message Number 1    
+56     : 60 ;
+57     : 0D ;  --  Message Number 2    
+58     : 03 ;
+
+--  Init Message msg_ubx_cfg_msg_nmea_gga
+
+59     : 06 ;  --  Class
+60     : 01 ;  --  ID
+61     : 08 ;  --  Payload Length
+62     : 00 ;
+63     : 81 ;  --  Following literal bytes
+64     : F0 ;  --  msgClass
+65     : 07 ;  --  Following zero bytes
+               --  msgID
+               --  rate
+66     : 80 ;  --  End of message
+
+--  Init Message msg_ubx_cfg_msg_nmea_gll
+
+67     : 06 ;  --  Class
+68     : 01 ;  --  ID
+69     : 08 ;  --  Payload Length
+70     : 00 ;
+71     : 82 ;  --  Following literal bytes
+72     : F0 ;  --  msgClass
+73     : 01 ;  --  msgID
+74     : 06 ;  --  Following zero bytes
+               --  rate
+75     : 80 ;  --  End of message
+
+--  Init Message msg_ubx_cfg_msg_nmea_gsa
+
+76     : 06 ;  --  Class
+77     : 01 ;  --  ID
+78     : 08 ;  --  Payload Length
+79     : 00 ;
+80     : 82 ;  --  Following literal bytes
+81     : F0 ;  --  msgClass
+82     : 02 ;  --  msgID
+83     : 06 ;  --  Following zero bytes
+               --  rate
+84     : 80 ;  --  End of message
+
+--  Init Message msg_ubx_cfg_msg_nmea_gsv
+
+85     : 06 ;  --  Class
+86     : 01 ;  --  ID
+87     : 08 ;  --  Payload Length
+88     : 00 ;
+89     : 82 ;  --  Following literal bytes
+90     : F0 ;  --  msgClass
+91     : 03 ;  --  msgID
+92     : 06 ;  --  Following zero bytes
+               --  rate
+93     : 80 ;  --  End of message
+
+--  Init Message msg_ubx_cfg_msg_nmea_rmc
+
+94     : 06 ;  --  Class
+95     : 01 ;  --  ID
+96     : 08 ;  --  Payload Length
+97     : 00 ;
+98     : 82 ;  --  Following literal bytes
+99     : F0 ;  --  msgClass
+100    : 04 ;  --  msgID
+101    : 06 ;  --  Following zero bytes
+               --  rate
+102    : 80 ;  --  End of message
+
+--  Init Message msg_ubx_cfg_msg_nmea_vtg
+
+103    : 06 ;  --  Class
+104    : 01 ;  --  ID
+105    : 08 ;  --  Payload Length
+106    : 00 ;
+107    : 82 ;  --  Following literal bytes
+108    : F0 ;  --  msgClass
+109    : 05 ;  --  msgID
+110    : 06 ;  --  Following zero bytes
+               --  rate
+111    : 80 ;  --  End of message
+
+--  Init Message msg_ubx_cfg_msg_nmea_txt
+
+112    : 06 ;  --  Class
+113    : 01 ;  --  ID
+114    : 08 ;  --  Payload Length
+115    : 00 ;
+116    : 82 ;  --  Following literal bytes
+117    : F0 ;  --  msgClass
+118    : 41 ;  --  msgID
+119    : 06 ;  --  Following zero bytes
+               --  rate
+120    : 80 ;  --  End of message
+
+--  Init Message msg_ubx_cfg_nav5
+
+121    : 06 ;  --  Class
+122    : 24 ;  --  ID
+123    : 24 ;  --  Payload Length
+124    : 00 ;
+125    : 81 ;  --  Following literal bytes
+126    : 01 ;  --  mask
+127    : 01 ;  --  Following zero bytes
+128    : 81 ;  --  Following literal bytes
+129    : 03 ;  --  dynModel
+130    : 21 ;  --  Following zero bytes
+               --  fixMode
+               --  fixedAlt
+               --  fixedAltVar
+               --  minElev
+               --  drLimit
+               --  pDop
+               --  tDop
+               --  pAcc
+               --  tAcc
+               --  staticHoldThresh
+               --  dgpsTimeOut
+               --  cnoThreshNumSVs
+               --  cnoThresh
+               --  reserved2
+               --  reserved3
+               --  reserved4
+131    : 80 ;  --  End of message
+
+--  Init Message msg_ubx_cfg_navx5
+
+132    : 06 ;  --  Class
+133    : 23 ;  --  ID
+134    : 28 ;  --  Payload Length
+135    : 00 ;
+136    : 03 ;  --  Following zero bytes
+               --  version
+               --  mask
+137    : 81 ;  --  Following literal bytes
+138    : 40 ;
+139    : 17 ;  --  Following zero bytes
+               --  reserved0
+               --  reserved1
+               --  reserved2
+               --  minSVs
+               --  maxSVs
+               --  minCNO
+               --  reserved5
+               --  iniFix3D
+               --  reserved6
+               --  reserved7
+               --  reserved8
+               --  wknRollover
+               --  reserved9
+               --  reserved10
+               --  reserved11
+               --  usePPP
+140    : 81 ;  --  Following literal bytes
+141    : 01 ;  --  aopCfg
+142    : 0C ;  --  Following zero bytes
+               --  reserved12
+               --  reserved13
+               --  aopOrbMaxErr
+               --  reserved14
+               --  reserved15
+               --  reserved3
+               --  reserved4
+143    : 80 ;  --  End of message
+
+--  Init Message msg_ubx_cfg_rxm
+
+144    : 06 ;  --  Class
+145    : 11 ;  --  ID
+146    : 02 ;  --  Payload Length
+147    : 00 ;
+148    : 82 ;  --  Following literal bytes
+149    : 08 ;  --  reserved
+150    : 01 ;  --  lpMode
+151    : 80 ;  --  End of message
+
+--  Init Message msg_ubx_cfg_inf
+
+152    : 06 ;  --  Class
+153    : 02 ;  --  ID
+154    : 0A ;  --  Payload Length
+155    : 00 ;
+156    : 81 ;  --  Following literal bytes
+157    : 01 ;  --  protocolID-NMEA
+158    : 09 ;  --  Following zero bytes
+               --  reserved0
+               --  reserved1
+               --  infMsgMask
+159    : 80 ;  --  End of message
+
+--  Init Message msg_ubx_cfg_tp5
+
+160    : 06 ;  --  Class
+161    : 31 ;  --  ID
+162    : 20 ;  --  Payload Length
+163    : 00 ;
+164    : 04 ;  --  Following zero bytes
+               --  tpIdx
+               --  reserved0
+               --  reserved1
+165    : 81 ;  --  Following literal bytes
+166    : 32 ;  --  antCableDelay
+167    : 03 ;  --  Following zero bytes
+               --  rfGroupDelay
+168    : 83 ;  --  Following literal bytes
+169    : 40 ;  --  freqPeriod
+170    : 42 ;
+171    : 0F ;
+172    : 01 ;  --  Following zero bytes
+173    : 83 ;  --  Following literal bytes
+174    : 40 ;  --  freqPeriodLock
+175    : 42 ;
+176    : 0F ;
+177    : 05 ;  --  Following zero bytes
+               --  pulseLenRatio
+178    : 83 ;  --  Following literal bytes
+179    : A0 ;  --  pulseLenRatioLock
+180    : 86 ;
+181    : 01 ;
+182    : 05 ;  --  Following zero bytes
+               --  userConfigDelay
+183    : 81 ;  --  Following literal bytes
+184    : F6 ;  --  flags
+185    : 03 ;  --  Following zero bytes
+186    : 00 ;  --  End of all messages
+
+END ;

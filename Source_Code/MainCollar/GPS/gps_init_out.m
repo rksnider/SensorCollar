@@ -56,7 +56,9 @@ message_mat = {'  --  Length' 0 ; '' 1} ;
 mat_index   = 1 ;
 tot_len     = 0 ;
 
-for ii = 1 : length (m_info)
+sz = size (m_info) ;
+
+for ii = 1 : sz (1)
   f_name    = sprintf ('  --  %s', m_info {ii, 1}) ;
   f_length  = m_info {ii, 2} ;
   f_value   = uint64 (m_info {ii, 3}) ;
@@ -107,13 +109,13 @@ last_nz         = 1 ;
 
 for mat_index   = 1 : length (message_mat)
 
-  b_value       = mat_message {mat_index, 2} ;
+  b_value       = message_mat {mat_index, 2} ;
 
   if (b_value == 0 && zero_count > 0)
     zero_count  = zero_count + 1 ;
-  else if (b_value ~= 0 && nz_count > 0)
+  elseif (b_value ~= 0 && nz_count > 0)
     nz_count    = nz_count + 1 ;
-  else if (mat_index == length (message_mate))
+  elseif (mat_index == length (message_mat))
     nz_count    = nz_count + 1 ;
   end
 
@@ -128,39 +130,39 @@ for mat_index   = 1 : length (message_mat)
     %   Write out the field comments to the MIF file.
 
     for ii = last_zero : last_zero + zero_count - 1
-      if (length (mat_message {ii, 1}) > 0)
-        fprintf (mif_file, '             %s\n', mat_message {ii, 1}) ;
+      if (length (message_mat {ii, 1}) > 0)
+        fprintf (mif_file, '             %s\n', message_mat {ii, 1}) ;
       end
     end
 
     zero_count  = 0 ;
-
-    if (b_value ~= 0)
-      nz_count  = 1 ;
-      last_nz   = mat_index ;
-    end
+    last_nz     = mat_index ;
   end
 
   %   Write out the non-zero count and corresponding bytes to the MIF file.
 
-  if ((mat_index == length (message_mat) || bvalue == 0) && nz_count > 0)
+  if ((mat_index == length (message_mat) || b_value == 0) && nz_count > 0)
 
-    fprintf (mif_file, '%-6u : %02X ;  --  Following litteral bytes\n', ...
+    fprintf (mif_file, '%-6u : %02X ;  --  Following literal bytes\n',  ...
              rom_addr, 128 + nz_count) ;
     rom_addr      = rom_addr + 1 ;
 
     for ii = last_nz : last_nz + nz_count - 1
       fprintf (mif_file, '%-6u : %02X ;%s\n',                           ...
-               rom_addr, mat_message {ii, 2}, mat_message {ii, 1}) ;
+               rom_addr, message_mat {ii, 2}, message_mat {ii, 1}) ;
       rom_addr    = rom_addr + 1 ;
     end
 
     nz_count      = 0 ;
+    last_zero     = mat_index ;
+  end
 
-    if (bvalue == 0)
-      zero_count  = 1 ;
-      last_zero   = mat_index ;
-    end
+  %   Update the counts.
+
+  if (b_value == 0 && zero_count == 0)
+    zero_count  = 1 ;
+  elseif (b_value ~= 0 && nz_count == 0)
+    nz_count    = 1 ;
   end
 end
 

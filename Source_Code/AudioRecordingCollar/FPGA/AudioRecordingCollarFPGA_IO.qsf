@@ -68,47 +68,53 @@ set_instance_assignment -name IO_STANDARD "1.8 V" -to CLK_50MHZ_TO_FPGA
 
 #   System Status
 
-# set_location_assignment PIN_F2 -to FORCE_STARTUP_TO_FPGA
+set_location_assignment PIN_F2 -to FORCE_STARTUP_TO_FPGA
 
-# set_instance_assignment -name IO_STANDARD "1.8 V" -to FORCE_STARTUP_TO_FPGA
+set_instance_assignment -name IO_STANDARD "1.8 V" -to FORCE_STARTUP_TO_FPGA
+
+#   Interrupt from Battery Monitor
+
+set_location_assignment PIN_F1 -to FPGA_BATT_INT
+
+set_instance_assignment -name IO_STANDARD "1.8 V" -to FPGA_BATT_INT
 
 #   Power Controller SPI
 
-# set_location_assignment PIN_E1 -to PC_STATUS_CHANGED
-# set_location_assignment PIN_E2 -to PC_SPI_NCS
-# set_location_assignment PIN_D1 -to PC_SPI_CLK
-# set_location_assignment PIN_J4 -to PC_SPI_DIN
-# set_location_assignment PIN_G3 -to PC_SPI_DOUT
+set_location_assignment PIN_E1 -to PC_STATUS_CHANGED
+set_location_assignment PIN_E2 -to PC_SPI_NCS
+set_location_assignment PIN_D1 -to PC_SPI_CLK
+set_location_assignment PIN_C1 -to PC_SPI_DIN
+set_location_assignment PIN_C2 -to PC_SPI_DOUT
 
-# set_instance_assignment -name IO_STANDARD "1.8 V" -to PC_STATUS_CHANGED
-# set_instance_assignment -name IO_STANDARD "1.8 V" -to PC_SPI_NCS
-# set_instance_assignment -name IO_STANDARD "1.8 V" -to PC_SPI_CLK
-# set_instance_assignment -name IO_STANDARD "1.8 V" -to PC_SPI_DIN
-# set_instance_assignment -name IO_STANDARD "1.8 V" -to PC_SPI_DOUT
+set_instance_assignment -name IO_STANDARD "1.8 V" -to PC_STATUS_CHANGED
+set_instance_assignment -name IO_STANDARD "1.8 V" -to PC_SPI_NCS
+set_instance_assignment -name IO_STANDARD "1.8 V" -to PC_SPI_CLK
+set_instance_assignment -name IO_STANDARD "1.8 V" -to PC_SPI_DIN
+set_instance_assignment -name IO_STANDARD "1.8 V" -to PC_SPI_DOUT
 
 #   Power Controller Flash
 
-# set_location_assignment PIN_E3  -to PC_FLASH_CLK
-# set_location_assignment PIN_C3  -to PC_FLASH_CS_N
-# set_location_assignment PIN_B3  -to PC_FLASH_DATA[0]
-# set_location_assignment PIN_A4  -to PC_FLASH_DATA[1]
-# set_location_assignment PIN_B4  -to PC_FLASH_DATA[2]
-# set_location_assignment PIN_B5  -to PC_FLASH_DATA[3]
+set_location_assignment PIN_E3  -to FLASH_C
+set_location_assignment PIN_C3  -to FLASH_S_N
+set_location_assignment PIN_B3  -to FLASH_DQ[0]
+set_location_assignment PIN_A4  -to FLASH_DQ[1]
+set_location_assignment PIN_B4  -to FLASH_DQ[2]
+set_location_assignment PIN_B5  -to FLASH_DQ[3]
 
-# set_instance_assignment -name IO_STANDARD "1.8 V" -to PC_FLASH_CLK
-# set_instance_assignment -name IO_STANDARD "1.8 V" -to PC_FLASH_CS_N
-# set_instance_assignment -name IO_STANDARD "1.8 V" -to PC_FLASH_DATA[0]
-# set_instance_assignment -name IO_STANDARD "1.8 V" -to PC_FLASH_DATA[1]
-# set_instance_assignment -name IO_STANDARD "1.8 V" -to PC_FLASH_DATA[2]
-# set_instance_assignment -name IO_STANDARD "1.8 V" -to PC_FLASH_DATA[3]
+set_instance_assignment -name IO_STANDARD "1.8 V" -to FLASH_C
+set_instance_assignment -name IO_STANDARD "1.8 V" -to FLASH_S_N
+set_instance_assignment -name IO_STANDARD "1.8 V" -to FLASH_DQ[0]
+set_instance_assignment -name IO_STANDARD "1.8 V" -to FLASH_DQ[1]
+set_instance_assignment -name IO_STANDARD "1.8 V" -to FLASH_DQ[2]
+set_instance_assignment -name IO_STANDARD "1.8 V" -to FLASH_DQ[3]
 
 #   I2C Bus
 
-# set_location_assignment PIN_D9 -to SDA_TO_FPGA_CPLD
-# set_location_assignment PIN_E8 -to SCL_TO_FPGA_CPLD
+set_location_assignment PIN_D9 -to SDA_TO_FPGA_CPLD
+set_location_assignment PIN_E8 -to SCL_TO_FPGA_CPLD
 
-# set_instance_assignment -name IO_STANDARD "1.8 V" -to SDA_TO_FPGA_CPLD
-# set_instance_assignment -name IO_STANDARD "1.8 V" -to SCL_TO_FPGA_CPLD
+set_instance_assignment -name IO_STANDARD "1.8 V" -to SDA_TO_FPGA_CPLD
+set_instance_assignment -name IO_STANDARD "1.8 V" -to SCL_TO_FPGA_CPLD
 
 # ESH SPI
 
@@ -242,22 +248,22 @@ set_instance_assignment -name IO_STANDARD "1.8 V" -to SDRAM_data[13]
 set_instance_assignment -name IO_STANDARD "1.8 V" -to SDRAM_data[14]
 set_instance_assignment -name IO_STANDARD "1.8 V" -to SDRAM_data[15]
 
-# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[0]
-# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[1]
-# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[2]
-# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[3]
-# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[4]
-# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[5]
-# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[6]
-# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[7]
-# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[8]
-# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[9]
-# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[10]
-# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[11]
-# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[12]
-# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[13]
-# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[14]
-# set_instance_assignment -name ENABLE_BUS_HOLD_CIRCUITRY ON -to SDRAM_data[15]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_data[0]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_data[1]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_data[2]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_data[3]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_data[4]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_data[5]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_data[6]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_data[7]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_data[8]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_data[9]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_data[10]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_data[11]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_data[12]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_data[13]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_data[14]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_data[15]
 
 # set_location_assignment PIN_E1  -to SDRAM_LDQM
 # set_location_assignment PIN_M2  -to SDRAM_UDQM
@@ -287,33 +293,66 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to ESH_FPGA_USB_DPLUS
 
 # BANK 7A
 
-#set_location_assignment PIN_A9  -to M_FPGA_7A_[0]
-#set_location_assignment PIN_A10 -to M_FPGA_7A_[1]
-#set_location_assignment PIN_A11 -to M_FPGA_7A_[2]
-#set_location_assignment PIN_A12 -to M_FPGA_7A_[3]
-#set_location_assignment PIN_A14 -to M_FPGA_7A_[4]
-#set_location_assignment PIN_A15 -to M_FPGA_7A_[5]
-#set_location_assignment PIN_B9  -to M_FPGA_7A_[6]
-#set_location_assignment PIN_B10 -to M_FPGA_7A_[7]
-#set_location_assignment PIN_B12 -to M_FPGA_7A_[8]
-#set_location_assignment PIN_B14 -to M_FPGA_7A_[9]
-#set_location_assignment PIN_B15 -to M_FPGA_7A_[10]
-#set_location_assignment PIN_C12 -to M_FPGA_7A_[11]
-#set_location_assignment PIN_D10 -to M_FPGA_7A_[12]
+# set_location_assignment PIN_A9  -to M_FPGA_7A_0
+# set_location_assignment PIN_A10 -to M_FPGA_7A_1
+# set_location_assignment PIN_A11 -to M_FPGA_7A_2
+# set_location_assignment PIN_A12 -to M_FPGA_7A_3
+# set_location_assignment PIN_A14 -to M_FPGA_7A_4
+# set_location_assignment PIN_A15 -to M_FPGA_7A_5
+# set_location_assignment PIN_B9  -to M_FPGA_7A_6
+# set_location_assignment PIN_B10 -to M_FPGA_7A_7
+# set_location_assignment PIN_B12 -to M_FPGA_7A_8
+# set_location_assignment PIN_B14 -to M_FPGA_7A_9
+# set_location_assignment PIN_B15 -to M_FPGA_7A_10
+# set_location_assignment PIN_C12 -to M_FPGA_7A_11
+# set_location_assignment PIN_D10 -to M_FPGA_7A_12
 
-#set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_[0]
-#set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_[1]
-#set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_[2]
-#set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_[3]
-#set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_[4]
-#set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_[5]
-#set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_[6]
-#set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_[7]
-#set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_[8]
-#set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_[9]
-#set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_[10]
-#set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_[11]
-#set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_[12]
+# set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_0
+# set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_1
+# set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_2
+# set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_3
+# set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_4
+# set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_5
+# set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_6
+# set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_7
+# set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_8
+# set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_9
+# set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_10
+# set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_11
+# set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_12
+
+
+
+
+#set_location_assignment PIN_A9  -to M_FPGA_7A_0
+#set_location_assignment PIN_A10 -to M_FPGA_7A_1
+set_location_assignment PIN_A11 -to IM_SPI_SDI_TO_FPGA
+set_location_assignment PIN_A12 -to IM_SDO_A_G_TO_FPGA
+set_location_assignment PIN_A14 -to IM_DRDY_M_TO_FPGA
+set_location_assignment PIN_A15 -to IM_INT2_A_G_TO_FPGA
+#set_location_assignment PIN_B9  -to M_FPGA_7A_6
+set_location_assignment PIN_B10 -to IM_SPI_SCLK_TO_FPGA
+set_location_assignment PIN_B12 -to IM_CS_A_G_TO_FPGA
+set_location_assignment PIN_B14 -to IM_INT1_A_G_TO_FPGA
+set_location_assignment PIN_B15 -to IM_INT_M_TO_FPGA
+set_location_assignment PIN_C12 -to IM_SDO_M_TO_FPGA
+set_location_assignment PIN_D10 -to IM_CS_M_TO_FPGA
+
+# set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_0
+# set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_1
+set_instance_assignment -name IO_STANDARD "1.8 V" -to IM_SPI_SDI_TO_FPGA
+set_instance_assignment -name IO_STANDARD "1.8 V" -to IM_SDO_A_G_TO_FPGA
+set_instance_assignment -name IO_STANDARD "1.8 V" -to IM_DRDY_M_TO_FPGA
+set_instance_assignment -name IO_STANDARD "1.8 V" -to IM_INT2_A_G_TO_FPGA
+# set_instance_assignment -name IO_STANDARD "1.8 V" -to M_FPGA_7A_6
+set_instance_assignment -name IO_STANDARD "1.8 V" -to IM_SPI_SCLK_TO_FPGA
+set_instance_assignment -name IO_STANDARD "1.8 V" -to IM_CS_A_G_TO_FPGA
+set_instance_assignment -name IO_STANDARD "1.8 V" -to IM_INT1_A_G_TO_FPGA
+set_instance_assignment -name IO_STANDARD "1.8 V" -to IM_INT_M_TO_FPGA
+set_instance_assignment -name IO_STANDARD "1.8 V" -to IM_SDO_M_TO_FPGA
+set_instance_assignment -name IO_STANDARD "1.8 V" -to IM_CS_M_TO_FPGA
+
+
 
 # BANK 8A
 #set_location_assignment PIN_A7 -to M_FPGA_8A_[0]
@@ -324,35 +363,68 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to ESH_FPGA_USB_DPLUS
 
 # BANK 3B
 
-#set_location_assignment PIN_P10 -to M_FPGA_3B_[0]
-#set_location_assignment PIN_P9  -to M_FPGA_3B_[1]
-#set_location_assignment PIN_R11 -to M_FPGA_3B_[2]
-#set_location_assignment PIN_R9  -to M_FPGA_3B_[3]
-#set_location_assignment PIN_T11 -to M_FPGA_3B_[4]
-#set_location_assignment PIN_T4  -to M_FPGA_3B_[5]
-#set_location_assignment PIN_T9  -to M_FPGA_3B_[6]
-#set_location_assignment PIN_U4  -to M_FPGA_3B_[7]
-#set_location_assignment PIN_U5  -to M_FPGA_3B_[8]
-#set_location_assignment PIN_U8  -to M_FPGA_3B_[9]
-#set_location_assignment PIN_U9  -to M_FPGA_3B_[10]
-#set_location_assignment PIN_V10 -to M_FPGA_3B_[11]
-#set_location_assignment PIN_V7  -to M_FPGA_3B_[12]
-#set_location_assignment PIN_V8  -to M_FPGA_3B_[13]
+#set_location_assignment PIN_P10 -to M_FPGA_3B_0
+#set_location_assignment PIN_P9  -to M_FPGA_3B_1
+#set_location_assignment PIN_R11 -to M_FPGA_3B_2
+#set_location_assignment PIN_R9  -to M_FPGA_3B_3
+#set_location_assignment PIN_T11 -to M_FPGA_3B_4
+#set_location_assignment PIN_T4  -to M_FPGA_3B_5
+#set_location_assignment PIN_T9  -to M_FPGA_3B_6
+#set_location_assignment PIN_U4  -to M_FPGA_3B_7
+#set_location_assignment PIN_U5  -to M_FPGA_3B_8
+#set_location_assignment PIN_U8  -to M_FPGA_3B_9
+#set_location_assignment PIN_U9  -to M_FPGA_3B_10
+#set_location_assignment PIN_V10 -to M_FPGA_3B_11
+#set_location_assignment PIN_V7  -to M_FPGA_3B_12
+#set_location_assignment PIN_V8  -to M_FPGA_3B_13
 
-#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_[0]
-#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_[1]
-#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_[2]
-#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_[3]
-#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_[4]
-#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_[5]
-#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_[6]
-#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_[7]
-#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_[8]
-#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_[9]
-#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_[10]
-#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_[11]
-#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_[12]
-#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_[13]
+#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_0
+#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_1
+#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_2
+#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_3
+#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_4
+#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_5
+#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_6
+#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_7
+#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_8
+#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_9
+#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_10
+#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_11
+#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_12
+#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_3B_13
+
+
+
+set_location_assignment PIN_P10 -to RXD_GPS_TO_FPGA
+set_location_assignment PIN_P9  -to MIC_CLK_TO_FPGA
+set_location_assignment PIN_R11 -to MRAM_WP_N_TO_FPGA
+set_location_assignment PIN_R9  -to MRAM_SI_TO_FPGA
+set_location_assignment PIN_T11 -to MRAM_SO_TO_FPGA
+set_location_assignment PIN_T4  -to SDCARD_DI_CMD_TO_FPGA
+set_location_assignment PIN_T9  -to MRAM_SCK_TO_FPGA
+set_location_assignment PIN_U4  -to SDCARD_DI_DAT_TO_FPGA[2]
+set_location_assignment PIN_U5  -to SDCARD_DI_DAT_TO_FPGA[3]
+set_location_assignment PIN_U8  -to SDCARD_DI_DAT_TO_FPGA[0]
+set_location_assignment PIN_U9  -to MIC_B_DATA_TO_FPGA
+set_location_assignment PIN_V10 -to TXD_GPS_TO_FPGA
+set_location_assignment PIN_V7  -to SDCARD_DI_CLK_TO_FPGA
+set_location_assignment PIN_V8  -to SDCARD_DI_DAT_TO_FPGA[1]
+
+
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to RXD_GPS_TO_FPGA
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to MIC_CLK_TO_FPGA
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to MRAM_WP_N_TO_FPGA
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to MRAM_SI_TO_FPGA
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to MRAM_SO_TO_FPGA
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to SDCARD_DI_CMD_TO_FPGA
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to MRAM_SCK_TO_FPGA
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to SDCARD_DI_DAT_TO_FPGA[2]
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to SDCARD_DI_DAT_TO_FPGA[3]
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to SDCARD_DI_DAT_TO_FPGA[0]
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to MIC_B_DATA_TO_FPGA
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to TXD_GPS_TO_FPGA
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to SDCARD_DI_CLK_TO_FPGA
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to  SDCARD_DI_DAT_TO_FPGA[1]
 
 
 # BANK 4A
@@ -362,7 +434,7 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to ESH_FPGA_USB_DPLUS
 #set_location_assignment PIN_U13 -to M_FPGA_4A_[2]
 #set_location_assignment PIN_U14 -to M_FPGA_4A_[3]
 #set_location_assignment PIN_U15 -to M_FPGA_4A_[4]
-#set_location_assignment PIN_U17 -to M_FPGA_4A_[5]
+#set_location_assignment PIN_U17 -to M_FPGA_4A_5
 #set_location_assignment PIN_V12 -to M_FPGA_4A_[6]
 #set_location_assignment PIN_V15 -to M_FPGA_4A_[7]
 #set_location_assignment PIN_V16 -to M_FPGA_4A_[8]
@@ -373,8 +445,45 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to ESH_FPGA_USB_DPLUS
 #set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_4A_[2]
 #set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_4A_[3]
 #set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_4A_[4]
-#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_4A_[5]
+#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_4A_5
 #set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_4A_[6]
 #set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_4A_[7]
 #set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_4A_[8]
 #set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_4A_[9]
+
+set_location_assignment PIN_T12 -to MRAM_CS_N_TO_FPGA
+set_location_assignment PIN_U12 -to EXTINT_GPS_TO_FPGA
+#set_location_assignment PIN_U13 -to M_FPGA_4A_[2]
+set_location_assignment PIN_U14 -to MIC_A_DATA_TO_FPGA
+set_location_assignment PIN_U15 -to TXRX_MOSI_TO_FPGA
+set_location_assignment PIN_U17 -to TXRX_CS_N_TO_FPGA
+set_location_assignment PIN_V12 -to TIMEPULSE_GPS_TO_FPGA
+set_location_assignment PIN_V15 -to TXRX_GPIO3_TO_FPGA_CPLD
+set_location_assignment PIN_V16 -to TXRX_SCLK_TO_FPGA
+set_location_assignment PIN_V17 -to TXRX_MISO_TO_FPGA
+
+
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to MRAM_CS_N_TO_FPGA
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to EXTINT_GPS_TO_FPGA
+#set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to M_FPGA_4A_[2]
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to MIC_A_DATA_TO_FPGA
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to TXRX_MOSI_TO_FPGA
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to TXRX_CS_N_TO_FPGA
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to TIMEPULSE_GPS_TO_FPGA
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to TXRX_GPIO3_TO_FPGA_CPLD
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to TXRX_SCLK_TO_FPGA
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to TXRX_MISO_TO_FPGA
+
+
+
+
+
+
+
+
+
+
+
+
+
+
