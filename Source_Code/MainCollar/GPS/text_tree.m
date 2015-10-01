@@ -42,6 +42,32 @@ function string_tree = text_tree (strings)
 % --------------------------------------------------------------------------
 
 
+%     This function builds a tree of nodes used to match strings
+%     received one character at a time.  Each character matched has
+%     a list of characters that follow the matched character and a list of
+%     nodes for characters that can follow the one just matched.  The tree
+%     is searched initialy for the null character that percedes each
+%     string.
+%     Each tree node is made up of a series nodes consisting of four fields,
+%     a character to be matched, a list end marker (set for the last entry
+%     in a list), the end string result (when this character is the last one
+%     in the string the result is for), and an offset from the current node
+%     to the location of the list of nodes for characters following this one
+%     in strings.  A zero offset indicates there is no list, the string has
+%     ended.  The first entry in the tree is the null element.  It is used
+%     when a match has reached the end of a string.
+%     The strings "sexy", "set", "test string", "testy", "test", "text",
+%     and "t" form the following tree where + indicates the list condinues
+%     and ! indicates the list has ended.  The result values for this tree
+%     are the numbers of the strings in the string list starting at zero
+%     for the string "sexy".  The nodes are:
+%           <character to match, result, offset>
+%       <0, 7, 0!> <s, 7, 2+> <t, 6, 5!> <e, 7, 1!>  <t, 1, 0+> <x, 7, 1!>
+%       <y, 0, 0!> <e, 7, 1!> <s, 7, 2+> <x, 7, 10!> <t, 4, 1!> <sp, 7, 2+>
+%       <y, 3, 0!> <s, 7, 1!> <t, 7, 1!> <r, 7, 1!>  <i, 7, 1!> <n, 7, 1!>
+%       <g, 2, 0> <t, 6, 0!>
+
+
 %   A character that will never show up in any string.
 
 not_char        = char (127) ;
@@ -130,55 +156,57 @@ prefix              = [not_char] ;
 
 while (tos > 0)
 
-  %   Take the last list entry offset from the top-of-stack and advance to
-  %   the next node.
-
-  stack (tos)       = uint32 (stack (tos) + 1) ;
-  cur_node          = stack (tos) ;
-
-  %   Add the list's current character to the prefix string.
-
-  preflen           = uint32 (length (prefix)) ;
-  prefix (preflen)  = chars (cur_node) ;
-  lastch            = not_char ;
-
-  %   Save the start of the new list (if there is one).
+  %   Save the start of the next new list (if there is one).
 
   list_start        = next_node ;
 
-  %   Add the characters to the tree for strings that match the current
-  %   prefix.
+  %   Take the last list entry offset from the top-of-stack and advance to
+  %   the next node.
 
-  for k = 1 : length (sorted_strs)
-    str             = [sorted_strs{k}] ;
+  if (stack (tos) + 1 < next_node)
+    stack (tos)       = uint32 (stack (tos) + 1) ;
+    cur_node          = stack (tos) ;
 
-    if (length (str) > preflen)
-      if (min (str (1:preflen) == prefix))
+    %   Add the list's current character to the prefix string.
 
-        %   The offset for this character's list of following characters
-        %   will be updated each time a character is added to the current
-        %   list.
+    preflen           = uint32 (length (prefix)) ;
+    prefix (preflen)  = chars (cur_node) ;
+    lastch            = not_char ;
 
-        offsets (cur_node)      = uint32 (list_start - cur_node) ;
+    %   Add the characters to the tree for strings that match the current
+    %   prefix.
 
-        %   When a new character is found for this character's list add it
-        %   to the new list.
+    for k = 1 : length (sorted_strs)
+      str             = [sorted_strs{k}] ;
 
-        if (str (preflen + 1) ~= last_ch)
-          last_ch               = str (preflen + 1) ;
+      if (length (str) > preflen)
+        if (min (str (1:preflen) == prefix))
 
-          chars     (next_node) = last_ch ;
-          offsets   (next_node) = uint32 (0) ;
-          listend   (next_node) = uint32 (0) ;
-          stringnos (next_node) = tot_strs ;
+          %   The offset for this character's list of following characters
+          %   will be updated each time a character is added to the current
+          %   list.
 
-          next_node             = uint32 (next_node + 1) ;
+          offsets (cur_node)      = uint32 (list_start - cur_node) ;
+
+          %   When a new character is found for this character's list add it
+          %   to the new list.
+
+          if (str (preflen + 1) ~= last_ch)
+            last_ch               = str (preflen + 1) ;
+
+            chars     (next_node) = last_ch ;
+            offsets   (next_node) = uint32 (0) ;
+            listend   (next_node) = uint32 (0) ;
+            stringnos (next_node) = tot_strs ;
+
+            next_node             = uint32 (next_node + 1) ;
+          end
+
+          %   Update the string's number with the new last character in the
+          %   current character's list.
+
+          string_numbers {k, 2}   = uint32 (next_node - 1) ;
         end
-
-        %   Update the string's number with the new last character in the
-        %   current character's list.
-
-        string_numbers {k, 2}   = uint32 (next_node - 1) ;
       end
     end
   end
