@@ -77,6 +77,21 @@ AP DxDesigner_Common_Parts:cap_0p1uF_0402 1 #=1
 AP DxDesigner_Common_Parts:cap_0p1uF_0402 1 PINTYPE=ANALOG
 AP DxDesigner_Common_Parts:cap_0p1uF_0402 2 #=2
 AP DxDesigner_Common_Parts:cap_0p1uF_0402 2 PINTYPE=ANALOG
+|Q DxDesigner_Common_Parts:Res_25k_0402 1
+AS DxDesigner_Common_Parts:Res_25k_0402 INOV_VER_REC=14:59:44_10-1-15
+AS DxDesigner_Common_Parts:Res_25k_0402 PINSWAP=(1,2)
+AS DxDesigner_Common_Parts:Res_25k_0402 REFDES=R?
+AS DxDesigner_Common_Parts:Res_25k_0402 DEVICE=Res_0402
+AS DxDesigner_Common_Parts:Res_25k_0402 VALUE=25k
+AS DxDesigner_Common_Parts:Res_25k_0402 TOLERANCE=.1%
+AS DxDesigner_Common_Parts:Res_25k_0402 PKG_TYPE=0402_MY
+AS DxDesigner_Common_Parts:Res_25k_0402 PART_NUMBER=PNM0402E2502BST1
+AS DxDesigner_Common_Parts:Res_25k_0402 P/D_NUM=541-1903-2-ND
+AS DxDesigner_Common_Parts:Res_25k_0402 PINORDER=1 2
+AP DxDesigner_Common_Parts:Res_25k_0402 1 #=1
+AP DxDesigner_Common_Parts:Res_25k_0402 1 PINTYPE=ANALOG
+AP DxDesigner_Common_Parts:Res_25k_0402 2 #=2
+AP DxDesigner_Common_Parts:Res_25k_0402 2 PINTYPE=ANALOG
 G GND
 M DxDesigner_Common_Parts:s_bit_uni_translator_FXLP34 $2I1
 I $2I1 DxDesigner_Common_Parts:s_bit_uni_translator_FXLP34 SPI_PIN9_TO_LT GND VCC1P8_VISHAY_OUT VCC3P3 SERIAL_CTL REFDES=U?`
@@ -128,8 +143,13 @@ I $2I160 DxDesigner_Common_Parts:cap_4p7uF_0402 VCC1P8 GND REFDES=C?`
 API $2I160 DxDesigner_Common_Parts:cap_4p7uF_0402 1 #=1
 API $2I160 DxDesigner_Common_Parts:cap_4p7uF_0402 2 #=2
 M DxDesigner_Common_Parts:cap_0p1uF_0402 $2I168
-I $2I168 DxDesigner_Common_Parts:cap_0p1uF_0402 VCC1P8_VISHAY_OUT GND REFDES=C?`
+I $2I168 DxDesigner_Common_Parts:cap_0p1uF_0402 VCC1P8_VISHAY_OUT GND VALUE=0.1uF`REFDES=C?`
 |R 14:43:56_1-7-15
 API $2I168 DxDesigner_Common_Parts:cap_0p1uF_0402 1 #=1
 API $2I168 DxDesigner_Common_Parts:cap_0p1uF_0402 2 #=2
+M DxDesigner_Common_Parts:Res_25k_0402 $2I181
+I $2I181 DxDesigner_Common_Parts:Res_25k_0402 GND SPI_PIN4_TO_VISHAY_PWR REFDES=R?`
+|R 14:59:44_10-1-15
+API $2I181 DxDesigner_Common_Parts:Res_25k_0402 1 #=1
+API $2I181 DxDesigner_Common_Parts:Res_25k_0402 2 #=2
 EW

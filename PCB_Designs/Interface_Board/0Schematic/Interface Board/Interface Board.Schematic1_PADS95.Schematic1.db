@@ -251,6 +251,22 @@
 			(pin 3  3 "RIBBON_USB__RIBBON_USB_1" 0 "D+" 0)
 			(pin 8  3 "RIBBON_USB__RIBBON_USB_1" 0 "CTL" 0)
 			(pin 6  3 "RIBBON_USB__RIBBON_USB_1" 0 "CLK" 0))
+		(part "RES_0402")
+		(logical_part_mapping "RES_0402"
+			(comp "R1"))
+		(logical_part "RES_0402"
+			(slots
+				(slot "RES_25K_0402__RES_0402_1"
+					(attributes
+						(attval "DEVICE" "RES_0402")
+						(attval "Part Number" "PNM0402E2502BST1")
+						(attval "PINSWAP" "[(1,2)]")
+						(attval "PKG_TYPE" "0402_MY")
+						(attval "REFDES" "R?")
+						(attval "Tolerance" ".1%")
+						(attval "Value" "25K"))))
+			(pin 2  5 "RES_25K_0402__RES_0402_1" 0 "2" 0)
+			(pin 1  5 "RES_25K_0402__RES_0402_1" 0 "1" 0))
 		(part "JUMPER_8PIN_100MIL")
 		(logical_part_mapping "JUMPER_8PIN_100MIL"
 			(comp "U8"))
@@ -541,6 +557,16 @@
 				(attval "Part Number" "SIP32414")
 				(attval "DEVICE" "SWITCH_DUAL_SIP32414")
 				(attval "REFDES" "S1")))
+		(component "0402_MY"
+			(place "R1" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "PNM0402E2502BST1")
+				(attval "Tolerance" ".1%")
+				(attval "Value" "25K")
+				(attval "DEVICE" "RES_0402")
+				(attval "REFDES" "R1")))
 		(component "EXT_SERIAL"
 			(place "J10" 0.0 0.0 top 0.0
 				(comp_pin "1" 0.0 0.0 "IN")
@@ -762,6 +788,7 @@
 		(func "$1I41" "" "U2" 1)
 		(func "$1I55" "" "U1" 1)
 		(func "$2I141" "" "S1" 1)
+		(func "$2I181" "" "R1" 1)
 		(func "$4I266" "" "J10" 1)
 		(func "$4I291" "" "J9" 1)
 		(func "$4I210" "" "J8" 1)
@@ -784,9 +811,9 @@
 		(net "$5N32"
 			(pins J5-3 J5-2))
 		(net "GND"
-			(pins U7-2 J1-3 U1-2 U9-5 U10-5 U2-2 C5-2 C9-2 C10-2 J6-4 J8-6 C1-2 C2-2 C4-2
- C3-2 U3-3 U4-3 U5-3 U6-3 S1-7 S1-9 J2-10 J2-2 C6-2 J3-10 J3-2 J5-5 U8-7 J4-5
- J9-5 J10-5))
+			(pins U7-2 J1-3 U1-2 U9-5 U10-5 U2-2 J4-5 J9-5 C5-2 C9-2 C10-2 J6-4 J8-6 C1-2
+ C2-2 C4-2 C3-2 U3-3 U4-3 U5-3 U6-3 S1-7 S1-9 J2-10 J2-2 C6-2 J3-10 J3-2 J5-5
+ J10-5 U8-7 R1-1))
 		(net "I2C_JUMPER_TO_SPI_PIN1"
 			(pins J2-1 U8-2))
 		(net "I2C_JUMPER_TO_SPI_PIN3"
@@ -802,21 +829,21 @@
 		(net "LT_TO_SPI_PIN5"
 			(pins U9-1 U6-4 J2-5))
 		(net "SERIAL_CLK"
-			(pins U10-3 J8-5 U4-4 J4-6 J9-6 J10-6))
+			(pins U10-3 J4-6 J9-6 J8-5 U4-4 J10-6))
 		(net "SERIAL_CTL"
-			(pins U10-4 J8-3 U3-4 J3-5 J4-8 J9-8 J10-8))
+			(pins U10-4 J4-8 J9-8 J8-3 U3-4 J3-5 J10-8))
 		(net "SERIAL_DMINUS"
-			(pins J6-2 J8-9 J4-2 J9-2 J10-2))
+			(pins J4-2 J9-2 J6-2 J8-9 J10-2))
 		(net "SERIAL_DPLUS"
-			(pins J6-3 J8-8 J4-3 J9-3 J10-3))
+			(pins J4-3 J9-3 J6-3 J8-8 J10-3))
 		(net "SERIAL_IN"
-			(pins U10-9 J8-2 U5-4 J3-9 J4-9 J9-9 J10-9))
+			(pins U10-9 J4-9 J9-9 J8-2 U5-4 J3-9 J10-9))
 		(net "SERIAL_OUT"
-			(pins U10-10 J8-1 U6-2 J3-3 J4-10 J9-10 J10-10))
+			(pins U10-10 J4-10 J9-10 J8-1 U6-2 J3-3 J10-10))
 		(net "SERIAL_TCLK"
-			(pins J8-4 J3-1 J4-7 J9-7 J10-7))
+			(pins J4-7 J9-7 J8-4 J3-1 J10-7))
 		(net "SPI_PIN4_TO_VISHAY_PWR"
-			(pins S1-2 J2-4))
+			(pins S1-2 J2-4 R1-2))
 		(net "SPI_PIN7_TO_LT"
 			(pins U9-2 U4-2 J2-7))
 		(net "SPI_PIN8_TO_LT"
@@ -824,9 +851,9 @@
 		(net "SPI_PIN9_TO_LT"
 			(pins U9-3 U3-2 J2-9))
 		(net "SWITCH_TO_FS"
-			(pins J8-7 J7-1 J4-4 J9-4 J10-4))
+			(pins J4-4 J9-4 J8-7 J7-1 J10-4))
 		(net "USB_VCC"
-			(pins U1-3 U1-1 U10-1 U2-3 U2-1 J8-10 C1-1 C2-1 J5-1 J4-1 J9-1 J10-1))
+			(pins U1-3 U1-1 U10-1 U2-3 U2-1 J4-1 J9-1 J8-10 C1-1 C2-1 J5-1 J10-1))
 		(net "VCC1P8"
 			(pins U7-6 U7-3 U10-2 U2-5 C10-1 C4-1 J7-3 S1-1 C6-1 J3-4))
 		(net "VCC1P8_VISHAY_OUT"
