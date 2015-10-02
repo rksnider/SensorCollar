@@ -63,6 +63,8 @@ use WORK.msg_ubx_tim_tm2_pkg.all ;
 --! @param      clk                   Clock used to move throuth states in
 --!                                   the entity and its components.
 --! @param      curtime_in            Time since reset in GPS time format.
+--! @param      gps_init_start_in     Start initializing the GPS.
+--! @param      gps_init_done_in      The GPS has been initialized.
 --! @param      pollinterval_in       Number of seconds between message
 --!                                   polls.
 --! @param      datavalid_out         The bank of memory with the newest
@@ -81,6 +83,8 @@ use WORK.msg_ubx_tim_tm2_pkg.all ;
 --!                                   mark.
 --! @param      aop_running_out       AssistNow Autonomous is currently
 --!                                   running.
+--! @param      busy_out              The GPS components are actively
+--!                                   working.
 --
 ----------------------------------------------------------------------------
 
@@ -96,6 +100,8 @@ entity GPSmessages is
     clk                   : in    std_logic ;
     curtime_in            : in    std_logic_vector (gps_time_bits_c-1
                                                     downto 0) ;
+    gps_init_start_in     : in    std_logic ;
+    gps_init_done_out     : out   std_logic ;
     pollinterval_in       : in    unsigned (13 downto 0) ;
     datavalid_out         : out   std_logic_vector (msg_ram_blocks_c-1
                                                     downto 0) ;
@@ -112,7 +118,8 @@ entity GPSmessages is
     gps_rx_in             : in    std_logic ;
     gps_tx_out            : out   std_logic ;
     timemarker_out        : out   std_logic ;
-    aop_running_out       : out   std_logic
+    aop_running_out       : out   std_logic ;
+    busy_out              : out   std_logic
   ) ;
 
 end entity GPSmessages ;
@@ -349,6 +356,37 @@ architecture structural of GPSmessages is
 
   end component TimeMark ;
 
+  --  Initialize the GPS on command.
+
+  component GPSinit is
+    Generic (
+      memaddr_bits_g  : natural := 8
+    ) ;
+    Port (
+      reset           : in    std_logic ;
+      clk             : in    std_logic ;
+      curtime_in      : in    std_logic_vector (gps_time_bits_c-1 downto 0) ;
+      init_start_in   : in    std_logic ;
+      init_done_out   : out   std_logic ;
+      sendreq_out     : out   std_logic ;
+      sendrcv_in      : in    std_logic ;
+      memreq_out      : out   std_logic ;
+      memrcv_in       : in    std_logic ;
+      memaddr_out     : out   std_logic_vector (memaddr_bits_g-1 downto 0) ;
+      memread_en_out  : out   std_logic ;
+      memwrite_en_out : out   std_logic ;
+      meminput_in     : in    std_logic_vector (7 downto 0) ;
+      memoutput_out   : out   std_logic_vector (7 downto 0) ;
+      msgclass_out    : out   std_logic_vector (7 downto 0) ;
+      msgid_out       : out   std_logic_vector (7 downto 0) ;
+      msglength_out   : out   unsigned (15 downto 0) ;
+      msgaddress_out  : out   std_logic_vector (memaddr_bits_g-1 downto 0) ;
+      sendready_in    : in    std_logic ;
+      outsend_out     : out   std_logic ;
+      busy_out        : out   std_logic
+    ) ;
+  end component GPSinit ;
+
   --  Memory requesters.
 
   constant memreq_parser_c    : natural := 0 ;
@@ -356,8 +394,9 @@ architecture structural of GPSmessages is
   constant memreq_poll_c      : natural := memreq_send_c + 1 ;
   constant memreq_aopstat_c   : natural := memreq_poll_c + 1 ;
   constant memreq_timemark_c  : natural := memreq_aopstat_c + 1 ;
+  constant memreq_init_c      : natural := memreq_timemark_c + 1 ;
 
-  constant mem_user_cnt_c     : natural := memreq_timemark_c + 1 ;
+  constant mem_user_cnt_c     : natural := memreq_init_c + 1 ;
 
   --  Memory control signals.
 
@@ -436,6 +475,15 @@ architecture structural of GPSmessages is
   signal memctl_timemark      : std_logic_vector (mem_io_bits_c-1
                                                   downto 0) ;
 
+  signal memaddr_init         : std_logic_vector (mem_addrbits_g-1
+                                                  downto 0) ;
+  signal memwrite_to_init     : std_logic_vector (mem_databits_g-1
+                                                  downto 0) ;
+  signal memwrite_en_init     : std_logic ;
+  signal memread_en_init      : std_logic ;
+  signal memctl_init          : std_logic_vector (mem_io_bits_c-1
+                                                  downto 0) ;
+
   --  GPS UART connecting signals.
 
   signal tx_load              : std_logic ;
@@ -460,27 +508,77 @@ architecture structural of GPSmessages is
   --  Information about messages to send.
 
   constant send_poll_c        : natural := 0 ;
+  constant send_init_c        : natural := send_poll_c + 1 ;
 
-  constant sendcnt_c          : natural := send_poll_c + 1 ;
+  constant sendcnt_c          : natural := send_init_c + 1 ;
 
-  signal msgclass             : std_logic_vector (7 downto 0) ;
-  signal msgid                : std_logic_vector (7 downto 0) ;
-  signal memstart             : std_logic_vector (mem_addrbits_g-1
-                                                  downto 0) ;
-  signal memlength            : unsigned (15 downto 0) ;
+  constant send_classbits_c   : natural := 8 ;
+  constant send_idbits_c      : natural := 8 ;
+  constant send_startbits_c   : natural := mem_addrbits_g ;
+  constant send_lengthbits_c  : natural := 16 ;
+  constant send_outbits_c     : natural := 1 ;
+
+  constant send_classstrt_c   : natural := 0 ;
+  constant send_idstrt_c      : natural := send_classstrt_c +
+                                           send_classbits_c ;
+  constant send_startstrt_c   : natural := send_idstrt_c +
+                                           send_idbits_c ;
+  constant send_lengthstrt_c  : natural := send_startstrt_c +
+                                           send_startbits_c ;
+  constant send_outstrt_c     : natural := send_lengthstrt_c +
+                                           send_lengthbits_c ;
+  constant send_io_bits_c     : natural := send_outstrt_c +
+                                           send_outbits_c ;
+
   signal sendready            : std_logic ;
-  signal sendout              : std_logic ;
   signal sendreq              : std_logic_vector (sendcnt_c-1 downto 0) ;
   signal sendrcv              : std_logic_vector (sendcnt_c-1 downto 0) ;
+
+  signal sendinput_tbl        : std_logic_2D (sendcnt_c-1      downto 0,
+                                              send_io_bits_c-1 downto 0) ;
+
+  signal sendselected         : std_logic_vector (send_io_bits_c-1
+                                                  downto 0) ;
+  alias  msgclass             : std_logic_vector (send_classbits_c-1
+                                                  downto 0) is
+                                sendselected     (send_classstrt_c +
+                                                  send_classbits_c-1 downto
+                                                  send_classstrt_c) ;
+  alias  msgid                : std_logic_vector (send_idbits_c-1
+                                                  downto 0) is
+                                sendselected     (send_idstrt_c +
+                                                  send_idbits_c-1 downto
+                                                  send_idstrt_c) ;
+  alias  msgstart             : std_logic_vector (send_startbits_c-1
+                                                  downto 0) is
+                                sendselected     (send_startstrt_c +
+                                                  send_startbits_c-1 downto
+                                                  send_startstrt_c) ;
+  alias  msglength            : std_logic_vector (send_lengthbits_c-1
+                                                  downto 0) is
+                                sendselected     (send_lengthstrt_c +
+                                                  send_lengthbits_c-1 downto
+                                                  send_lengthstrt_c) ;
+  alias  sendout              : std_logic is
+                                sendselected     (send_outstrt_c) ;
+
+  constant send_nomsgstart_c  :
+              std_logic_vector (send_startbits_c-1
+                                downto 0) := (others => '0') ;
+  constant send_nomsglength_c :
+              std_logic_vector (send_lengthbits_c-1
+                                downto 0) := (others => '0') ;
 
   --  Information about messages to poll.
 
   signal pollmessages         : std_logic_vector (msg_count_c-1 downto 0) ;
-  signal sendreq_poll         : std_logic ;
-  signal sendrcv_poll         : std_logic ;
-  signal msgclass_poll        : std_logic_vector (7 downto 0) ;
-  signal msgid_poll           : std_logic_vector (7 downto 0) ;
+  signal msgclass_poll        : std_logic_vector (send_classbits_c-1
+                                                  downto 0) ;
+  signal msgid_poll           : std_logic_vector (send_idbits_c-1
+                                                  downto 0) ;
   signal sendout_poll         : std_logic ;
+  signal sendctl_poll         : std_logic_vector (send_io_bits_c-1
+                                                  downto 0) ;
 
   --  Information about timemark messages.
 
@@ -488,6 +586,21 @@ architecture structural of GPSmessages is
   signal tm_req_timemark      : std_logic ;
   signal tm_marker_time       : std_logic_vector (gps_time_bits_c-1
                                                   downto 0) ;
+
+  --  Information about initialization messages.
+
+  signal msgclass_init        : std_logic_vector (send_classbits_c-1
+                                                  downto 0) ;
+  signal msgid_init           : std_logic_vector (send_idbits_c-1
+                                                  downto 0) ;
+  signal msgstart_init        : std_logic_vector (send_startbits_c-1
+                                                  downto 0) ;
+  signal msglength_init       : std_logic_vector (send_lengthbits_c-1
+                                                  downto 0) ;
+  signal sendout_init         : std_logic ;
+  signal sendctl_init         : std_logic_vector (send_io_bits_c-1
+                                                  downto 0) ;
+  signal init_busy            : std_logic ;
 
   --  Clock generation information.
   --  The UART receiver requires 16 clock cycles to process a bit.  There
@@ -520,6 +633,8 @@ begin
   gpsmem_writeto_out          <= memwrite_to ;
 
   datavalid_out               <= databank ;
+
+  busy_out                    <= init_busy ;
 
   --  Generated clocks used by the GPS components.
 
@@ -631,6 +746,23 @@ begin
 
   set2D_element (memreq_parser_c, memctl_parser, meminput_tbl) ;
 
+  --  GPS Message sender multiplexer allows multiple entities to share
+  --  access to the message sender module.
+
+  sendmux : ResourceMUX
+    Generic Map (
+      requester_cnt_g         => sendcnt_c,
+      resource_bits_g         => send_io_bits_c
+    )
+    Port Map (
+      reset                   => reset,
+      clk                     => memalloc_gated_clk,
+      requesters_in           => sendreq,
+      resource_tbl_in         => sendinput_tbl,
+      receivers_out           => sendrcv,
+      resources_out           => sendselected
+    ) ;
+
   --  Message sender.
 
   gps_send : GPSsend
@@ -643,8 +775,8 @@ begin
       outready_in             => tx_empty,
       msgclass_in             => msgclass,
       msgid_in                => msgid,
-      memstart_in             => memstart,
-      memlength_in            => memlength,
+      memstart_in             => msgstart,
+      memlength_in            => unsigned (msglength),
       meminput_in             => gpsmem_readfrom_in,
       memrcv_in               => memreceivers  (memreq_send_c),
       memreq_out              => memrequesters (memreq_send_c),
@@ -673,13 +805,13 @@ begin
       pollinterval_in         => pollinterval_in,
       pollmessages_in         => pollmessages,
       sendready_in            => sendready,
-      sendrcv_in              => sendrcv_poll,
+      sendrcv_in              => sendrcv (send_poll_c),
       meminput_in             => gpsmem_readfrom_in,
       memrcv_in               => memreceivers  (memreq_poll_c),
       memreq_out              => memrequesters (memreq_poll_c),
       memaddr_out             => memaddr_poll,
       memread_en_out          => memread_en_poll,
-      sendreq_out             => sendreq_poll,
+      sendreq_out             => sendreq (send_poll_c),
       msgclass_out            => msgclass_poll,
       msgid_out               => msgid_poll,
       outsend_out             => sendout_poll
@@ -690,22 +822,13 @@ begin
 
   set2D_element (memreq_poll_c, memctl_poll, meminput_tbl) ;
 
-  --  Normally the message send information would be run through a
-  --  multiplexer to choose which sender's message will be sent.  However,
-  --  there is currently only a single sender so the signals are mapped
-  --  directly.
+  --  GPS message sender multiplexing entry.
 
-  msgclass                    <= msgclass_poll ;
-  msgid                       <= msgid_poll ;
-  memstart                    <= (others => '0') ;
-  memlength                   <= (others => '0') ;
+  sendctl_poll                <= sendout_poll       & send_nomsglength_c  &
+                                 send_nomsgstart_c  & msgid_poll          &
+                                 msgclass_poll ;
 
-  sendreq (send_poll_c)       <= sendreq_poll ;
-  sendrcv_poll                <= sendrcv (send_poll_c) ;
-
-  sendrcv (send_poll_c)       <= sendreq (send_poll_c) ;
-
-  sendout                     <= sendout_poll ;
+  set2D_element (send_poll_c, sendctl_poll, sendinput_tbl) ;
 
   --  Handle AssistNow Autonomous status messages.
 
@@ -761,6 +884,49 @@ begin
                                  memwrite_to_none_c & memaddr_timemark ;
 
   set2D_element (memreq_timemark_c, memctl_timemark, meminput_tbl) ;
+
+  --  GPS Initializer.
+
+  gps_init : GPSinit
+    Generic Map (
+      memaddr_bits_g            => mem_addrbits_g
+    )
+    Port Map (
+      reset                     => reset,
+      clk                       => parse_clk,
+      curtime_in                => curtime_in,
+      init_start_in             => gps_init_start_in,
+      init_done_out             => gps_init_done_out,
+      sendreq_out               => sendreq (send_init_c),
+      sendrcv_in                => sendrcv (send_init_c),
+      memreq_out                => memrequesters (memreq_init_c),
+      memrcv_in                 => memreceivers  (memreq_init_c),
+      memaddr_out               => memaddr_init,
+      memread_en_out            => memread_en_init,
+      memwrite_en_out           => memwrite_en_init,
+      meminput_in               => gpsmem_readfrom_in,
+      memoutput_out             => memwrite_to_init,
+      msgclass_out              => msgclass_init,
+      msgid_out                 => msgid_init,
+      unsigned (msglength_out)  => msglength_init,
+      msgaddress_out            => msgstart_init,
+      sendready_in              => sendready,
+      outsend_out               => sendout_init,
+      busy_out                  => init_busy
+    ) ;
+
+  memctl_init                   <= memwrite_en_init   & memread_en_init   &
+                                   memwrite_to_init   & memaddr_init ;
+
+  set2D_element (memreq_init_c, memctl_init, meminput_tbl) ;
+
+  --  GPS message sender multiplexing entry.
+
+  sendctl_init                <= sendout_init       & msglength_init      &
+                                 msgstart_init      & msgid_init          &
+                                 msgclass_init ;
+
+  set2D_element (send_init_c, sendctl_init, sendinput_tbl) ;
 
   --  Poll request combination signals.  Always poll for position and
   --  AssistNow status info.

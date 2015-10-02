@@ -313,6 +313,7 @@ begin
 
         when INIT_STATE_GET_PAYLOAD =>
           msglength_out       <= payload_length ;
+          msgaddress_out      <= std_logic_vector (mem_outaddress) ;
           mem_address         <= mem_inaddress ;
           cur_state           <= INIT_STATE_GET_CTL ;
 

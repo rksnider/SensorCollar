@@ -2062,7 +2062,8 @@ begin
           gps_rx_in             : in    std_logic ;
           gps_tx_out            : out   std_logic ;
           timemarker_out        : out   std_logic ;
-          aop_running_out       : out   std_logic
+          aop_running_out       : out   std_logic ;
+          busy_out              : out   std_logic
         ) ;
       end component GPSmessages ;
 
