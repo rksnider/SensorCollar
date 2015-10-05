@@ -143,7 +143,7 @@ entity Collar is
   Generic (
     master_clk_freq_g     : natural           := 10e6 ;
     button_cnt_g          : natural           :=  8 ;
-    sdram_space_g         : SDRAM_Capacity_t  := SDRAM_32_Capacity_c ;
+    sdram_space_g         : SDRAM_Capacity_t  := SDRAM_16_Capacity_c ;
     sdram_times_g         : SDRAM_Timing_t    := SDRAM_75_2_Timing_c
   ) ;
   Port (
@@ -411,7 +411,7 @@ architecture structural of Collar is
   constant magmem_iobits_c      : natural := magmem_databits_c +
                                              magmem_addrbits_c +
                                              magmem_rdwr_enbits_c +
-                                             magmem_clkbits_c ;
+                                             magmem_clkbits_c  ;
 
   constant magmem_wrto_none_c   : std_logic_vector (magmem_databits_c-1
                                                     downto 0) :=
@@ -745,8 +745,70 @@ architecture structural of Collar is
 
   signal SDLogging_status       : std_logic := '0' ;
   signal SDLogging_flush        : std_logic := '0' ;
+  
+  
+  component Startup is
+
+    Port (
+      clk                 : in    std_logic ;
+      rst_n               : in    std_logic ;
+      
+      pc_control_reg_out  : out std_logic_vector (ControlSignalsCnt_c-1
+                                            downto 0);                                                 
+      pc_status_set_in        : in std_logic;
+      sd_contr_start_out        : out  std_logic ;       
+      sd_contr_done_in          : in  std_logic ;
+      sdram_start_out           : out  std_logic ;
+      sdram_done_in             : in  std_logic ;
+      imu_start_out             : out std_logic ;
+      imu_done_in               : in std_logic ;
+      mems_start_out            : out std_logic ;
+      mems_done_in              : in  std_logic ;
+      mag_start_out             : out   std_logic ;
+      mag_done_in               : in    std_logic ;
+      gps_start_out             : out   std_logic ;
+      gps_done_in               : in    std_logic 
+
+    ) ;
+  end component Startup;
+
+
+  
+  
+  
 
 begin
+
+
+  --------------------------------------------------------------------------
+  --  Startup Machine
+  --  System startup sequencing and setting of the control register.
+  --------------------------------------------------------------------------
+
+  
+  i_startup_0 : Startup
+
+    Port Map(
+      clk                 => spi_clk,
+      rst_n               => not reset,
+      
+      pc_control_reg_out  =>  PC_ControlReg,                                                
+      pc_status_set_in             => PC_StatusSet,
+      sd_contr_start_out        => sdcard_start,
+      sd_contr_done_in          => '1',
+      --sdram_start_out             : out  std_logic ;
+      sdram_done_in             => sdram_ready,
+      --imu_start_out              : out std_logic ;
+      imu_done_in               => '1',
+      --mems_start_out            : out std_logic ;
+      mems_done_in              => '1',
+      --mag_start_out             : out   std_logic ;
+      mag_done_in               => '1',
+      --gps_start_out             : out   std_logic ;
+      gps_done_in               => '1'
+
+    ) ;
+
 
   --------------------------------------------------------------------------
   --  SPI clock.
@@ -1371,97 +1433,116 @@ begin
     if (Collar_Control_useSD_c = '1') generate
 
       component microsd_controller_dir is
-        generic (
-          CLK_FREQ          : natural   := 50E6 ;
-          buf_size_g        : natural   := 2048 ;
-          block_size_g      : natural   := 512 ;
-          hs_sdr25_mode     : std_logic := '1' ;
-          clk_divide        : natural   := 128 ;
-          signalling_18_en  : std_logic := '1'
-        ) ;
-        port (
-          rst_n             : in    std_logic ;
-          clk               : in    std_logic ;
-          clock_enable      : in    std_logic ;
+        generic(
+    
+          clk_freq_g                :natural    := 50E6;
+          buf_size_g                :natural    := 2048;     
+          block_size_g              :natural    := 512;    
+          hs_sdr25_mode_g						:std_logic  := '1';                  
+          clk_divide_g              :natural    := 128;
+          signalling_18_en_g				:std_logic  := '0'  
+        );
 
-          data_input        : in    std_logic_vector (7 downto 0) ;
-          data_we           : in    std_logic ;
-          data_full         : out   std_logic ;
+        port(
 
-          data_sd_start_address       : in    std_logic_vector (31 downto 0) ;
-          data_nblocks                : in    std_logic_vector (31 downto 0) ;
+          rst_n           :in      std_logic;                                     
+          clk             :in      std_logic;                                     
+          clock_enable    :in      std_logic;                                     
+          data_input      :in      std_logic_vector(7 downto 0);                  
+          data_we         :in      std_logic;
+          data_full       :out     std_logic;                                     
+          data_sd_start_address     :in      std_logic_vector(31 downto 0);                 
+          data_nblocks              :in      std_logic_vector(31 downto 0);                 
+                    
+          data_current_block_written      :out     std_logic_vector(31 downto 0);                 
+          sd_block_written_flag           :out     std_logic; 
+          buffer_level                    :out     std_logic_vector (natural(trunc(log2(
+                                          real(buf_size_g/block_size_g)))) downto 0); 
 
-          data_current_block_written  : out   std_logic_vector(31 downto 0);
-          sd_block_written_flag       : out   std_logic;
-          buffer_level                : out
-            std_logic_vector (natural (trunc
-                                 (log2 (real (buf_size_g / block_size_g))))
-                              downto 0);
+          sd_clk                          :out     std_logic;                                                                      
+             
+          sd_cmd_in                       : in      std_logic ;
+          sd_cmd_out                      : out     std_logic ;
+          sd_cmd_dir                      : out     std_logic ;
+          sd_dat_in                       : in      std_logic_vector (3 downto 0) ;
+          sd_dat_out                      : out     std_logic_vector (3 downto 0) ;
+          sd_dat_dir                      : out     std_logic_vector (3 downto 0) ;                 
+       
+          v_3_3_on_off                    :out     std_logic;                                     
+          v_1_8_on_off                    :out     std_logic;                                     
+          
+          init_start                      :in     std_logic;                                  
+          user_led_n_out                  :out    std_logic_vector(3 downto 0);
+          ext_trigger                     :out    std_logic
 
-          sd_clk            : out   std_logic ;
-          sd_cmd_in         : in    std_logic ;
-          sd_cmd_out        : out   std_logic ;
-          sd_cmd_dir        : out   std_logic ;
-          sd_dat_in         : in    std_logic_vector (3 downto 0) ;
-          sd_dat_out        : out   std_logic_vector (3 downto 0) ;
-          sd_dat_dir        : out   std_logic_vector (3 downto 0) ;
-
-          V_3_3_ON_OFF      : out   std_logic ;
-          V_1_8_ON_OFF      : out   std_logic ;
-
-          init_start        : in    std_logic ;
-          user_led_n_out    : out   std_logic_vector (3 downto 0) ;
-          ext_trigger       : out   std_logic
-        ) ;
+        );
       end component microsd_controller_dir ;
 
-      component sd_loader is
-        generic (
-          OUTMEM_BUFFROWS       : natural     := 1 ;
-          OUTMEM_BUFFCOUNT      : natural     := 2 ;
-          SDRAM_SPACE           : SDRAM_Capacity_t  := SDRAM_32_Capacity_c;
-          sdram_outbuf_size_bytes_g : natural := 4096;
-          buf_size_g            :   natural := 2048;
-          block_size_g          :   natural := 512
-        );
-        port (
-          clk        : in std_logic;
-          rst_n      : in std_logic;
-          startup_in              : in std_logic;
-          data_nbytes_in          : in std_logic_vector(const_bits (SDRAM_SPACE.BANKS * SDRAM_SPACE.ROWCOUNT *
-                                    SDRAM_SPACE.ROWBITS / 8 - 1) - 1 downto 0) ;
-          outbuf_data_rdy_in      : in std_logic;
-          outbuf_sd_q_b_in        : in std_logic_vector(7 downto 0);
-          sd_outbuf_rd_en_b_out   : out std_logic;
-          sd_outbuf_address_b_out : out std_logic_vector(natural(trunc(log2(real(sdram_outbuf_size_bytes_g-1)))) downto 0);
-          mem_req_a_out           : out std_logic;
-          mem_rec_a_in            : in std_logic;
-          sd_magram_wr_en_a_out   : out std_logic;
-          sd_magram_rd_en_a_out   : out std_logic;
-          sd_magram_address_a_out : out std_logic_vector(natural(trunc(log2(real(magmem_buffer_bytes-1)))) downto 0);
-          sd_magram_data_a_out    : out std_logic_vector(7 downto 0);
-          magram_sd_q_a_in        : in std_logic_vector(7 downto 0);
-          dw_en                   : in std_logic;
-          crit_block_serviced     : out std_logic;
-          data_input                         :out      std_logic_vector(7 downto 0);
-          data_we                            :out      std_logic;
-          data_full                          :in       std_logic;
-          data_sd_start_address              :out      std_logic_vector(31 downto 0);
-          data_nblocks                       :out      std_logic_vector(31 downto 0);
-          data_current_block_written         :in       std_logic_vector(31 downto 0);
-          sd_block_written_flag              :in       std_logic;
-          buffer_level                       :in       std_logic_vector (natural(trunc(log2(real(buf_size_g/block_size_g)))) downto 0);
-          blocks_past_crit                   :in std_logic_vector(7 downto 0)
-        );
-      end component sd_loader;
+    component sd_loader is
+      generic(
+        OUTMEM_BUFFROWS       : natural     := 1 ;
+        OUTMEM_BUFFCOUNT      : natural     := 2 ;
+        sdram_space_g         : SDRAM_Capacity_t  := SDRAM_16_Capacity_c; 
+        sdram_outbuf_size_bytes_g : natural := 4096;
+        buf_size_g            :   natural := 2048;
+        block_size_g          :   natural := 512;
+        enable_magmem_g       :   std_logic := '0'
+      );
+      port(
+      
+        clk        : in std_logic;
+        rst_n      : in std_logic;
+         
+        startup_in              : in std_logic;
+        
+        data_nbytes_in          : in std_logic_vector (const_bits (sdram_space_g.BANKS * sdram_space_g.ROWCOUNT *
+                                sdram_space_g.ROWBITS / 8 - 1) - 1 downto 0) ;
+        outbuf_data_rdy_in      : in std_logic;
+        
+        outbuf_sd_q_b_in        : in std_logic_vector(7 downto 0);
+        sd_outbuf_rd_en_b_out   : out std_logic;  
+        sd_outbuf_clk_b_out     : out std_logic; 
+        sd_outbuf_address_b_out : out std_logic_vector(natural(trunc(log2(real(sdram_outbuf_size_bytes_g-1)))) downto 0);
+        
+        sd_outmem_buffready_out : out std_logic;  
+
+        mem_req_a_out           : out std_logic;  
+        mem_rec_a_in            : in std_logic;  
+        
+        
+        sd_magram_clk_a_out     : out std_logic;
+        sd_magram_wr_en_a_out   : out std_logic;  
+        sd_magram_rd_en_a_out   : out std_logic;  
+        sd_magram_address_a_out : out std_logic_vector(natural(trunc(log2(real(
+                                (magmem_buffer_bytes/magmem_buffer_num)-1)))) downto 0);
+        sd_magram_data_a_out    : out std_logic_vector(7 downto 0);
+        magram_sd_q_a_in        : in std_logic_vector(7 downto 0);
+        
+        dw_en                   : in std_logic;
+        crit_block_serviced     : out std_logic;
+                    
+        data_input                         :out      std_logic_vector(7 downto 0);                   
+        data_we                            :out      std_logic;    
+        data_full                          :in       std_logic;                                     
+        data_sd_start_address              :out      std_logic_vector(31 downto 0);                 
+        data_nblocks                       :out      std_logic_vector(31 downto 0);                                                                                          
+        data_current_block_written         :in       std_logic_vector(31 downto 0);                
+        sd_block_written_flag              :in       std_logic;      
+        buffer_level                       :in       std_logic_vector (natural(trunc(log2(real(buf_size_g/block_size_g)))) downto 0);
+
+        blocks_past_crit                   :in std_logic_vector(7 downto 0)    
+
+      );
+    end component;
 
       --  SD loader to Magnetic Memory communications signals.
 
       signal sdl_magmem_clk       : std_logic ;
       signal sdl_magmem_wr_en     : std_logic ;
       signal sdl_magmem_rd_en     : std_logic ;
-      signal sdl_magmem_addr      : std_logic_vector (magmem_addrbits_c-1
-                                                      downto 0) ;
+       signal sdl_magmem_addr      : std_logic_vector(natural(trunc(log2(real((magmem_buffer_bytes/magmem_buffer_num)-1)))) downto 0);
+      --signal sdl_magmem_addr      : std_logic_vector (magmem_addrbits_c-1
+      --                                                downto 0) ;
       signal sdl_magmem_writeto   : std_logic_vector (magmem_databits_c-1
                                                       downto 0) ;
       signal sdl_magmem_control   : std_logic_vector (magmem_iobits_c-1
@@ -1485,6 +1566,8 @@ begin
       signal sdl_sdcard_bufflevel :
                 std_logic_vector (const_bits (outmem_buffblks_c-1)
                                   downto 0) ;
+      signal sdl_sdcard_critdone  : std_logic ;
+      signal sdl_sdcard_critpast  : std_logic_vector (7 downto 0) ;
 
       --  Signals for I/O mapping.
 
@@ -1507,7 +1590,7 @@ begin
         generic map (
           OUTMEM_BUFFROWS           => outmem_buffrows_c,
           OUTMEM_BUFFCOUNT          => outmem_buffcount_c,
-          SDRAM_SPACE               => sdram_space_g,
+          sdram_space_g               => sdram_space_g,
           sdram_outbuf_size_bytes_g => outmem_bytecnt_c,
           buf_size_g                => sdram_rowbytes_c,
           block_size_g              => sdcard_blksize_c
@@ -1520,9 +1603,12 @@ begin
           outbuf_data_rdy_in        => sdram_outwriting,
           outbuf_sd_q_b_in          => sdram_outrd_data,
           sd_outbuf_rd_en_b_out     => sdram_outrd_en,
+          sd_outbuf_clk_b_out       => sdram_outrd_clk,
           sd_outbuf_address_b_out   => sdram_outrd_addr,
+          sd_outmem_buffready_out   => sdram_outready,
           mem_req_a_out             => magmem_requesters (magmemrq_sdcard_c),
           mem_rec_a_in              => magmem_receivers  (magmemrq_sdcard_c),
+          sd_magram_clk_a_out       => sdl_magmem_clk,
           sd_magram_wr_en_a_out     => sdl_magmem_wr_en,
           sd_magram_rd_en_a_out     => sdl_magmem_rd_en,
           sd_magram_address_a_out   => sdl_magmem_addr,
@@ -1537,17 +1623,16 @@ begin
           sd_block_written_flag     => sdl_sdcard_lastflag,
           buffer_level              => sdl_sdcard_bufflevel,
           dw_en                     => '0',
-          crit_block_serviced       => sdcard_critdone,
-          blocks_past_crit          => sdcard_critpast
+          crit_block_serviced       => sdl_sdcard_critdone,
+          blocks_past_crit          => sdl_sdcard_critpast
         );
 
-      sdram_outrd_clk       <= master_clk ;
 
-      sdl_magmem_clk        <= master_clk ;
 
       sdl_magmem_control    <= sdl_magmem_clk     &
                                sdl_magmem_wr_en   & sdl_magmem_rd_en &
-                               sdl_magmem_writeto & sdl_magmem_addr ;
+                               sdl_magmem_writeto & mm_buffno &
+                               sdl_magmem_addr ;
 
       set2D_element (magmemrq_sdcard_c, sdl_magmem_control,
                      magmem_input_tbl) ;
@@ -1556,11 +1641,11 @@ begin
 
       sdcard : microsd_controller_dir
         generic map (
-          CLK_FREQ          => master_clk_freq_g,
+          clk_freq_g          => master_clk_freq_g,
           buf_size_g        => sdcard_blksize_c * 4,
           block_size_g      => sdcard_blksize_c,
-          hs_sdr25_mode     => '1',
-          clk_divide        => natural (real (master_clk_freq_g) / 400000.0)
+          hs_sdr25_mode_g     => '1',
+          clk_divide_g        => natural (real (master_clk_freq_g) / 400000.0)
         )
         port map (
           rst_n                       => (not reset) and CTL_SDCardOn,
@@ -1644,97 +1729,159 @@ begin
     if (Collar_Control_useSDH_c = '1') generate
 
       component microsd_controller_dir is
-        generic (
-          CLK_FREQ          : natural   := 50E6 ;
-          buf_size_g        : natural   := 2048 ;
-          block_size_g      : natural   := 512 ;
-          hs_sdr25_mode     : std_logic := '1' ;
-          clk_divide        : natural   := 128 ;
-          signalling_18_en  : std_logic := '1'
-        ) ;
-        port (
-          rst_n             : in    std_logic ;
-          clk               : in    std_logic ;
-          clock_enable      : in    std_logic ;
+        generic(
+    
+          clk_freq_g                :natural    := 50E6;
+          buf_size_g                :natural    := 2048;     
+          block_size_g              :natural    := 512;    
+          hs_sdr25_mode_g						:std_logic  := '1';                  
+          clk_divide_g              :natural    := 128;
+          signalling_18_en_g				:std_logic  := '0'  
+        );
 
-          data_input        : in    std_logic_vector (7 downto 0) ;
-          data_we           : in    std_logic ;
-          data_full         : out   std_logic ;
+        port(
 
-          data_sd_start_address       : in    std_logic_vector (31 downto 0) ;
-          data_nblocks                : in    std_logic_vector (31 downto 0) ;
+          rst_n           :in      std_logic;                                     
+          clk             :in      std_logic;                                     
+          clock_enable    :in      std_logic;                                     
+          data_input      :in      std_logic_vector(7 downto 0);                  
+          data_we         :in      std_logic;
+          data_full       :out     std_logic;                                     
+          data_sd_start_address     :in      std_logic_vector(31 downto 0);                 
+          data_nblocks              :in      std_logic_vector(31 downto 0);                 
+                    
+          data_current_block_written      :out     std_logic_vector(31 downto 0);                 
+          sd_block_written_flag           :out     std_logic; 
+          buffer_level                    :out     std_logic_vector (natural(trunc(log2(
+                                          real(buf_size_g/block_size_g)))) downto 0); 
 
-          data_current_block_written  : out   std_logic_vector(31 downto 0);
-          sd_block_written_flag       : out   std_logic;
-          buffer_level                : out
-            std_logic_vector (natural (trunc
-                                 (log2 (real (buf_size_g / block_size_g))))
-                              downto 0);
+          sd_clk                          :out     std_logic;                                                                      
+             
+          sd_cmd_in                       : in      std_logic ;
+          sd_cmd_out                      : out     std_logic ;
+          sd_cmd_dir                      : out     std_logic ;
+          sd_dat_in                       : in      std_logic_vector (3 downto 0) ;
+          sd_dat_out                      : out     std_logic_vector (3 downto 0) ;
+          sd_dat_dir                      : out     std_logic_vector (3 downto 0) ;                 
+       
+          v_3_3_on_off                    :out     std_logic;                                     
+          v_1_8_on_off                    :out     std_logic;                                     
+          
+          init_start                      :in     std_logic;                                  
+          user_led_n_out                  :out    std_logic_vector(3 downto 0);
+          ext_trigger                     :out    std_logic
 
-          sd_clk            : out   std_logic ;
-          sd_cmd_in         : in    std_logic ;
-          sd_cmd_out        : out   std_logic ;
-          sd_cmd_dir        : out   std_logic ;
-          sd_dat_in         : in    std_logic_vector (3 downto 0) ;
-          sd_dat_out        : out   std_logic_vector (3 downto 0) ;
-          sd_dat_dir        : out   std_logic_vector (3 downto 0) ;
-
-          V_3_3_ON_OFF      : out   std_logic ;
-          V_1_8_ON_OFF      : out   std_logic ;
-
-          init_start        : in    std_logic ;
-          user_led_n_out    : out   std_logic_vector (3 downto 0) ;
-          ext_trigger       : out   std_logic
-        ) ;
+        );
       end component microsd_controller_dir ;
 
-      component sd_loader is
-        generic (
-          OUTMEM_BUFFROWS       : natural     := 1 ;
-          OUTMEM_BUFFCOUNT      : natural     := 2 ;
-          SDRAM_SPACE           : SDRAM_Capacity_t  := SDRAM_32_Capacity_c;
-          sdram_outbuf_size_bytes_g : natural := 4096;
-          buf_size_g            :   natural := 2048;
-          block_size_g          :   natural := 512
-        );
-        port (
-          clk        : in std_logic;
-          rst_n      : in std_logic;
-          startup_in              : in std_logic;
-          data_nbytes_in          : in std_logic_vector(const_bits (SDRAM_SPACE.BANKS * SDRAM_SPACE.ROWCOUNT *
-                                    SDRAM_SPACE.ROWBITS / 8 - 1) - 1 downto 0) ;
-          outbuf_data_rdy_in      : in std_logic;
-          outbuf_sd_q_b_in        : in std_logic_vector(7 downto 0);
-          sd_outbuf_rd_en_b_out   : out std_logic;
-          sd_outbuf_address_b_out : out std_logic_vector(natural(trunc(log2(real(sdram_outbuf_size_bytes_g-1)))) downto 0);
-          mem_req_a_out           : out std_logic;
-          mem_rec_a_in            : in std_logic;
-          sd_magram_wr_en_a_out   : out std_logic;
-          sd_magram_rd_en_a_out   : out std_logic;
-          sd_magram_address_a_out : out std_logic_vector(natural(trunc(log2(real(magmem_buffer_bytes-1)))) downto 0);
-          sd_magram_data_a_out    : out std_logic_vector(7 downto 0);
-          magram_sd_q_a_in        : in std_logic_vector(7 downto 0);
-          dw_en                   : in std_logic;
-          crit_block_serviced     : out std_logic;
-          data_input                         :out      std_logic_vector(7 downto 0);
-          data_we                            :out      std_logic;
-          data_full                          :in       std_logic;
-          data_sd_start_address              :out      std_logic_vector(31 downto 0);
-          data_nblocks                       :out      std_logic_vector(31 downto 0);
-          data_current_block_written         :in       std_logic_vector(31 downto 0);
-          sd_block_written_flag              :in       std_logic;
-          buffer_level                       :in       std_logic_vector (natural(trunc(log2(real(buf_size_g/block_size_g)))) downto 0);
-          blocks_past_crit                   :in std_logic_vector(7 downto 0)
-        );
-      end component sd_loader;
+      -- component sd_loader is
+        -- generic (
+          -- OUTMEM_BUFFROWS       : natural     := 1 ;
+          -- OUTMEM_BUFFCOUNT      : natural     := 2 ;
+          -- SDRAM_SPACE           : SDRAM_Capacity_t  := SDRAM_32_Capacity_c;
+          -- sdram_outbuf_size_bytes_g : natural := 4096;
+          -- buf_size_g            :   natural := 2048;
+          -- block_size_g          :   natural := 512
+        -- );
+        -- port (
+          -- clk        : in std_logic;
+          -- rst_n      : in std_logic;
+          -- startup_in              : in std_logic;
+          -- data_nbytes_in          : in std_logic_vector(const_bits (SDRAM_SPACE.BANKS * SDRAM_SPACE.ROWCOUNT *
+                                    -- SDRAM_SPACE.ROWBITS / 8 - 1) - 1 downto 0) ;
+          -- outbuf_data_rdy_in      : in std_logic;
+          -- outbuf_sd_q_b_in        : in std_logic_vector(7 downto 0);
+          -- sd_outbuf_rd_en_b_out   : out std_logic;
+          -- sd_outbuf_address_b_out : out std_logic_vector(natural(trunc(log2(real(sdram_outbuf_size_bytes_g-1)))) downto 0);
+          -- mem_req_a_out           : out std_logic;
+          -- mem_rec_a_in            : in std_logic;
+          -- sd_magram_wr_en_a_out   : out std_logic;
+          -- sd_magram_rd_en_a_out   : out std_logic;
+          -- sd_magram_address_a_out : out std_logic_vector(natural(trunc(log2(real(magmem_buffer_bytes-1)))) downto 0);
+          -- sd_magram_data_a_out    : out std_logic_vector(7 downto 0);
+          -- magram_sd_q_a_in        : in std_logic_vector(7 downto 0);
+          -- dw_en                   : in std_logic;
+          -- crit_block_serviced     : out std_logic;
+          -- data_input                         :out      std_logic_vector(7 downto 0);
+          -- data_we                            :out      std_logic;
+          -- data_full                          :in       std_logic;
+          -- data_sd_start_address              :out      std_logic_vector(31 downto 0);
+          -- data_nblocks                       :out      std_logic_vector(31 downto 0);
+          -- data_current_block_written         :in       std_logic_vector(31 downto 0);
+          -- sd_block_written_flag              :in       std_logic;
+          -- buffer_level                       :in       std_logic_vector (natural(trunc(log2(real(buf_size_g/block_size_g)))) downto 0);
+          -- blocks_past_crit                   :in std_logic_vector(7 downto 0)
+        -- );
+      -- end component sd_loader;
+      
+    component sd_loader is
+      generic(
+        OUTMEM_BUFFROWS       : natural     := 1 ;
+        OUTMEM_BUFFCOUNT      : natural     := 2 ;
+        sdram_space_g         : SDRAM_Capacity_t  := SDRAM_16_Capacity_c; 
+        sdram_outbuf_size_bytes_g : natural := 4096;
+        buf_size_g            :   natural := 2048;
+        block_size_g          :   natural := 512;
+        enable_magmem_g       :   std_logic := '0'
+      );
+      port(
+      
+        clk        : in std_logic;
+        rst_n      : in std_logic;
+         
+        startup_in              : in std_logic;
+        
+        data_nbytes_in          : in std_logic_vector (const_bits (sdram_space_g.BANKS * sdram_space_g.ROWCOUNT *
+                                sdram_space_g.ROWBITS / 8 - 1) - 1 downto 0) ;
+        outbuf_data_rdy_in      : in std_logic;
+        
+        outbuf_sd_q_b_in        : in std_logic_vector(7 downto 0);
+        sd_outbuf_rd_en_b_out   : out std_logic;  
+        sd_outbuf_clk_b_out     : out std_logic; 
+        sd_outbuf_address_b_out : out std_logic_vector(natural(trunc(log2(real(sdram_outbuf_size_bytes_g-1)))) downto 0);
+        
+        sd_outmem_buffready_out : out std_logic;  
+
+        mem_req_a_out           : out std_logic;  
+        mem_rec_a_in            : in std_logic;  
+        
+        
+        sd_magram_clk_a_out     : out std_logic;
+        sd_magram_wr_en_a_out   : out std_logic;  
+        sd_magram_rd_en_a_out   : out std_logic;  
+        sd_magram_address_a_out : out std_logic_vector(natural(trunc(log2(
+                                      real((magmem_buffer_bytes/magmem_buffer_num)-1)
+                                      ))) downto 0);
+        sd_magram_data_a_out    : out std_logic_vector(7 downto 0);
+        magram_sd_q_a_in        : in std_logic_vector(7 downto 0);
+        
+        dw_en                   : in std_logic;
+        crit_block_serviced     : out std_logic;
+                    
+        data_input                         :out      std_logic_vector(7 downto 0);                   
+        data_we                            :out      std_logic;    
+        data_full                          :in       std_logic;                                     
+        data_sd_start_address              :out      std_logic_vector(31 downto 0);                 
+        data_nblocks                       :out      std_logic_vector(31 downto 0);                                                                                          
+        data_current_block_written         :in       std_logic_vector(31 downto 0);                
+        sd_block_written_flag              :in       std_logic;      
+        buffer_level                       :in       std_logic_vector (natural(trunc(log2(real(buf_size_g/block_size_g)))) downto 0);
+
+        blocks_past_crit                   :in std_logic_vector(7 downto 0)    
+
+      );
+    end component;
 
       --  SD loader to Magnetic Memory communications signals.
 
       signal sdl_magmem_clk       : std_logic ;
       signal sdl_magmem_wr_en     : std_logic ;
       signal sdl_magmem_rd_en     : std_logic ;
-      signal sdl_magmem_addr      : std_logic_vector (magmem_addrbits_c-1
-                                                      downto 0) ;
+      
+      signal sdl_magmem_addr      : std_logic_vector(natural(trunc(log2(real((magmem_buffer_bytes/magmem_buffer_num)-1)))) downto 0);
+      
+      -- signal sdl_magmem_addr      : std_logic_vector (magmem_addrbits_c-1
+                                                      -- downto 0) ;
       signal sdl_magmem_writeto   : std_logic_vector (magmem_databits_c-1
                                                       downto 0) ;
       signal sdl_magmem_control   : std_logic_vector (magmem_iobits_c-1
@@ -1782,7 +1929,7 @@ begin
         generic map (
           OUTMEM_BUFFROWS           => outmem_buffrows_c,
           OUTMEM_BUFFCOUNT          => outmem_buffcount_c,
-          SDRAM_SPACE               => sdram_space_g,
+          sdram_space_g               => sdram_space_g,
           sdram_outbuf_size_bytes_g => outmem_bytecnt_c,
           buf_size_g                => sdram_rowbytes_c,
           block_size_g              => sdcard_blksize_c
@@ -1795,7 +1942,9 @@ begin
           outbuf_data_rdy_in        => sdram_outwriting,
           outbuf_sd_q_b_in          => sdram_outrd_data,
           sd_outbuf_rd_en_b_out     => sdram_outrd_en,
+          sd_outbuf_clk_b_out       => sdram_outrd_clk,
           sd_outbuf_address_b_out   => sdram_outrd_addr,
+          sd_outmem_buffready_out   => sdram_outready,
           mem_req_a_out             => magmem_requesters (magmemrq_sdcard_c),
           mem_rec_a_in              => magmem_receivers  (magmemrq_sdcard_c),
           sd_magram_wr_en_a_out     => sdl_magmem_wr_en,
@@ -1816,13 +1965,10 @@ begin
           blocks_past_crit          => sdl_sdcard_critpast
         );
 
-      sdram_outrd_clk       <= master_clk ;
-
-      sdl_magmem_clk        <= master_clk ;
-
       sdl_magmem_control    <= sdl_magmem_clk     &
                                sdl_magmem_wr_en   & sdl_magmem_rd_en &
-                               sdl_magmem_writeto & sdl_magmem_addr ;
+                               sdl_magmem_writeto & mm_buffno &
+                               sdl_magmem_addr ;
 
       set2D_element (magmemrq_sdcard_c, sdl_magmem_control,
                      magmem_input_tbl) ;
@@ -1831,11 +1977,11 @@ begin
 
       sdcard : microsd_controller_dir
         generic map (
-          CLK_FREQ          => master_clk_freq_g,
+          clk_freq_g          => master_clk_freq_g,
           buf_size_g        => sdcard_blksize_c * 4,
           block_size_g      => sdcard_blksize_c,
-          hs_sdr25_mode     => '1',
-          clk_divide        => natural (real (master_clk_freq_g) / 400000.0)
+          hs_sdr25_mode_g     => '1',
+          clk_divide_g        => natural (real (master_clk_freq_g) / 400000.0)
         )
         port map (
           rst_n                       => (not reset) and CTL_SDCardOn,
@@ -2062,8 +2208,7 @@ begin
           gps_rx_in             : in    std_logic ;
           gps_tx_out            : out   std_logic ;
           timemarker_out        : out   std_logic ;
-          aop_running_out       : out   std_logic ;
-          busy_out              : out   std_logic
+          aop_running_out       : out   std_logic
         ) ;
       end component GPSmessages ;
 
@@ -2665,6 +2810,9 @@ begin
       signal mic_clock    : std_logic ;
       signal mic_right    : std_logic ;
       signal mic_left     : std_logic ;
+      
+      -- Microphone Test Signals
+      signal mic_left_sample_clk_f  : std_logic;
 
     begin
 
@@ -2688,7 +2836,7 @@ begin
           rst_n           => (not reset) and CTL_MicLeftOn,
           clk_enable      => '1',
           pdm_bit         => mic_left,
-          filter_out      => mic_left_sample,
+          --filter_out      => mic_left_sample,
           clock_out       => mic_left_sample_clk
         ) ;
 
@@ -2722,6 +2870,25 @@ begin
           end if ;
         end if ;
       end process mics_on ;
+      
+      
+      
+      --TEST PROCESS
+      mems_mic_counter:	process(mic_clock, reset)
+      begin
+      if (reset = '1') then
+        mic_left_sample   <= (others => '0');
+        mic_left_sample_clk_f <= '0';
+      elsif (mic_clock'event and mic_clock = '1') then
+        if (mic_left_sample_clk_f /= mic_left_sample_clk ) then
+          mic_left_sample_clk_f <= mic_left_sample_clk;
+          if (mic_left_sample_clk = '1') then
+            mic_left_sample <= std_logic_vector(unsigned(mic_left_sample) + 1);
+          end if;
+        end if;
+      end if;
+      end process;
+      --TEST PROCESS
 
     end generate use_PDMmic ;
 
@@ -2795,86 +2962,135 @@ begin
     if (Collar_Control_useFlashBlock_c = '1') generate
 
       component FlashBlock is
-        Generic (
-          FPGA_TIME_LENGTH_BYTES  :natural := 9;          --! Length of FPGA TIME COUNTER IN BYTES
-          TIME_BYTES            : natural := 9 ;        --! Bytes of current time.
-          EVENT_BYTES           : natural := 2 ;        --! Bytes of event counts.
-          RTC_TIME_BYTES      : natural := 4;
-          NUM_MICS_ACTIVE     : natural := 1;
 
+        Generic (
+          fpga_time_length_bytes_g  : natural := 9;          
+          time_bytes_g              : natural := 9 ;        
+          event_bytes_g             : natural := 2 ;       
+
+          rtc_time_bytes_g          : natural := 4;
+          num_mics_active_g         : natural := 1;
+          
           counter_data_size_g       : natural     := 8 ;
           counter_address_size_g    : natural     := 9 ;
           counters_g                : natural     := 10 ;
 
-          GPS_BUFFER_BYTES            : natural := 512;
-          IMU_AXIS_WORD_LENGTH_BYTES  : natural := 2;
-          SDRAM_INPUT_BUFFER_BYTES    : natural := 4096;
-          AUDIO_WORD_BYTES       : natural    := 2
-        ) ;
+          gps_buffer_bytes_g            : natural := 512;
+          imu_axis_word_length_bytes_g  : natural := 2;
+          sdram_input_buffer_bytes_g    : natural := 4096;
+          audio_word_bytes_g            : natural := 2
+      ) ;
         Port (
-          clock_sys               : in    std_logic ;
-          reset                   : in    std_logic ;
-          magmem_req_out           : out std_logic;
-          magmem_rec_in            : in std_logic;
-          magmem_wr_en_out      : out std_logic;
-          magmem_rd_en_out      : out std_logic;
-          magmem_address_out    : out std_logic_vector(natural(trunc(log2(real(magmem_buffer_bytes-1)))) downto 0);
-          magmem_data_out       : out std_logic_vector(7 downto 0);
-          magmem_sd_q_in        : in std_logic_vector(7 downto 0);
-          log_status              : in    std_logic ;
-          current_fpga_time       : in    std_logic_vector (gps_time_bytes_c*8-1 downto 0);
-          log_events              : in  std_logic;
-          device_byte             : out   std_logic_vector (7 downto 0);
-          device_byte_ready       : out   std_logic ;
+          clock_sys             : in    std_logic ;
+          rst_n                 : in    std_logic ;
+          clk_enable            : in    std_logic;
+
+          log_status            : in    std_logic ;
+          
+          current_fpga_time     : in std_logic_vector 
+                                    (gps_time_bytes_c*8-1 downto 0);
+          log_events            : in    std_logic;
+          
           gyro_data_rdy   : in    std_logic;
           accel_data_rdy  : in    std_logic;
           mag_data_rdy    : in    std_logic;
           temp_data_rdy   : in    std_logic;
-          gyro_data_x     :in     std_logic_vector(IMU_AXIS_WORD_LENGTH_BYTES*8 - 1 downto 0);
-          gyro_data_y     :in     std_logic_vector(IMU_AXIS_WORD_LENGTH_BYTES*8 - 1 downto 0);
-          gyro_data_z     :in     std_logic_vector(IMU_AXIS_WORD_LENGTH_BYTES*8 - 1 downto 0);
-          accel_data_x    :in     std_logic_vector(IMU_AXIS_WORD_LENGTH_BYTES*8 - 1 downto 0);
-          accel_data_y    :in     std_logic_vector(IMU_AXIS_WORD_LENGTH_BYTES*8 - 1 downto 0);
-          accel_data_z    :in     std_logic_vector(IMU_AXIS_WORD_LENGTH_BYTES*8 - 1 downto 0);
-          mag_data_x      :in     std_logic_vector(IMU_AXIS_WORD_LENGTH_BYTES*8 - 1 downto 0);
-          mag_data_y      :in     std_logic_vector(IMU_AXIS_WORD_LENGTH_BYTES*8 - 1 downto 0);
-          mag_data_z      :in     std_logic_vector(IMU_AXIS_WORD_LENGTH_BYTES*8 - 1 downto 0);
-          temp_data       :in     std_logic_vector(IMU_AXIS_WORD_LENGTH_BYTES*8 - 1 downto 0);
+          
+          
+          gyro_data_x     :in     std_logic_vector(
+                                  imu_axis_word_length_bytes_g*8 - 1 downto 0);
+          gyro_data_y     :in     std_logic_vector(
+                                  imu_axis_word_length_bytes_g*8 - 1 downto 0);
+          gyro_data_z     :in     std_logic_vector(
+                                  imu_axis_word_length_bytes_g*8 - 1 downto 0);
+          
+          accel_data_x    :in     std_logic_vector(
+                                  imu_axis_word_length_bytes_g*8 - 1 downto 0);
+          accel_data_y    :in     std_logic_vector(
+                                  imu_axis_word_length_bytes_g*8 - 1 downto 0);
+          accel_data_z    :in     std_logic_vector(
+                                  imu_axis_word_length_bytes_g*8 - 1 downto 0);
+          
+          mag_data_x      :in     std_logic_vector(
+                                  imu_axis_word_length_bytes_g*8 - 1 downto 0);
+          mag_data_y      :in     std_logic_vector(
+                                  imu_axis_word_length_bytes_g*8 - 1 downto 0);
+          mag_data_z      :in     std_logic_vector(
+                                  imu_axis_word_length_bytes_g*8 - 1 downto 0);
+          
+          temp_data       :in     std_logic_vector(
+                                  imu_axis_word_length_bytes_g*8 - 1 downto 0);
+          
           audio_data_rdy          : in std_logic;
-          audio_data              : in std_logic_vector(AUDIO_WORD_BYTES*8  - 1 downto 0);
-          flashblock_inbuf_data       : out    std_logic_vector(7 downto 0);
+          audio_data              : in std_logic_vector(
+                                    audio_word_bytes_g*8  - 1 downto 0);
+          
+          flashblock_inbuf_data       : out    std_logic_vector(7 downto 0); 
           flashblock_inbuf_wr_en      : out    std_logic;
           flashblock_inbuf_clk        : out    std_logic;
-          flashblock_inbuf_addr       : out    std_logic_vector(natural(trunc(log2(real(SDRAM_INPUT_BUFFER_BYTES-1)))) downto 0);
-          flashblock_gpsbuf_addr      : out   std_logic_vector(natural(trunc(log2(real(GPS_BUFFER_BYTES-1)))) downto 0);
+          flashblock_inbuf_addr       : out   std_logic_vector(
+                                              natural(trunc(log2(real(
+                                              sdram_input_buffer_bytes_g-1)))) 
+                                              downto 0);
+          
+          flashblock_gpsbuf_addr      : out   std_logic_vector(
+                                              natural(trunc(log2(real(
+                                              gps_buffer_bytes_g-1)))) 
+                                              downto 0);  
           flashblock_gpsbuf_rd_en     : out   std_logic;
           flashblock_gpsbuf_clk       : out   std_logic;
           gpsbuf_flashblock_data      : in    std_logic_vector(7 downto 0);
+          
+          gps_req_out       : out   std_logic;
+          gps_rec_in        : in    std_logic;
+          
+          
           posbank     :in std_logic;
           tmbank      :in std_logic;
+          
           gyro_fpga_time  :in std_logic_vector (gps_time_bytes_c*8-1 downto 0);
           accel_fpga_time :in std_logic_vector (gps_time_bytes_c*8-1 downto 0);
           mag_fpga_time :in std_logic_vector (gps_time_bytes_c*8-1 downto 0);
           temp_fpga_time :in std_logic_vector (gps_time_bytes_c*8-1 downto 0);
-          rtc_time  : in std_logic_vector (RTC_TIME_BYTES*8-1 downto 0);
-          flashblock_counter_rd_addr  : out   std_logic_vector(counter_address_size_g-1 downto 0);
-          flashblock_counter_wr_addr  : out   std_logic_vector(counter_address_size_g-1 downto 0);
+          
+          rtc_time  : in std_logic_vector (rtc_time_bytes_g*8-1 downto 0);
+          
+          flashblock_counter_rd_wr_addr  : out   std_logic_vector(
+                                              counter_address_size_g-1 downto 0); 
           flashblock_counter_rd_en    : out   std_logic;
           flashblock_counter_wr_en    : out   std_logic;
           flashblock_counter_clk      : out   std_logic;
-          flashblock_counter_lock     : out   std_logic;
-          flashblock_counter_data     : out   std_logic_vector(counter_data_size_g-1 downto 0);
-          counter_flashblock_data     : in    std_logic_vector(counter_data_size_g-1 downto 0);
+          flashblock_counter_lock     : out   std_logic;      
+          flashblock_counter_data     : out   std_logic_vector(
+                                              counter_data_size_g-1 downto 0);
+          counter_flashblock_data     : in    std_logic_vector(
+                                              counter_data_size_g-1 downto 0);
+          
           flashblock_sdram_2k_accumulated : out  std_logic;
-          dw_en : out  std_logic;
-          dw_amt_valid  : out  std_logic;
-          dw_amt_bytes  : out  std_logic_vector(natural(trunc(log2(real(SDRAM_INPUT_BUFFER_BYTES-1)))) downto 0);
-          force_wr_en : out  std_logic;
+          
+          mem_req_a_out           : out std_logic;  
+          mem_rec_a_in            : in std_logic;  
+          
+          fb_magram_clk_a_out     : out std_logic;
+          fb_magram_wr_en_a_out   : out std_logic;  
+          fb_magram_rd_en_a_out   : out std_logic;  
+          fb_magram_address_a_out : out std_logic_vector(natural(trunc(log2(real(
+                                      (magmem_buffer_bytes/magmem_buffer_num)-1)))) downto 0);
+          fb_magram_data_a_out    : out std_logic_vector(7 downto 0);
+          magram_fb_q_a_in        : in std_logic_vector(7 downto 0);
+          
+          
+          force_wr_en : out  std_logic;         
           sdram_empty : in  std_logic;
+          
           crit_event  : in  std_logic;
           blocks_past_crit : out std_logic_vector(7 downto 0)
-        ) ;
+
+
+      ) ;
+
       end component FlashBlock ;
+      
 
       --  Flash Block to GPS Memory communications signals.
 
@@ -2890,8 +3106,11 @@ begin
       signal fb_magmem_clk        : std_logic ;
       signal fb_magmem_wr_en      : std_logic ;
       signal fb_magmem_rd_en      : std_logic ;
-      signal fb_magmem_addr       : std_logic_vector (magmem_addrbits_c-1
-                                                      downto 0) ;
+      signal fb_magmem_addr       : std_logic_vector(natural(trunc(log2(
+                                    real((magmem_buffer_bytes/magmem_buffer_num)-1)
+                                    ))) downto 0);
+      -- signal fb_magmem_addr       : std_logic_vector (magmem_addrbits_c-1
+                                                      -- downto 0) ;
       signal fb_magmem_writeto    : std_logic_vector (magmem_databits_c-1
                                                       downto 0) ;
       signal fb_magmem_control    : std_logic_vector (magmem_iobits_c-1
@@ -2917,31 +3136,23 @@ begin
 
       flashblk : FlashBlock
         Generic Map (
-          FPGA_TIME_LENGTH_BYTES      => gps_time_bytes_c,
-          TIME_BYTES                  => gps_time_bytes_c,
-          EVENT_BYTES                 => eventcnt_bytes_c,
-          RTC_TIME_BYTES              => rtc_time_bytes_c,
-          NUM_MICS_ACTIVE             => 2,
+          fpga_time_length_bytes_g      => gps_time_bytes_c,
+          time_bytes_g                  => gps_time_bytes_c,
+          event_bytes_g                 => eventcnt_bytes_c,
+          rtc_time_bytes_g              => rtc_time_bytes_c,
+          num_mics_active_g             => 2,
           counter_data_size_g         => eventcnt_databits_c,
           counter_address_size_g      => eventcnt_addrbits_c,
           counters_g                  => eventcnt_events_c,
-          GPS_BUFFER_BYTES            => gpsmem_bytecnt_c,
-          IMU_AXIS_WORD_LENGTH_BYTES  => im_datalen_c,
-          SDRAM_INPUT_BUFFER_BYTES    => inmem_bytecnt_c,
-          AUDIO_WORD_BYTES            => audio_bytes_c
+          gps_buffer_bytes_g            => gpsmem_bytecnt_c,
+          imu_axis_word_length_bytes_g  => im_datalen_c,
+          sdram_input_buffer_bytes_g    => inmem_bytecnt_c,
+          audio_word_bytes_g            => 2
         )
         Port Map (
           clock_sys                   => spi_clk,
-          reset                       => reset,
-          magmem_req_out              =>
-                  magmem_requesters (magmemrq_flashblk_c),
-          magmem_rec_in               =>
-                  magmem_receivers  (magmemrq_flashblk_c),
-          magmem_wr_en_out            => fb_magmem_wr_en,
-          magmem_rd_en_out            => fb_magmem_rd_en,
-          magmem_address_out          => fb_magmem_addr,
-          magmem_data_out             => fb_magmem_writeto,
-          magmem_sd_q_in              => magmemsrc_readfrom,
+          rst_n                       => not reset,
+          clk_enable                  => '1',      
           log_status                  => SDLogging_status,
           current_fpga_time           => reset_time_bytes,
           log_events                  => eventcnt_changed,
@@ -2960,7 +3171,7 @@ begin
           mag_data_z                  => im_mag_data_z,
           temp_data                   => im_temp_data,
           audio_data_rdy              => mic_left_sample_clk,
-          audio_data                  => audio_word,
+          audio_data                  => mic_left_sample,
           flashblock_inbuf_data       => sdram_inwr_data,
           flashblock_inbuf_wr_en      => sdram_inwr_en,
           flashblock_inbuf_clk        => sdram_inwr_clk,
@@ -2969,6 +3180,8 @@ begin
           flashblock_gpsbuf_rd_en     => fb_gpsmem_rd_en,
           flashblock_gpsbuf_clk       => fb_gpsmem_clk,
           gpsbuf_flashblock_data      => gpsmemdst_readfrom,
+          gps_req_out                 => gpsmem_requesters (gpsmemrq_flashblk_c),
+          gps_rec_in                  => magmem_receivers (gpsmemrq_flashblk_c),
           posbank                     =>
                             gps_databanks (msg_ubx_nav_sol_ramblock_c),
           tmbank                      =>
@@ -2978,7 +3191,7 @@ begin
           mag_fpga_time               => im_mag_time,
           temp_fpga_time              => im_temp_time,
           rtc_time                    => rtc_time,
-          flashblock_counter_rd_addr  => evmemdst_addr,
+          flashblock_counter_rd_wr_addr  => evmemdst_addr,
           flashblock_counter_rd_en    => evmemdst_read_en,
           flashblock_counter_wr_en    => evmemdst_write_en,
           flashblock_counter_clk      => evmemdst_clk,
@@ -2986,13 +3199,24 @@ begin
           flashblock_counter_data     => evmemdst_writeto,
           counter_flashblock_data     => evmemdst_readfrom,
           flashblock_sdram_2k_accumulated   => sdram_inready,
+          mem_req_a_out              =>
+                    magmem_requesters (magmemrq_flashblk_c),
+          mem_rec_a_in               =>
+                  magmem_receivers  (magmemrq_flashblk_c),
+          fb_magram_clk_a_out         =>  fb_magmem_clk,
+          fb_magram_wr_en_a_out            => fb_magmem_wr_en,
+          fb_magram_rd_en_a_out            => fb_magmem_rd_en,
+          fb_magram_address_a_out          => fb_magmem_addr,
+          fb_magram_data_a_out             => fb_magmem_writeto,
+          magram_fb_q_a_in              => magmemsrc_readfrom,
+          
           force_wr_en                 => sdram_forceout,
           sdram_empty                 => sdram_empty,
           crit_event                  => SDLogging_flush,
           blocks_past_crit            => sdcard_critpast
         ) ;
 
-      gpsmem_requesters (gpsmemrq_flashblk_c) <= '1' ;
+      --gpsmem_requesters (gpsmemrq_flashblk_c) <= '1' ;
 
       fb_gpsmem_control    <= fb_gpsmem_clk       &
                               gpsmem_wren_none_c  & fb_gpsmem_rd_en &
@@ -3001,11 +3225,12 @@ begin
       set2D_element (gpsmemrq_flashblk_c, fb_gpsmem_control,
                      gpsmem_input_tbl) ;
 
-      fb_magmem_clk        <= spi_gated_inv_clk ;
+      --fb_magmem_clk        <= spi_gated_inv_clk ;
 
       fb_magmem_control    <= fb_magmem_clk     &
                               fb_magmem_wr_en   & fb_magmem_rd_en &
-                              fb_magmem_writeto & fb_magmem_addr ;
+                              fb_magmem_writeto & mm_buffno & 
+                              fb_magmem_addr ;
 
       set2D_element (magmemrq_flashblk_c, fb_magmem_control,
                      magmem_input_tbl) ;
