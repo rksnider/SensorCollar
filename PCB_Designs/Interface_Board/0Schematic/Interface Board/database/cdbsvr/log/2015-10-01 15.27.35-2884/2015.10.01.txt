@@ -220,3 +220,37 @@
 [2015.10.01 15:28:29] [0000m.54s.706ms] [1] SC[345]: UnRegistered sub-client [BlockCacheDxD:322031584] with ID [37] for session ID [345] host [bz-ece-cb508-01] user [s58p233] process ID [5520]
 [2015.10.01 15:28:29] [0000m.54s.706ms] [1] SC[345]: UnRegistered sub-client [ObjectHolder_321632096] with ID [36] for session ID [345] host [bz-ece-cb508-01] user [s58p233] process ID [5520]
 [2015.10.01 15:28:29] [0000m.54s.706ms] [1] SC[345]: UnRegistered sub-client [IcdbNetProcessorSubClientDxD:321738224] with ID [39] for session ID [345] host [bz-ece-cb508-01] user [s58p233] process ID [5520]
+[2015.10.01 15:30:25] [0002m.50s.930ms] [1] SC[345]: UnRegistered sub-client [SelectionHolder] with ID [4] for session ID [345] host [bz-ece-cb508-01] user [s58p233] process ID [5520]
+[2015.10.01 15:30:25] [0002m.50s.930ms] [1] SC[345]: UnRegistered sub-client [SheetConnectorsCacheDxD:1443734858] with ID [14] for session ID [345] host [bz-ece-cb508-01] user [s58p233] process ID [5520]
+[2015.10.01 15:30:25] [0002m.50s.930ms] [1] SC[345]: UnRegistered sub-client [NetsNamesCollectorDxD:1443734858] with ID [15] for session ID [345] host [bz-ece-cb508-01] user [s58p233] process ID [5520]
+[2015.10.01 15:30:25] [0002m.50s.930ms] [1] SC[345]: UnRegistered sub-client [TransactionRollbackSubClient] with ID [2] for session ID [345] host [bz-ece-cb508-01] user [s58p233] process ID [5520]
+[2015.10.01 15:30:25] [0002m.50s.930ms] [1] SC[345]: UnRegistered sub-client [DxD] with ID [1] for session ID [345] host [bz-ece-cb508-01] user [s58p233] process ID [5520]
+[2015.10.01 15:30:25] [0002m.50s.960ms] [1] SC[345]: UnRegistered sub-client [xprob] with ID [3] for session ID [345] host [bz-ece-cb508-01] user [s58p233] process ID [5520]
+[2015.10.01 15:30:25] [0002m.50s.960ms] [1] SC[345]: UnRegistered sub-client [SymbolEditor] with ID [5] for session ID [345] host [bz-ece-cb508-01] user [s58p233] process ID [5520]
+[2015.10.01 15:30:26] [0002m.50s.990ms] [1] SC[345]: UnRegistered sub-client [Navigator] with ID [7] for session ID [345] host [bz-ece-cb508-01] user [s58p233] process ID [5520]
+[2015.10.01 15:30:26] [0002m.51s.000ms] [1] SC[345]: UnRegistered sub-client [OutputWindow] with ID [8] for session ID [345] host [bz-ece-cb508-01] user [s58p233] process ID [5520]
+[2015.10.01 15:30:26] [0002m.51s.010ms] [1] SC[345]: UnRegistered sub-client [DxDbSearch] with ID [16] for session ID [345] host [bz-ece-cb508-01] user [s58p233] process ID [5520]
+[2015.10.01 15:30:26] [0002m.51s.010ms] [1] SC[345]: UnRegistered sub-client [SAE] with ID [10] for session ID [345] host [bz-ece-cb508-01] user [s58p233] process ID [5520]
+[2015.10.01 15:30:26] [0002m.51s.050ms] [1] SC[345]: UnRegistered sub-client [CCZAddin] with ID [12] for session ID [345] host [bz-ece-cb508-01] user [s58p233] process ID [5520]
+[2015.10.01 15:30:26] [0002m.51s.050ms] [1] SC[345]: UnRegistered sub-client [DxThumbnails] with ID [13] for session ID [345] host [bz-ece-cb508-01] user [s58p233] process ID [5520]
+[2015.10.01 15:30:26] [0002m.51s.160ms] [1] SC[345]: UnRegistered sub-client [DxConstraints] with ID [11] for session ID [345] host [bz-ece-cb508-01] user [s58p233] process ID [5520]
+[2015.10.01 15:30:29] [0002m.54s.680ms] [1] SC[345]: UnRegistered sub-client [PlaceDevice] with ID [9] for session ID [345] host [bz-ece-cb508-01] user [s58p233] process ID [5520]
+[2015.10.01 15:30:29] [0002m.54s.700ms] [1] SC[345]: UnRegistered sub-client [HdlProject] with ID [6] for session ID [345] host [bz-ece-cb508-01] user [s58p233] process ID [5520]
+[2015.10.01 15:30:29] [0002m.54s.720ms] [1] CMT: Removed client [345]
+[2015.10.01 15:30:29] [0002m.54s.720ms] [1] CMT: There are no clients left - waiting [1 seconds]
+[2015.10.01 15:30:31] [0002m.56s.020ms] [0] CMT: Starting server auto-close
+[2015.10.01 15:30:31] [0002m.56s.080ms] [0] S: Closing server
+[2015.10.01 15:30:31] [0002m.56s.150ms] [0] iCDB Server PI: Closing plugins
+[2015.10.01 15:30:31] [0002m.56s.150ms] [0] iCDB Server PI: Plugins closed
+[2015.10.01 15:30:31] [0002m.56s.150ms] [0] iCDB Server PI: Unloading database
+[2015.10.01 15:30:31] [0002m.56s.150ms] [0] iCDB Server PI: Saving storage
+[2015.10.01 15:30:31] [0002m.56s.150ms] [0] iCDB Server PI: Closing database
+[2015.10.01 15:30:31] [0002m.56s.210ms] [1] iCDB Server PI: Stats: Database defragmentation: max[1] avg[1] holes[0%] data[97%]
+[2015.10.01 15:30:31] [0002m.56s.210ms] [1] iCDB Server PI: Stats: Database file size [87928 (85.9 kB)]
+[2015.10.01 15:30:31] [0002m.56s.250ms] [0] iCDB Server PI: Database closed
+[2015.10.01 15:30:31] [0002m.56s.250ms] [1] iCDB Server PI: Stats: Total iCDB execution time: [3304] ticks
+[2015.10.01 15:30:31] [0002m.56s.250ms] [1] iCDB Server PI: Stats: Total iCDB execution time: [1130] microseconds
+[2015.10.01 15:30:31] [0002m.56s.250ms] [1] iCDB Server PI: Stats: Total iCDB commands count: [22]
+[2015.10.01 15:30:31] [0002m.56s.250ms] [1] iCDB Server PI: Stats: Average iCDB speed:        [19459] commands per second
+[2015.10.01 15:30:31] [0002m.56s.250ms] [0] Single file [C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board\database\icdb.dat] closed with size [87928 (85.9 kB)]
+[2015.10.01 15:30:31] [0002m.56s.420ms] [0] S: STOP
