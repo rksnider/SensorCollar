@@ -67,7 +67,8 @@ Set Standard Datum.  (CFG-DAT)
   scale         = 0.0
 
 Information Message Configuration.  (CFG-INF)
-Repeated 5 times for ports 0 (IIC), 1 (UART1), 2 (UART2), 3 (USB), 4 (SPI)
+Five infMsgMask bytes each for a different I/O port:
+        0 (IIC), 1 (UART1), 2 (UART2), 3 (USB), 4 (SPI)
   protocolID    = 1
   reserved0
   reseverd1
