@@ -1,4 +1,4 @@
-------------------------------------------------------------------------------
+---------------------------------
 --
 --! @file       $File$
 --! @brief      Initialize and Control the ST Microelectronics LSM9DS1 IMU
@@ -27,12 +27,12 @@
 --  Bozeman, MT 59717
 --  christopher.casebee1@msu.montana.edu
 --
-------------------------------------------------------------------------------
+---------------------------------
 
 
 
 
-------------------------------------------------------------------------------
+---------------------------------
 --
 --! @brief      Initialize and Control the ST Microelectronics LSM9DS1 IMU.
 --! @details    
@@ -91,7 +91,7 @@
 --!
 --!  
 --
-------------------------------------------------------------------------------
+---------------------------------
 
 
 
@@ -128,10 +128,8 @@
 -- The interrupt pins on the IMU are programmable. The state machine has been programmed
 -- to recognize INT_1_A_G as gyroscope data ready and INT_2_A_G as accelerometer data rdy. 
 
---The DRDY_M is negative logic by default. This requires an inversion on the
---upper port map of this entity. INT1_A_G and INT2_A_G are positive logic
---by default. They must be enabled on startup and may also be programmed to
---negative logic, but are not currently. 
+--All three data interrupts. Mag/XL/G are all positive logic. They are 
+--synchronized with one flip-flop before being read. 
 
 
 library IEEE ;                  --! Use standard library.
@@ -496,7 +494,7 @@ spi_commands_slave_XL_G : spi_commands
 	);
 
 
-----------------------------------------------------------------------------
+---------------------------------
 --
 --! @brief    Interact with the LSM9DS1 IMU. Make use of SPI abstractions.
 --!          
@@ -508,7 +506,7 @@ spi_commands_slave_XL_G : spi_commands
 --! @param    clk             Take action on positive edge.
 --! @param    rst_n           rst_n to initial state.
 --
-----------------------------------------------------------------------------
+---------------------------------
 
 
 
@@ -712,17 +710,17 @@ master_slave_data_rdy_spi_signal <= '0';
       end if;
       
       
-      when IMU_STATE_INIT_WAIT_M =>
+    when IMU_STATE_INIT_WAIT_M =>
       
       --Wait for a register to complete going out before continuing. 
       --This is necessary for cs_n multiplexing.
       --This is necessary as no spi_command ack's come back for command only.
-     -- if (command_done_spi_signal_follower /= command_done_spi_signal) then
-       -- command_done_spi_signal_follower <= command_done_spi_signal;
-        if(command_done_spi_signal = '1') then
-          cur_imu_state <= IMU_STATE_INIT_FETCH_M;
-        end if;
-      --end if;
+       --if (command_done_spi_signal_follower /= command_done_spi_signal) then
+          --command_done_spi_signal_follower <= command_done_spi_signal;
+          if(command_done_spi_signal = '1') then
+            cur_imu_state <= IMU_STATE_INIT_FETCH_M;
+          end if;
+        --end if;
       
       
       
@@ -898,19 +896,19 @@ end process LSM9DS1_state_machine ;
 
 
 
- ----------------------------------------------------------------------------
-  --
-  --! @brief    The output logic for the cur_imu_state state machine.
-  --! @details  Signals associated with certain states are set/deset here. 
-  --!           Signals of importance include rd_en on the 2port memory
-  --!           and the SPI one to many mux select bit. 
+---------------------------------
+--
+--! @brief    The output logic for the cur_imu_state state machine.
+--! @details  Signals associated with certain states are set/deset here. 
+--!           Signals of importance include rd_en on the 2port memory
+--!           and the SPI one to many mux select bit. 
 
-  
-  --! @param    clk       Take action on positive edge.
-  --! @param    rst_n           rst_n to initial state.
-  --!
-  --!          
-  ----------------------------------------------------------------------------
+
+--! @param    clk       Take action on positive edge.
+--! @param    rst_n           rst_n to initial state.
+--!
+--!          
+---------------------------------
 
 imu_machine_output:  process (cur_imu_state)
 begin
@@ -993,7 +991,7 @@ end case;
 end process imu_machine_output ;
 
 
-----------------------------------------------------------------------------
+---------------------------------
 --!
 --! @brief      data_rdy_catch
 --!             
@@ -1006,7 +1004,7 @@ end process imu_machine_output ;
 --! @param    clk       Take action on positive edge.
 --! @param    rst_n           rst_n to initial state.
 --!
-----------------------------------------------------------------------------
+---------------------------------
 
 data_rdy_catch: process (clk, rst_n)
 begin
@@ -1030,7 +1028,7 @@ gyro_processed_follower <= '0';
 accel_processed_follower <= '0';
 DRDY_M_processed_follower   <= '0';
 
-command_done_spi_signal_follower  <= '0';
+
 
 INT1_A_G_sync   <= '0';
 INT2_A_G_sync   <= '0';

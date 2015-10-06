@@ -213,10 +213,12 @@ begin
 
   --  Determine if the entity is busy.
 
-  busy_out      <= '1' when ((process_busy   = '1')                   or
-                             (control_in    /= control_in_follower)   or
-                             (status_chg_in /= status_chg_in_follower))
-                       else '0' ;
+  busy_out      <= '1'; 
+  
+  -- when ((process_busy   = '1')                   or
+                             -- (control_in    /= control_in_follower)   or
+                             -- (status_chg_in /= status_chg_in_follower))
+                       -- else '0' ;
 
 
   --------------------------------------------------------------------------
