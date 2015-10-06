@@ -62,7 +62,6 @@ USE WORK.COMPILE_START_TIME_PKG.ALL ;
 --!
 --! @param      timezone_g        Number of seconds east of the prime
 --!                               meridinan.  (MST = 7 hours)
---! @param      use_dst_g         Daylight Savings Time (DST) is used.
 --! @param      dst_start_mth_g   Month DST starts in.  (March)
 --! @param      dst_start_day_g   Earliest day DST can start on.  (Second
 --!                               Sunday non-leap year)
@@ -95,7 +94,6 @@ USE WORK.COMPILE_START_TIME_PKG.ALL ;
 entity FormatSeconds is
   Generic (
     timezone_g        : integer   := -7 * 60 * 60 ;
-    use_dst_g         : std_logic := '1' ;
     dst_start_mth_g   : natural   :=  3 ;
     dst_start_day_g   : natural   :=  8 ;
     dst_start_hr_g    : natural   :=  2 ;
@@ -465,7 +463,7 @@ begin
 
             to_datetime.indst   <= '0' ;
 
-            if (use_dst_g = '1') then
+            if (dst_seconds_g /= 0) then
               if ((dst_start_mth_g < dst_end_mth_g      and
                    (to_seconds    >= to_dst_start   and
                     to_seconds    <= to_dst_end))           or
@@ -721,7 +719,7 @@ begin
             --  hemisphere (starts and ends in the same year) and southern
             --  hemisphere (starts in one year and ends in the next).
 
-            if (use_dst_g = '1') then
+            if (dst_seconds_g /= 0) then
               dst_start_passed_v  :=
                     (from_datetime.month          > dst_start_mth_g   or
                      (from_datetime.month         = dst_start_mth_g and
@@ -792,7 +790,8 @@ begin
 
           when dtst_fourmin_e       =>
             from_counter          <=
-                      SHIFT_RIGHT (from_datetime.minute, 2) ;
+                      RESIZE (SHIFT_RIGHT (from_datetime.minute, 2),
+                              from_counter'length) ;
             from_time_diff_index  <=
                       TO_UNSIGNED (fourmin_times_start_c,
                                    from_time_diff_index'length) ;

@@ -68,16 +68,33 @@ USE WORK.MSG_UBX_TIM_TM2_PKG.ALL ;  --  Navagation Solution message.
 --! @param      clk_freq_g          Frequency of the clock in Hertz.
 --! @param      gpsmem_addrbits_g   Number of address bits to read GPS mem.
 --! @param      gpsmem_databits_g   Number of data bits returned by GPS mem.
+--! @param      timezone_g          Number of seconds east of the prime
+--!                                 meridinan.  (MST = 7 hours)
+--! @param      dst_start_mth_g     Month DST starts in.  (March)
+--! @param      dst_start_day_g     Earliest day DST can start on.  (Second
+--!                                 Sunday non-leap year)
+--! @param      dst_start_hr_g      Hour into day DST starts at.  (2:00 AM)
+--! @param      dst_start_min_g     Minutes into day DST starts.
+--! @param      dst_end_mth_g       Month DST ends in.  (November)
+--! @param      dst_end_day_g       Earliest day DST can end on.  (First
+--!                                 Sunday non-leap year)
+--! @param      dst_end_hr_g        Hour into day DST ends at.  (2:00 AM)
+--! @param      dst_end_min_g       Minutes into day DST ends.
+--! @param      dst_seconds_g       Number of seconds to add when DST
+--!                                 starts.  Zero value means no DST used.
 --! @param      reset               Reset the module.
 --! @param      startup_time_out    Running time in GPS time format since
 --!                                 the system started.  This value is
 --!                                 continuously updated and does not jump.
+--! @param      startup_bytes_out   Running time since system started in
+--!                                 bytes.
 --! @param      gps_time_out        Running GPS time in GPS time format
 --!                                 calculated from Timemark info stored in
 --!                                 GPS mem or Real Time Clock info read
 --!                                 from the RTC.  Note that this value can
 --!                                 jump as new information is obtained from
 --!                                 the GPS.
+--! @param      gps_bytes_out       The running GPS time in bytes.
 --! @param      rtc_sec_in          RTC time in seconds to load into GPS
 --!                                 time.
 --! @param      rtc_sec_load_in     Load the new RTC seconds into the GPS
@@ -111,14 +128,28 @@ entity SystemTime is
   Generic (
     clk_freq_g          : natural := 50e3 ;
     gpsmem_addrbits_g   : natural := 10 ;
-    gpsmem_databits_g   : natural :=  8
+    gpsmem_databits_g   : natural :=  8 ;
+    timezone_g          : integer := -7 * 60 * 60 ;
+    dst_start_mth_g     : natural :=  3 ;
+    dst_start_day_g     : natural :=  8 ;
+    dst_start_hr_g      : natural :=  2 ;
+    dst_start_min_g     : natural :=  0 ;
+    dst_end_mth_g       : natural := 11 ;
+    dst_end_day_g       : natural :=  1 ;
+    dst_end_hr_g        : natural :=  2 ;
+    dst_end_min_g       : natural :=  0 ;
+    dst_seconds_g       : natural := 60 * 60
   ) ;
   Port (
     reset               : in    std_logic ;
     clk                 : in    std_logic ;
     startup_time_out    : out   std_logic_vector (gps_time_bits_c-1
                                                   downto 0) ;
+    startup_bytes_out   : out   std_logic_vector (gps_time_bytes_c*8-1
+                                                  downto 0) ;
     gps_time_out        : out   std_logic_vector (gps_time_bits_c-1
+                                                  downto 0) ;
+    gps_bytes_out       : out   std_logic_vector (gps_time_bytes_c*8-1
                                                   downto 0) ;
 
     rtc_sec_in          : in    unsigned (epoch70_secbits_c-1 downto 0) ;
@@ -159,6 +190,22 @@ architecture rtl of SystemTime is
   signal alarm_time           : unsigned (epoch70_secbits_c-1 downto 0) ;
   signal date_time            : std_logic_vector (dt_totalbits_c-1
                                                   downto 0) ;
+
+  --  Map GPS times to standard logic vector of bytes and one of bytes.
+
+  signal startup_time_bts   : std_logic_vector (gps_time_bytes_c*8-1
+                                                downto 0) :=
+                                                    (others => '0') ;
+  alias  startup_time_slv   : std_logic_vector (gps_time_bits_c-1
+                                                downto 0) is
+        startup_time_bts (gps_time_bits_c-1 downto 0) ;
+
+  signal gps_timerec_bts    : std_logic_vector (gps_time_bytes_c*8-1
+                                                downto 0) :=
+                                                    (others => '0') ;
+  alias  gps_timerec_slv    : std_logic_vector (gps_time_bits_c-1
+                                                downto 0) is
+        gps_timerec_bts (gps_time_bits_c-1 downto 0) ;
 
   --  Bits of addition that can be carried out in specified times.
   --  These numbers are underestimated in order for connection times to and
@@ -453,7 +500,6 @@ architecture rtl of SystemTime is
   component FormatSeconds is
     Generic (
       timezone_g        : integer   := -7 * 60 * 60 ;
-      use_dst_g         : std_logic := '1' ;
       dst_start_mth_g   : natural   :=  3 ;
       dst_start_day_g   : natural   :=  8 ;
       dst_start_hr_g    : natural   :=  2 ;
@@ -498,7 +544,9 @@ begin
   --  Startup Time
   --------------------------------------------------------------------------
 
-  startup_time_out          <= TO_STD_LOGIC_VECTOR (startup_time) ;
+  startup_time_slv          <= TO_STD_LOGIC_VECTOR (startup_time) ;
+  startup_time_out          <= startup_time_slv ;
+  startup_bytes_out         <= startup_time_bts ;
 
   nanosec_counter : FastConstCounter
     Generic Map
@@ -551,7 +599,9 @@ begin
   --  GPS Time
   --------------------------------------------------------------------------
 
-  gps_time_out              <= TO_STD_LOGIC_VECTOR (gps_timerec) ;
+  gps_timerec_slv           <= TO_STD_LOGIC_VECTOR (gps_timerec) ;
+  gps_time_out              <= gps_timerec_slv ;
+  gps_bytes_out             <= gps_timerec_bts ;
 
   gps_timerec_restart       <= reset or gps_timerec_load ;
 
@@ -735,17 +785,16 @@ begin
 
   dt_cnv : FormatSeconds
     Generic Map (
-      timezone_g        => -7 * 60 * 60,  -- Mountain Standard Time
-      use_dst_g         => '1',
-      dst_start_mth_g   => 3,       -- Second Sunday in March, 2:00 AM.
-      dst_start_day_g   => 8,
-      dst_start_hr_g    => 2,
-      dst_start_min_g   => 0,
-      dst_end_mth_g     => 11,      -- First Sunday in Novermber, 2:00 AM.
-      dst_end_day_g     => 1,
-      dst_end_hr_g      => 2,
-      dst_end_min_g     => 0,
-      dst_seconds_g     => 60 * 60  --  One hour forward.
+      timezone_g        => timezone_g,
+      dst_start_mth_g   => dst_start_mth_g,
+      dst_start_day_g   => dst_start_day_g,
+      dst_start_hr_g    => dst_start_hr_g,
+      dst_start_min_g   => dst_start_min_g,
+      dst_end_mth_g     => dst_end_mth_g,
+      dst_end_day_g     => dst_end_day_g,
+      dst_end_hr_g      => dst_end_hr_g,
+      dst_end_min_g     => dst_end_min_g,
+      dst_seconds_g     => dst_seconds_g
     )
     Port Map (
       reset             => reset,
@@ -796,7 +845,7 @@ begin
   rtc_sec_set_out             <= gps_seconds_load ;
 
 
-  upd_sec : process (rtc_seconds_load, milli_clk)
+  upd_sec : process (rtc_seconds_load, gps_seconds, milli_clk)
   begin
     if (rtc_seconds_load = '1') then
       rtc_seconds             <= gps_seconds ;
