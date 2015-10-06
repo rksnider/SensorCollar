@@ -42,9 +42,11 @@ library GENERAL ;               --! General libraries
 use GENERAL.UTILITIES_PKG.ALL ;
 
 use GENERAL.GPS_CLOCK_PKG.ALL ;
+use GENERAL.FORMATSECONDS_PKG.ALL ;
 
 library WORK ;                  --! Local Library
 use WORK.COLLAR_CONTROL_PKG.ALL ;
+use WORK.COLLAR_PARAMETERS_PKG.ALL ;
 use WORK.COLLAR_EVENTS_PKG.ALL ;
 use WORK.SHARED_SDC_VALUES_PKG.ALL ;
 use WORK.PC_STATUSCONTROL_PKG.ALL ;
@@ -111,7 +113,6 @@ use WORK.MSG_UBX_TIM_TM2_PKG.ALL ;
 --! @param      gps_timemark_out  Time mark generator line to the GPS
 --!                               external interrupt.
 --! @param      ms_clk          Motion sensor SPI Clock.
---! @param      ms_cs_out       Motion sensor SPI chip select.
 --! @param      ms_mosi_out     Motion sensor SPI Master Out/Slave In.
 --! @param      ms_miso_in      Motion sensor SPI Master In/Slave Out.
 --! @param      ms_int_in       Motion sensor Interrupt.
@@ -191,7 +192,6 @@ entity Collar is
     gps_timepulse_io      : inout std_logic ;
 
     ms_clk                : out   std_logic ;
-    ms_cs_out             : out   std_logic ;
     ms_mosi_out           : out   std_logic ;
     --ms_miso_in            : in    std_logic ;
     --ms_int_in             : in    std_logic ;
@@ -230,12 +230,26 @@ architecture structural of Collar is
   constant reset_button_c     : natural := 0 ;
   constant sd_start_button_c  : natural := 1 ;
 
-  --  Reset clock signals.
+  --  Clock and time signals.
 
-  signal reset_time_bytes   : std_logic_vector (gps_time_bytes_c*8-1
-                                                downto 0) ;
-  signal reset_time         : std_logic_vector (gps_time_bits_c-1
-                                                downto 0) ;
+  signal reset_time_bytes     : std_logic_vector (gps_time_bytes_c*8-1
+                                                  downto 0) ;
+  signal reset_time           : std_logic_vector (gps_time_bits_c-1
+                                                  downto 0) ;
+  signal gps_time_bytes       : std_logic_vector (gps_time_bytes_c*8-1
+                                                  downto 0) ;
+  signal gps_time             : std_logic_vector (gps_time_bits_c-1
+                                                  downto 0) ;
+  signal rtc_seconds          : unsigned (epoch70_secbits_c-1 downto 0) ;
+  signal rtc_seconds_load     : std_logic ;
+  signal rtc_running_seconds  : unsigned (epoch70_secbits_c-1 downto 0) ;
+  signal rtc_running_set      : std_logic ;
+  signal running_datetime     : std_logic_vector (dt_totalbits_c-1
+                                                  downto 0) ;
+  signal sunrise_today        : unsigned (epoch70_secbits_c-1 downto 0) ;
+  signal sunset_today         : unsigned (epoch70_secbits_c-1 downto 0) ;
+  signal sunrise_tomorrow     : unsigned (epoch70_secbits_c-1 downto 0) ;
+  signal sunset_tomorrow      : unsigned (epoch70_secbits_c-1 downto 0) ;
 
   --  Reset information.  The power up signal defaults to zero.
 
@@ -255,6 +269,16 @@ architecture structural of Collar is
   signal reset_pushed       : std_logic := '0' ;
   signal pb_counter         : unsigned (const_bits (pb_count_c)-1
                                         downto 0) := (others => '0') ;
+
+  --  Allow JTAG to determine the location code for this executable.
+
+  signal LocationCode       :
+            unsigned (const_bits (CP_LocationTbl_c'length-1)-1 downto 0) :=
+                TO_UNSIGNED (CP_Loc_code_c,
+                             const_bits (CP_LocationTbl_c'length-1)) ;
+
+  attribute noprune                   : boolean ;
+  attribute noprune of LocationCode   : signal is true ;
 
   --  SPI clocks and gated Master clock.
 
@@ -358,7 +382,7 @@ architecture structural of Collar is
 
   --  Shared GPS Memory constants and signals.
 
-  constant gpsmem_bytecnt_c     : natural := 512 ;
+  constant gpsmem_bytecnt_c     : natural := 1024 ;
   constant gpsmem_databits_c    : natural := 8 ;
   constant gpsmem_elementcnt_c  : natural := 8 * gpsmem_bytecnt_c /
                                                  gpsmem_databits_c ;
@@ -379,21 +403,23 @@ architecture structural of Collar is
 
   --  Memory requestors.
 
-  constant gpsmemrq_flashblk_c  : natural := 0 ;
-  constant gpsmemrq_rtc_c       : natural := gpsmemrq_flashblk_c    + 1 ;
+  constant gpsmemrq_flashblk_c    : natural := 0 ;
+  constant gpsmemrq_systemtime_c  : natural := gpsmemrq_flashblk_c    + 1 ;
 
-  constant gpsmemrq_count_c     : natural := gpsmemrq_rtc_c         + 1 ;
+  constant gpsmemrq_count_c       : natural := gpsmemrq_systemtime_c  + 1 ;
 
-  signal gpsmem_requesters      : std_logic_vector (gpsmemrq_count_c-1
-                                                    downto 0) ;
-  signal gpsmem_receivers       : std_logic_vector (gpsmemrq_count_c-1
-                                                    downto 0) ;
+  signal gpsmem_requesters        : std_logic_vector (gpsmemrq_count_c-1
+                                                      downto 0) ;
+  signal gpsmem_receivers         : std_logic_vector (gpsmemrq_count_c-1
+                                                      downto 0) ;
 
-  signal gpsmem_input_tbl       : std_logic_2D (gpsmemrq_count_c-1 downto 0,
-                                                gpsmem_iobits_c-1 downto 0) ;
+  signal gpsmem_input_tbl         : std_logic_2D (gpsmemrq_count_c-1
+                                                  downto 0,
+                                                  gpsmem_iobits_c-1
+                                                  downto 0) ;
 
-  signal gpsmemdst_readfrom     : std_logic_vector (gpsmem_databits_c-1
-                                                    downto 0) ;
+  signal gpsmemdst_readfrom       : std_logic_vector (gpsmem_databits_c-1
+                                                      downto 0) ;
 
   --------------------------------------------------------------------------
   --  Shared Magnetic Memory constants and signals.
@@ -631,8 +657,8 @@ architecture structural of Collar is
 
   --  GPS dual port RAM communication signals.
 
-  constant gpsmemsrc_addrbits_c : natural := 9 ;
-  constant gpsmemsrc_databits_c : natural := 8 ;
+  constant gpsmemsrc_addrbits_c : natural := gpsmem_addrbits_c ;
+  constant gpsmemsrc_databits_c : natural := gpsmem_databits_c ;
 
   signal gpsmemsrc_addr         : std_logic_vector (gpsmemsrc_addrbits_c-1
                                                     downto 0) ;
@@ -723,11 +749,8 @@ architecture structural of Collar is
   --  Real-time Clock constants and signals.
   --------------------------------------------------------------------------
 
-  constant rtc_time_bytes_c   : natural := 4 ;
+  constant rtc_time_bytes_c   : natural := epoch70_secbits_c / 8 ;
 
-  signal rtc_time             : std_logic_vector (rtc_time_bytes_c*8-1
-                                                  downto 0) :=
-                                                      (others => '0') ;
 
   --------------------------------------------------------------------------
   --  Constants and signals to control logging of information to the SDCard.
@@ -745,18 +768,17 @@ architecture structural of Collar is
 
   signal SDLogging_status       : std_logic := '0' ;
   signal SDLogging_flush        : std_logic := '0' ;
-  
-  
-  component Startup is
 
+
+  component Startup is
     Port (
       clk                 : in    std_logic ;
       rst_n               : in    std_logic ;
-      
+
       pc_control_reg_out  : out std_logic_vector (ControlSignalsCnt_c-1
-                                            downto 0);                                                 
+                                            downto 0);
       pc_status_set_in        : in std_logic;
-      sd_contr_start_out        : out  std_logic ;       
+      sd_contr_start_out        : out  std_logic ;
       sd_contr_done_in          : in  std_logic ;
       sdram_start_out           : out  std_logic ;
       sdram_done_in             : in  std_logic ;
@@ -767,32 +789,23 @@ architecture structural of Collar is
       mag_start_out             : out   std_logic ;
       mag_done_in               : in    std_logic ;
       gps_start_out             : out   std_logic ;
-      gps_done_in               : in    std_logic 
-
+      gps_done_in               : in    std_logic
     ) ;
   end component Startup;
 
-
-  
-  
-  
-
 begin
-
 
   --------------------------------------------------------------------------
   --  Startup Machine
   --  System startup sequencing and setting of the control register.
   --------------------------------------------------------------------------
 
-  
   i_startup_0 : Startup
 
     Port Map(
       clk                 => spi_clk,
       rst_n               => not reset,
-      
-      pc_control_reg_out  =>  PC_ControlReg,                                                
+      pc_control_reg_out  =>  PC_ControlReg,
       pc_status_set_in             => PC_StatusSet,
       sd_contr_start_out        => sdcard_start,
       sd_contr_done_in          => '1',
@@ -806,9 +819,7 @@ begin
       mag_done_in               => '1',
       --gps_start_out             : out   std_logic ;
       gps_done_in               => '1'
-
     ) ;
-
 
   --------------------------------------------------------------------------
   --  SPI clock.
@@ -864,35 +875,172 @@ begin
 
 
   --------------------------------------------------------------------------
-  --  Time since reset clock.
+  --  System Time clocks.
   --------------------------------------------------------------------------
 
   use_StrClk:
     if (Collar_Control_useStrClk_c = '1') generate
 
-      component StartupClock is
+      component SystemTime is
         Generic (
-          clk_freq_g            : natural := 50e6
+          clk_freq_g          : natural := 50e3 ;
+          gpsmem_addrbits_g   : natural := 10 ;
+          gpsmem_databits_g   : natural :=  8 ;
+          timezone_g          : integer := -7 * 60 * 60 ;
+          dst_start_mth_g     : natural :=  3 ;
+          dst_start_day_g     : natural :=  8 ;
+          dst_start_hr_g      : natural :=  2 ;
+          dst_start_min_g     : natural :=  0 ;
+          dst_end_mth_g       : natural := 11 ;
+          dst_end_day_g       : natural :=  1 ;
+          dst_end_hr_g        : natural :=  2 ;
+          dst_end_min_g       : natural :=  0 ;
+          dst_seconds_g       : natural := 60 * 60
         ) ;
         Port (
-          clk                   : in    std_logic ;
-          time_since_reset_out  : out   std_logic_vector (gps_time_bits_c-1
-                                                          downto 0) ;
-          time_bytes_out        : out   std_logic_vector (gps_time_bytes_c*8-1
-                                                          downto 0)
+          reset               : in    std_logic ;
+          clk                 : in    std_logic ;
+          startup_time_out    : out   std_logic_vector (gps_time_bits_c-1
+                                                        downto 0) ;
+          startup_bytes_out   : out   std_logic_vector (gps_time_bytes_c*8-1
+                                                        downto 0) ;
+          gps_time_out        : out   std_logic_vector (gps_time_bits_c-1
+                                                        downto 0) ;
+          gps_bytes_out       : out   std_logic_vector (gps_time_bytes_c*8-1
+                                                        downto 0) ;
+
+          rtc_sec_in          : in    unsigned (epoch70_secbits_c-1 downto 0) ;
+          rtc_sec_load_in     : in    std_logic ;
+          rtc_sec_out         : out   unsigned (epoch70_secbits_c-1 downto 0) ;
+          rtc_sec_set_out     : out   std_logic ;
+          rtc_datetime_out    : out   std_logic_vector (dt_totalbits_c-1
+                                                        downto 0) ;
+
+          gpsmem_tmbank_in    : in    std_logic ;
+          gpsmem_req_out      : out   std_logic ;
+          gpsmem_rcv_in       : in    std_logic ;
+          gpsmem_addr_out     : out   std_logic_vector (gpsmem_addrbits_g-1
+                                                        downto 0) ;
+          gpsmem_datafrom_in  : in    std_logic_vector (gpsmem_databits_g-1
+                                                        downto 0) ;
+          gpsmem_readen_out   : out   std_logic ;
+
+          alarm_time_in       : in    std_logic_vector (dt_totalbits_c-1
+                                                        downto 0) ;
+          alarm_time_out      : out   unsigned  (epoch70_secbits_c-1 downto 0)
         ) ;
-      end component StartupClock ;
+      end component SystemTime ;
+
+      --  System Time to GPS Memory communications signals.
+
+      signal st_gpsmem_clk      : std_logic ;
+      signal st_gpsmem_rd_en    : std_logic ;
+      signal st_gpsmem_addr     : std_logic_vector (gpsmem_addrbits_c-1
+                                                    downto 0) ;
+      signal st_gpsmem_control  : std_logic_vector (gpsmem_iobits_c-1
+                                                      downto 0) ;
+
+      --  Sunrise/Sunset signals.
+
+      signal noon_datetime        : std_logic_vector (dt_totalbits_c-1
+                                                      downto 0) ;
+      signal noon_seconds         : unsigned (epoch70_secbits_c-1 downto 0) ;
+
+      signal sunrise_today_out    : unsigned (epoch70_secbits_c-1 downto 0) ;
+      signal sunset_today_out     : unsigned (epoch70_secbits_c-1 downto 0) ;
+      signal sunrise_tomorrow_out : unsigned (epoch70_secbits_c-1 downto 0) ;
+      signal sunset_tomorrow_out  : unsigned (epoch70_secbits_c-1 downto 0) ;
+
+      component SunriseSunset is
+        Generic (
+          location_code_g       : natural :=  0 ;
+          longitude_g           : real    := -111.0525791 ;
+          timezone_g            : integer := -7 * 60 * 60 ;
+          dst_offset_g          : integer := 60 * 60
+        ) ;
+        Port (
+          reset                 : in    std_logic ;
+          rtc_sec_in            : in    unsigned (epoch70_secbits_c-1 downto 0) ;
+          rtc_datetime_in       : in    std_logic_vector (dt_totalbits_c-1
+                                                          downto 0) ;
+          alarm_time_out        : out   std_logic_vector (dt_totalbits_c-1
+                                                          downto 0) ;
+          alarm_time_in         : in    unsigned (epoch70_secbits_c-1 downto 0) ;
+          sunrise_today_out     : out   unsigned (epoch70_secbits_c-1 downto 0) ;
+          sunset_today_out      : out   unsigned (epoch70_secbits_c-1 downto 0) ;
+          sunrise_tomorrow_out  : out   unsigned (epoch70_secbits_c-1 downto 0) ;
+          sunset_tomorrow_out   : out   unsigned (epoch70_secbits_c-1 downto 0)
+        ) ;
+      end component SunriseSunset ;
 
     begin
 
-      reset_clock : StartupClock
+      system_clock : SystemTime
         Generic Map (
-          clk_freq_g            => master_clk_freq_g
+          clk_freq_g          => master_clk_freq_g,
+          gpsmem_addrbits_g   => gpsmem_addrbits_c,
+          gpsmem_databits_g   => gpsmem_databits_c,
+          timezone_g          => CP_CurrentLocation_c.timezone,
+          dst_start_mth_g     => CP_CurrentLocation_c.dst_start_month,
+          dst_start_day_g     => CP_CurrentLocation_c.dst_start_mday,
+          dst_start_hr_g      => CP_CurrentLocation_c.dst_start_hour,
+          dst_start_min_g     => CP_CurrentLocation_c.dst_start_minute,
+          dst_end_mth_g       => CP_CurrentLocation_c.dst_end_month,
+          dst_end_day_g       => CP_CurrentLocation_c.dst_end_mday,
+          dst_end_hr_g        => CP_CurrentLocation_c.dst_end_hour,
+          dst_end_min_g       => CP_CurrentLocation_c.dst_end_minute,
+          dst_seconds_g       => CP_CurrentLocation_c.dst_change
         )
         Port Map (
-          clk                   => master_clk,
-          time_since_reset_out  => reset_time,
-          time_bytes_out        => reset_time_bytes
+          reset               => reset,
+          clk                 => master_clk,
+          startup_time_out    => reset_time,
+          startup_bytes_out   => reset_time_bytes,
+          gps_time_out        => gps_time,
+          gps_bytes_out       => gps_time_bytes,
+          rtc_sec_in          => rtc_seconds,
+          rtc_sec_load_in     => rtc_seconds_load,
+          rtc_sec_out         => rtc_running_seconds,
+          rtc_sec_set_out     => rtc_running_set,
+          rtc_datetime_out    => running_datetime,
+          gpsmem_tmbank_in    => gps_databanks (msg_ubx_tim_tm2_ramblock_c),
+          gpsmem_req_out      => gpsmem_requesters (gpsmemrq_systemtime_c),
+          gpsmem_rcv_in       => gpsmem_receivers  (gpsmemrq_systemtime_c),
+          gpsmem_addr_out     => st_gpsmem_addr,
+          gpsmem_datafrom_in  => gpsmemdst_readfrom,
+          gpsmem_readen_out   => st_gpsmem_rd_en,
+          alarm_time_in       => noon_datetime,
+          alarm_time_out      => noon_seconds
+        ) ;
+
+      st_gpsmem_clk       <= master_gated_inv_clk ;
+
+      st_gpsmem_control   <= st_gpsmem_clk        &
+                             gpsmem_wren_none_c   & st_gpsmem_rd_en   &
+                             gpsmem_wrto_none_c   & st_gpsmem_addr ;
+
+      set2D_element (gpsmemrq_systemtime_c, st_gpsmem_control,
+                     gpsmem_input_tbl) ;
+
+      --  Calculate the sunrise/sunset times.
+
+      sunrise_set : SunriseSunset
+        Generic Map (
+          location_code_g       => CP_Loc_Code_c,
+          longitude_g           => CP_CurrentLocation_c.longitude,
+          timezone_g            => CP_CurrentLocation_c.timezone,
+          dst_offset_g          => CP_CurrentLocation_c.dst_change
+        )
+        Port Map (
+          reset                 => reset,
+          rtc_sec_in            => rtc_running_seconds,
+          rtc_datetime_in       => running_datetime,
+          alarm_time_out        => noon_datetime,
+          alarm_time_in         => noon_seconds,
+          sunrise_today_out     => sunrise_today,
+          sunset_today_out      => sunset_today,
+          sunrise_tomorrow_out  => sunrise_tomorrow,
+          sunset_tomorrow_out   => sunset_tomorrow
         ) ;
 
   end generate use_StrClk ;
@@ -1377,7 +1525,7 @@ begin
 
       sdram_on : process (CTL_SDRAM_On, sdram_clock, sdram_clk_en,
                           sdram_command, sdram_mask, sdram_bank,
-                          sdram_addr, sdram_outdata)
+                          sdram_addr, sdram_outdata, sdram_dirdata)
       begin
         if (CTL_SDRAM_On = '0') then
           sdram_clk           <= '0' ;
@@ -1434,44 +1582,44 @@ begin
 
       component microsd_controller_dir is
         generic(
-    
+
           clk_freq_g                :natural    := 50E6;
-          buf_size_g                :natural    := 2048;     
-          block_size_g              :natural    := 512;    
-          hs_sdr25_mode_g						:std_logic  := '1';                  
+          buf_size_g                :natural    := 2048;
+          block_size_g              :natural    := 512;
+          hs_sdr25_mode_g            :std_logic  := '1';
           clk_divide_g              :natural    := 128;
-          signalling_18_en_g				:std_logic  := '0'  
+          signalling_18_en_g        :std_logic  := '0'
         );
 
         port(
 
-          rst_n           :in      std_logic;                                     
-          clk             :in      std_logic;                                     
-          clock_enable    :in      std_logic;                                     
-          data_input      :in      std_logic_vector(7 downto 0);                  
+          rst_n           :in      std_logic;
+          clk             :in      std_logic;
+          clock_enable    :in      std_logic;
+          data_input      :in      std_logic_vector(7 downto 0);
           data_we         :in      std_logic;
-          data_full       :out     std_logic;                                     
-          data_sd_start_address     :in      std_logic_vector(31 downto 0);                 
-          data_nblocks              :in      std_logic_vector(31 downto 0);                 
-                    
-          data_current_block_written      :out     std_logic_vector(31 downto 0);                 
-          sd_block_written_flag           :out     std_logic; 
-          buffer_level                    :out     std_logic_vector (natural(trunc(log2(
-                                          real(buf_size_g/block_size_g)))) downto 0); 
+          data_full       :out     std_logic;
+          data_sd_start_address     :in      std_logic_vector(31 downto 0);
+          data_nblocks              :in      std_logic_vector(31 downto 0);
 
-          sd_clk                          :out     std_logic;                                                                      
-             
+          data_current_block_written      :out     std_logic_vector(31 downto 0);
+          sd_block_written_flag           :out     std_logic;
+          buffer_level                    :out     std_logic_vector (natural(trunc(log2(
+                                          real(buf_size_g/block_size_g)))) downto 0);
+
+          sd_clk                          :out     std_logic;
+
           sd_cmd_in                       : in      std_logic ;
           sd_cmd_out                      : out     std_logic ;
           sd_cmd_dir                      : out     std_logic ;
           sd_dat_in                       : in      std_logic_vector (3 downto 0) ;
           sd_dat_out                      : out     std_logic_vector (3 downto 0) ;
-          sd_dat_dir                      : out     std_logic_vector (3 downto 0) ;                 
-       
-          v_3_3_on_off                    :out     std_logic;                                     
-          v_1_8_on_off                    :out     std_logic;                                     
-          
-          init_start                      :in     std_logic;                                  
+          sd_dat_dir                      : out     std_logic_vector (3 downto 0) ;
+
+          v_3_3_on_off                    :out     std_logic;
+          v_1_8_on_off                    :out     std_logic;
+
+          init_start                      :in     std_logic;
           user_led_n_out                  :out    std_logic_vector(3 downto 0);
           ext_trigger                     :out    std_logic
 
@@ -1482,55 +1630,55 @@ begin
       generic(
         OUTMEM_BUFFROWS       : natural     := 1 ;
         OUTMEM_BUFFCOUNT      : natural     := 2 ;
-        sdram_space_g         : SDRAM_Capacity_t  := SDRAM_16_Capacity_c; 
+        sdram_space_g         : SDRAM_Capacity_t  := SDRAM_16_Capacity_c;
         sdram_outbuf_size_bytes_g : natural := 4096;
         buf_size_g            :   natural := 2048;
         block_size_g          :   natural := 512;
         enable_magmem_g       :   std_logic := '0'
       );
       port(
-      
+
         clk        : in std_logic;
         rst_n      : in std_logic;
-         
+
         startup_in              : in std_logic;
-        
+
         data_nbytes_in          : in std_logic_vector (const_bits (sdram_space_g.BANKS * sdram_space_g.ROWCOUNT *
                                 sdram_space_g.ROWBITS / 8 - 1) - 1 downto 0) ;
         outbuf_data_rdy_in      : in std_logic;
-        
-        outbuf_sd_q_b_in        : in std_logic_vector(7 downto 0);
-        sd_outbuf_rd_en_b_out   : out std_logic;  
-        sd_outbuf_clk_b_out     : out std_logic; 
-        sd_outbuf_address_b_out : out std_logic_vector(natural(trunc(log2(real(sdram_outbuf_size_bytes_g-1)))) downto 0);
-        
-        sd_outmem_buffready_out : out std_logic;  
 
-        mem_req_a_out           : out std_logic;  
-        mem_rec_a_in            : in std_logic;  
-        
-        
+        outbuf_sd_q_b_in        : in std_logic_vector(7 downto 0);
+        sd_outbuf_rd_en_b_out   : out std_logic;
+        sd_outbuf_clk_b_out     : out std_logic;
+        sd_outbuf_address_b_out : out std_logic_vector(natural(trunc(log2(real(sdram_outbuf_size_bytes_g-1)))) downto 0);
+
+        sd_outmem_buffready_out : out std_logic;
+
+        mem_req_a_out           : out std_logic;
+        mem_rec_a_in            : in std_logic;
+
+
         sd_magram_clk_a_out     : out std_logic;
-        sd_magram_wr_en_a_out   : out std_logic;  
-        sd_magram_rd_en_a_out   : out std_logic;  
+        sd_magram_wr_en_a_out   : out std_logic;
+        sd_magram_rd_en_a_out   : out std_logic;
         sd_magram_address_a_out : out std_logic_vector(natural(trunc(log2(real(
                                 (magmem_buffer_bytes/magmem_buffer_num)-1)))) downto 0);
         sd_magram_data_a_out    : out std_logic_vector(7 downto 0);
         magram_sd_q_a_in        : in std_logic_vector(7 downto 0);
-        
+
         dw_en                   : in std_logic;
         crit_block_serviced     : out std_logic;
-                    
-        data_input                         :out      std_logic_vector(7 downto 0);                   
-        data_we                            :out      std_logic;    
-        data_full                          :in       std_logic;                                     
-        data_sd_start_address              :out      std_logic_vector(31 downto 0);                 
-        data_nblocks                       :out      std_logic_vector(31 downto 0);                                                                                          
-        data_current_block_written         :in       std_logic_vector(31 downto 0);                
-        sd_block_written_flag              :in       std_logic;      
+
+        data_input                         :out      std_logic_vector(7 downto 0);
+        data_we                            :out      std_logic;
+        data_full                          :in       std_logic;
+        data_sd_start_address              :out      std_logic_vector(31 downto 0);
+        data_nblocks                       :out      std_logic_vector(31 downto 0);
+        data_current_block_written         :in       std_logic_vector(31 downto 0);
+        sd_block_written_flag              :in       std_logic;
         buffer_level                       :in       std_logic_vector (natural(trunc(log2(real(buf_size_g/block_size_g)))) downto 0);
 
-        blocks_past_crit                   :in std_logic_vector(7 downto 0)    
+        blocks_past_crit                   :in std_logic_vector(7 downto 0)
 
       );
     end component;
@@ -1730,44 +1878,44 @@ begin
 
       component microsd_controller_dir is
         generic(
-    
+
           clk_freq_g                :natural    := 50E6;
-          buf_size_g                :natural    := 2048;     
-          block_size_g              :natural    := 512;    
-          hs_sdr25_mode_g						:std_logic  := '1';                  
+          buf_size_g                :natural    := 2048;
+          block_size_g              :natural    := 512;
+          hs_sdr25_mode_g            :std_logic  := '1';
           clk_divide_g              :natural    := 128;
-          signalling_18_en_g				:std_logic  := '0'  
+          signalling_18_en_g        :std_logic  := '0'
         );
 
         port(
 
-          rst_n           :in      std_logic;                                     
-          clk             :in      std_logic;                                     
-          clock_enable    :in      std_logic;                                     
-          data_input      :in      std_logic_vector(7 downto 0);                  
+          rst_n           :in      std_logic;
+          clk             :in      std_logic;
+          clock_enable    :in      std_logic;
+          data_input      :in      std_logic_vector(7 downto 0);
           data_we         :in      std_logic;
-          data_full       :out     std_logic;                                     
-          data_sd_start_address     :in      std_logic_vector(31 downto 0);                 
-          data_nblocks              :in      std_logic_vector(31 downto 0);                 
-                    
-          data_current_block_written      :out     std_logic_vector(31 downto 0);                 
-          sd_block_written_flag           :out     std_logic; 
-          buffer_level                    :out     std_logic_vector (natural(trunc(log2(
-                                          real(buf_size_g/block_size_g)))) downto 0); 
+          data_full       :out     std_logic;
+          data_sd_start_address     :in      std_logic_vector(31 downto 0);
+          data_nblocks              :in      std_logic_vector(31 downto 0);
 
-          sd_clk                          :out     std_logic;                                                                      
-             
+          data_current_block_written      :out     std_logic_vector(31 downto 0);
+          sd_block_written_flag           :out     std_logic;
+          buffer_level                    :out     std_logic_vector (natural(trunc(log2(
+                                          real(buf_size_g/block_size_g)))) downto 0);
+
+          sd_clk                          :out     std_logic;
+
           sd_cmd_in                       : in      std_logic ;
           sd_cmd_out                      : out     std_logic ;
           sd_cmd_dir                      : out     std_logic ;
           sd_dat_in                       : in      std_logic_vector (3 downto 0) ;
           sd_dat_out                      : out     std_logic_vector (3 downto 0) ;
-          sd_dat_dir                      : out     std_logic_vector (3 downto 0) ;                 
-       
-          v_3_3_on_off                    :out     std_logic;                                     
-          v_1_8_on_off                    :out     std_logic;                                     
-          
-          init_start                      :in     std_logic;                                  
+          sd_dat_dir                      : out     std_logic_vector (3 downto 0) ;
+
+          v_3_3_on_off                    :out     std_logic;
+          v_1_8_on_off                    :out     std_logic;
+
+          init_start                      :in     std_logic;
           user_led_n_out                  :out    std_logic_vector(3 downto 0);
           ext_trigger                     :out    std_logic
 
@@ -1813,61 +1961,61 @@ begin
           -- blocks_past_crit                   :in std_logic_vector(7 downto 0)
         -- );
       -- end component sd_loader;
-      
+
     component sd_loader is
       generic(
         OUTMEM_BUFFROWS       : natural     := 1 ;
         OUTMEM_BUFFCOUNT      : natural     := 2 ;
-        sdram_space_g         : SDRAM_Capacity_t  := SDRAM_16_Capacity_c; 
+        sdram_space_g         : SDRAM_Capacity_t  := SDRAM_16_Capacity_c;
         sdram_outbuf_size_bytes_g : natural := 4096;
         buf_size_g            :   natural := 2048;
         block_size_g          :   natural := 512;
         enable_magmem_g       :   std_logic := '0'
       );
       port(
-      
+
         clk        : in std_logic;
         rst_n      : in std_logic;
-         
+
         startup_in              : in std_logic;
-        
+
         data_nbytes_in          : in std_logic_vector (const_bits (sdram_space_g.BANKS * sdram_space_g.ROWCOUNT *
                                 sdram_space_g.ROWBITS / 8 - 1) - 1 downto 0) ;
         outbuf_data_rdy_in      : in std_logic;
-        
-        outbuf_sd_q_b_in        : in std_logic_vector(7 downto 0);
-        sd_outbuf_rd_en_b_out   : out std_logic;  
-        sd_outbuf_clk_b_out     : out std_logic; 
-        sd_outbuf_address_b_out : out std_logic_vector(natural(trunc(log2(real(sdram_outbuf_size_bytes_g-1)))) downto 0);
-        
-        sd_outmem_buffready_out : out std_logic;  
 
-        mem_req_a_out           : out std_logic;  
-        mem_rec_a_in            : in std_logic;  
-        
-        
+        outbuf_sd_q_b_in        : in std_logic_vector(7 downto 0);
+        sd_outbuf_rd_en_b_out   : out std_logic;
+        sd_outbuf_clk_b_out     : out std_logic;
+        sd_outbuf_address_b_out : out std_logic_vector(natural(trunc(log2(real(sdram_outbuf_size_bytes_g-1)))) downto 0);
+
+        sd_outmem_buffready_out : out std_logic;
+
+        mem_req_a_out           : out std_logic;
+        mem_rec_a_in            : in std_logic;
+
+
         sd_magram_clk_a_out     : out std_logic;
-        sd_magram_wr_en_a_out   : out std_logic;  
-        sd_magram_rd_en_a_out   : out std_logic;  
+        sd_magram_wr_en_a_out   : out std_logic;
+        sd_magram_rd_en_a_out   : out std_logic;
         sd_magram_address_a_out : out std_logic_vector(natural(trunc(log2(
                                       real((magmem_buffer_bytes/magmem_buffer_num)-1)
                                       ))) downto 0);
         sd_magram_data_a_out    : out std_logic_vector(7 downto 0);
         magram_sd_q_a_in        : in std_logic_vector(7 downto 0);
-        
+
         dw_en                   : in std_logic;
         crit_block_serviced     : out std_logic;
-                    
-        data_input                         :out      std_logic_vector(7 downto 0);                   
-        data_we                            :out      std_logic;    
-        data_full                          :in       std_logic;                                     
-        data_sd_start_address              :out      std_logic_vector(31 downto 0);                 
-        data_nblocks                       :out      std_logic_vector(31 downto 0);                                                                                          
-        data_current_block_written         :in       std_logic_vector(31 downto 0);                
-        sd_block_written_flag              :in       std_logic;      
+
+        data_input                         :out      std_logic_vector(7 downto 0);
+        data_we                            :out      std_logic;
+        data_full                          :in       std_logic;
+        data_sd_start_address              :out      std_logic_vector(31 downto 0);
+        data_nblocks                       :out      std_logic_vector(31 downto 0);
+        data_current_block_written         :in       std_logic_vector(31 downto 0);
+        sd_block_written_flag              :in       std_logic;
         buffer_level                       :in       std_logic_vector (natural(trunc(log2(real(buf_size_g/block_size_g)))) downto 0);
 
-        blocks_past_crit                   :in std_logic_vector(7 downto 0)    
+        blocks_past_crit                   :in std_logic_vector(7 downto 0)
 
       );
     end component;
@@ -1877,9 +2025,9 @@ begin
       signal sdl_magmem_clk       : std_logic ;
       signal sdl_magmem_wr_en     : std_logic ;
       signal sdl_magmem_rd_en     : std_logic ;
-      
+
       signal sdl_magmem_addr      : std_logic_vector(natural(trunc(log2(real((magmem_buffer_bytes/magmem_buffer_num)-1)))) downto 0);
-      
+
       -- signal sdl_magmem_addr      : std_logic_vector (magmem_addrbits_c-1
                                                       -- downto 0) ;
       signal sdl_magmem_writeto   : std_logic_vector (magmem_databits_c-1
@@ -2208,7 +2356,8 @@ begin
           gps_rx_in             : in    std_logic ;
           gps_tx_out            : out   std_logic ;
           timemarker_out        : out   std_logic ;
-          aop_running_out       : out   std_logic
+          aop_running_out       : out   std_logic ;
+          busy_out              : out   std_logic
         ) ;
       end component GPSmessages ;
 
@@ -2435,7 +2584,6 @@ begin
       begin
         if (CTL_InertialOn1p8 = '0' or CTL_InertialOn2p5 = '0') then
           ms_clk              <= '0' ;
-          ms_cs_out           <= '0' ;
           ms_mosi_out         <= '0' ;
           ms_cs_accgyro_out   <= '0' ;
           ms_miso_accgyro_io  <= '0' ;
@@ -2810,7 +2958,7 @@ begin
       signal mic_clock    : std_logic ;
       signal mic_right    : std_logic ;
       signal mic_left     : std_logic ;
-      
+
       -- Microphone Test Signals
       signal mic_left_sample_clk_f  : std_logic;
 
@@ -2870,11 +3018,11 @@ begin
           end if ;
         end if ;
       end process mics_on ;
-      
-      
-      
+
+
+
       --TEST PROCESS
-      mems_mic_counter:	process(mic_clock, reset)
+      mems_mic_counter:  process(mic_clock, reset)
       begin
       if (reset = '1') then
         mic_left_sample   <= (others => '0');
@@ -2964,13 +3112,13 @@ begin
       component FlashBlock is
 
         Generic (
-          fpga_time_length_bytes_g  : natural := 9;          
-          time_bytes_g              : natural := 9 ;        
-          event_bytes_g             : natural := 2 ;       
+          fpga_time_length_bytes_g  : natural := 9;
+          time_bytes_g              : natural := 9 ;
+          event_bytes_g             : natural := 2 ;
 
           rtc_time_bytes_g          : natural := 4;
           num_mics_active_g         : natural := 1;
-          
+
           counter_data_size_g       : natural     := 8 ;
           counter_address_size_g    : natural     := 9 ;
           counters_g                : natural     := 10 ;
@@ -2986,103 +3134,103 @@ begin
           clk_enable            : in    std_logic;
 
           log_status            : in    std_logic ;
-          
-          current_fpga_time     : in std_logic_vector 
+
+          current_fpga_time     : in std_logic_vector
                                     (gps_time_bytes_c*8-1 downto 0);
           log_events            : in    std_logic;
-          
+
           gyro_data_rdy   : in    std_logic;
           accel_data_rdy  : in    std_logic;
           mag_data_rdy    : in    std_logic;
           temp_data_rdy   : in    std_logic;
-          
-          
+
+
           gyro_data_x     :in     std_logic_vector(
                                   imu_axis_word_length_bytes_g*8 - 1 downto 0);
           gyro_data_y     :in     std_logic_vector(
                                   imu_axis_word_length_bytes_g*8 - 1 downto 0);
           gyro_data_z     :in     std_logic_vector(
                                   imu_axis_word_length_bytes_g*8 - 1 downto 0);
-          
+
           accel_data_x    :in     std_logic_vector(
                                   imu_axis_word_length_bytes_g*8 - 1 downto 0);
           accel_data_y    :in     std_logic_vector(
                                   imu_axis_word_length_bytes_g*8 - 1 downto 0);
           accel_data_z    :in     std_logic_vector(
                                   imu_axis_word_length_bytes_g*8 - 1 downto 0);
-          
+
           mag_data_x      :in     std_logic_vector(
                                   imu_axis_word_length_bytes_g*8 - 1 downto 0);
           mag_data_y      :in     std_logic_vector(
                                   imu_axis_word_length_bytes_g*8 - 1 downto 0);
           mag_data_z      :in     std_logic_vector(
                                   imu_axis_word_length_bytes_g*8 - 1 downto 0);
-          
+
           temp_data       :in     std_logic_vector(
                                   imu_axis_word_length_bytes_g*8 - 1 downto 0);
-          
+
           audio_data_rdy          : in std_logic;
           audio_data              : in std_logic_vector(
                                     audio_word_bytes_g*8  - 1 downto 0);
-          
-          flashblock_inbuf_data       : out    std_logic_vector(7 downto 0); 
+
+          flashblock_inbuf_data       : out    std_logic_vector(7 downto 0);
           flashblock_inbuf_wr_en      : out    std_logic;
           flashblock_inbuf_clk        : out    std_logic;
           flashblock_inbuf_addr       : out   std_logic_vector(
                                               natural(trunc(log2(real(
-                                              sdram_input_buffer_bytes_g-1)))) 
+                                              sdram_input_buffer_bytes_g-1))))
                                               downto 0);
-          
+
           flashblock_gpsbuf_addr      : out   std_logic_vector(
                                               natural(trunc(log2(real(
-                                              gps_buffer_bytes_g-1)))) 
-                                              downto 0);  
+                                              gps_buffer_bytes_g-1))))
+                                              downto 0);
           flashblock_gpsbuf_rd_en     : out   std_logic;
           flashblock_gpsbuf_clk       : out   std_logic;
           gpsbuf_flashblock_data      : in    std_logic_vector(7 downto 0);
-          
+
           gps_req_out       : out   std_logic;
           gps_rec_in        : in    std_logic;
-          
-          
+
+
           posbank     :in std_logic;
           tmbank      :in std_logic;
-          
+
           gyro_fpga_time  :in std_logic_vector (gps_time_bytes_c*8-1 downto 0);
           accel_fpga_time :in std_logic_vector (gps_time_bytes_c*8-1 downto 0);
           mag_fpga_time :in std_logic_vector (gps_time_bytes_c*8-1 downto 0);
           temp_fpga_time :in std_logic_vector (gps_time_bytes_c*8-1 downto 0);
-          
+
           rtc_time  : in std_logic_vector (rtc_time_bytes_g*8-1 downto 0);
-          
+
           flashblock_counter_rd_wr_addr  : out   std_logic_vector(
-                                              counter_address_size_g-1 downto 0); 
+                                              counter_address_size_g-1 downto 0);
           flashblock_counter_rd_en    : out   std_logic;
           flashblock_counter_wr_en    : out   std_logic;
           flashblock_counter_clk      : out   std_logic;
-          flashblock_counter_lock     : out   std_logic;      
+          flashblock_counter_lock     : out   std_logic;
           flashblock_counter_data     : out   std_logic_vector(
                                               counter_data_size_g-1 downto 0);
           counter_flashblock_data     : in    std_logic_vector(
                                               counter_data_size_g-1 downto 0);
-          
+
           flashblock_sdram_2k_accumulated : out  std_logic;
-          
-          mem_req_a_out           : out std_logic;  
-          mem_rec_a_in            : in std_logic;  
-          
+
+          mem_req_a_out           : out std_logic;
+          mem_rec_a_in            : in std_logic;
+
           fb_magram_clk_a_out     : out std_logic;
-          fb_magram_wr_en_a_out   : out std_logic;  
-          fb_magram_rd_en_a_out   : out std_logic;  
+          fb_magram_wr_en_a_out   : out std_logic;
+          fb_magram_rd_en_a_out   : out std_logic;
           fb_magram_address_a_out : out std_logic_vector(natural(trunc(log2(real(
                                       (magmem_buffer_bytes/magmem_buffer_num)-1)))) downto 0);
           fb_magram_data_a_out    : out std_logic_vector(7 downto 0);
           magram_fb_q_a_in        : in std_logic_vector(7 downto 0);
-          
-          
-          force_wr_en : out  std_logic;         
+
+
+          force_wr_en : out  std_logic;
           sdram_empty : in  std_logic;
-          
+
           crit_event  : in  std_logic;
           blocks_past_crit : out std_logic_vector(7 downto 0)
 
@@ -3090,7 +3238,7 @@ begin
       ) ;
 
       end component FlashBlock ;
-      
+
 
       --  Flash Block to GPS Memory communications signals.
 
@@ -3151,8 +3299,8 @@ begin
         )
         Port Map (
           clock_sys                   => spi_clk,
-          rst_n                       => not reset,
-          clk_enable                  => '1',      
+          rst_n                       => (not reset),
+          clk_enable                  => '1',
           log_status                  => SDLogging_status,
           current_fpga_time           => reset_time_bytes,
           log_events                  => eventcnt_changed,
@@ -3190,7 +3338,8 @@ begin
           accel_fpga_time             => im_accel_time,
           mag_fpga_time               => im_mag_time,
           temp_fpga_time              => im_temp_time,
-          rtc_time                    => rtc_time,
+          rtc_time                    =>
+                            std_logic_vector (rtc_running_seconds),
           flashblock_counter_rd_wr_addr  => evmemdst_addr,
           flashblock_counter_rd_en    => evmemdst_read_en,
           flashblock_counter_wr_en    => evmemdst_write_en,
@@ -3209,14 +3358,12 @@ begin
           fb_magram_address_a_out          => fb_magmem_addr,
           fb_magram_data_a_out             => fb_magmem_writeto,
           magram_fb_q_a_in              => magmemsrc_readfrom,
-          
+
           force_wr_en                 => sdram_forceout,
           sdram_empty                 => sdram_empty,
           crit_event                  => SDLogging_flush,
           blocks_past_crit            => sdcard_critpast
         ) ;
-
-      --gpsmem_requesters (gpsmemrq_flashblk_c) <= '1' ;
 
       fb_gpsmem_control    <= fb_gpsmem_clk       &
                               gpsmem_wren_none_c  & fb_gpsmem_rd_en &
@@ -3225,11 +3372,9 @@ begin
       set2D_element (gpsmemrq_flashblk_c, fb_gpsmem_control,
                      gpsmem_input_tbl) ;
 
-      --fb_magmem_clk        <= spi_gated_inv_clk ;
-
       fb_magmem_control    <= fb_magmem_clk     &
                               fb_magmem_wr_en   & fb_magmem_rd_en &
-                              fb_magmem_writeto & mm_buffno & 
+                              fb_magmem_writeto & mm_buffno &
                               fb_magmem_addr ;
 
       set2D_element (magmemrq_flashblk_c, fb_magmem_control,
