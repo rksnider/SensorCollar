@@ -85,7 +85,7 @@
 --!                                   magmem_controller facing.
 --! @param      mag_ram_rd_en_b       rd_en B of dual port ram.  magmem_controller facing   
 --! @param      mag_ram_wr_en_b       wr_en B of dual port ram.  magmem_controller facing  
---! @param      mag_ram_address_b     address B of dual port ram. System Facing. 
+--! @param      mag_ram_address_b     address B of dual port ram. magmem_controller facing 
 
 --!                                        
 --! @param      miso       MISO line from device  

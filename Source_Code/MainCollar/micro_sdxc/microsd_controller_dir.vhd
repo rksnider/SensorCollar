@@ -737,7 +737,7 @@ begin
 end process data_buffer_to_sd_data_handler;
 
 
--- --Process to test one erase. TURN OFF WHEN NOTE IN USE
+--Process to test one erase. TURN OFF WHEN NOTE IN USE
 -- process(clk,rst_n)
 	-- begin
   

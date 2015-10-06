@@ -68,11 +68,9 @@ USE GENERAL.magmem_buffer_def_pkg.all;    --Magnetic Memory Buffer Size and Loca
 --!         
 --! @param    audio_word_bytes_g  Size of an audio word in bytes.
 --!
---! @param      clock_sys         System clock that drives the fastest ops.
---! @param      reset             Reset to initial conditions.    
---! @param      clk_enable        Clock enable. Used to power on the machine for now.
---!         
---! @param     last_seqno           The last sequence number. 
+--! @param     clock_sys         System clock that drives the fastest ops.
+--! @param     rst_n             Reset to initial conditions.    
+--! @param     clk_enable        Clock enable. Used to power on the machine for now.       
 --! @param     log_status           Log Status. Will push a status packet.
 --! @param     current_fpga_time    FPGA time from the FPGA time component 
 --! @param     log_events           Log Events Flag   
@@ -137,16 +135,15 @@ USE GENERAL.magmem_buffer_def_pkg.all;    --Magnetic Memory Buffer Size and Loca
 --!    
 --! @param     flashblock_sdram_2k_accumulated Signal 2k accumulated flag relayed to the sdram_controller
 --!    
---! @param     mem_req_a_out           : out std_logic;  
---! @param     mem_rec_a_in            : in std_logic;  
+--! @param     mem_req_a_out           : Request the magnetic memory buffer
+--! @param     mem_rec_a_in            : Receive the magnetic memory buffer
     
---! @param     fb_magram_clk_a_out     : out std_logic;
---! @param     fb_magram_wr_en_a_out   : out std_logic;  
---! @param     fb_magram_rd_en_a_out   : out std_logic;  
---! @param     fb_magram_address_a_out : out std_logic_vector(natural(trunc(log2(real(
---!                                  (magmem_buffer_bytes/magmem_buffer_num)-1)))) downto 0);
---! @param     fb_magram_data_a_out    : out std_logic_vector(7 downto 0);
---! @param     magram_fb_q_a_in        : in std_logic_vector(7 downto 0);
+--! @param     fb_magram_clk_a_out     : Clk to the magnetic memory buffer.
+--! @param     fb_magram_wr_en_a_out   : Magmem wr_en
+--! @param     fb_magram_rd_en_a_out   : Magmem rd_en
+--! @param     fb_magram_address_a_out : Side A magnetic memory buffer address
+--! @param     fb_magram_data_a_out    : Data to magnetic memory buffer side A
+--! @param     magram_fb_q_a_in        : Data from magnetic memory buffer side A
 --!
 --!
 --! 
@@ -206,7 +203,6 @@ USE GENERAL.magmem_buffer_def_pkg.all;    --Magnetic Memory Buffer Size and Loca
 
 
 --TODO:
---Fetch last sequence number from magram buffer.
 --Implement overflow detection on the circular buffers.
 --Fix the address on the event counter system (only one address line is 
 --available. 
@@ -237,7 +233,7 @@ entity FlashBlock is
 ) ;
   Port (
     clock_sys             : in    std_logic ;
-    reset                 : in    std_logic ;
+    rst_n                 : in    std_logic ;
     clk_enable            : in    std_logic;
 
     log_status            : in    std_logic ;
@@ -1130,6 +1126,7 @@ blocks_past_crit <= std_logic_vector(blocks_past_crit_signal);
 
 --Signal mapping for the magnetic memory interfacing.
 fb_magram_address_a_out <= std_logic_vector(fb_magram_address_a);
+fb_magram_clk_a_out <= not(clock_sys);
   
 
 --
@@ -1139,9 +1136,9 @@ fb_magram_address_a_out <= std_logic_vector(fb_magram_address_a);
 --
 --
 
-send_device_byte:  process (clock_sys, reset)
+send_device_byte:  process (clock_sys, rst_n)
 begin
-  if (reset = '0') then
+  if (rst_n = '0') then
     device_byte_sending       <= '0' ;
     block_byte_ready_follower <= '0' ;
     device_byte               <= (others => '0') ;
@@ -1192,9 +1189,9 @@ end process send_device_byte ;
 --as initial block number and padding. 
 
 
-send_block_item:  process (clock_sys, reset)
+send_block_item:  process (clock_sys, rst_n)
 begin
-  if (reset = '0') then
+  if (rst_n = '0') then
     cur_block_state       <= BLOCK_STATE_WAIT ;
     end_block_state       <= BLOCK_STATE_WAIT ;
     block_byte_ready      <= '0' ;
@@ -1203,8 +1200,7 @@ begin
     audio_seg_length      <= (others => '0') ;
     audio_written         <= '0' ;
 
-    
-    
+
     gyro_written        <= '0' ;
     accel_written       <= '0' ;
     mag_written         <= '0' ;
@@ -1228,8 +1224,6 @@ begin
       
     flashblock_gpsbuf_rd_en <= '0'; 
     
-    
-    
     circ_buffer_rd_audio <= (others => '0') ;
     
     circ_buffer_rd_gyro <= (others => '0') ;
@@ -1243,14 +1237,9 @@ begin
     flashblock_circbuffer_rd_en_internal <= '0';
     
     crit_event_written <= '0';
-    
-
-
 
     force_wr_en_signal <= '0';
-  
-  
-  
+
     force_wr_en_signal <= '0';
     empty_serviced <= '0';
     blocks_past_crit_signal <= to_unsigned(0,blocks_past_crit_signal'length);
@@ -2086,9 +2075,9 @@ end process send_block_item ;
 --
 
 
-send_item:  process (clock_sys, reset)
+send_item:  process (clock_sys, rst_n)
 begin
-  if (reset = '0') then
+  if (rst_n = '0') then
     cur_item_state        <= ITEM_STATE_WAIT ;
     next_item_state       <= ITEM_STATE_WAIT ;
     end_item_state        <= ITEM_STATE_WAIT ;
@@ -2108,7 +2097,7 @@ begin
     --Wait until the block item process is idle before starting another
     --item send.
     --A lag between next_block_state reaching cur_block_state requires
-    --use to check that no next_block_state is queued. 
+    --us to check that no next_block_state is queued. 
 
     --Always return here when off send_block_item is engaged.
     --Wait until the previous block is serviced AND count updated before
@@ -2418,9 +2407,8 @@ begin
           --next_item_state         <= end_item_state;
           next_item_state         <= ITEM_STATE_WAIT;
           next_block_state        <= BLOCK_STATE_SEQNO ;
-          block_seqno             <= block_seqno + 1 ;
-          
-          
+          block_seqno             <= block_seqno + 1 ;     
+
           
         when ITEM_STATE_GPS_POS     =>
           cur_item_state          <= ITEM_STATE_PAUSE ;
@@ -2460,9 +2448,9 @@ begin
           
         when ITEM_STATE_LOGIC_BLOCK_FETCH_SETUP =>
           mem_req_a_out     <= '1';
-            if (mem_rec_a_in = '1') then 
-              cur_item_state <= ITEM_STATE_LOGIC_BLOCK_FETCH;
-            end if;
+          if (mem_rec_a_in = '1') then 
+            cur_item_state <= ITEM_STATE_LOGIC_BLOCK_FETCH;
+          end if;
 
           fb_magram_address_a     <= TO_UNSIGNED (logical_block_location_c,
                                           fb_magram_address_a'length) ;            
@@ -2471,17 +2459,21 @@ begin
                                             byte_number'length) ;
           byte_count_i        <= TO_UNSIGNED (0, byte_count'length) ;
           startup_done      <= '1';
+          fb_magram_rd_en_a_out <= '1';
+          
 
       
       
         when ITEM_STATE_LOGIC_BLOCK_FETCH =>
+        
           if (byte_count_i = byte_number_i) then
             cur_item_state   <= ITEM_STATE_WAIT ;
             block_seqno <= unsigned(last_seqno);
             mem_req_a_out     <= '0';
+            fb_magram_rd_en_a_out <= '0';
           else
           --The 4 bytes value is stored little endian.
-          
+            fb_magram_rd_en_a_out <= '1';
             last_seqno    <=  magram_fb_q_a_in 
             & last_seqno(31 downto 8); 
             byte_count_i        <= byte_count_i + 1 ;
@@ -2489,33 +2481,33 @@ begin
           end if ;   
         
       when ITEM_STATE_LOGIC_BLOCK_STORE_SETUP =>
-       mem_req_a_out     <= '1';
-       --Quickly init last_seqno while we wait for the buffer.
-       last_seqno <= std_logic_vector(block_seqno);
+        
+        mem_req_a_out     <= '1';
         if (mem_rec_a_in = '1') then 
           cur_item_state <= ITEM_STATE_LOGIC_BLOCK_STORE;
-            
-          fb_magram_address_a   <= TO_UNSIGNED (logical_block_location_c,
-                                              fb_magram_address_a'length) ;            
-          byte_number_i       <= TO_UNSIGNED (logical_block_length_bytes_c,
-                                            byte_number'length) ;
-                                            
-          byte_count_i        <= TO_UNSIGNED (1, byte_count'length) ;
-          
-          fb_magram_data_a_out <=  last_seqno(7 downto 0); 
-          
-          last_seqno <= x"00" & last_seqno(31 downto 8);
-
         end if;
+        fb_magram_wr_en_a_out <= '1';
+        fb_magram_address_a   <= TO_UNSIGNED (logical_block_location_c,
+                                            fb_magram_address_a'length) ;            
+        byte_number_i       <= TO_UNSIGNED (logical_block_length_bytes_c,
+                                          byte_number'length) ;
+                                          
+        byte_count_i        <= TO_UNSIGNED (1, byte_count'length) ;
+        
+        fb_magram_data_a_out <=  last_seqno(7 downto 0); 
+        
+        last_seqno <= x"00" & last_seqno(31 downto 8);
           
 
       
       when ITEM_STATE_LOGIC_BLOCK_STORE =>
         if (byte_count_i = byte_number_i) then
           cur_item_state   <= ITEM_STATE_WAIT ;
-          mem_req_a_out     <= '0';          
+          mem_req_a_out     <= '0';  
+          fb_magram_wr_en_a_out <= '0';
         else
         --The 4 bytes value is stored little endian.
+          fb_magram_wr_en_a_out <= '1';
           fb_magram_data_a_out <=  last_seqno(7 downto 0); 
           last_seqno <= x"00" & last_seqno(31 downto 8);
           byte_count_i        <= byte_count_i + 1 ;
@@ -2534,15 +2526,16 @@ end process send_item ;
 
 
 
+
 --
 --Determine when a status segment should be written.
 --Initiate a status segment write when requested.
 --This process also initiates handling critical events in
 --
 
-update_status:  process (clock_sys, reset)
+update_status:  process (clock_sys, rst_n)
 begin
-  if reset = '0' then
+  if rst_n = '0' then
     log_status_follower     <= '0' ;
     write_status            <= '0' ;
     status_written_follower <= '0';
@@ -2585,9 +2578,9 @@ end process update_status ;
 --
   
   
-handle_events:  process (clock_sys, reset)
+handle_events:  process (clock_sys, rst_n)
   begin
-    if reset = '0' then
+    if rst_n = '0' then
         
       events_data_write             <= '0' ;
       events_written_follower       <= '0' ;
@@ -2621,9 +2614,9 @@ end process handle_events ;
 --No circular buffer overrun detection has been coded yet. That is a to do.
 ---
 
-process_samples: process (clock_sys, reset)
+process_samples: process (clock_sys, rst_n)
 begin
-  if (reset = '0') then
+  if (rst_n = '0') then
     audio_written_follower    <= '0' ;
     
     audio_data_write      <= '0';
@@ -2964,9 +2957,9 @@ end process process_samples ;
 --machines to process the data out of those buffers and into block.          
 --
 --
-read_in_GPS_data:  process (clock_sys, reset)
+read_in_GPS_data:  process (clock_sys, rst_n)
 begin
-  if (reset = '0') then
+  if (rst_n = '0') then
     gps_pos_data_write             <= '0' ;
     gps_pos_written_follower       <= '0' ;
   
