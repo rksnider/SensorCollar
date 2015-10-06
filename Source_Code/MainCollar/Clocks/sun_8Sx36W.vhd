@@ -4,7 +4,7 @@
 -- MODULE: altsyncram 
 
 -- ============================================================
--- File Name: sunriseyr.vhd
+-- File Name: sun_8Sx36W.vhd
 -- Megafunction Name(s):
 -- 			altsyncram
 --
@@ -40,7 +40,7 @@ USE ieee.std_logic_1164.all;
 LIBRARY altera_mf;
 USE altera_mf.altera_mf_components.all;
 
-ENTITY sunriseyr IS
+ENTITY sun_8Sx36W IS
 	PORT
 	(
 		address_a		: IN STD_LOGIC_VECTOR (8 DOWNTO 0);
@@ -49,10 +49,10 @@ ENTITY sunriseyr IS
 		q_a		: OUT STD_LOGIC_VECTOR (19 DOWNTO 0);
 		q_b		: OUT STD_LOGIC_VECTOR (19 DOWNTO 0)
 	);
-END sunriseyr;
+END sun_8Sx36W;
 
 
-ARCHITECTURE SYN OF sunriseyr IS
+ARCHITECTURE SYN OF sun_8sx36w IS
 
 	SIGNAL sub_wire0_bv	: BIT_VECTOR (19 DOWNTO 0);
 	SIGNAL sub_wire0	: STD_LOGIC_VECTOR (19 DOWNTO 0);
@@ -75,7 +75,7 @@ BEGIN
 		clock_enable_output_a => "BYPASS",
 		clock_enable_output_b => "BYPASS",
 		indata_reg_b => "CLOCK0",
-		init_file => "sunriseyr.mif",
+		init_file => "sun_8Sx36W.mif",
 		intended_device_family => "Cyclone V",
 		lpm_type => "altsyncram",
 		numwords_a => 367,
@@ -146,7 +146,7 @@ END SYN;
 -- Retrieval info: PRIVATE: MAXIMUM_DEPTH NUMERIC "0"
 -- Retrieval info: PRIVATE: MEMSIZE NUMERIC "7340"
 -- Retrieval info: PRIVATE: MEM_IN_BITS NUMERIC "0"
--- Retrieval info: PRIVATE: MIFfilename STRING "sunriseyr.mif"
+-- Retrieval info: PRIVATE: MIFfilename STRING "sun_8Sx36W.mif"
 -- Retrieval info: PRIVATE: OPERATION_MODE NUMERIC "3"
 -- Retrieval info: PRIVATE: OUTDATA_ACLR_B NUMERIC "0"
 -- Retrieval info: PRIVATE: OUTDATA_REG_B NUMERIC "1"
@@ -178,7 +178,7 @@ END SYN;
 -- Retrieval info: CONSTANT: CLOCK_ENABLE_OUTPUT_A STRING "BYPASS"
 -- Retrieval info: CONSTANT: CLOCK_ENABLE_OUTPUT_B STRING "BYPASS"
 -- Retrieval info: CONSTANT: INDATA_REG_B STRING "CLOCK0"
--- Retrieval info: CONSTANT: INIT_FILE STRING "sunriseyr.mif"
+-- Retrieval info: CONSTANT: INIT_FILE STRING "sun_8Sx36W.mif"
 -- Retrieval info: CONSTANT: INTENDED_DEVICE_FAMILY STRING "Cyclone V"
 -- Retrieval info: CONSTANT: LPM_TYPE STRING "altsyncram"
 -- Retrieval info: CONSTANT: NUMWORDS_A NUMERIC "367"
@@ -211,9 +211,9 @@ END SYN;
 -- Retrieval info: CONNECT: @wren_b 0 0 0 0 GND 0 0 0 0
 -- Retrieval info: CONNECT: q_a 0 0 20 0 @q_a 0 0 20 0
 -- Retrieval info: CONNECT: q_b 0 0 20 0 @q_b 0 0 20 0
--- Retrieval info: GEN_FILE: TYPE_NORMAL sunriseyr.vhd TRUE
--- Retrieval info: GEN_FILE: TYPE_NORMAL sunriseyr.inc FALSE
--- Retrieval info: GEN_FILE: TYPE_NORMAL sunriseyr.cmp FALSE
--- Retrieval info: GEN_FILE: TYPE_NORMAL sunriseyr.bsf FALSE
--- Retrieval info: GEN_FILE: TYPE_NORMAL sunriseyr_inst.vhd FALSE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL sun_8Sx36W.vhd TRUE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL sun_8Sx36W.inc FALSE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL sun_8Sx36W.cmp FALSE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL sun_8Sx36W.bsf FALSE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL sun_8Sx36W_inst.vhd FALSE
 -- Retrieval info: LIB_FILE: altera_mf

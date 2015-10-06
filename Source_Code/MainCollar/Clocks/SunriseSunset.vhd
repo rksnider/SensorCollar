@@ -52,41 +52,49 @@ USE GENERAL.FORMATSECONDS_PKG.ALL ;   --  Use Second Formatting information.
 --!                     inacturate on a DST change day before the DST change
 --!                     takes place on that day.
 --!
---! @param      longitude_g         Longitude of current location.
---! @param      timezone_g          Seconds from GMT that this location's
---!                                 timezone is at in standard time.
---! @param      dst_offset_g        Number of seconds added to time when
---!                                 in Daylight Savings Time.
---! @param      reset               Reset the module.
---! @param      rtc_sec_in          Running time in RTC seconds.
---! @param      rtc_datetime_in     Running Local time in year-month-day
---!                                 hour-minute-second from RTC current
---!                                 value.
---! @param      alarm_time_out      Time to determine local noon of the
---!                                 current day in local time.
---! @param      alarm_time_in       Time of local noon in RTC seconds.
---! @param      sunrise_time_out    Next sunrise time in RTC seconds.
---! @param      sunset_time_out     Next sunset time in RTC seconds.
+--! @param      location_code_g       Code indicating location this
+--!                                   module is for.
+--! @param      longitude_g           Longitude of current location.
+--! @param      timezone_g            Seconds from GMT that this location's
+--!                                   timezone is at in standard time.
+--! @param      dst_offset_g          Number of seconds added to time when
+--!                                   in Daylight Savings Time.
+--! @param      reset                 Reset the module.
+--! @param      rtc_sec_in            Running time in RTC seconds.
+--! @param      rtc_datetime_in       Running Local time in year-month-day
+--!                                   hour-minute-second from RTC current
+--!                                   value.
+--! @param      alarm_time_out        Time to determine local noon of the
+--!                                   current day in local time.
+--! @param      alarm_time_in         Time of local noon in RTC seconds.
+--! @param      sunrise_today_out     Today's sunrise time in RTC seconds.
+--! @param      sunset_today_out      Today's sunset time in RTC seconds.
+--! @param      sunrise_tomorrow_out  Tomorrow's sunrise time in RTC
+--!                                   seconds.
+--! @param      sunset_tomorrow_out   Tomorrow's sunset time in RTC seconds.
 --
 ----------------------------------------------------------------------------
 
 entity SunriseSunset is
 
   Generic (
-    longitude_g         : real    := -111.0525791 ;
-    timezone_g          : integer := -7 * 60 * 60 ;
-    dst_offset_g        : integer := 60 * 60
+    location_code_g       : natural :=  0 ;
+    longitude_g           : real    := -111.0525791 ;
+    timezone_g            : integer := -7 * 60 * 60 ;
+    dst_offset_g          : integer := 60 * 60
   ) ;
   Port (
-    reset               : in    std_logic ;
-    rtc_sec_in          : in    unsigned (epoch70_secbits_c-1 downto 0) ;
-    rtc_datetime_in     : in    std_logic_vector (dt_totalbits_c-1
-                                                  downto 0) ;
-    alarm_time_out      : out   std_logic_vector (dt_totalbits_c-1
-                                                  downto 0) ;
-    alarm_time_in       : in    unsigned (epoch70_secbits_c-1 downto 0) ;
-    sunrise_time_out    : out   unsigned (epoch70_secbits_c-1 downto 0) ;
-    sunset_time_out     : out   unsigned (epoch70_secbits_c-1 downto 0)
+    reset                 : in    std_logic ;
+    rtc_sec_in            : in    unsigned (epoch70_secbits_c-1 downto 0) ;
+    rtc_datetime_in       : in    std_logic_vector (dt_totalbits_c-1
+                                                    downto 0) ;
+    alarm_time_out        : out   std_logic_vector (dt_totalbits_c-1
+                                                    downto 0) ;
+    alarm_time_in         : in    unsigned (epoch70_secbits_c-1 downto 0) ;
+    sunrise_today_out     : out   unsigned (epoch70_secbits_c-1 downto 0) ;
+    sunset_today_out      : out   unsigned (epoch70_secbits_c-1 downto 0) ;
+    sunrise_tomorrow_out  : out   unsigned (epoch70_secbits_c-1 downto 0) ;
+    sunset_tomorrow_out   : out   unsigned (epoch70_secbits_c-1 downto 0)
   ) ;
 
 end entity SunriseSunset ;
@@ -98,7 +106,7 @@ architecture rtl of SunriseSunset is
       integer (real (timezone_g) -
                (longitude_g / 360.0) * 24.0 * 60.0 * 60.0) ;
 
-  COMPONENT sunriseyr IS
+  COMPONENT sun_8Sx36W IS
     PORT
     (
       address_a           : IN STD_LOGIC_VECTOR (8 DOWNTO 0);
@@ -107,7 +115,18 @@ architecture rtl of SunriseSunset is
       q_a                 : OUT STD_LOGIC_VECTOR (19 DOWNTO 0);
       q_b                 : OUT STD_LOGIC_VECTOR (19 DOWNTO 0)
     );
-  END COMPONENT sunriseyr;
+  END COMPONENT sun_8Sx36W ;
+
+  COMPONENT sun_46Nx111W IS
+    PORT
+    (
+      address_a           : IN STD_LOGIC_VECTOR (8 DOWNTO 0);
+      address_b           : IN STD_LOGIC_VECTOR (8 DOWNTO 0);
+      clock               : IN STD_LOGIC  := '1';
+      q_a                 : OUT STD_LOGIC_VECTOR (19 DOWNTO 0);
+      q_b                 : OUT STD_LOGIC_VECTOR (19 DOWNTO 0)
+    );
+  END COMPONENT sun_46Nx111W ;
 
   signal datetime         : DateTime_t ;
   signal alarmtime        : DateTime_t ;
@@ -153,16 +172,33 @@ begin
 
   --  Determine the sunrise and noon offsets for the the current and
   --  next day.  Very slow as the clock is 0.5 Hz.
+  --  The MIF file to use depends on the location.
 
-  sun: sunriseyr
-    PORT MAP
-    (
-      address_a   => std_logic_vector (datetime.yday),
-      address_b   => std_logic_vector (datetime.yday + 1),
-      clock       => datetime.second (0),
-      q_a         => today,
-      q_b         => tomorrow
-    ) ;
+  at_8Sx36W:
+    if (location_code_g = 0) generate
+      sun: sun_8Sx36W
+        PORT MAP
+        (
+          address_a   => std_logic_vector (datetime.yday),
+          address_b   => std_logic_vector (datetime.yday + 1),
+          clock       => datetime.second (0),
+          q_a         => today,
+          q_b         => tomorrow
+        ) ;
+    end generate at_8Sx36W ;
+
+  at_46Nx111W:
+    if (location_code_g = 0) generate
+      sun: sun_46Nx111W
+        PORT MAP
+        (
+          address_a   => std_logic_vector (datetime.yday),
+          address_b   => std_logic_vector (datetime.yday + 1),
+          clock       => datetime.second (0),
+          q_a         => today,
+          q_b         => tomorrow
+        ) ;
+    end generate at_46Nx111W ;
 
   sunrise_today         <= unsigned (today    (19 downto 7)) ;
   noon_today            <= unsigned (today    (6  downto 0)) ;
@@ -194,27 +230,18 @@ begin
   --  Produce the sunrise and sunset times in Standard Time, subtracting
   --  off the Daylight Savings Time offset if needed.
 
-  sunrise_time_today    <= today_noon - sun_today - dst_offset_g
+  sunrise_today_out     <= today_noon - sun_today - dst_offset_g
                               when (datetime.indst = '1') else
                            today_noon - sun_today ;
-  sunset_time_today     <= today_noon + sun_today - dst_offset_g
+  sunset_today_out      <= today_noon + sun_today - dst_offset_g
                               when (datetime.indst = '1') else
                            today_noon + sun_today ;
 
-  sunrise_time_tomorrow <= tomorrow_noon - sun_tomorrow - dst_offset_g
+  sunrise_tomorrow_out  <= tomorrow_noon - sun_tomorrow - dst_offset_g
                               when (datetime.indst = '1') else
                            tomorrow_noon - sun_tomorrow ;
-  sunset_time_tomorrow  <= tomorrow_noon + sun_tomorrow - dst_offset_g
+  sunset_tomorrow_out   <= tomorrow_noon + sun_tomorrow - dst_offset_g
                               when (datetime.indst = '1') else
                            tomorrow_noon + sun_tomorrow ;
-
-  --  Use the sunrise and sunset times that are nearest in the future.
-
-  sunrise_time_out      <= sunrise_time_today
-                              when (sunrise_time_today > rtc_sec_in) else
-                           sunrise_time_tomorrow ;
-  sunset_time_out       <= sunset_time_today
-                              when (sunset_time_today > rtc_sec_in) else
-                           sunset_time_tomorrow ;
 
 end rtl ;
