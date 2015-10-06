@@ -304,7 +304,6 @@ architecture structural of DevBoard_PowerMonitorFPGA_TopLevel is
       gps_timepulse_io      : inout std_logic ;
 
       ms_clk                : out   std_logic ;
-      ms_cs_out             : out   std_logic ;
       ms_mosi_out           : out   std_logic ;
       --ms_miso_in            : in    std_logic ;
       --ms_int_in             : in    std_logic ;
