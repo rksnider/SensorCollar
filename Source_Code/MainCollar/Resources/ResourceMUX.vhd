@@ -128,7 +128,7 @@ architecture rtl of ResourceMUX is
 
   --  Internal signals.
 
-  constant selector_bits_c  : natural := const_bits (requester_cnt_g) ;
+  constant selector_bits_c  : natural := const_bits (requester_cnt_g - 1) ;
 
   signal selector           : unsigned (selector_bits_c-1 downto 0) ;
 
