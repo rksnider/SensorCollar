@@ -59,6 +59,33 @@ source GenClock.sdc
 
 pop_instance
 
+#   Process SDC file for System Time.  Push the new instance onto the
+#   instances stack beforehand and remove it afterwards.
+
+push_instance               "SystemTime:@use_StrClk:system_clock"
+
+copy_instvalues             { "master_clk,clk" }
+
+source SystemTime.sdc
+
+pop_instance
+
+#   The SDRAM Controller.
+
+set sdc_file              "SDRAM_Controller.sdc"
+
+if { [file exists "$sdc_file"] > 0 } {
+
+  push_instance           "SDRAM_Controller:@use_SDRAM:sdcard_buffer"
+
+  copy_instvalues         [list "master_clk,sysclk" \
+                                "sdram_clk,sdram_clk_out"]
+
+  source $sdc_file
+
+  pop_instance
+}
+
 #   Process SDC file for Status/Control SPI.  Push the new instance onto the
 #   instances stack beforehand and remove it afterwards.
 
@@ -102,7 +129,7 @@ if { [file exists "$sdc_file"] > 0 } {
 
   set clk_divide          [expr {int($master_clk_freq / 400000.0 + 0.5)}]
 
-  set_instvalue           CLK_DIVIDE $clk_divide
+  set_instvalue           clk_divide_g $clk_divide
   set_instvalue           sd_clk [list $sd_clk_port sd_400 sd_clk_dir]
 
   copy_instvalues         [list "master_clk,clk"]
@@ -119,7 +146,7 @@ if { [file exists "$sdc_file"] > 0 } {
 
   set clk_divide          [expr {int($master_clk_freq / 400000.0 + 0.5)}]
 
-  set_instvalue           CLK_DIVIDE $clk_divide
+  set_instvalue           clk_divide_g $clk_divide
   set_instvalue           sd_clk [list $sdh_clk_port sdh_400 sdh_clk_dir]
 
   copy_instvalues         [list "master_clk,clk"]
