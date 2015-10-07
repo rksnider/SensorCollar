@@ -123,10 +123,17 @@ if {[get_collection_size $sync_list] > 0} {
 
 #   Set the I/O port delays for all devices.
 
-# foreach sdc_file    [glob *_dev.sdc] {
-    # puts $sdc_log "Processing $sdc_file\n"
-    # source $sdc_file
-# }
+foreach sdc_file    [glob *_dev.sdc] {
+    puts $sdc_log "Processing $sdc_file\n"
+    source $sdc_file
+}
+
+
+
+
+
+
+
 
 # #   Log any other information.
 
