@@ -40,6 +40,9 @@ LIBRARY GENERAL ;                     --  Use General Purpose Libraries
 USE GENERAL.UTILITIES_PKG.ALL ;       --  Use Utilities.
 USE GENERAL.FORMATSECONDS_PKG.ALL ;   --  Use Second Formatting information.
 
+LIBRARY WORK ;                        --  Use Local Libraries
+USE WORK.COLLAR_PARAMETERS_PKG.ALL ;
+
 
 ----------------------------------------------------------------------------
 --
@@ -175,7 +178,7 @@ begin
   --  The MIF file to use depends on the location.
 
   at_8Sx36W:
-    if (location_code_g = 0) generate
+    if (location_code_g = CP_Loc_8Sx36W_c) generate
       sun: sun_8Sx36W
         PORT MAP
         (
@@ -188,7 +191,7 @@ begin
     end generate at_8Sx36W ;
 
   at_46Nx111W:
-    if (location_code_g = 0) generate
+    if (location_code_g = CP_Loc_46N111W_c) generate
       sun: sun_46Nx111W
         PORT MAP
         (
