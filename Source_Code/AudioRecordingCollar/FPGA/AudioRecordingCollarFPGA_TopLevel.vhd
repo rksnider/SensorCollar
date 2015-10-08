@@ -44,12 +44,12 @@ use WORK.SDRAM_INFORMATION_PKG.ALL ;  --! SDRAM chip information.
 --
 --! @brief     PowerMonitorFPGA_TopLevel.
 --! @details    Maps top level FPGA pins into Collar.vhd
---!             
+--!
 --!
 --! @param      CLK_50MHZ_TO_FPGA         Master clock for the system.
---!                               
---! @param      BAT_HIGH_TO_FPGA          Battery is above minimum voltage. 
---!                              
+--!
+--! @param      BAT_HIGH_TO_FPGA          Battery is above minimum voltage.
+--!
 --! @param      FORCE_STARTUP_TO_FPGA     System force to run.
 --!
 --! @param      PC_STATUS_CHANGED       Power Controller status change
@@ -63,26 +63,26 @@ use WORK.SDRAM_INFORMATION_PKG.ALL ;  --! SDRAM chip information.
 --! @param      FLASH_C                 Flash clock.
 --! @param      FLASH_S_N               Flash select
 --! @param      PC_FLASH_DATA           Flash data
---! 
---! @param      I2C_SDA                I2C data.                 
+--!
+--! @param      I2C_SDA                I2C data.
 --! @param      I2C_SCL                I2C clock.
 --!
 --! @param    FPGA_SPI_CLK             SPI 10 pin communication.
 --! @param    FPGA_SPI_MOSI            SPI 10 pin communication.
---! @param    FPGA_TDO_SPI_MISO        SPI 10 pin communication.  
---! @param    FPGA_TMS_SPI_CS          SPI 10 pin communication.  
+--! @param    FPGA_TDO_SPI_MISO        SPI 10 pin communication.
+--! @param    FPGA_TMS_SPI_CS          SPI 10 pin communication.
 --!
---!                                   
+--!
 --! @param      TXRX_MOSI_TO_FPGA         Data Transmitter connections.
 --! @param      TXRX_CS_N_TO_FPGA         Data Transmitter connections.
 --! @param      TXRX_GPIO3_TO_FPGA_CPLD   Data Transmitter connections.
 --! @param      TXRX_SCLK_TO_FPGA         Data Transmitter connections.
 --! @param      TXRX_MISO_TO_FPGA         Data Transmitter connections.
---!                                  
+--!
 --! @param      SDCARD_DI_CLK_TO_FPGA   Directly connected SD card clock.
 --! @param      SDCARD_DI_CMD_TO_FPGA   Directly connected SD card command.
---! @param      SDCARD_DI_DAT_TO_FPGA   Directly connected SD card data. 
---!   
+--! @param      SDCARD_DI_DAT_TO_FPGA   Directly connected SD card data.
+--!
 --!
 --!
 --! @param      MRAM_SCK_TO_FPGA       Magnetic Memory SPI clock.
@@ -100,7 +100,7 @@ use WORK.SDRAM_INFORMATION_PKG.ALL ;  --! SDRAM chip information.
 --! @param      SDRAM_bank          SD RAM bank.
 --! @param      SDRAM_data          SD RAM data.
 --! @param      SDRAM_mask          SD RAM byte mask.
---! 
+--!
 --!
 --! @param      MIC_CLK_TO_FPGA                 Microphone clock
 --! @param      MIC_B_DATA_TO_FPGA              Sensor board MIC header
@@ -116,7 +116,7 @@ use WORK.SDRAM_INFORMATION_PKG.ALL ;  --! SDRAM chip information.
 --! @param      IM_DRDY_M_TO_FPGA             IM Magnetic data ready.
 --! @param      IM_SDO_A_G_TO_FPGA            IM Gyroscope SPI MISO.
 --! @param      IM_INT2_A_G_TO_FPGA           IM Gyroscope interrupt 2.
---! @param      IM_SPI_SCLK_TO_FPGA           IM shared SPI clock.  
+--! @param      IM_SPI_SCLK_TO_FPGA           IM shared SPI clock.
 --!
 --!
 --! @param      RXD_GPS_TO_FPGA               GPS UART receive.
@@ -134,7 +134,7 @@ entity AudioRecordingCollarFPGA_TopLevel is
   Port (
 
     --   Clocks
-     
+
     CLK_50MHZ_TO_FPGA    : in   std_logic;
 
     --  System Status
@@ -174,7 +174,7 @@ entity AudioRecordingCollarFPGA_TopLevel is
     TXRX_GPIO3_TO_FPGA_CPLD : inout std_logic;
     TXRX_SCLK_TO_FPGA : out std_logic;
     TXRX_MISO_TO_FPGA : inout std_logic;
-    
+
     --Direct SDCard Connections
     SDCARD_DI_CLK_TO_FPGA   : out std_logic;
     SDCARD_DI_CMD_TO_FPGA   : inout std_logic;
@@ -188,7 +188,7 @@ entity AudioRecordingCollarFPGA_TopLevel is
     MRAM_SO_TO_FPGA   : inout std_logic;
     MRAM_CS_N_TO_FPGA : out std_logic;
     MRAM_WP_N_TO_FPGA : out std_logic;
-        
+
     --  SDRAM Connections
 
     SDRAM_CLK                   : out   std_logic;
@@ -219,9 +219,9 @@ entity AudioRecordingCollarFPGA_TopLevel is
     -- IM2_SDO_AG    : inout   std_logic ;
     -- IM2_INT2_AG   : inout   std_logic ;
     -- IM2_SPI_SCLK  : out   std_logic ;
-    
-    
-        --   Inertial Module 
+
+
+        --   Inertial Module
 
     IM_INT_M_TO_FPGA      : inout   std_logic ;
     IM_CS_A_G_TO_FPGA     : out     std_logic ;
@@ -239,7 +239,7 @@ entity AudioRecordingCollarFPGA_TopLevel is
     RXD_GPS_TO_FPGA       : out std_logic;
     TXD_GPS_TO_FPGA       : inout  std_logic;
     TIMEPULSE_GPS_TO_FPGA : inout  std_logic;
-    EXTINT_GPS_TO_FPGA    : out std_logic; 
+    EXTINT_GPS_TO_FPGA    : out std_logic;
 
     -- USB
     ESH_FPGA_USB_DMINUS   : out std_logic;
@@ -250,11 +250,11 @@ entity AudioRecordingCollarFPGA_TopLevel is
   ) ;
 
   end entity AudioRecordingCollarFPGA_TopLevel ;
-  
-  
 
-  
-  
+
+
+
+
 
 architecture structural of AudioRecordingCollarFPGA_TopLevel is
 
@@ -262,13 +262,13 @@ architecture structural of AudioRecordingCollarFPGA_TopLevel is
 component Collar is
 
   Generic (
-    master_clk_freq_g     : natural           := 10e6 ;
+    source_clk_freq_g     : natural           := 10e6 ;
     button_cnt_g          : natural           :=  8 ;
     sdram_space_g         : SDRAM_Capacity_t  := SDRAM_16_Capacity_c ;
     sdram_times_g         : SDRAM_Timing_t    := SDRAM_75_2_Timing_c
   ) ;
   Port (
-    master_clk            : in    std_logic ;
+    source_clk            : in    std_logic ;
     buttons_in            : in    std_logic_vector (button_cnt_g-1
                                                       downto 0) ;
 
@@ -312,7 +312,6 @@ component Collar is
     gps_timepulse_io      : inout std_logic ;
 
     ms_clk                : out   std_logic ;
-    ms_cs_out             : out   std_logic ;
     ms_mosi_out           : out   std_logic ;
     --ms_miso_in            : in    std_logic ;
     --ms_int_in             : in    std_logic ;
@@ -355,13 +354,13 @@ ESH_FPGA_USB_DPLUS <= count(7);
 
 C : Collar
     Generic Map(
-      master_clk_freq_g         => master_clk_freq_c,
+      source_clk_freq_g         => source_clk_freq_c,
       button_cnt_g              => 8,
       sdram_space_g             => SDRAM_16_Capacity_c,
       sdram_times_g             => SDRAM_75_3_Timing_c
     )
     Port Map(
-      master_clk                => CLK_50MHZ_TO_FPGA,
+      source_clk                => CLK_50MHZ_TO_FPGA,
       buttons_in                => (others => '0'),
 
       batt_int_in               => FPGA_BATT_INT,
@@ -428,8 +427,8 @@ C : Collar
       --radio_clk                 => TXRX_SCLK_TO_FPGA(0),
       --radio_data_io             => (others => '0')
     );
-    
-    
+
+
 process(CLK_50MHZ_TO_FPGA)
 begin
   if (CLK_50MHZ_TO_FPGA'event and CLK_50MHZ_TO_FPGA = '1') then
@@ -438,6 +437,6 @@ begin
 end process;
 
 
-    
-    
+
+
 end architecture structural ;
