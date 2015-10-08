@@ -64,7 +64,7 @@ use WORK.MSG_UBX_TIM_TM2_PKG.ALL ;
 --! @details    Instanciates and connects all the components that make up
 --!             the Acoustic Recording Collar FPGA implementation.
 --!
---! @param      master_clk_freq_g Frequency of the system clock in cycles
+--! @param      master_clk_freq_c Frequency of the system clock in cycles
 --!                               per second.
 --! @param      button_cnt_g    Number of buttons used by the device.
 --! @param      sdram_space_g   Space available parameters for SDRAM chip.
@@ -142,13 +142,13 @@ use WORK.MSG_UBX_TIM_TM2_PKG.ALL ;
 entity Collar is
 
   Generic (
-    master_clk_freq_g     : natural           := 10e6 ;
+    source_clk_freq_g     : natural           := 10e6 ;
     button_cnt_g          : natural           :=  8 ;
     sdram_space_g         : SDRAM_Capacity_t  := SDRAM_16_Capacity_c ;
     sdram_times_g         : SDRAM_Timing_t    := SDRAM_75_2_Timing_c
   ) ;
   Port (
-    master_clk            : in    std_logic ;
+    source_clk            : in    std_logic ;
     buttons_in            : in    std_logic_vector (button_cnt_g-1
                                                       downto 0) ;
 
@@ -225,6 +225,15 @@ end entity Collar ;
 
 architecture structural of Collar is
 
+  --  Master clock information.
+  
+  constant master_clk_freq_c  : natural := source_clk_freq_g ;
+
+  signal master_clk           : std_logic ;
+  signal master_gated_clk     : std_logic ;
+  signal master_gated_inv_clk : std_logic ;
+  signal master_gated_en      : std_logic ;
+
   --  Button specifications.
 
   constant reset_button_c     : natural := 0 ;
@@ -255,7 +264,7 @@ architecture structural of Collar is
 
   constant pu_time_c        : real    := 0.5 ;   -- Give sigtap start time.
   constant pu_count_c       : natural :=
-              natural (trunc (real (master_clk_freq_g) * pu_time_c)) ;
+              natural (trunc (real (master_clk_freq_c) * pu_time_c)) ;
 
   signal reset              : std_logic ;
   signal power_up           : std_logic := '0' ;
@@ -264,7 +273,7 @@ architecture structural of Collar is
 
   constant pb_time_c        : real    := 0.5 ;
   constant pb_count_c       : natural :=
-              natural (trunc (real (master_clk_freq_g) * pb_time_c)) ;
+              natural (trunc (real (master_clk_freq_c) * pb_time_c)) ;
 
   signal reset_pushed       : std_logic := '0' ;
   signal pb_counter         : unsigned (const_bits (pb_count_c)-1
@@ -280,23 +289,23 @@ architecture structural of Collar is
   attribute noprune                   : boolean ;
   attribute noprune of LocationCode   : signal is true ;
 
-  --  SPI clocks and gated Master clock.
+  --  SPI clocks.
 
   signal spi_clk              : std_logic ;
   signal spi_gated_clk        : std_logic ;
   signal spi_gated_inv_clk    : std_logic ;
   signal spi_gated_en         : std_logic ;
 
-  signal master_gated_clk     : std_logic ;
-  signal master_gated_inv_clk : std_logic ;
-  signal master_gated_en      : std_logic ;
-
   component GenClock is
 
     Generic (
       clk_freq_g              : natural   := 10e6 ;
-      out_clk_freq_g          : natural   := 1e6
-    ) ;
+      out_clk_freq_g          : natural   := 1e6 ;
+      net_clk_g               : natural   := 0 ;
+      net_inv_g               : natural   := 0 ;
+      net_gated_g             : natural   := 0 ;
+      net_inv_gated_g         : natural   := 0
+     ) ;
     Port (
       reset                   : in    std_logic ;
       clk                     : in    std_logic ;
@@ -833,8 +842,11 @@ begin
 
   spi_clock : GenClock
     Generic Map (
-      clk_freq_g              => master_clk_freq_g,
-      out_clk_freq_g          => spi_clk_freq_c
+      clk_freq_g              => master_clk_freq_c,
+      out_clk_freq_g          => spi_clk_freq_c,
+      net_clk_g               => 1,
+      net_gated_g             => 1,
+      net_inv_gated_g         => 0
     )
     Port Map (
       reset                   => reset,
@@ -850,20 +862,25 @@ begin
                            magmem_buff_busy ;
 
   --------------------------------------------------------------------------
-  --  Gated Master clock.
-  --  The gated clock is turned on when the shared gps memory port is used.
+  --  Master clock.
+  --  The gated clock is turned on when the shared gps memory port is used
+  --  and under other conditions.
   --------------------------------------------------------------------------
 
-  master_gated_clock : GenClock
+  master_clock : GenClock
     Generic Map (
-      clk_freq_g              => master_clk_freq_g,
-      out_clk_freq_g          => master_clk_freq_g
+      clk_freq_g              => master_clk_freq_c,
+      out_clk_freq_g          => master_clk_freq_c,
+      net_clk_g               => 1,
+      net_gated_g             => 1,
+      net_inv_gated_g         => 1
     )
     Port Map (
       reset                   => reset,
-      clk                     => master_clk,
+      clk                     => source_clk,
       clk_on_in               => master_gated_en,
       clk_off_in              => not master_gated_en,
+      clk_out                 => master_clk,
       gated_clk_out           => master_gated_clk,
       gated_clk_inv_out       => master_gated_inv_clk
     ) ;
@@ -977,7 +994,7 @@ begin
 
       system_clock : SystemTime
         Generic Map (
-          clk_freq_g          => master_clk_freq_g,
+          clk_freq_g          => master_clk_freq_c,
           gpsmem_addrbits_g   => gpsmem_addrbits_c,
           gpsmem_databits_g   => gpsmem_databits_c,
           timezone_g          => CP_CurrentLocation_c.timezone,
@@ -1209,7 +1226,7 @@ begin
 
       eventcnt : LoggingCounterArray
         Generic Map (
-          clk_freq_g            => master_clk_freq_g,
+          clk_freq_g            => master_clk_freq_c,
           counter_size_g        => eventcnt_databits_c,
           address_size_g        => eventcnt_addrbits_c,
           counters_g            => eventcnt_events_c,
@@ -1450,7 +1467,7 @@ begin
 
       sdcard_buffer : SDRAM_Controller
         Generic Map (
-          sysclk_freq_g         => master_clk_freq_g,
+          sysclk_freq_g         => master_clk_freq_c,
 
           outmem_buffrows_g     => outmem_buffrows_c,
           outmem_buffcount_g    => outmem_buffcount_c,
@@ -1789,11 +1806,11 @@ begin
 
       sdcard : microsd_controller_dir
         generic map (
-          clk_freq_g          => master_clk_freq_g,
+          clk_freq_g          => master_clk_freq_c,
           buf_size_g        => sdcard_blksize_c * 4,
           block_size_g      => sdcard_blksize_c,
           hs_sdr25_mode_g     => '1',
-          clk_divide_g        => natural (real (master_clk_freq_g) / 400000.0)
+          clk_divide_g        => natural (real (master_clk_freq_c) / 400000.0)
         )
         port map (
           rst_n                       => (not reset) and CTL_SDCardOn,
@@ -2125,11 +2142,11 @@ begin
 
       sdcard : microsd_controller_dir
         generic map (
-          clk_freq_g          => master_clk_freq_g,
+          clk_freq_g          => master_clk_freq_c,
           buf_size_g        => sdcard_blksize_c * 4,
           block_size_g      => sdcard_blksize_c,
           hs_sdr25_mode_g     => '1',
-          clk_divide_g        => natural (real (master_clk_freq_g) / 400000.0)
+          clk_divide_g        => natural (real (master_clk_freq_c) / 400000.0)
         )
         port map (
           rst_n                       => (not reset) and CTL_SDCardOn,
@@ -2375,7 +2392,7 @@ begin
 
       gps_ctl : GPSmessages
         Generic Map (
-          clk_freq_g            => master_clk_freq_g,
+          clk_freq_g            => master_clk_freq_c,
           mem_addrbits_g        => gpsmemsrc_addrbits_c,
           mem_databits_g        => gpsmemsrc_databits_c
         )

@@ -52,6 +52,13 @@ use GENERAL.UTILITIES_PKG.ALL ; --  Generally useful functions.
 --!                                 cycles per second.
 --! @param      out_clk_freq_g      Frequency the result clock in cycles per
 --!                                 second.
+--! @param      net_clk_g           Type of network for the output clock.
+--!                                   0 - None, 1 - Global,
+--!                                   2 - Dual Regional,
+--!                                   3 - Quadrant Regional
+--! @param      net_inv_g           Type of network for inverted clock.
+--! @param      net_gated_g         Type of network for gated clock.
+--! @param      net_inv_gated_g     Type of network for gated inverted clk.
 --! @param      reset               Reset all the processing information.
 --! @param      clk                 Clock used to drive clock generation.
 --! @param      clk_on_in           Turn on the gated result clock.
@@ -67,7 +74,11 @@ entity GenClock is
 
   Generic (
     clk_freq_g              : natural   := 10e6 ;
-    out_clk_freq_g          : natural   := 1e6
+    out_clk_freq_g          : natural   := 1e6 ;
+    net_clk_g               : natural   := 0 ;
+    net_inv_g               : natural   := 0 ;
+    net_gated_g             : natural   := 0 ;
+    net_inv_gated_g         : natural   := 0
   ) ;
   Port (
     reset                   : in    std_logic ;
@@ -95,26 +106,220 @@ architecture rtl of GenClock is
   signal clk_cnt            : unsigned (clk_cntbits_c-1 downto 0) :=
                                               (others => '0') ;
 
-  signal out_clk            : std_logic := '0' ;
-  signal out_inv_clk        : std_logic := '0' ;
-  signal out_gated_clk      : std_logic := '0' ;
-  signal out_inv_gated_clk  : std_logic := '0' ;
   signal gated_clk_en       : std_logic := '0' ;
   signal gated_inv_clk_en   : std_logic := '0' ;
+
+  signal out_clk            : std_logic := '0' ;
+  signal out_clk_inv        : std_logic := '0' ;
+  signal out_gated_clk      : std_logic := '0' ;
+  signal out_gated_clk_inv  : std_logic := '0' ;
 
   attribute keep            : boolean ;
 
   attribute keep of out_clk           : signal is true ;
-  attribute keep of out_inv_clk       : signal is true ;
+  attribute keep of out_clk_inv       : signal is true ;
   attribute keep of out_gated_clk     : signal is true ;
-  attribute keep of out_inv_gated_clk : signal is true ;
+  attribute keep of out_gated_clk_inv : signal is true ;
+
+  --  Clock network components.
+
+  COMPONENT GlobalClock IS
+    PORT
+    (
+      ena    : IN STD_LOGIC  := '1';
+      inclk    : IN STD_LOGIC ;
+      outclk    : OUT STD_LOGIC
+    );
+  END COMPONENT GlobalClock;
+
+  COMPONENT DualClock IS
+    PORT
+    (
+      ena    : IN STD_LOGIC  := '1';
+      inclk    : IN STD_LOGIC ;
+      outclk    : OUT STD_LOGIC
+    );
+  END COMPONENT DualClock;
+
+  COMPONENT QuadrantClock IS
+    PORT
+    (
+      ena    : IN STD_LOGIC  := '1';
+      inclk    : IN STD_LOGIC ;
+      outclk    : OUT STD_LOGIC
+    );
+  END COMPONENT QuadrantClock;
+
 
 begin
 
-  clk_out                   <= out_clk ;
-  clk_inv_out               <= out_inv_clk ;
-  gated_clk_out             <= out_gated_clk ;
-  gated_clk_inv_out         <= out_inv_gated_clk ;
+  --------------------------------------------------------------------------
+  --  Select the clock networking to used for main output clock.
+  --------------------------------------------------------------------------
+
+  clk_Normal:
+    if (net_clk_g = 0) generate
+      clk_out               <= out_clk ;
+    end generate clk_Normal;
+
+  clk_GlobalClock:
+    if (net_clk_g = 1) generate
+      net_clock: GlobalClock
+      PORT MAP
+      (
+        ena       => '1',
+        inclk     => out_clk,
+        outclk    => clk_out
+      ) ;
+    end generate clk_GlobalClock ;
+
+  clk_DualClock:
+    if (net_clk_g = 2) generate
+      net_clock: DualClock
+      PORT MAP
+      (
+        ena       => '1',
+        inclk     => out_clk,
+        outclk    => clk_out
+      ) ;
+    end generate clk_DualClock;
+
+  clk_QuadrantClock:
+    if (net_clk_g = 3) generate
+      net_clock: QuadrantClock
+      PORT MAP
+      (
+        ena       => '1',
+        inclk     => out_clk,
+        outclk    => clk_out
+      ) ;
+    end generate clk_QuadrantClock ;
+
+  --------------------------------------------------------------------------
+  --  Select the clock networking to used for inverted output clock.
+  --------------------------------------------------------------------------
+
+  clk_inv_Normal:
+    if (net_inv_g = 0) generate
+      clk_inv_out           <= out_clk_inv ;
+    end generate clk_inv_Normal ;
+
+  clk_inv_GlobalClock:
+    if (net_inv_g = 1) generate
+      net_clock: GlobalClock
+      PORT MAP
+      (
+        ena       => '1',
+        inclk     => out_clk_inv,
+        outclk    => clk_inv_out
+      ) ;
+    end generate clk_inv_GlobalClock ;
+
+  clk_inv_DualClock:
+    if (net_inv_g = 2) generate
+      net_clock: DualClock
+      PORT MAP
+      (
+        ena       => '1',
+        inclk     => out_clk_inv,
+        outclk    => clk_inv_out
+      ) ;
+    end generate clk_inv_DualClock ;
+
+  clk_inv_QuadrantClock:
+    if (net_inv_g = 3) generate
+      net_clock: QuadrantClock
+      PORT MAP
+      (
+        ena       => '1',
+        inclk     => out_clk_inv,
+        outclk    => clk_inv_out
+      ) ;
+    end generate clk_inv_QuadrantClock ;
+
+  --------------------------------------------------------------------------
+  --  Select the clock networking to used for gated output clock.
+  --------------------------------------------------------------------------
+
+  gated_clk_Normal:
+    if (net_clk_g = 0) generate
+      gated_clk_out         <= out_gated_clk ;
+    end generate gated_clk_Normal ;
+
+  gated_clk_GlobalClock:
+    if (net_clk_g = 1) generate
+      net_clock: GlobalClock
+      PORT MAP
+      (
+        ena       => gated_clk_en,
+        inclk     => out_clk,
+        outclk    => gated_clk_out
+      ) ;
+    end generate gated_clk_GlobalClock ;
+
+  gated_clk_DualClock:
+    if (net_clk_g = 2) generate
+      net_clock: DualClock
+      PORT MAP
+      (
+        ena       => gated_clk_en,
+        inclk     => out_clk,
+        outclk    => gated_clk_out
+      ) ;
+    end generate gated_clk_DualClock ;
+
+  gated_clk_QuadrantClock :
+    if (net_clk_g = 3) generate
+      net_clock: QuadrantClock
+      PORT MAP
+      (
+        ena       => gated_clk_en,
+        inclk     => out_clk,
+        outclk    => gated_clk_out
+      ) ;
+    end generate gated_clk_QuadrantClock ;
+
+  --------------------------------------------------------------------------
+  --  Select the clock networking to used for gated inverted output clock.
+  --------------------------------------------------------------------------
+
+  gated_clk_inv_Normal:
+    if (net_inv_gated_g = 0) generate
+      gated_clk_inv_out       <= out_gated_clk_inv ;
+    end generate gated_clk_inv_Normal ;
+
+  gated_clk_inv_GlobalClock:
+    if (net_inv_gated_g = 1) generate
+      net_clock: GlobalClock
+      PORT MAP
+      (
+        ena       => gated_inv_clk_en,
+        inclk     => out_clk_inv,
+        outclk    => gated_clk_inv_out
+      ) ;
+    end generate gated_clk_inv_GlobalClock ;
+
+  gated_clk_inv_DualClock:
+    if (net_inv_gated_g = 2) generate
+      net_clock: DualClock
+      PORT MAP
+      (
+        ena       => gated_inv_clk_en,
+        inclk     => out_clk_inv,
+        outclk    => gated_clk_inv_out
+      ) ;
+    end generate gated_clk_inv_DualClock ;
+
+  gated_clk_inv_QuadrantClock:
+    if (net_inv_gated_g = 3) generate
+      net_clock: QuadrantClock
+      PORT MAP
+      (
+        ena       => gated_inv_clk_en,
+        inclk     => out_clk_inv,
+        outclk    => gated_clk_inv_out
+      ) ;
+    end generate gated_clk_inv_QuadrantClock ;
 
   --------------------------------------------------------------------------
   --  Clock enable setting.
@@ -160,17 +365,17 @@ begin
     begin
       if (reset = '1') then
         out_clk               <= '0' ;
-        out_inv_clk           <= '0' ;
+        out_clk_inv           <= '0' ;
         out_gated_clk         <= '0' ;
-        out_inv_gated_clk     <= '0' ;
+        out_gated_clk_inv     <= '0' ;
 
       --  Handle clocks that pass through directly.
 
       else
         out_clk               <= clk ;
-        out_inv_clk           <= not clk ;
+        out_clk_inv           <= not clk ;
         out_gated_clk         <= clk and gated_clk_en ;
-        out_inv_gated_clk     <= (not clk) and gated_inv_clk_en ;
+        out_gated_clk_inv     <= (not clk) and gated_inv_clk_en ;
       end if ;
     end process clk_gen ;
 
@@ -184,9 +389,9 @@ begin
       if (reset = '1') then
         clk_cnt               <= (others => '0') ;
         out_clk               <= '0' ;
-        out_inv_clk           <= '0' ;
+        out_clk_inv           <= '0' ;
         out_gated_clk         <= '0' ;
-        out_inv_gated_clk     <= '0' ;
+        out_gated_clk_inv     <= '0' ;
 
       --  Count out a half cycle of the output clock in driver clock cycles.
 
@@ -203,9 +408,9 @@ begin
 
           new_clk             := not out_clk ;
           out_clk             <= new_clk ;
-          out_inv_clk         <= not new_clk ;
+          out_clk_inv         <= not new_clk ;
           out_gated_clk       <= new_clk and gated_clk_en ;
-          out_inv_gated_clk   <= (not new_clk) and gated_inv_clk_en ;
+          out_gated_clk_inv   <= (not new_clk) and gated_inv_clk_en ;
         end if ;
       end if ;
     end process clk_gen ;

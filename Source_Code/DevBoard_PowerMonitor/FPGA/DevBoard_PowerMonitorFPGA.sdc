@@ -22,7 +22,7 @@ puts $sdc_log "name of executable is $::quartus(nameofexecutable)\n"
 puts $sdc_log "sdc log file open at [clock format [clock seconds]] \n"
 
 #if { 1 != [info exists instance_stack]} {
-  
+
 
 #   Read in all procedures used by SDC files.
 
@@ -44,21 +44,21 @@ set_time_format -unit ns -decimal_places $decplaces
 
 #   Main system clock.
 
-set master_clk_freq     $shared_constants(master_clk_freq_c)
+set source_clk_freq     $shared_constants(source_clk_freq_c)
 
-set master_clk_period   [expr 1.0e9 / $master_clk_freq]
-set per                 [format "%.*f" $decplaces $master_clk_period]
+set source_clk_period   [expr 1.0e9 / $source_clk_freq]
+set per                 [format "%.*f" $decplaces $source_clk_period]
 set rise                [expr 0]
-set fall                [expr $master_clk_period * 0.5]
+set fall                [expr $source_clk_period * 0.5]
 set duty                [format "%.*f %.*f" $decplaces $rise $decplaces $fall]
 
-set master_clk_target   [get_ports CLK_50MHZ_TO_FPGA]
-set master_clk_name     master_clk
+set source_clk_target   [get_ports CLK_50MHZ_TO_FPGA]
+set source_clk_name     source_clk
 
-create_clock -name $master_clk_name -period $per -waveform $duty \
-                   $master_clk_target
+create_clock -name $source_clk_name -period $per -waveform $duty \
+                   $source_clk_target
 
-#create_clock -name master_clk -period 20.000 -waveform { 0.000 10.000 } \
+#create_clock -name source_clk -period 20.000 -waveform { 0.000 10.000 } \
 #             [get_ports CLK_50MHZ_TO_FPGA]
 
 #   The 'inst_mapping' array contains information needed by other levels.
@@ -75,8 +75,8 @@ create_clock -name $master_clk_name -period $per -waveform $duty \
 set top_level_inst            "Collar:C"
 push_instance                 $top_level_inst
 
-set_instvalue                 master_clk_freq_g $master_clk_freq
-set_instvalue                 master_clk        $master_clk_name
+set_instvalue                 source_clk_freq_g $source_clk_freq
+set_instvalue                 source_clk        $source_clk_name
 
 set_instvalue                 i2c_clk_io        "SDA_TO_FPGA_CPLD"
 set_instvalue                 pc_spi_clk        "PC_SPI_CLK"
@@ -97,28 +97,24 @@ source Collar.sdc
 # synchronous counterparts (*_s)
 
 
-set sync_list  [get_registers {*_s}] 
+set sync_list               [get_registers {*_s}]
 
 if {[get_collection_size $sync_list] > 0} {
 
-
   foreach_in_collection reg $sync_list {
 
-    set sync_name [get_object_info -name $reg]
+    set sync_name           [get_object_info -name $reg]
 
     regsub -all {^[A-Za-z0-9_]+:|(\|)[A-Za-z0-9_]+:} "$sync_name" {\1} cell_path
-    set sync [get_cells $cell_path]
-    
+    set sync                [get_cells $cell_path]
+
     if {[get_collection_size $sync] > 0} {
       set_false_path -through $sync
       puts $sdc_log "Breaking async paths $sync_name\n"
     } else {
       puts $sdc_log "$cell_path missing\n"
     }
-    
-    
   }
-
 }
 
 #   Set the I/O port delays for all devices.
@@ -127,13 +123,6 @@ foreach sdc_file    [glob *_dev.sdc] {
     puts $sdc_log "Processing $sdc_file\n"
     source $sdc_file
 }
-
-
-
-
-
-
-
 
 # #   Log any other information.
 
