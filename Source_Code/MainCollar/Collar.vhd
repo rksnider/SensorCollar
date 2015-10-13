@@ -2765,7 +2765,7 @@ begin
 
       --  Resource multiplexer.
 
-      gps_resmux : ResourceMUX
+      magmem_resmux : ResourceMUX
         Generic Map (
           requester_cnt_g         => magmemrq_count_c,
           resource_bits_g         => magmem_iobits_c
