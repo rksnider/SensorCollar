@@ -68,8 +68,8 @@ use GENERAL.UTILITIES_PKG.ALL ;
 --!             is latched by the data latch signal, a data valid signal is
 --!             also sent.  This signal is not true across the time the
 --!             data latch signal goes high.  The data receiver should not
---!             read the data array unless this signal is high to prevent it
---!             from reading the new value on some of the array's signals
+--!             read the latched data unless this signal is high to prevent
+--!             it from reading the new value on some of the array's signals
 --!             and the old value on others if the read takes place at the
 --!             same time as the data latch goes high.
 --!             To help with this situation the valid latch signal can be
@@ -110,6 +110,74 @@ entity CrossChipSend is
   ) ;
 
 end entity CrossChipSend ;
+
+--! @details    The following timing diagrams show how the input and output
+--!             signals relate in time.  All data reading and capturing
+--!             takes place on rising edges.  The signal abreviations are:
+--!
+--!             DR is data ready.  It triggers the other signals except for
+--!             the clocks.
+--!             FC-SCD is the fast clock when in the same clock domain as
+--!             the data ready.
+--!             DL-SCD is the data latch when the fast clock and data ready
+--!             are in the same clock domain.  It starts on the next clock
+--!             edge after the data ready goes high.
+--!             FC-DCD is the fast clock when in a different clock domain
+--!             from the data ready.
+--!             DL-DCD is the data latch when the fast clock and the data
+--!             ready are in different clock domains.  In the case shown
+--!             the time difference between the data ready and next clock
+--!             edge is very short.  Thus the data latch must be two clock
+--!             edges from the data ready going high to insure that there is
+--!             enough time for all data lines to reach the destination
+--!             before the data latch captures them there.
+--!             DV is the data valid signal.  It must be false around the
+--!             time the data latch goes high to insure that the data
+--!             captured by the data latch is not read during that capture,
+--!             which could lead to some bits being recently captured and
+--!             some bits being from a previous capture.
+--!             VL is the valid latch signal.  It will latch the newly
+--!             captured data into another latch safely after that data
+--!             has been completely captured.
+--!             RC-DCD is the remote clock in a diffrent clock domain from
+--!             all other clocks.  It can try to read data at the same time
+--!             it is being captured by the latches.  To avoid this problem
+--!             the data read is from the data latch if the data valid line
+--!             is high.  Otherwise it is from valid latch which will be
+--!             somewhat older.
+--!
+--!                   +----+----+
+--! DR                |         |
+--!     ----+----+----+         +----+----+----+
+--!                   .
+--!         +----+    +----+    +----+    +----+    +----+    +----+
+--! FC-SCD  |    |    |    |    |    |    |    |    |    |    |    |
+--!     ----+    +----+    +----+    +----+    +----+    +----+    +----
+--!                   .
+--!                   .    +----+
+--! DL-SCD            .    |    |
+--!     ----+----+----+----+    +----+----+----+
+--!                   .
+--!      +----+    +----+    +----+    +----+    +----+    +----+
+--! FC-DCD    |    |  . |    |    |    |    |    |    |    |    |
+--!           +----+  . +----+    +----+    +----+    +----+    +----
+--!                   .
+--!                   .      +----+
+--! DL-DCD            .      |    |
+--!     -+----+----+----+----+    +----+----+----+
+--!                   .      .
+--!     -+----+----+--+      .    +----+----+----+
+--! DV                |      .    |
+--!                   +-+----+----+
+--!                          .
+--!                          .         +----+
+--! VL                       .         |    |
+--!     -+----+----+----+----+----+----+    +----+
+--!                          .
+--!      +----+----+         +----+----+         +----+----+
+--! RC-DCD         |         |         |         |         |
+--!                +----+----+         +----+----+         +----+----
+--!
 
 architecture rtl of CrossChipSend is
 
