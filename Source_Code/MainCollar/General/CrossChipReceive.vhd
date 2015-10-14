@@ -127,7 +127,7 @@ architecture rtl of CrossChipReceive is
                                       (others => '0') ;
   signal data_acked         : std_logic_vector (0 downto 0) ;
   signal data_ready         : std_logic_vector (0 downto 0) ;
-  
+
   signal new_data_clear     : std_logic := '0' ;
   signal new_data_ready     : std_logic ;
   signal data_ready_s       : std_logic := '0' ;
@@ -160,11 +160,12 @@ begin
   data_out                <= data_local_new_s
                                 when (data_valid_s = '1') else
                              data_local_old_s ;
+
   data_ready_out          <= data_ready_s ;
 
   sync_data : process (clk)
   begin
-    if (rising_edge (clk)) then
+    if (falling_edge (clk)) then
       data_local_new_s    <= data_local_new ;
       data_local_old_s    <= data_local_old ;
       data_valid_s        <= data_valid_in ;
