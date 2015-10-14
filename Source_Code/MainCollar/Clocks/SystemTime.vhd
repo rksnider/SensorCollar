@@ -285,6 +285,7 @@ architecture rtl of SystemTime is
   signal gps_timerec_load           : std_logic ;
   signal gps_seconds_load           : std_logic ;
   signal rtc_seconds_load           : std_logic ;
+  signal rtc_seconds_set            : std_logic ;
   signal gps_timerec_restart        : std_logic ;
 
   signal gps_seconds                : unsigned (epoch70_secbits_c-1
@@ -898,14 +899,20 @@ begin
   upd_sec : process (rtc_seconds_load, gps_seconds, milli_clk)
   begin
     if (rtc_seconds_load = '1') then
-      rtc_seconds             <= gps_seconds ;
+      rtc_seconds_set         <= '1' ;
       rtc_milli_cnt           <= (others => '0') ;
       calc_datetime_start     <= '0' ;
       alarm_time_out          <= (others => '0') ;
 
     elsif (rising_edge (milli_clk)) then
 
-      if (rtc_milli_cnt /= milli_count_c) then
+      if (rtc_seconds_set = '1') then
+        rtc_seconds_set       <= '0' ;
+        rtc_seconds           <= gps_seconds ;
+        rtc_milli_cnt         <= (others => '0') ;
+        calc_datetime_start   <= '1' ;
+
+      elsif (rtc_milli_cnt /= milli_count_c) then
         rtc_milli_cnt         <= rtc_milli_cnt + 1 ;
         calc_datetime_start   <= '0' ;
       else
