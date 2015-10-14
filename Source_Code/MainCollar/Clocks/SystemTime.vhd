@@ -106,6 +106,12 @@ USE WORK.MSG_UBX_TIM_TM2_PKG.ALL ;  --  Navagation Solution message.
 --! @param      rtc_datetime_out    Running Local time in year-month-day
 --!                                 hour-minute-second from RTC current
 --!                                 value.
+--! @param      time_latch_out      Latches time startup, gps, or rtc time
+--!                                 after a long path across the chip.
+--! @param      time_valid_out      Latched time is valid.
+--! @param      valid_latch_out     Latches the last latched time when it is
+--!                                 valid for use when next time is not yet
+--!                                 valid.
 --! @param      gpsmem_tmbank_in    Most recent valid Timemark bank in
 --!                                 GPS memory.  Changes to it triggers
 --!                                 update of the GPS Time and RTC Time
@@ -159,6 +165,10 @@ entity SystemTime is
     rtc_datetime_out    : out   std_logic_vector (dt_totalbits_c-1
                                                   downto 0) ;
 
+    time_latch_out      : out   std_logic ;
+    time_valid_out      : out   std_logic ;
+    valid_latch_out     : out   std_logic ;
+
     gpsmem_tmbank_in    : in    std_logic ;
     gpsmem_req_out      : out   std_logic ;
     gpsmem_rcv_in       : in    std_logic ;
@@ -191,7 +201,27 @@ architecture rtl of SystemTime is
   signal date_time            : std_logic_vector (dt_totalbits_c-1
                                                   downto 0) ;
 
-  --  Map GPS times to standard logic vector of bytes and one of bytes.
+  --  Cross chip communication protects against corruption of signals
+  --  travelling long distances and across clock domains.  This operation
+  --  takes to fast clock cycles to complete and so must be slowed down from
+  --  clock generation by a factor of two.
+
+  signal systime_ready        : std_logic := '0' ;
+
+  component CrossChipSend is
+    Generic (
+      fast_latch_g          : std_logic := '1'
+    ) ;
+    Port (
+      fast_clk              : in    std_logic ;
+      data_ready_in         : in    std_logic ;
+      data_latch_out        : out   std_logic ;
+      data_valid_out        : out   std_logic ;
+      valid_latch_out       : out   std_logic
+    ) ;
+  end component CrossChipSend ;
+
+  --  Map GPS times to standard logic vector of bits and one of bytes.
 
   signal startup_time_bts   : std_logic_vector (gps_time_bytes_c*8-1
                                                 downto 0) :=
@@ -260,7 +290,8 @@ architecture rtl of SystemTime is
   signal gps_seconds                : unsigned (epoch70_secbits_c-1
                                                 downto 0) ;
   signal rtc_seconds                : unsigned (epoch70_secbits_c-1
-                                                downto 0) ;
+                                                downto 0) :=
+                                          (others => '0') ;
   signal next_second                : unsigned (epoch70_secbits_c-1
                                                 downto 0) ;
 
@@ -539,6 +570,22 @@ architecture rtl of SystemTime is
   attribute keep of milli_clk   : signal is true ;
 
 begin
+
+  --------------------------------------------------------------------------
+  --  Cross Chip Latching Signalling
+  --------------------------------------------------------------------------
+
+  ccs : CrossChipSend
+    Generic Map (
+      fast_latch_g          => '1'
+    )
+    Port Map (
+      fast_clk              => clk,
+      data_ready_in         => systime_ready,
+      data_latch_out        => time_latch_out,
+      data_valid_out        => time_valid_out,
+      valid_latch_out       => valid_latch_out
+    ) ;
 
   --------------------------------------------------------------------------
   --  Startup Time
@@ -832,6 +879,11 @@ begin
                                  std_logic_vector (gps_nanosec_cnt) ;
       gps_timerec.week_millisecond         <= gps_millisec_cnt ;
       gps_timerec.week_number              <= gps_weekno_cnt ;
+
+      --  Latch Cross Chip signals every other clock cycle.
+
+      systime_ready                       <= not systime_ready ;
+
     end if ;
   end process latch_process ;
 

@@ -192,6 +192,20 @@ out_count               = out_count + 1 ;
 out_sig (out_count)     = dt_totalbits_c ;
 rtc_datetime_out        = out_count ;
 
+%   Cross Chip Latching Signals
+
+out_count               = out_count + 1 ;
+out_sig (out_count)     = 1 ;
+time_latch_out          = out_count ;
+
+out_count               = out_count + 1 ;
+out_sig (out_count)     = 1 ;
+time_valid_out          = out_count ;
+
+out_count               = out_count + 1 ;
+out_sig (out_count)     = 1 ;
+valid_latch_out         = out_count ;
+
 %   GPS Memory Signals
 
 in_count                = in_count + 1 ;

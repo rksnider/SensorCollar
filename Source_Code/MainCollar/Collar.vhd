@@ -933,6 +933,10 @@ begin
           rtc_datetime_out    : out   std_logic_vector (dt_totalbits_c-1
                                                         downto 0) ;
 
+          time_latch_out      : out   std_logic ;
+          time_valid_out      : out   std_logic ;
+          valid_latch_out     : out   std_logic ;
+
           gpsmem_tmbank_in    : in    std_logic ;
           gpsmem_req_out      : out   std_logic ;
           gpsmem_rcv_in       : in    std_logic ;
