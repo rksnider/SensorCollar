@@ -166,8 +166,11 @@ begin
 
   datetime              <= TO_DATE_TIME (rtc_datetime_in) ;
   alarmtime.year        <= datetime.year ;
+  alarmtime.lyear       <= '0' ;
   alarmtime.month       <= datetime.month ;
   alarmtime.mday        <= datetime.mday ;
+  alarmtime.yday        <= (others => '0') ;
+  alarmtime.indst       <= '0' ;
   alarmtime.hour        <= TO_UNSIGNED (12, dt_hourbits_c) ;
   alarmtime.minute      <= (others => '0') ;
   alarmtime.second      <= (others => '0') ;
