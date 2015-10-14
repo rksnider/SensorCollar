@@ -68,22 +68,6 @@ source SystemTime.sdc
 
 pop_instance
 
-#   The SDRAM Controller.
-
-set sdc_file              "SDRAM_Controller.sdc"
-
-if { [file exists "$sdc_file"] > 0 } {
-
-  push_instance           "SDRAM_Controller:@use_SDRAM:sdcard_buffer"
-  set_instvalue           sysclk            [list $collar_master_clk_name]
-
-  copy_instvalues         [list "sdram_clk,sdram_clk_out"]
-
-  source $sdc_file
-
-  pop_instance
-}
-
 #   Process SDC file for Status/Control SPI.  Push the new instance onto the
 #   instances stack beforehand and remove it afterwards.
 
