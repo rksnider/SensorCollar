@@ -176,6 +176,7 @@ begin
       signal preset_low       : unsigned (LowBitCnt_c-1 downto 0) ;
       signal preset_high      : unsigned (HighBitCnt_c-1 downto 0) ;
 
+      signal restart          : std_logic ;
       signal counter_reset    : std_logic ;
 
       signal high_clk         : std_logic ;
@@ -195,23 +196,23 @@ begin
       --  roll the result over to zero.
       ----------------------------------------------------------------------
 
-      low_counter: process (reset, clk)
-        variable diff_low       : signed (low_bits'length downto 0) ;
-        variable diff_limit     : signed (low_bits'length downto 0) ;
-        variable high_bits_new  : unsigned (high_bits'length-1 downto 0) ;
+      low_counter: process (reset, clk, preset_in)
+        variable low_bits_v       : unsigned (low_bits'length-1 downto 0) ;
+        variable high_bits_v      : unsigned (high_bits'length-1 downto 0) ;
+        variable diff_low_v       : signed (low_bits'length downto 0) ;
+        variable diff_limit_v     : signed (low_bits'length downto 0) ;
+        variable high_bits_new_v  : unsigned (high_bits'length-1 downto 0) ;
       begin
         --  Calculate the result of the first clock cycle.  Counting will
         --  not start until the second rising clock edge.
 
         if (reset = '1') then
+          restart             <= '1' ;
           counter_reset       <= '0' ;
           carry_next          <= '0' ;
           carry_out           <= '0' ;
           high_clk            <= '0' ;
           result_out          <= preset_in ;
-
-          low_bits            <= preset_low ;
-          high_bits           <= preset_high ;
 
         --  The carry signal is set one half clock cycle before rollover
         --  and cleared one half clock cycle after.  This allows synchronous
@@ -225,6 +226,15 @@ begin
         --  counter and the counter as a whole is done here.
 
         elsif (rising_edge (clk)) then
+          if (restart = '1') then
+            restart           <= '0' ;
+            low_bits_v        := preset_low ;
+            high_bits_v       := preset_high ;
+          else
+            low_bits_v        := low_bits ;
+            high_bits_v       := high_bits ;
+          end if ;
+
           result_out          <= result ;
 
           counter_reset       <= '0' ;
@@ -234,34 +244,34 @@ begin
           --  is indicated by a non negative value from the subtraction
           --  (sign bit is clear).
 
-          diff_low            := signed (RESIZE (low_bits,
-                                                 diff_low'length)) -
-                                 ((2 ** low_bits'length) -
+          diff_low_v          := signed (RESIZE (low_bits_v,
+                                                 diff_low_v'length)) -
+                                 ((2 ** low_bits_v'length) -
                                   CounterConstant_g) ;
 
-          if (diff_low (diff_low'length-1) = '1') then
-            low_bits          <= low_bits + CounterConstant_g ;
-            high_bits_new     := high_bits ;
+          if (diff_low_v (diff_low_v'length-1) = '1') then
+            low_bits          <= low_bits_v + CounterConstant_g ;
+            high_bits_new_v   := high_bits_v ;
             high_clk          <= '0' ;
 
-            diff_limit        := signed (RESIZE (low_bits,
-                                                 diff_limit'length)) +
+            diff_limit_v      := signed (RESIZE (low_bits_v,
+                                                 diff_limit_v'length)) +
                                  (CounterConstant_g -
                                   signed (RESIZE (CounterLimit_low_c,
-                                                  diff_limit'length))) ;
+                                                  diff_limit_v'length))) ;
           else
-            low_bits          <= RESIZE (unsigned (diff_low),
+            low_bits          <= RESIZE (unsigned (diff_low_v),
                                          low_bits'length) ;
-            high_bits_new     := pre_high_bits ;
+            high_bits_new_v   := pre_high_bits ;
             high_bits         <= pre_high_bits ;
             high_clk          <= '1' ;
 
-            diff_limit        := signed (RESIZE (low_bits,
-                                                 diff_limit'length)) -
-                                 ((2 ** low_bits'length) -
+            diff_limit_v      := signed (RESIZE (low_bits_v,
+                                                 diff_limit_v'length)) -
+                                 ((2 ** low_bits_v'length) -
                                   CounterConstant_g +
                                   signed (RESIZE (CounterLimit_low_c,
-                                                  diff_limit'length))) ;
+                                                  diff_limit_v'length))) ;
           end if ;
 
           --  Determine if full counter roll over has occured.  This is
@@ -269,10 +279,10 @@ begin
           --  bit clear) and the high bit counter has reached the maximum
           --  value.
 
-          if (high_bits_new = CounterLimit_high_c and
-              diff_limit (diff_limit'length-1) = '0') then
+          if (high_bits_new_v = CounterLimit_high_c and
+              diff_limit_v (diff_limit_v'length-1) = '0') then
 
-            low_bits          <= RESIZE (unsigned (diff_limit),
+            low_bits          <= RESIZE (unsigned (diff_limit_v),
                                          low_bits'length) ;
             high_bits         <= (others => '0') ;
             counter_reset     <= '1' ;
@@ -291,17 +301,18 @@ begin
                     when (preset_high /= CounterLimit_high_c) else
                 (others => '0') ;
 
-      high_counter : process (reset, clk)
+      high_counter : process (clk)
       begin
-        if (reset = '1') then
-          pre_high_bits     <= pre_high_reset ;
+        if (rising_edge (clk)) then
 
-        elsif (rising_edge (clk)) then
-          if (counter_reset = '1') then
+          if (restart = '1') then
+            pre_high_bits   <= pre_high_reset ;
+
+          elsif (counter_reset = '1') then
             pre_high_bits   <= TO_UNSIGNED (1, pre_high_bits'length) ;
 
           elsif (high_clk = '1') then
-            pre_high_bits   <= pre_high_bits + 1 ;
+              pre_high_bits <= pre_high_bits + 1 ;
           end if ;
         end if ;
       end process high_counter ;
