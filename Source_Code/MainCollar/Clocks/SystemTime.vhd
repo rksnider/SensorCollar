@@ -300,7 +300,6 @@ architecture rtl of SystemTime is
   --------------------------------------------------------------------------
 
   signal calc_datetime_start  : std_logic ;
-  signal calc_datetime_done   : std_logic ;
 
   --------------------------------------------------------------------------
   --  Calculate differences between Real Time Clock and Timemark time
@@ -850,7 +849,6 @@ begin
       datetime_out      => date_time,
       to_datetime_clk   => milli_clk,
       to_dt_start_in    => calc_datetime_start,
-      to_dt_done_out    => calc_datetime_done,
       datetime_in       => alarm_time_in,
       epoch70_out       => alarm_time,
       from_datetime_clk => milli_clk,
