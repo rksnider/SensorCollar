@@ -20,7 +20,8 @@ set sysclk_freq                 [expr 1.0 / ($sysclk_period * 1e-9)]
 set max_divider                 10000
 
 set milliclk_name               "StartupTime_milli_clk"
-set milliclk_target             "$systime_inst|milli_clk"
+set milliclk_bit                "gps_timerec.week_millisecond[2]"
+set milliclk_target             "$systime_inst|$milliclk_bit"
 set milliclk_freq               [expr 1.0 / ((2 ** 3) * 1.0e-3)]
 set milliclk_div                [expr {int($sysclk_freq / $milliclk_freq)}]
 
@@ -80,9 +81,7 @@ if {[get_collection_size [get_nodes $clk_target]] > 0} {
   puts $sdc_log "Skipped clock '$seconds_load_name' via '$sysclk' on '$clk_target'\n"
 }
 
-regsub -all {^[A-Za-z0-9_]+:|(\|)[A-Za-z0-9_]+:}                        \
-            "$milliclk_target|combout" {\1}   temp_path
-regsub -all "@" "$temp_path" "\\" clk_target
+regsub -all "@" "$milliclk_target" "\\" clk_target
 
 if {[get_collection_size [get_nodes $clk_target]] > 0} {
   puts $sdc_log "Creating clock '$milliclk_name' via '$sysclk' on '$clk_target'\n"
