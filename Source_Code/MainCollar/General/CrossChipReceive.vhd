@@ -67,7 +67,10 @@ use GENERAL.UTILITIES_PKG.ALL ;
 --!                             time it is valid for use during the time
 --!                             the received data is not valid.
 --! @param      data_in         The data that is to be read.
---! @param      data_out        The data that has been read.
+--! @param      data_out        The data that has been read.  It is latched
+--!                             on the falling edge of the clock in order to
+--!                             provide the most recent data for processes
+--!                             that are rising edge triggered.
 --! @param      data_ready_out  New data has been received and is ready to
 --!                             be read.
 --
