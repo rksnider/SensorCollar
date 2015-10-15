@@ -50,14 +50,26 @@ foreach clock_type $clock_net_type_list {
 #   Timings between the source clock and the generating clock are not
 #   important and are broken.
 
-set clk_list                    {clk clk_inv gated_clk gated_clk_inv}
+array set source_clocks {}
 
-foreach clock $clk_list {
+set clk_list                    {clk,clk,+ clk_inv,clk_inv,-            \
+                                 gated_clk,clk,+ gated_clk_inv,clk_inv,-}
+
+foreach clock_data $clk_list {
+
+  set clock_list                  [split "$clock_data" ","]
+  set clock                       [lindex $clock_list 0]
+  set source                      [lindex $clock_list 1]
+  set inv                         [lindex $clock_list 2]
+
+  set invert                      [lsearch [split "+-" ""] "$inv"]
 
   set clk_info                    [get_instvalue "${clock}_out"]
 
   if {[llength $clk_info] > 0} {
     set clk_name                  [lindex $clk_info 0]
+    set divide_by                 "$clk_div"
+    set new_clock                 {}
 
     if {[llength $clk_info] > 1} {
       #   Try for an output port as the target.
@@ -67,41 +79,98 @@ foreach clock $clk_list {
 
       regsub -all "@" "$clk_port" "\\" clock_target
       set target_data             [get_nodes $clock_target]
+      set clock_source            "$sysclk_source"
 
     } else {
-      #   Try all network clock types as clock targets.
+      #   Try all network clock types as clock targets.  Give the source
+      #   a clock name if it does not already have one.
 
       foreach net_pin $net_pin_list {
         set clock_target          "$genclk_path|\\${clock}_$net_pin"
-        set target_data           [get_nodes $clock_target]
+        set target_data           [get_nodes -nowarn $clock_target]
 
         if {[get_collection_size $target_data] > 0} {
+          set divide_by           1
+          set clock_source        "$genclk_inst|out_$source"
+
+          if {[llength [array names source_clocks $clock_source]] == 0} {
+            set src_name          "${clk_name}_src"
+            set new_clock         [list "$src_name" "$clock_source"     \
+                                        "$invert"]
+            set source_clocks($clock_source)    "$src_name"
+          } else {
+            set src_name          $source_clocks($clock_source)
+          }
+
+          set invert              0
           break
         }
       }
 
-      #   Try for a normal, non clock network, clock.
+      #   Try for a normal, non clock network clock.
 
       if {[get_collection_size $target_data] == 0} {
         set temp_path             "$genclk_inst|out_$clock"
         regsub -all "@" "$temp_path" "\\" clock_target
         set target_data           [get_nodes $clock_target]
+
+        set source_clocks($temp_path)   "$clk_name"
+        set clock_source                "$sysclk_source"
+        set src_name                    "$sysclk_clock"
       }
     }
+
+    #   Create the clock for the given target.
 
     if {[get_collection_size $target_data] > 0} {
       puts $sdc_log [format "%s%s%s\n" "Creating clock '$clk_name' via "  \
                                        "'$sysclk_clock' on "              \
                                        "'$clock_target' from '$clk_info'"]
 
-      create_generated_clock -source "$sysclk_source"                     \
-                             -name   "$clk_name"                          \
-                             -divide_by "$clk_div" "$clock_target"
+      #   Create the clock for the source if it is new.
+
+      if {[llength $new_clock] > 0} {
+        set new_name              [lindex $new_clock 0]
+        set new_path              [lindex $new_clock 1]
+        set new_invert            [lindex $new_clock 2]
+
+        regsub -all "@" "$new_path" "\\" source_path
+
+        if {$new_invert} {
+          create_generated_clock -source "$sysclk_source"                 \
+                                 -name   "$new_name"   -invert            \
+                                 -divide_by "$clk_div" "$source_path"
+        } else {
+          create_generated_clock -source "$sysclk_source"                 \
+                                 -name   "$new_name"                      \
+                                 -divide_by "$clk_div" "$source_path"
+        }
+
+        set clk_data              [get_clocks "$new_name"]
+
+        set_false_path -from $sysclk_data -to $clk_data
+        set_false_path -from $clk_data    -to $sysclk_data
+      }
+
+      #   Create the target clock.
+
+      regsub -all "@" "$clock_source" "\\" source_path
+
+      if {$invert} {
+        create_generated_clock -source "$source_path"                     \
+                               -name   "$clk_name"     -invert            \
+                               -divide_by "$divide_by" "$clock_target"
+      } else {
+        create_generated_clock -source "$source_path"                     \
+                               -name   "$clk_name"                        \
+                               -divide_by "$divide_by" "$clock_target"
+      }
 
       set clk_data                [get_clocks "$clk_name"]
+      set src_data                [get_clocks "$src_name"]
 
-      set_false_path -from $sysclk_data -to $clk_data
-      set_false_path -from $clk_data    -to $sysclk_data
+      set_false_path -from $src_data -to $clk_data
+      set_false_path -from $clk_data -to $src_data
     } else {
       puts $sdc_log [format "%s%s%s\n" "Skipped clock '$clk_name' via "   \
                                        "'$sysclk_clock' on "              \
