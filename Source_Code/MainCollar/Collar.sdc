@@ -77,7 +77,7 @@ if { [file exists "$sdc_file"] > 0 } {
 
   push_instance           "StatCtlSPI_FPGA:pc_spi"
 
-  set_instvalue           clk "$collar_spi_clk_name"
+  set_instvalue           clk "$collar_spi_g_clk_name"
 
   copy_instvalues         { "pc_spi_clk,sclk" }
 
