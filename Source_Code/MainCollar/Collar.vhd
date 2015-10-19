@@ -279,6 +279,15 @@ architecture structural of Collar is
   signal pb_counter         : unsigned (const_bits (pb_count_c)-1
                                         downto 0) := (others => '0') ;
 
+  COMPONENT GlobalClock IS
+    PORT
+    (
+      ena    : IN STD_LOGIC  := '1';
+      inclk    : IN STD_LOGIC ;
+      outclk    : OUT STD_LOGIC 
+    );
+  END COMPONENT GlobalClock;
+
   --  Allow JTAG to determine the location code for this executable.
 
   signal LocationCode       :
@@ -3407,7 +3416,13 @@ begin
   --  Reset occurs on power up or button press of the reset button.
   --------------------------------------------------------------------------
 
-  reset                     <= (not power_up) or reset_pushed ;
+  global_reset : GlobalClock
+    Port Map
+    (
+      ena       => '1',
+      inclk     => (not power_up) or reset_pushed,
+      outclk    => reset
+    ) ;
 
   reset_poweron : process (master_clk)
   begin

@@ -5,7 +5,20 @@ set Collar_inst             [get_instance]
 #   Power-up to all reset recovery times are not important.  Removal
 #   recovery times are important.
 
-set_false_path -from [get_registers "$Collar_inst|power_up"] -setup
+set reset_inst              "GlobalClock:global_reset"
+set reset_comp              "GlobalClock_altclkctrl_vch_component"
+set reset_pin               "sd1|outclk"
+set reset_target            "$Collar_inst|$reset_inst|$reset_comp|$reset_pin"
+
+regsub -all {^[A-Za-z0-9_]+:|(\|)[A-Za-z0-9_]+:}                        \
+            "$reset_target" {\1}   temp_path
+regsub -all "@" "$temp_path" "\\" reset_path
+
+set reset_data              [get_pins $reset_path]
+
+set_false_path -from $reset_data -setup
+
+set_keyvalue reset          $reset_path
 
 #   Find source clock frequency.
 
