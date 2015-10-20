@@ -79,6 +79,7 @@ use WORK.msg_ubx_tim_tm2_pkg.all ;
 --! @param      msgnumber_out   Message number of the most recent valid
 --!                             message.
 --! @param      msgreceived_out A new valid message has been received.
+--! @param      busy_out        The component is busy processing data.
 --
 ----------------------------------------------------------------------------
 
@@ -105,7 +106,8 @@ entity GPSmessageParser is
     datavalid_out   : out   std_logic_vector (msg_ram_blocks_c-1 downto 0) ;
     tempbank_out    : out   std_logic ;
     msgnumber_out   : out   std_logic_vector (msg_count_bits_c-1 downto 0) ;
-    msgreceived_out : out   std_logic
+    msgreceived_out : out   std_logic ;
+    busy_out        : out   std_logic
   ) ;
 
 end entity GPSmessageParser ;
@@ -223,13 +225,6 @@ architecture rtl of GPSmessageParser is
   signal temp_ramaddr           : unsigned (memaddr_bits_g-1 downto 0) ;
   signal save_ramaddr           : unsigned (memaddr_bits_g-1 downto 0) ;
 
-  --  Gated clock control information.
-
-  signal gated_clk              : std_logic ;
-  signal gated_clk_en           : std_logic ;
-
-  signal message_done           : std_logic ;
-
   --  Scratch area used for loading/storing bit vectors to/from
   --  memory.  Each signal using it is defined via an alias.
 
@@ -256,10 +251,6 @@ architecture rtl of GPSmessageParser is
 
 
 begin
-
-  --  Gated clock.
-
-  gated_clk       <= clk and gated_clk_en ;
 
   --  The byte received state is saved in the follower signal.
 
@@ -315,31 +306,10 @@ begin
 
 
   --------------------------------------------------------------------------
-  --  Gate the processing clock on only when processing a message.
-  --------------------------------------------------------------------------
-
-  gate_clk:   process (reset, clk)
-  begin
-    if (reset = '1') then
-      gated_clk_en      <= '0' ;
-
-    elsif (falling_edge (clk)) then
-      if (inready_in = '1') then
-        gated_clk_en    <= '1' ;
-
-      elsif (message_done = '1') then
-        gated_clk_en    <= '0' ;
-
-      end if ;
-    end if ;
-  end process gate_clk ;
-
-
-  --------------------------------------------------------------------------
   --  Parse the individual fields in a line and save the results to memory.
   --------------------------------------------------------------------------
 
-  parse_fields:  process (reset, gated_clk)
+  parse_fields:  process (reset, clk)
   begin
     if (reset = '1') then
       text_reset      <= '1' ;
@@ -356,19 +326,13 @@ begin
       next_state      <= PARSE_STATE_WAIT ;
       msgnumber_out   <= (others => '0') ;
       msgreceived_out <= '0' ;
-      message_done    <= '0' ;
+      busy_out        <= '0' ;
 
-    elsif (rising_edge (gated_clk)) then
+    elsif (rising_edge (clk)) then
 
       --  Always allow the write enable to be high for just one clock cycle.
 
       memwrite_en_out <= '0' ;
-
-      --  A message is not done when there is a byte ready to be processed.
-
-      if (inready_in = '1') then
-        message_done  <= '0' ;
-      end if ;
 
       --  Always wait for a new character unless changed within a state.
       --  In most cases a new byte is needed before a state can proceed.
@@ -427,6 +391,7 @@ begin
         when PARSE_STATE_WAIT_BYTE  =>
           msg_memreq          <= '0' ;
           msg_memread_en      <= '0' ;
+          busy_out            <= '0' ;
 
           if (inready_fwl /= inready_in) then
             inready_fwl   <= inready_in ;
@@ -439,6 +404,7 @@ begin
               end if ;
 
               msg_memreq      <= '1' ;
+              busy_out        <= '1' ;
               cur_state       <= PARSE_STATE_WAIT_MEM ;
             end if ;
           end if ;
@@ -459,7 +425,6 @@ begin
           if (inbyte_in = msg_ubx_sync_1_c) then
             next_state        <= PARSE_STATE_SYNC ;
           else
-            message_done      <= '1' ;
             next_state        <= PARSE_STATE_WAIT ;
           end if ;
 
@@ -473,7 +438,6 @@ begin
 
             cur_state         <= PARSE_STATE_INIT_STR ;
           else
-            message_done      <= '1' ;
             next_state        <= PARSE_STATE_WAIT ;
           end if ;
 
@@ -761,7 +725,6 @@ begin
         when PARSE_STATE_SUCCESS      =>
           msgnumber_out             <= std_logic_vector (m_number) ;
           msgreceived_out           <= '1' ;
-          message_done              <= '1' ;
           next_state                <= PARSE_STATE_WAIT ;
 
           --  Indicate the bank with the most recent valid message.
@@ -793,7 +756,6 @@ begin
             m_length                <= TO_UNSIGNED (2, m_length'length) ;
             next_state              <= PARSE_STATE_ABORT_LOOP ;
           else
-            message_done            <= '1' ;
             next_state              <= PARSE_STATE_WAIT ;
           end if ;
 

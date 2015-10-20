@@ -63,15 +63,16 @@ use WORK.COLLAR_CONTROL_PKG.ALL ;
 --! @param      gps_clk_out         The GPS UART receiver clock.
 --! @param      tx_clk_on_in        Turn on the gated UART transmitter
 --!                                 clock.
---! @param      tx_clk_off_in       Turn off the gated UART tranmitter
+--! @param      tx_clk_off_in       Turn off the gated UART transmitter
 --!                                 clock.
---! @param      parse_clk_out       The Messasge Parser and Memory access
+--! @param      tx_clk_out          Gated UART transmitter clock.
+--! @param      parse_clk_out       The Message Parser and Memory access
 --!                                 clock.
 --! @param      mem_clk_en_in       Enable the gated memory allocation and
 --!                                 memory access clocks.  The memory access
 --!                                 clock is the inverted parse clock.
---! @param      mem_gated_clk_out   Gated memory access clock.
---! @param      memalloc_gated_clk_out  Gated memory allocation clock.
+--! @param      mem_clk_out         Gated, inverted memory access clock.
+--! @param      memalloc_clk_out    Gated memory allocation clock.
 --
 ----------------------------------------------------------------------------
 
@@ -86,14 +87,16 @@ entity GPSclocks is
   Port (
     reset                   : in    std_logic ;
     clk                     : in    std_logic ;
+    gps_clk_en_in           : in    std_logic ;
     gps_clk_out             : out   std_logic ;
     tx_clk_on_in            : in    std_logic ;
     tx_clk_off_in           : in    std_logic ;
-    tx_gated_clk_out        : out   std_logic ;
+    tx_clk_out              : out   std_logic ;
+    parse_clk_en_in         : in    std_logic ;
     parse_clk_out           : out   std_logic ;
     mem_clk_en_in           : in    std_logic ;
-    mem_gated_clk_out       : out   std_logic ;
-    memalloc_gated_clk_out  : out   std_logic
+    mem_clk_out             : out   std_logic ;
+    memalloc_clk_out        : out   std_logic
   ) ;
 
 end entity GPSclocks ;
@@ -101,10 +104,13 @@ end entity GPSclocks ;
 architecture structural of GPSclocks is
 
   component GenClock is
-
     Generic (
       clk_freq_g              : natural   := 10e6 ;
-      out_clk_freq_g          : natural   := 1e6
+      out_clk_freq_g          : natural   := 1e6 ;
+      net_clk_g               : natural   := 0 ;
+      net_inv_g               : natural   := 0 ;
+      net_gated_g             : natural   := 0 ;
+      net_inv_gated_g         : natural   := 0
     ) ;
     Port (
       reset                   : in    std_logic ;
@@ -112,9 +118,10 @@ architecture structural of GPSclocks is
       clk_on_in               : in    std_logic ;
       clk_off_in              : in    std_logic ;
       clk_out                 : out   std_logic ;
-      gated_clk_out           : out   std_logic
+      clk_inv_out             : out   std_logic ;
+      gated_clk_out           : out   std_logic ;
+      gated_clk_inv_out       : out   std_logic
     ) ;
-
   end component GenClock ;
 
   --  GPS clock used to generate other clocks needed by GPS entities.
@@ -123,7 +130,7 @@ architecture structural of GPSclocks is
 
   --  Other clocks.
 
-  signal mem_clk                : std_logic ;
+  signal parse_clk              : std_logic ;
 
 
 begin
@@ -138,8 +145,8 @@ begin
     Port Map (
       reset                   => reset,
       clk                     => clk,
-      clk_on_in               => '1',
-      clk_off_in              => '0',
+      clk_on_in               => gps_clk_en_in,
+      clk_off_in              => not gps_clk_en_in,
       clk_out                 => gps_clk
     ) ;
 
@@ -157,26 +164,40 @@ begin
       clk                     => gps_clk,
       clk_on_in               => tx_clk_on_in,
       clk_off_in              => tx_clk_off_in,
-      gated_clk_out           => tx_gated_clk_out
+      gated_clk_out           => tx_clk_out
     ) ;
 
-  --  Parsing Clock generation.
+  --  Parsing Clock generation.  This uses a clock network to avoid data
+  --  overtaking the clock in the various modules that use it.
 
   parseclk_gen : GenClock
     Generic Map (
       clk_freq_g              => gps_clk_freq_g,
-      out_clk_freq_g          => parse_clk_freq_g
+      out_clk_freq_g          => parse_clk_freq_g,
+      net_gated_g             => 1
     )
     Port Map (
       reset                   => reset,
       clk                     => gps_clk,
-      clk_on_in               => mem_clk_en_in,
-      clk_off_in              => not mem_clk_en_in,
-      clk_out                 => parse_clk_out,
-      gated_clk_out           => mem_clk
+      clk_on_in               => parse_clk_en_in,
+      clk_off_in              => not parse_clk_en_in,
+      gated_clk_out           => parse_clk
     ) ;
 
-    memalloc_gated_clk_out    <= mem_clk ;
-    mem_gated_clk_out         <= not mem_clk ;
+  parse_clk_out               <= parse_clk ;
+
+  memclk_gen : GenClock
+    Generic Map (
+      clk_freq_g              => parse_clk_freq_g,
+      out_clk_freq_g          => parse_clk_freq_g
+    )
+    Port Map (
+      reset                   => reset,
+      clk                     => parse_clk,
+      clk_on_in               => mem_clk_en_in,
+      clk_off_in              => not mem_clk_en_in,
+      gated_clk_out           => memalloc_clk_out,
+      gated_clk_inv_out       => mem_clk_out
+    ) ;
 
 end architecture structural ;

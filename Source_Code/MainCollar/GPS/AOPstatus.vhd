@@ -67,6 +67,7 @@ USE WORK.MSG_UBX_NAV_AOPSTATUS_PKG.ALL ;  --  Navagation Solution message.
 --! @param      memdata_in            Data byte of memory that is addressed.
 --! @param      memread_en_out        Enable the memory for reading.
 --! @param      running_out           Set when AssistNow is running.
+--! @param      busy_out              The component is busy processing.
 --
 ----------------------------------------------------------------------------
 
@@ -89,7 +90,8 @@ entity AOPstatus is
                                                       downto 0) ;
     memdata_in            : in    std_logic_vector (7 downto 0) ;
     memread_en_out        : out   std_logic ;
-    running_out           : out   std_logic
+    running_out           : out   std_logic ;
+    busy_out              : out   std_logic
   ) ;
 
 end entity AOPstatus ;
@@ -109,19 +111,10 @@ architecture rtl of AOPstatus is
 
   signal cur_state            : AOP_State ;
 
-  --  Gated clock for the state machine.
-
-  signal gated_clk            : std_logic ;
-  signal gated_clk_en         : std_logic ;
-
   --  Follower of the message received signal used to detect when the latter
   --  changes.
 
   signal msgreceived_fwl      : std_logic ;
-
-  --  Determine when the message has been processed.
-
-  signal message_done         : std_logic ;
 
   --  Count of the number of messages where AssistNow Autonomous was not
   --  running.
@@ -142,44 +135,22 @@ begin
   memaddr_out               <= std_logic_vector (mem_address) ;
 
   --------------------------------------------------------------------------
-  --  Gate the clock when a message needs to be processed.
-  --------------------------------------------------------------------------
-
-  gate_clk : process (reset, clk)
-  begin
-    if (reset = '1') then
-      gated_clk_en          <= '0' ;
-
-    elsif (falling_edge (clk)) then
-      if (msgreceived_in = '1') then
-        gated_clk_en        <= '1' ;
-
-      elsif (message_done = '1') then
-        gated_clk_en        <= '0' ;
-      end if ;
-    end if ;
-  end process gate_clk ;
-
-  gated_clk                 <= clk and gated_clk_en ;
-
-
-  --------------------------------------------------------------------------
   --  Handle recevied AssistNow Autonomous status messages.
   --------------------------------------------------------------------------
 
-  marker_pending : process (reset, gated_clk)
+  marker_pending : process (reset, clk)
   begin
     if (reset = '1') then
-      memreq_out             <= '0' ;
-      mem_address            <= (others => '0') ;
-      memread_en_out         <= '0' ;
-      msgreceived_fwl        <= '0' ;
-      running_out            <= '0' ;
-      quiet_counter          <= (others => '0') ;
-      message_done           <= '1' ;
-      cur_state              <= AOP_STATE_WAIT ;
+      memreq_out              <= '0' ;
+      mem_address             <= (others => '0') ;
+      memread_en_out          <= '0' ;
+      msgreceived_fwl         <= '0' ;
+      running_out             <= '0' ;
+      quiet_counter           <= (others => '0') ;
+      busy_out                <= '0' ;
+      cur_state               <= AOP_STATE_WAIT ;
 
-    elsif (rising_edge (gated_clk)) then
+    elsif (rising_edge (clk)) then
 
       case cur_state is
 
@@ -197,12 +168,12 @@ begin
               if (unsigned (msgnumber_in) =
                   msg_ubx_nav_aopstatus_number_c) then
 
-                message_done  <= '0' ;
+                busy_out      <= '1' ;
                 memreq_out    <= '1' ;
                 cur_state     <= AOP_STATE_RCVMEM ;
               end if ;
             else
-              message_done    <= '1' ;
+              busy_out        <= '0' ;
             end if ;
           end if ;
 

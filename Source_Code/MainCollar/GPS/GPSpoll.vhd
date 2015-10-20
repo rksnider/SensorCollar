@@ -72,6 +72,7 @@ use WORK.gps_message_ctl_pkg.all ;  --  GPS message control definitions.
 --! @param      sendready_in    The message sender is ready for another
 --!                             message.
 --! @param      outsend_out     Send the message.
+--! @param      busy_out        The polling process is busy.
 --
 ----------------------------------------------------------------------------
 
@@ -96,13 +97,32 @@ entity GPSpoll is
     msgclass_out    : out   std_logic_vector (7 downto 0) ;
     msgid_out       : out   std_logic_vector (7 downto 0) ;
     sendready_in    : in    std_logic ;
-    outsend_out     : out   std_logic
+    outsend_out     : out   std_logic ;
+    busy_out        : out   std_logic
   ) ;
 
 end entity GPSpoll ;
 
 
 architecture rtl of GPSpoll is
+
+  --  An SR flip-flop can be used to capture signals across clock domains.
+  --  The startup time is not in the local clock's domain so the flip-flop
+  --  is used to catch the signal from it.  The SR flip-flop does not use
+  --  a clock and so is not domain specific itself.
+
+  component SR_FlipFlop is
+    Generic (
+      set_edge_detect_g     : std_logic := '0' ;
+      clear_edge_detect_g   : std_logic := '0'
+    ) ;
+    Port (
+      reset_in              : in    std_logic ;
+      set_in                : in    std_logic ;
+      result_rd_out         : out   std_logic ;
+      result_sd_out         : out   std_logic
+    ) ;
+  end component SR_FlipFlop ;
 
   --  Resource allocator to find next message to poll.
 
@@ -142,10 +162,11 @@ architecture rtl of GPSpoll is
 
   signal cur_state        : PollState ;
 
-  --  Gated clock for state machine.
+  --  Start a new poll signalling across clock domains.
 
-  signal gated_clk        : std_logic ;
-  signal gated_clk_en     : std_logic ;
+  signal newpoll          : std_logic ;
+  signal set_newpoll      : std_logic ;
+  signal clr_newpoll      : std_logic ;
 
   --  Output signals that must be read.
 
@@ -169,24 +190,31 @@ architecture rtl of GPSpoll is
 
   --  Timing information.
 
-  signal newpoll          : std_logic ;
+  signal process_busy     : std_logic ;
   signal pollcounter      : unsigned (pollinterval_in'length-1 downto 0) ;
-  signal millicounter     : unsigned (9 downto 0) ;
-  signal milliclock       : std_logic ;
+  signal milli8counter    : unsigned (9 downto 0) ;
+  signal milli8clock      : std_logic ;
 
 begin
 
+  --  The component is busy.
+
+  busy_out          <= '1'  when (newpoll = '1' or process_busy = '1' or
+                                  (pollinterval_in /= 0 and
+                                   unsigned (message_bit) /= 0)) else
+                       '0' ;
+
   --  Output signals that must be read.
 
-  memaddr_out <= std_logic_vector (mem_address) ;
+  memaddr_out       <= std_logic_vector (mem_address) ;
 
   --  Conversion of current time as a standard logic vector to GPS_Time.
 
-  curtime     <= TO_GPS_TIME (curtime_in) ;
+  curtime           <= TO_GPS_TIME (curtime_in) ;
 
-  --  The millisecond clock is derived from the reset clock.
+  --  The 8 millisecond clock is derived from the startup clock.
 
-  milliclock  <= curtime.millisecond_nanosecond (gps_time_nanobits_c - 1) ;
+  milli8clock       <= curtime.week_millisecond (2) ;
 
   --  Poll input is set to initial signals first.
 
@@ -204,71 +232,63 @@ begin
     )
     Port Map (
       reset           => reset,
-      clk             => gated_clk,
+      clk             => clk,
       requesters_in   => poll_input,
       receivers_out   => message_bit,
       receiver_no_out => message_number
     ) ;
 
+  --  Edge triggered flip-flop set for determining when a new poll sequence
+  --  should be started.
+
+  newpoll_ctl : SR_FlipFlop
+    Generic Map (
+      set_edge_detect_g   => '1'
+    )
+    Port Map (
+      reset_in            => clr_newpoll,
+      set_in              => set_newpoll,
+      result_sd_out       => newpoll
+    ) ;
+
 
   --------------------------------------------------------------------------
-  --  This process is clocked by milliseconds to determine when the current
-  --  poll period has ended by counting the seconds since it started.
+  --  This process is clocked by 8 milliseconds to determine when the
+  --  current poll period has ended by counting the seconds since it
+  --  started.
   --------------------------------------------------------------------------
 
-  poll_period:  process (reset, milliclock)
+  poll_period:  process (reset, milli8clock)
   begin
     if (reset = '1') then
-      millicounter      <= (others => '0') ;
-      pollcounter       <= (others => '0') ;
-      newpoll           <= '1' ;
+      milli8counter     <= TO_UNSIGNED (1, milli8counter'length) ;
+      pollcounter       <= TO_UNSIGNED (1, pollcounter'length) ;
+      set_newpoll       <= '0' ;
 
-    elsif (rising_edge (milliclock)) then
-      newpoll           <= '0' ;
+    elsif (rising_edge (milli8clock)) then
+      set_newpoll       <= '0' ;
 
-      if (millicounter /= 1000) then
-        millicounter    <= millicounter + 1 ;
+      if (milli8counter /= 1) then
+        milli8counter   <= milli8counter - 1 ;
       else
-        millicounter    <= (others => '0') ;
+        milli8counter   <= TO_UNSIGNED (125, milli8counter'length) ;
 
-        if (pollcounter /= pollinterval_in) then
-          pollcounter   <= pollcounter + 1 ;
+        if (pollcounter /= 1) then
+          pollcounter   <= pollcounter - 1 ;
         else
-          pollcounter   <= (others => '0') ;
-          newpoll       <= '1' ;
+          pollcounter   <= pollinterval_in ;
+          set_newpoll   <= '1' ;
         end if ;
       end if ;
     end if ;
   end process poll_period ;
 
   --------------------------------------------------------------------------
-  --  Gated clock is on when there is something that needs to be polled.
-  --------------------------------------------------------------------------
-
-  gate_clk : process (reset, clk)
-  begin
-    if (reset = '1') then
-      gated_clk_en      <= '0' ;
-
-    elsif (falling_edge (clk)) then
-      if (newpoll = '1' or unsigned (poll_input) /= 0) then
-        gated_clk_en    <= '1' ;
-
-      elsif (poll_select = '1' and unsigned (message_bit) = 0) then
-        gated_clk_en    <= '0' ;
-      end if ;
-    end if ;
-  end process gate_clk ;
-
-  gated_clk             <= clk and gated_clk_en ;
-
-
-  --------------------------------------------------------------------------
   --  Determine the next message to poll on the GPS that has not been polled
   --  in this poll interval.  A zero poll interval disables polling.
   --------------------------------------------------------------------------
 
-  poll_messages:  process (reset, gated_clk)
+  poll_messages:  process (reset, clk)
   begin
     if (reset = '1') then
       memreq_out            <= '0' ;
@@ -279,14 +299,18 @@ begin
       polled_messages       <= (others => '0') ;
       poll_select           <= '0' ;
       poll_init             <= (others => '0') ;
+      process_busy          <= '1' ;
       cur_state             <= POLL_STATE_START ;
 
-    elsif (rising_edge (gated_clk)) then
+    elsif (rising_edge (clk)) then
 
       --  Clear the polled message mask when a new poll interval is started.
 
       if (newpoll = '1') then
+        clr_newpoll         <= '1' ;
         polled_messages     <= (others => '0') ;
+      else
+        clr_newpoll         <= '0' ;
       end if ;
 
       --  Poll selection and initiation states.
@@ -311,9 +335,11 @@ begin
         when POLL_STATE_WAIT        =>
           if (pollinterval_in /= 0 and unsigned (message_bit) /= 0) then
             sendreq_out     <= '1' ;
+            process_busy    <= '1' ;
             cur_state       <= POLL_STATE_GET_SENDER ;
           else
             sendreq_out     <= '0' ;
+            process_busy    <= '0' ;
             cur_state       <= POLL_STATE_WAIT ;
           end if ;
 
