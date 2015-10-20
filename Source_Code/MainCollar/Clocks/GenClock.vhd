@@ -109,12 +109,12 @@ architecture rtl of GenClock is
   signal gated_clk_en       : std_logic := '0' ;
   signal gated_inv_clk_en   : std_logic := '0' ;
 
+  attribute keep            : boolean ;
+
   signal out_clk            : std_logic := '0' ;
   signal out_clk_inv        : std_logic := '0' ;
   signal out_gated_clk      : std_logic := '0' ;
   signal out_gated_clk_inv  : std_logic := '0' ;
-
-  attribute keep            : boolean ;
 
   attribute keep of out_clk           : signal is true ;
   attribute keep of out_clk_inv       : signal is true ;
@@ -242,12 +242,12 @@ begin
   --------------------------------------------------------------------------
 
   gated_clk_Normal:
-    if (net_clk_g = 0) generate
+    if (net_gated_g = 0) generate
       gated_clk_out         <= out_gated_clk ;
     end generate gated_clk_Normal ;
 
   gated_clk_GlobalClock:
-    if (net_clk_g = 1) generate
+    if (net_gated_g = 1) generate
       net_clock: GlobalClock
       PORT MAP
       (
@@ -258,7 +258,7 @@ begin
     end generate gated_clk_GlobalClock ;
 
   gated_clk_DualClock:
-    if (net_clk_g = 2) generate
+    if (net_gated_g = 2) generate
       net_clock: DualClock
       PORT MAP
       (
@@ -269,7 +269,7 @@ begin
     end generate gated_clk_DualClock ;
 
   gated_clk_QuadrantClock :
-    if (net_clk_g = 3) generate
+    if (net_gated_g = 3) generate
       net_clock: QuadrantClock
       PORT MAP
       (
@@ -356,65 +356,259 @@ begin
 
 
   --------------------------------------------------------------------------
-  --  Clock generation.
+  --  Clock generation, both gated clocks are normal.
   --------------------------------------------------------------------------
 
-  direct_clock : if (clk_cntmax_c = 0) generate
+  net_both_gated_normal :
+    if (net_gated_g = 0 and net_inv_gated_g = 0) generate
 
-    clk_gen : process (reset, clk, gated_clk_en, gated_inv_clk_en)
-    begin
-      if (reset = '1') then
-        out_clk               <= '0' ;
-        out_clk_inv           <= '0' ;
-        out_gated_clk         <= '0' ;
-        out_gated_clk_inv     <= '0' ;
+      direct_clock :
+        if (clk_cntmax_c = 0) generate
 
-      --  Handle clocks that pass through directly.
+          clk_gen : process (reset, clk, gated_clk_en, gated_inv_clk_en)
+          begin
+            if (reset = '1') then
+              out_clk               <= '0' ;
+              out_clk_inv           <= '0' ;
+              out_gated_clk         <= '0' ;
+              out_gated_clk_inv     <= '0' ;
 
-      else
-        out_clk               <= clk ;
-        out_clk_inv           <= not clk ;
-        out_gated_clk         <= clk and gated_clk_en ;
-        out_gated_clk_inv     <= (not clk) and gated_inv_clk_en ;
-      end if ;
-    end process clk_gen ;
+            --  Handle clocks that pass through directly.
 
-  end generate direct_clock ;
+            else
+              out_clk               <= clk ;
+              out_clk_inv           <= not clk ;
+              out_gated_clk         <= clk and gated_clk_en ;
+              out_gated_clk_inv     <= (not clk) and gated_inv_clk_en ;
+            end if ;
+          end process clk_gen ;
 
-  divided_clock : if (clk_cntmax_c /= 0) generate
+        end generate direct_clock ;
 
-    clk_gen : process (reset, clk)
-      variable new_clk        : std_logic ;
-    begin
-      if (reset = '1') then
-        clk_cnt               <= (others => '0') ;
-        out_clk               <= '0' ;
-        out_clk_inv           <= '0' ;
-        out_gated_clk         <= '0' ;
-        out_gated_clk_inv     <= '0' ;
+      divided_clock :
+        if (clk_cntmax_c /= 0) generate
 
-      --  Count out a half cycle of the output clock in driver clock cycles.
+          clk_gen : process (reset, clk)
+            variable new_clk        : std_logic ;
+          begin
+            if (reset = '1') then
+              clk_cnt               <= (others => '0') ;
+              out_clk               <= '0' ;
+              out_clk_inv           <= '0' ;
+              out_gated_clk         <= '0' ;
+              out_gated_clk_inv     <= '0' ;
 
-      elsif (rising_edge (clk)) then
-        if (clk_cnt /= TO_UNSIGNED (clk_cntmax_c,
-                                    clk_cnt'length)) then
+            --  Count out a half cycle of the output clock in driver clock cycles.
 
-          clk_cnt             <= clk_cnt + 1 ;
-        else
-          clk_cnt             <= (others => '0') ;
+            elsif (rising_edge (clk)) then
+              if (clk_cnt /= TO_UNSIGNED (clk_cntmax_c,
+                                          clk_cnt'length)) then
 
-          --  Generate a new output clock edge and start counting a half
-          --  cycle again.
+                clk_cnt             <= clk_cnt + 1 ;
+              else
+                clk_cnt             <= (others => '0') ;
 
-          new_clk             := not out_clk ;
-          out_clk             <= new_clk ;
-          out_clk_inv         <= not new_clk ;
-          out_gated_clk       <= new_clk and gated_clk_en ;
-          out_gated_clk_inv   <= (not new_clk) and gated_inv_clk_en ;
-        end if ;
-      end if ;
-    end process clk_gen ;
+                --  Generate a new output clock edge and start counting a half
+                --  cycle again.
 
-  end generate divided_clock ;
+                new_clk             := not out_clk ;
+                out_clk             <= new_clk ;
+                out_clk_inv         <= not new_clk ;
+                out_gated_clk       <= new_clk and gated_clk_en ;
+                out_gated_clk_inv   <= (not new_clk) and gated_inv_clk_en ;
+              end if ;
+            end if ;
+          end process clk_gen ;
+
+        end generate divided_clock ;
+    end generate net_both_gated_normal ;
+
+  --------------------------------------------------------------------------
+  --  Clock generation, gated normal.
+  --------------------------------------------------------------------------
+
+  net_gated_normal :
+    if (net_gated_g = 0 and net_inv_gated_g /= 0) generate
+
+      direct_clock :
+        if (clk_cntmax_c = 0) generate
+
+          clk_gen : process (reset, clk, gated_clk_en)
+          begin
+            if (reset = '1') then
+              out_clk               <= '0' ;
+              out_clk_inv           <= '0' ;
+              out_gated_clk         <= '0' ;
+
+            --  Handle clocks that pass through directly.
+
+            else
+              out_clk               <= clk ;
+              out_clk_inv           <= not clk ;
+              out_gated_clk         <= clk and gated_clk_en ;
+            end if ;
+          end process clk_gen ;
+
+        end generate direct_clock ;
+
+      divided_clock :
+        if (clk_cntmax_c /= 0) generate
+
+          clk_gen : process (reset, clk)
+            variable new_clk        : std_logic ;
+          begin
+            if (reset = '1') then
+              clk_cnt               <= (others => '0') ;
+              out_clk               <= '0' ;
+              out_clk_inv           <= '0' ;
+              out_gated_clk         <= '0' ;
+
+            --  Count out a half cycle of the output clock in driver clock cycles.
+
+            elsif (rising_edge (clk)) then
+              if (clk_cnt /= TO_UNSIGNED (clk_cntmax_c,
+                                          clk_cnt'length)) then
+
+                clk_cnt             <= clk_cnt + 1 ;
+              else
+                clk_cnt             <= (others => '0') ;
+
+                --  Generate a new output clock edge and start counting a half
+                --  cycle again.
+
+                new_clk             := not out_clk ;
+                out_clk             <= new_clk ;
+                out_clk_inv         <= not new_clk ;
+                out_gated_clk       <= new_clk and gated_clk_en ;
+              end if ;
+            end if ;
+          end process clk_gen ;
+
+        end generate divided_clock ;
+    end generate net_gated_normal ;
+
+  --------------------------------------------------------------------------
+  --  Clock generation, gated inverted normal.
+  --------------------------------------------------------------------------
+
+  net_gated_inverted_normal :
+    if (net_gated_g /= 0 and net_inv_gated_g = 0) generate
+
+      direct_clock :
+        if (clk_cntmax_c = 0) generate
+
+          clk_gen : process (reset, clk, gated_inv_clk_en)
+          begin
+            if (reset = '1') then
+              out_clk               <= '0' ;
+              out_clk_inv           <= '0' ;
+              out_gated_clk_inv     <= '0' ;
+
+            --  Handle clocks that pass through directly.
+
+            else
+              out_clk               <= clk ;
+              out_clk_inv           <= not clk ;
+              out_gated_clk_inv     <= (not clk) and gated_inv_clk_en ;
+            end if ;
+          end process clk_gen ;
+
+        end generate direct_clock ;
+
+      divided_clock :
+        if (clk_cntmax_c /= 0) generate
+
+          clk_gen : process (reset, clk)
+            variable new_clk        : std_logic ;
+          begin
+            if (reset = '1') then
+              clk_cnt               <= (others => '0') ;
+              out_clk               <= '0' ;
+              out_clk_inv           <= '0' ;
+              out_gated_clk_inv     <= '0' ;
+
+            --  Count out a half cycle of the output clock in driver clock cycles.
+
+            elsif (rising_edge (clk)) then
+              if (clk_cnt /= TO_UNSIGNED (clk_cntmax_c,
+                                          clk_cnt'length)) then
+
+                clk_cnt             <= clk_cnt + 1 ;
+              else
+                clk_cnt             <= (others => '0') ;
+
+                --  Generate a new output clock edge and start counting a half
+                --  cycle again.
+
+                new_clk             := not out_clk ;
+                out_clk             <= new_clk ;
+                out_clk_inv         <= not new_clk ;
+                out_gated_clk_inv   <= (not new_clk) and gated_inv_clk_en ;
+              end if ;
+            end if ;
+          end process clk_gen ;
+
+        end generate divided_clock ;
+    end generate net_gated_inverted_normal ;
+
+  --------------------------------------------------------------------------
+  --  Clock generation, neither gated normal.
+  --------------------------------------------------------------------------
+
+  net_neither_normal :
+    if (net_gated_g /= 0 and net_inv_gated_g /= 0) generate
+
+      direct_clock :
+        if (clk_cntmax_c = 0) generate
+
+          clk_gen : process (reset, clk)
+          begin
+            if (reset = '1') then
+              out_clk               <= '0' ;
+              out_clk_inv           <= '0' ;
+
+            --  Handle clocks that pass through directly.
+
+            else
+              out_clk               <= clk ;
+              out_clk_inv           <= not clk ;
+            end if ;
+          end process clk_gen ;
+
+        end generate direct_clock ;
+
+      divided_clock :
+        if (clk_cntmax_c /= 0) generate
+
+          clk_gen : process (reset, clk)
+            variable new_clk        : std_logic ;
+          begin
+            if (reset = '1') then
+              clk_cnt               <= (others => '0') ;
+              out_clk               <= '0' ;
+              out_clk_inv           <= '0' ;
+
+            --  Count out a half cycle of the output clock in driver clock cycles.
+
+            elsif (rising_edge (clk)) then
+              if (clk_cnt /= TO_UNSIGNED (clk_cntmax_c,
+                                          clk_cnt'length)) then
+
+                clk_cnt             <= clk_cnt + 1 ;
+              else
+                clk_cnt             <= (others => '0') ;
+
+                --  Generate a new output clock edge and start counting a half
+                --  cycle again.
+
+                new_clk             := not out_clk ;
+                out_clk             <= new_clk ;
+                out_clk_inv         <= not new_clk ;
+              end if ;
+            end if ;
+          end process clk_gen ;
+
+        end generate divided_clock ;
+    end generate net_neither_normal ;
 
 end architecture rtl ;
