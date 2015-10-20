@@ -107,9 +107,11 @@ end entity InterruptController ;
 
 architecture rtl of InterruptController is
 
-  component SR_FlipFlop is
+  component SR_FlipFlopVector is
     Generic (
-      source_cnt_g          : natural   :=  1
+      source_cnt_g          : natural   :=  1 ;
+      set_edge_detect_g     : std_logic := '0' ;
+      clear_edge_detect_g   : std_logic := '0'
     ) ;
     Port (
       resets_in             : in    std_logic_vector (source_cnt_g-1
@@ -121,11 +123,7 @@ architecture rtl of InterruptController is
       results_sd_out        : out   std_logic_vector (source_cnt_g-1
                                                       downto 0)
     ) ;
-  end component SR_FlipFlop ;
-
-  signal input_triggers     : std_logic_vector (source_cnt_g-1 downto 0) ;
-  signal sources_in_last    : std_logic_vector (source_cnt_g-1 downto 0) :=
-                                      (others => '0') ;
+  end component SR_FlipFlopVector ;
 
   signal sources_active     : std_logic_vector (source_cnt_g-1 downto 0) ;
 
@@ -157,32 +155,19 @@ begin
   --  a source has been detected the source will remain active until cleared
   --  by the interrupt handler.
 
-  active : SR_FlipFlop
+  active : SR_FlipFlopVector
     Generic Map (
-      source_cnt_g        => source_cnt_g
+      source_cnt_g        => source_cnt_g,
+      set_edge_detect_g   => edge_trigger_g,
+      clear_edge_detect_g => '0'
     )
     Port Map (
       resets_in           => clears_in,
-      sets_in             => input_triggers,
+      sets_in             => sources_in,
       results_sd_out      => sources_active
     ) ;
 
   sources_out             <= sources_active ;
-
-  --  Determine source edges since they last reset.
-
-  edge : SR_FlipFlop
-    Generic Map (
-      source_cnt_g        => source_cnt_g
-    )
-    Port Map (
-      resets_in           => not sources_in,
-      sets_in             => sources_active,
-      results_sd_out      => sources_in_last
-    ) ;
-
-  input_triggers          <= sources_in when (edge_trigger_g = '0') else
-                             (sources_in and not sources_in_last) ;
 
   --  Wait until the active interrupt source has been cleared before
   --  choosing another one.

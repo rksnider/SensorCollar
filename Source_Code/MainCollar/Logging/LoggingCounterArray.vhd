@@ -134,17 +134,14 @@ architecture rtl of LoggingCounterArray is
 
   component SR_FlipFlop is
     Generic (
-      source_cnt_g          : natural   :=  1
+      set_edge_detect_g     : std_logic := '0' ;
+      clear_edge_detect_g   : std_logic := '0'
     ) ;
     Port (
-      resets_in             : in    std_logic_vector (source_cnt_g-1
-                                                      downto 0) ;
-      sets_in               : in    std_logic_vector (source_cnt_g-1
-                                                      downto 0) ;
-      results_rd_out        : out   std_logic_vector (source_cnt_g-1
-                                                      downto 0) ;
-      results_sd_out        : out   std_logic_vector (source_cnt_g-1
-                                                      downto 0)
+      reset_in              : in    std_logic ;
+      set_in                : in    std_logic ;
+      result_rd_out         : out   std_logic ;
+      result_sd_out         : out   std_logic
     ) ;
   end component SR_FlipFlop ;
 
@@ -203,13 +200,10 @@ begin
   --  Capture clear requests while logger may be sleeping.
 
   clrcnt : SR_FlipFlop
-    Generic Map (
-      source_cnt_g        => 1
-    )
     Port Map (
-      resets_in      (0)  => clear_busy,
-      sets_in        (0)  => counter_clear_in,
-      results_sd_out (0)  => counter_clear
+      reset_in            => clear_busy,
+      set_in              => counter_clear_in,
+      result_sd_out       => counter_clear
     ) ;
 
   --------------------------------------------------------------------------

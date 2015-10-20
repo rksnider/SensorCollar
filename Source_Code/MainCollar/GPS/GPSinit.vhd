@@ -115,24 +115,19 @@ architecture rtl of GPSinit is
   --  clock period used for this entity.  An asynchronous SR flip flop will
   --  still be able to catch the signal.
 
-  signal init_start         : std_logic_vector (0 downto 0) ;
-  signal init_started       : std_logic_vector (0 downto 0) :=
-                                    (others => '0') ;
-  signal start_init         : std_logic_vector (0 downto 0) ;
+  signal init_started       : std_logic := '0' ;
+  signal start_init         : std_logic ;
 
   component SR_FlipFlop is
     Generic (
-      source_cnt_g          : natural   :=  1
+      set_edge_detect_g     : std_logic := '0' ;
+      clear_edge_detect_g   : std_logic := '0'
     ) ;
     Port (
-      resets_in             : in    std_logic_vector (source_cnt_g-1
-                                                      downto 0) ;
-      sets_in               : in    std_logic_vector (source_cnt_g-1
-                                                      downto 0) ;
-      results_rd_out        : out   std_logic_vector (source_cnt_g-1
-                                                      downto 0) ;
-      results_sd_out        : out   std_logic_vector (source_cnt_g-1
-                                                      downto 0)
+      reset_in              : in    std_logic ;
+      set_in                : in    std_logic ;
+      result_rd_out         : out   std_logic ;
+      result_sd_out         : out   std_logic
     ) ;
   end component SR_FlipFlop ;
 
@@ -194,21 +189,16 @@ begin
   --  clock period used for this entity.  An asynchronous SR flip flop will
   --  still be able to catch the signal.
 
-  init_start (0)            <= init_start_in ;
-
   init_sig : SR_FlipFlop
-    Generic Map (
-      source_cnt_g          => 1
-    )
     Port Map (
-      resets_in             => init_started,
-      sets_in               => init_start,
-      results_rd_out        => start_init
+      reset_in              => init_started,
+      set_in                => init_start_in,
+      result_rd_out         => start_init
     ) ;
 
   --  Entity busy.
 
-  busy_out    <= start_init (0) or process_busy ;
+  busy_out    <= start_init or process_busy ;
 
 
   --------------------------------------------------------------------------
@@ -218,7 +208,7 @@ begin
   init_messages:  process (reset, clk)
   begin
     if (reset = '1') then
-      init_started          <= (others => '0') ;
+      init_started          <= '0' ;
       init_done_out         <= '0' ;
       memreq_out            <= '0' ;
       memread_en_out        <= '0' ;
@@ -240,9 +230,9 @@ begin
         when INIT_STATE_WAIT        =>
           init_done_out       <= '0' ;
 
-          if (start_init (0) = '1') then
+          if (start_init = '1') then
             process_busy      <= '1' ;
-            init_started (0)  <= '1' ;
+            init_started      <= '1' ;
             sendreq_out       <= '1' ;
             mem_inaddress     <=
                 RESIZE (CONST_UNSIGNED (msg_rom_base_c +
@@ -250,7 +240,7 @@ begin
                         mem_address'length) ;
             cur_state         <= INIT_STATE_GET_SENDER ;
           else
-            init_started (0)  <= '0' ;
+            init_started      <= '0' ;
             process_busy      <= '0' ;
             cur_state         <= INIT_STATE_WAIT ;
           end if ;

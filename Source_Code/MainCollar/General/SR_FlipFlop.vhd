@@ -1,7 +1,7 @@
-----------------------------------------------------------------------------
+---------------------------------------------------------------------------
 --
---! @file       SR_FlipFlop.vhd
---! @brief      Implements an SR flip-flop.
+--! @file       SR_FlipFlopVector.vhd
+--! @brief      Implements a simple SR flip-flop.
 --! @details    Produces SR flip-flop output with both reset and set
 --!             dominant when both are set at the same time.
 --! @author     Emery Newlon
@@ -40,36 +40,37 @@ use GENERAL.UTILITIES_PKG.ALL ;
 
 ----------------------------------------------------------------------------
 --
---! @brief      SR Flip-Flop
---! @details    Simple Set/Reset flip-flop with outputs for both when
---!             reset dominates and set dominates when both inputs are high
---!             at the same time.
---! @param      source_cnt_g    Number of input lines.
---! @param      resets_in       Bit vector of reset lines.
---! @param      sets_in         Bit vector of set lines.
---! @param      results_rd_out  Bit vector of results with outputs clear
---!                             when both set and reset are high together.
---!                             (Reset Dominant)
---! @param      results_sd_out  Bit vector of results with outputs set
---!                             when both set and reset are high together.
---!                             (Set Dominant)
+--! @brief    SR Flip-Flop Vector
+--! @details  Set/Reset flip-flop with outputs for both when reset dominates
+--!           and set dominates when both inputs are high at the same time.
+--! @param    set_edge_detect_g   Set on the rising edge of the set input.
+--!                               Otherwise set on high level.
+--! @param    clear_edge_detect_g Clear on the rising edge of the clear
+--!                               input.  Otherwise clear on high level.
+--! @param    reset_in            Reset (clear) the flip flop when high or
+--!                               on its rising edge.
+--! @param    set_in              Set the flip flop when high or on its
+--!                               rising edge.
+--! @param    result_rd_out       Flip-flop's result.  Will be clear when
+--!                               both set and reset are high together.
+--!                               (Reset Dominant)
+--! @param    result_sd_out       Flip-flop's result.  Will be set when both
+--!                               set and reset are high together.
+--!                               (Set Dominant)
 --
 ----------------------------------------------------------------------------
 
 entity SR_FlipFlop is
 
   Generic (
-    source_cnt_g          : natural   :=  1
+    set_edge_detect_g     : std_logic := '0' ;
+    clear_edge_detect_g   : std_logic := '0'
   ) ;
   Port (
-    resets_in             : in    std_logic_vector (source_cnt_g-1
-                                                    downto 0) ;
-    sets_in               : in    std_logic_vector (source_cnt_g-1
-                                                    downto 0) ;
-    results_rd_out        : out   std_logic_vector (source_cnt_g-1
-                                                    downto 0) ;
-    results_sd_out        : out   std_logic_vector (source_cnt_g-1
-                                                    downto 0)
+    reset_in              : in    std_logic ;
+    set_in                : in    std_logic ;
+    result_rd_out         : out   std_logic ;
+    result_sd_out         : out   std_logic
   ) ;
 
 end entity SR_FlipFlop ;
@@ -77,36 +78,47 @@ end entity SR_FlipFlop ;
 
 architecture rtl of SR_FlipFlop is
 
-  signal results          : std_logic_vector (source_cnt_g-1 downto 0) :=
-                                                    (others => '0') ;
-  signal results_inv      : std_logic_vector (source_cnt_g-1 downto 0) :=
-                                                    (others => '1') ;
+  signal resets             : std_logic_vector (0 downto 0) ;
+  signal sets               : std_logic_vector (0 downto 0) ;
+  signal results_rd         : std_logic_vector (0 downto 0) ;
+  signal results_sd         : std_logic_vector (0 downto 0) ;
+
+  component SR_FlipFlopVector is
+    Generic (
+      source_cnt_g          : natural   := 1 ;
+      set_edge_detect_g     : std_logic := '0' ;
+      clear_edge_detect_g   : std_logic := '0'
+    ) ;
+    Port (
+      resets_in             : in    std_logic_vector (source_cnt_g-1
+                                                      downto 0) ;
+      sets_in               : in    std_logic_vector (source_cnt_g-1
+                                                      downto 0) ;
+      results_rd_out        : out   std_logic_vector (source_cnt_g-1
+                                                      downto 0) ;
+      results_sd_out        : out   std_logic_vector (source_cnt_g-1
+                                                      downto 0)
+    ) ;
+  end component SR_FlipFlopVector ;
 
 begin
 
-  --  Logic interconnect for a SR flip-flop.  The results will be the same
-  --  on both output lines except when both inputs are high at the same
-  --  time.  Then the reset dominating line will be clear and the set
-  --  dominating line will be set.
-  --
-  --                ______
-  --     resets ----\     \   results
-  --                 )     )O---+----------------- results reset dominating
-  --             +--/_____/     |
-  --             |              |
-  --             |_______  _____|
-  --                     \/
-  --              _______/\_____
-  --             |  ______      |
-  --             +--\     \     |          |\
-  --                 )     )O---+----------| }O--- results set dominating
-  --     sets   ----/_____/   results_inv  |/
-  --
+  resets (0)                <= reset_in ;
+  sets   (0)                <= set_in ;
+  result_rd_out             <= results_rd (0) ;
+  result_sd_out             <= results_sd (0) ;
 
-  results                 <= not (resets_in or results_inv) ;
-  results_inv             <= not (sets_in   or results) ;
-
-  results_rd_out          <= results ;
-  results_sd_out          <= not results_inv ;
+  ff_vector : SR_FlipFlopVector
+    Generic Map (
+      source_cnt_g          => 1,
+      set_edge_detect_g     => set_edge_detect_g,
+      clear_edge_detect_g   => clear_edge_detect_g
+    )
+    Port Map (
+      resets_in             => resets,
+      sets_in               => sets,
+      results_rd_out        => results_rd,
+      results_sd_out        => results_sd
+    ) ;
 
 end architecture rtl ;
