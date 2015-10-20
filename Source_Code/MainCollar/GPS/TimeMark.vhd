@@ -58,6 +58,9 @@ USE WORK.MSG_UBX_NAV_SOL_PKG.ALL ;  --  Navagation Solution message.
 --! @param      clk                   Clock used to drive the processes.
 --! @param      reset                 Reset the processes to initial state.
 --! @param      curtime_in            Current time in GPS format.
+--! @param      curtime_latch_in      Latch curtime across clock domains.
+--! @param      curtime_valid_in      Latched curtime is valid when set.
+--! @param      curtime_vlatch_in     Latch curtime when valid not set.
 --! @param      posbank_in            Position information memory bank.
 --! @param      tmbank_in             Time mark information memory bank.
 --! @param      memreq_out            Access to the memory bus requested.
@@ -71,6 +74,8 @@ USE WORK.MSG_UBX_NAV_SOL_PKG.ALL ;  --  Navagation Solution message.
 --!                                   obtained.
 --! @param      req_timemark_out      Request a new time mark msg be
 --!                                   obtained.
+--! @param      busy_out              The process is busy processing a
+--!                                   timemark request.
 --
 ----------------------------------------------------------------------------
 
@@ -87,6 +92,10 @@ entity TimeMark is
     reset                 : in    std_logic ;
     curtime_in            : in    std_logic_vector (gps_time_bits_c-1
                                                     downto 0) ;
+    curtime_latch_in      : in    std_logic ;
+    curtime_valid_in      : in    std_logic ;
+    curtime_vlatch_in     : in    std_logic ;
+
     posbank_in            : in    std_logic ;
     tmbank_in             : in    std_logic ;
     memreq_out            : out   std_logic ;
@@ -99,7 +108,8 @@ entity TimeMark is
     marker_time_out       : out   std_logic_vector (gps_time_bits_c-1
                                                     downto 0) ;
     req_position_out      : out   std_logic ;
-    req_timemark_out      : out   std_logic
+    req_timemark_out      : out   std_logic ;
+    busy_out              : out   std_logic
   ) ;
 
 end entity TimeMark ;
@@ -107,19 +117,25 @@ end entity TimeMark ;
 
 architecture rtl of TimeMark is
 
-  --  Convert a clock into a gated clock.
+  --  Capture the most recent current time possible from across clock
+  --  domains.
 
-  component GatedClock is
-
-    Port (
-      reset                   : in    std_logic ;
-      clk                     : in    std_logic ;
-      clk_on_in               : in    std_logic ;
-      clk_off_in              : in    std_logic ;
-      clk_out                 : out   std_logic
+  component CrossChipReceive is
+    Generic (
+      data_bits_g             : natural := 8
     ) ;
-
-  end component GatedClock ;
+    Port (
+      clk                     : in    std_logic ;
+      data_latch_in           : in    std_logic ;
+      data_valid_in           : in    std_logic ;
+      valid_latch_in          : in    std_logic ;
+      data_in                 : in    std_logic_vector (data_bits_g-1
+                                                        downto 0) ;
+      data_out                : out   std_logic_vector (data_bits_g-1
+                                                        downto 0) ;
+      data_ready_out          : out   std_logic
+    ) ;
+  end component CrossChipReceive ;
 
   --  Time Mark Generation States.
 
@@ -141,11 +157,6 @@ architecture rtl of TimeMark is
   signal cur_state        : TimeMarkState ;
   signal return_state     : TimeMarkState ;
 
-  --  Gate the clock that drives the state machine.
-
-  signal gated_clk          : std_logic ;
-  signal gated_clk_en       : std_logic ;
-
   --  Output signals that must be read.
 
   signal mem_address        : unsigned (memaddr_bits_g-1 downto 0) ;
@@ -153,7 +164,9 @@ architecture rtl of TimeMark is
   --  GPS time must be converted from standard logic vector to GPS time
   --  record structure.
 
+  signal curtime_slv        : std_logic_vector (gps_time_bits_c-1 downto 0) ;
   signal curtime            : GPS_Time ;
+  signal intime             : GPS_Time ;
 
   --  Time mark scheduling information.
 
@@ -209,14 +222,40 @@ begin
 
   memaddr_out       <= std_logic_vector (mem_address) ;
 
-  --  Convert GPS Time from standard logic vector to GPS_Time record.
+  --  Set the busy indicator.
 
-  curtime           <= TO_GPS_TIME (curtime_in) ;
+  busy_out          <= send_time_mark or time_mark_pending ;
+
+  --  Capture the most recent current time possible from across clock
+  --  domains.  The driving clock is inverted so that it will capture the
+  --  time on the rising edge (rather than falling edge normally done) to
+  --  produce the most recent possible clock when it is captured as the
+  --  captured time is not used for a full clock cycle.  Otherwise the
+  --  captured time would be half a local (slow) clock cycle before the
+  --  time mark line was pulled low.
+
+  curtime_receive : CrossChipReceive
+    Generic Map (
+      data_bits_g             => curtime_in'length
+    )
+    Port Map (
+      clk                     => not clk,
+      data_latch_in           => curtime_latch_in,
+      data_valid_in           => curtime_valid_in,
+      valid_latch_in          => curtime_vlatch_in,
+      data_in                 => curtime_in,
+      data_out                => curtime_slv
+    ) ;
+
+  --  Convert GPS Times from standard logic vector to GPS_Time record.
+
+  intime            <= TO_GPS_TIME (curtime_in) ;
+  curtime           <= TO_GPS_TIME (curtime_slv) ;
 
   --  Produce a millisecond clock from the current time.
 
   time_mark_clock   <=
-      curtime.millisecond_nanosecond (gps_time_nanobits_c-1) ;
+      intime.millisecond_nanosecond (gps_time_nanobits_c-1) ;
 
 
   --------------------------------------------------------------------------
@@ -234,17 +273,13 @@ begin
       --  Order time mark generation when the time has arrived for one
       --  until that operation has started.
 
-      if (time_mark_pending = '1') then
+      if (time_mark_target = unsigned (curtime.week_millisecond)) then
+        send_time_mark    <= '1' ;
+
+      elsif (time_mark_pending = '1') then
         send_time_mark      <= '0' ;
 
       else
-
-        if (send_time_mark = '0') then
-          if (time_mark_target = unsigned (curtime.week_millisecond)) then
-            send_time_mark    <= '1' ;
-          end if ;
-        end if ;
-
         --  After processing a time mark request, request a time mark
         --  message until one is received.
 
@@ -257,25 +292,12 @@ begin
     end if ;
   end process marker_alarm ;
 
-  --------------------------------------------------------------------------
-  --  Gate the marker clock on when it is time for a new time mark.
-  --------------------------------------------------------------------------
-
-  marker_gate : GatedClock
-    Port Map (
-      reset                 => reset,
-      clk                   => clk,
-      clk_on_in             => send_time_mark,
-      clk_off_in            => not time_mark_pending,
-      clk_out               => gated_clk
-    ) ;
-
 
   --------------------------------------------------------------------------
   --  Handle pending time mark requests.
   --------------------------------------------------------------------------
 
-  marker_pending : process (reset, gated_clk)
+  marker_pending : process (reset, clk)
   begin
     if (reset = '1') then
       time_mark_pending         <= '1' ;
@@ -290,7 +312,7 @@ begin
       req_position_out          <= '0' ;
       cur_state                 <= MARK_STATE_POS_WAIT ;
 
-    elsif (rising_edge (gated_clk)) then
+    elsif (rising_edge (clk)) then
 
       --  Start a new time mark generation sequence.
 
