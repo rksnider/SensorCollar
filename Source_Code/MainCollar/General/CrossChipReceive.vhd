@@ -110,26 +110,16 @@ architecture rtl of CrossChipReceive is
 
   component SR_FlipFlop is
     Generic (
-      source_cnt_g          : natural   :=  1
+      set_edge_detect_g     : std_logic := '0' ;
+      clear_edge_detect_g   : std_logic := '0'
     ) ;
     Port (
-      resets_in             : in    std_logic_vector (source_cnt_g-1
-                                                      downto 0) ;
-      sets_in               : in    std_logic_vector (source_cnt_g-1
-                                                      downto 0) ;
-      results_rd_out        : out   std_logic_vector (source_cnt_g-1
-                                                      downto 0) ;
-      results_sd_out        : out   std_logic_vector (source_cnt_g-1
-                                                      downto 0)
+      reset_in              : in    std_logic ;
+      set_in                : in    std_logic ;
+      result_rd_out         : out   std_logic ;
+      result_sd_out         : out   std_logic
     ) ;
   end component SR_FlipFlop ;
-
-  signal received_changed   : std_logic_vector (0 downto 0) ;
-  signal data_received      : std_logic_vector (0 downto 0) ;
-  signal data_received_last : std_logic_vector (0 downto 0) :=
-                                      (others => '0') ;
-  signal data_acked         : std_logic_vector (0 downto 0) ;
-  signal data_ready         : std_logic_vector (0 downto 0) ;
 
   signal new_data_clear     : std_logic := '0' ;
   signal new_data_ready     : std_logic ;
@@ -157,7 +147,7 @@ begin
   end process latch_valid ;
 
   --------------------------------------------------------------------------
-  --  Syncronise the captured data to the local clock domain.
+  --  Synchronise the captured data to the local clock domain.
   --------------------------------------------------------------------------
 
   data_out                <= data_local_new_s
@@ -188,34 +178,14 @@ begin
   --  line goes high.
   --------------------------------------------------------------------------
 
-  data_received (0)       <= data_valid_in ;
-  data_acked    (0)       <= new_data_clear ;
-
-  new_data_ready          <= data_ready (0) ;
-
   received : SR_FlipFlop
     Generic Map (
-      source_cnt_g        => 1
+      set_edge_detect_g     => '1'
     )
     Port Map (
-      resets_in           => data_acked,
-      sets_in             => received_changed,
-      results_sd_out      => data_ready
+      reset_in              => new_data_clear,
+      set_in                => data_valid_in,
+      result_sd_out         => new_data_ready
     ) ;
-
-  --  Edge detection.
-
-  edge : SR_FlipFlop
-    Generic Map (
-      source_cnt_g        => 1
-    )
-    Port Map (
-      resets_in           => not data_received,
-      sets_in             => data_ready,
-      results_sd_out      => data_received_last
-    ) ;
-
-  received_changed        <= data_received and
-                             not data_received_last ;
 
 end architecture rtl ;
