@@ -44,7 +44,7 @@ set CLKout_dst_min              0.080
 
 set CLKout_dev_max              1.500       ;#  tSUb
 set CLKout_dev_hld              1.000       ;#  tHb
-set CLKout_brd_max              0.100       ;#  BDd
+set CLKout_brd_max              0.100       ;#  BDb
 set CLKout_brd_min              0.080
 
 #   Set the delays for the I/O ports.
@@ -52,8 +52,7 @@ set CLKout_brd_min              0.080
 set_false_path -to [get_ports SDRAM_CLK]
 
 set output_port_list          {SDRAM_data* SDRAM_address* SDRAM_bank* \
-                               SDRAM_mask* SDRAM_command* SDRAM_CKE \
-                               GPIO1P8* GPIO3P3* GPIOSEL*}
+                               SDRAM_mask* SDRAM_command* SDRAM_CKE}
 
 set input_port_list           {SDRAM_data*}
 
@@ -70,14 +69,26 @@ set_input_delay -clock $sdram_clock -max $sdram_max_delay \
                 [get_ports $input_port_list]
 
 
-set sdram_min_delay           [expr $CLKout_brd_min + $CLKout_dev_hld + \
-                                    $CLKout_dst_min - $CLKout_src_max]
+set sdram_min_delay           [expr $CLKout_brd_min - $CLKout_dev_hld + \
+                                    $CLKout_src_min - $CLKout_dst_max]
 
 set sdram_max_delay           [expr $CLKout_brd_max + $CLKout_dev_max + \
-                                    $CLKout_dst_max - $CLKout_src_min]
+                                    $CLKout_src_max - $CLKout_dst_min]
 
 set_output_delay -clock $sdram_clock -min $sdram_min_delay \
                  -add_delay [get_ports $output_port_list]
 
 set_output_delay -clock $sdram_clock -max $sdram_max_delay \
                  -add_delay [get_ports $output_port_list]
+
+#   Break the connection between the reset line and the device pins.
+
+set reset_pin                 [get_keyvalue reset]
+
+set reset_data                [get_pins $reset_pin]
+
+set dev_data                  [get_ports [concat SDRAM_CLK              \
+                                                 $input_port_list       \
+                                                 $output_port_list]]
+
+set_false_path -hold -from $reset_data -to $dev_data
