@@ -19,10 +19,16 @@ set sysclk_freq                 [expr 1.0 / ($sysclk_period * 1e-9)]
 
 set max_divider                 10000
 
+set milli8clk_name              "StartupTime_milli8_clk"
+set milli8clk_bit               "startup_time.week_millisecond[2]"
+set milli8clk_target            "$systime_inst|$milli8clk_bit"
+set milli8clk_freq              [expr 1.0 / ((2 ** 3) * 1.0e-3)]
+set milli8clk_div               [expr {int($sysclk_freq / $milli8clk_freq)}]
+
 set milliclk_name               "StartupTime_milli_clk"
-set milliclk_bit                "gps_timerec.week_millisecond[2]"
+set milliclk_bit                "startup_time.millisecond_nanosecond[19]"
 set milliclk_target             "$systime_inst|$milliclk_bit"
-set milliclk_freq               [expr 1.0 / ((2 ** 3) * 1.0e-3)]
+set milliclk_freq               [expr 1.0 / ((2 ** 20) * 1.0e-9)]
 set milliclk_div                [expr {int($sysclk_freq / $milliclk_freq)}]
 
 set timerec_load_name           "StartupTime_timerec_load"
@@ -81,6 +87,24 @@ if {[get_collection_size [get_nodes $clk_target]] > 0} {
   puts $sdc_log "Skipped clock '$seconds_load_name' via '$sysclk' on '$clk_target'\n"
 }
 
+regsub -all "@" "$milli8clk_target" "\\" clk_target
+
+if {[get_collection_size [get_nodes $clk_target]] > 0} {
+  puts $sdc_log "Creating clock '$milli8clk_name' via '$sysclk' on '$clk_target'\n"
+
+  set clock_div                 [expr {min( $milli8clk_div, $max_divider)}]
+
+  create_generated_clock -source "$sysclk_source" -name "$milli8clk_name" \
+                         -divide_by "$clock_div"        "$clk_target"
+
+  set clk_out_data              [get_clocks "$milli8clk_name"]
+
+  set_false_path -from $sysclk_data   -to $clk_out_data
+  set_false_path -from $clk_out_data  -to $sysclk_data
+} else {
+  puts $sdc_log "Skipped clock '$milli8clk_name' via '$sysclk' on '$clk_target'\n"
+}
+
 regsub -all "@" "$milliclk_target" "\\" clk_target
 
 if {[get_collection_size [get_nodes $clk_target]] > 0} {
@@ -98,3 +122,24 @@ if {[get_collection_size [get_nodes $clk_target]] > 0} {
 } else {
   puts $sdc_log "Skipped clock '$milliclk_name' via '$sysclk' on '$clk_target'\n"
 }
+
+#   Cross chip send.
+
+set ST_data_latch_name    "SystemTimeLatch"
+set ST_valid_latch_name   "SystemTimeVLatch"
+
+set sdc_file              "CrossChipSend.sdc"
+
+if { [file exists "$sdc_file"] > 0 } {
+
+  push_instance           "CrossChipSend:ccs"
+  set_instvalue           data_latch_out    [list $ST_data_latch_name]
+  set_instvalue           valid_latch_out   [list $ST_valid_latch_name]
+
+  copy_instvalues         [list "clk,fast_clk"]
+
+  source $sdc_file
+
+  pop_instance
+}
+

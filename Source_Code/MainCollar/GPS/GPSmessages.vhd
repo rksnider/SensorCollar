@@ -43,6 +43,8 @@ use GENERAL.Utilities_pkg.all ;     --  General use utilities.
 use GENERAL.GPS_Clock_pkg.all ;     --  GPS type clock definitions.
 
 library WORK ;
+use WORK.SHARED_SDC_VALUES_PKG.ALL ;
+
 use WORK.gps_message_ctl_pkg.all ;  --  GPS message control definitions.
 use WORK.msg_ubx_nav_sol_pkg.all ;
 use WORK.msg_ubx_nav_aopstatus_pkg.all ;
@@ -627,7 +629,6 @@ architecture structural of GPSmessages is
   --  The memory clock is the parser clock inverted.
   --  Clocks are gated on when they are in use by components.
 
-  constant uart_baud_rate_c   : natural := 9600 ;
   constant uart_rx_mult_c     : natural := 16 ;
   constant uart_bytebits_c    : natural := 10 ;
 
@@ -678,10 +679,10 @@ begin
   gpsclks : GPSclocks
     Generic Map (
       clk_freq_g              => clk_freq_g,
-      gps_clk_freq_g          => uart_rx_mult_c * uart_baud_rate_c,
+      gps_clk_freq_g          => uart_rx_mult_c * gps_baud_rate_c,
       parse_clk_freq_g        => parse_clk_mult_c *
-                                (uart_baud_rate_c / uart_bytebits_c),
-      tx_clk_freq_g           => uart_baud_rate_c
+                                (gps_baud_rate_c / uart_bytebits_c),
+      tx_clk_freq_g           => gps_baud_rate_c
     )
     Port Map (
       reset                   => reset,

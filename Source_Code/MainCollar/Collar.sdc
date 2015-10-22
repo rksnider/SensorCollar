@@ -160,8 +160,9 @@ set sdc_file              "GPSmessages.sdc"
 
 if { [file exists "$sdc_file"] > 0 } {
 
-  push_instance           "GPSmessages:gps_ctl"
-  set_instvalue           clk               [list $collar_master_clk_name]
+  push_instance           "GPSmessages:@use_GPS:gps_ctl"
+  set_instvalue           clk_freq_g        $shared_constants(spi_clk_freq_c)
+  set_instvalue           clk               [list $collar_spi_clk_name]
 
   copy_instvalues         { "gps_rx_in,gps_rx_in" "gps_tx_out,gps_tx_out" }
 

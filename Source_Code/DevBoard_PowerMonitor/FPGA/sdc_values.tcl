@@ -2,4 +2,5 @@
 
 set sdc_value_list    {source_clk_freq_c        natural   50e6    \
                        spi_clk_freq_c           natural   3571428 \
-                       slow_sdcard_clk_freq_c   natural   400e3}
+                       slow_sdcard_clk_freq_c   natural   400e3   \
+                       gps_baud_rate_c          natural   9600}

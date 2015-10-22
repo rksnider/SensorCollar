@@ -564,10 +564,10 @@ architecture rtl of SystemTime is
 
   signal rtc_milli_cnt      : unsigned (const_bits (milli_count_c-1)-1
                                         downto 0) ;
-  signal milli_clk          : std_logic ;
+  signal milli8_clk         : std_logic ;
 
   attribute keep                : boolean ;
-  attribute keep of milli_clk   : signal is true ;
+  attribute keep of milli8_clk  : signal is true ;
 
 begin
 
@@ -824,7 +824,7 @@ begin
 
   --  Derive 8ms second counting clock from the GPS time.
 
-  milli_clk             <= gps_timerec.week_millisecond (2) ;
+  milli8_clk            <= startup_time.week_millisecond (2) ;
 
   --  Date/Time converter.
 
@@ -848,11 +848,11 @@ begin
       leap_seconds_in   => TO_UNSIGNED (26, 8),   -- as of July 2015
       epoch70_in        => next_second,
       datetime_out      => date_time,
-      to_datetime_clk   => milli_clk,
+      to_datetime_clk   => milli8_clk,
       to_dt_start_in    => calc_datetime_start,
       datetime_in       => alarm_time_in,
       epoch70_out       => alarm_time,
-      from_datetime_clk => milli_clk,
+      from_datetime_clk => milli8_clk,
       from_dt_start_in  => calc_datetime_start
     ) ;
 
@@ -896,7 +896,7 @@ begin
   rtc_sec_set_out             <= gps_seconds_load ;
 
 
-  upd_sec : process (rtc_seconds_load, gps_seconds, milli_clk)
+  upd_sec : process (rtc_seconds_load, gps_seconds, milli8_clk)
   begin
     if (rtc_seconds_load = '1') then
       rtc_seconds_set         <= '1' ;
@@ -904,7 +904,7 @@ begin
       calc_datetime_start     <= '0' ;
       alarm_time_out          <= (others => '0') ;
 
-    elsif (rising_edge (milli_clk)) then
+    elsif (rising_edge (milli8_clk)) then
 
       if (rtc_seconds_set = '1') then
         rtc_seconds_set       <= '0' ;

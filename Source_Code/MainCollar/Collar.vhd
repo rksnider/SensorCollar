@@ -226,7 +226,7 @@ end entity Collar ;
 architecture structural of Collar is
 
   --  Master clock information.
-  
+
   constant master_clk_freq_c  : natural := source_clk_freq_g ;
 
   signal master_clk           : std_logic ;
@@ -249,6 +249,9 @@ architecture structural of Collar is
                                                   downto 0) ;
   signal gps_time             : std_logic_vector (gps_time_bits_c-1
                                                   downto 0) ;
+  signal systime_latch        : std_logic ;
+  signal systime_valid        : std_logic ;
+  signal systime_vlatch       : std_logic ;
   signal rtc_seconds          : unsigned (epoch70_secbits_c-1 downto 0) ;
   signal rtc_seconds_load     : std_logic ;
   signal rtc_running_seconds  : unsigned (epoch70_secbits_c-1 downto 0) ;
@@ -284,7 +287,7 @@ architecture structural of Collar is
     (
       ena    : IN STD_LOGIC  := '1';
       inclk    : IN STD_LOGIC ;
-      outclk    : OUT STD_LOGIC 
+      outclk    : OUT STD_LOGIC
     );
   END COMPONENT GlobalClock;
 
@@ -669,6 +672,9 @@ architecture structural of Collar is
   --  GPS signals.
   --------------------------------------------------------------------------
 
+  signal gps_init               : std_logic ;
+  signal gps_ready              : std_logic ;
+
   signal gps_databanks          : std_logic_vector (msg_ram_blocks_c-1
                                                     downto 0) ;
   signal aop_running            : std_logic ;
@@ -821,10 +827,10 @@ begin
   i_startup_0 : Startup
 
     Port Map(
-      clk                 => spi_clk,
-      rst_n               => not reset,
-      pc_control_reg_out  =>  PC_ControlReg,
-      pc_status_set_in             => PC_StatusSet,
+      clk                       => spi_clk,
+      rst_n                     => not reset,
+      pc_control_reg_out        =>  PC_ControlReg,
+      pc_status_set_in          => PC_StatusSet,
       sd_contr_start_out        => sdcard_start,
       sd_contr_done_in          => '1',
       --sdram_start_out             : out  std_logic ;
@@ -835,8 +841,8 @@ begin
       mems_done_in              => '1',
       --mag_start_out             : out   std_logic ;
       mag_done_in               => '1',
-      --gps_start_out             : out   std_logic ;
-      gps_done_in               => '1'
+      gps_start_out             => gps_init,
+      gps_done_in               => gps_ready
     ) ;
 
   --------------------------------------------------------------------------
@@ -1033,6 +1039,9 @@ begin
           rtc_sec_out         => rtc_running_seconds,
           rtc_sec_set_out     => rtc_running_set,
           rtc_datetime_out    => running_datetime,
+          time_latch_out      => systime_latch,
+          time_valid_out      => systime_valid,
+          valid_latch_out     => systime_vlatch,
           gpsmem_tmbank_in    => gps_databanks (msg_ubx_tim_tm2_ramblock_c),
           gpsmem_req_out      => gpsmem_requesters (gpsmemrq_systemtime_c),
           gpsmem_rcv_in       => gpsmem_receivers  (gpsmemrq_systemtime_c),
@@ -2371,6 +2380,13 @@ begin
           clk                   : in    std_logic ;
           curtime_in            : in    std_logic_vector (gps_time_bits_c-1
                                                           downto 0) ;
+          curtime_latch_in      : in    std_logic ;
+          curtime_valid_in      : in    std_logic ;
+          curtime_vlatch_in     : in    std_logic ;
+
+          gps_enable_in         : in    std_logic ;
+          gps_init_start_in     : in    std_logic ;
+          gps_init_done_out     : out   std_logic ;
           pollinterval_in       : in    unsigned (13 downto 0) ;
           datavalid_out         : out   std_logic_vector (msg_ram_blocks_c-1
                                                           downto 0) ;
@@ -2410,9 +2426,15 @@ begin
           mem_databits_g        => gpsmemsrc_databits_c
         )
         Port Map (
-          reset                 => reset or not CTL_GPS_On,
+          reset                 => reset,
           clk                   => spi_clk,
           curtime_in            => reset_time,
+          curtime_latch_in      => systime_latch,
+          curtime_valid_in      => systime_valid,
+          curtime_vlatch_in     => systime_vlatch,
+          gps_enable_in         => CTL_GPS_On,
+          gps_init_start_in     => gps_init,
+          gps_init_done_out     => gps_ready,
           pollinterval_in       => poll_int,
           datavalid_out         => gps_databanks,
           gpsmem_clk_out        => gpsmemsrc_clk,

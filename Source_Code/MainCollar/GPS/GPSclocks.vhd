@@ -147,7 +147,7 @@ begin
       clk                     => clk,
       clk_on_in               => gps_clk_en_in,
       clk_off_in              => not gps_clk_en_in,
-      clk_out                 => gps_clk
+      gated_clk_out           => gps_clk
     ) ;
 
   gps_clk_out                 <= gps_clk ;
