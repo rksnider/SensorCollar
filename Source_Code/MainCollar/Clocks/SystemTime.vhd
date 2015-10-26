@@ -566,9 +566,6 @@ architecture rtl of SystemTime is
                                         downto 0) ;
   signal milli8_clk         : std_logic ;
 
-  attribute keep                : boolean ;
-  attribute keep of milli8_clk  : signal is true ;
-
 begin
 
   --------------------------------------------------------------------------
