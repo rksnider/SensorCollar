@@ -9,6 +9,12 @@ set sysclk_clock        [get_instvalue clk]
 set gps_rx_port         [get_instvalue gps_clk_out]
 set gps_tx_port         [get_instvalue tx_clk_out]
 
+#   Specify the clocks that can't interact well in TimeQuest with the
+#   clocks defined in this file.
+
+set interact_list       [list StartupTime_milli_clk StartupTime_milli8_clk]
+set interact_data       [get_clocks $interact_list]
+
 #   Determine the output clocks and frequencies.
 
 set gps_clk_name        "gps_clk"
@@ -35,6 +41,13 @@ source GenClock.sdc
 
 set_keyvalue            "$gps_rx_port"    "$gps_clk_name"
 
+if {[get_collection_size $interact_data] > 0} {
+  set clock_data        [get_clocks $gps_clk_name]
+
+  set_false_path -from  $clock_data -to   $interact_data
+  set_false_path -to    $clock_data -from $interact_data
+}
+
 pop_instance
 
 #   Create the GPS clock used for the TX port.
@@ -51,6 +64,13 @@ source GenClock.sdc
 
 set_keyvalue            "$gps_tx_port"    "$gps_tx_clk_name"
 
+if {[get_collection_size $interact_data] > 0} {
+  set clock_data        [get_clocks $gps_tx_clk_name]
+
+  set_false_path -from  $clock_data -to   $interact_data
+  set_false_path -to    $clock_data -from $interact_data
+}
+
 pop_instance
 
 #   Create the GPS Parse clock used by most GPS components.
@@ -64,6 +84,13 @@ set_instvalue           out_clk_freq_g    $gps_parse_clk_freq
 set_instvalue           gated_clk_out     [list $gps_parse_clk_name]
 
 source GenClock.sdc
+
+if {[get_collection_size $interact_data] > 0} {
+  set clock_data        [get_clocks $gps_parse_clk_name]
+
+  set_false_path -from  $clock_data -to   $interact_data
+  set_false_path -to    $clock_data -from $interact_data
+}
 
 pop_instance
 
@@ -79,5 +106,13 @@ set_instvalue           gated_clk_out     [list $gps_alloc_clk_name]
 set_instvalue           gated_clk_inv_out [list $gps_memory_clk_name]
 
 source GenClock.sdc
+
+if {[get_collection_size $interact_data] > 0} {
+  set clock_data        [get_clocks [list $gps_alloc_clk_name           \
+                                          $gps_memory_clk_name]]
+
+  set_false_path -from  $clock_data -to   $interact_data
+  set_false_path -to    $clock_data -from $interact_data
+}
 
 pop_instance
