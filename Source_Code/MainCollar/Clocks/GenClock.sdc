@@ -112,7 +112,7 @@ foreach clock_data $clk_list {
       if {[get_collection_size $target_data] == 0} {
         set temp_path             "$genclk_inst|out_$clock"
         regsub -all "@" "$temp_path" "\\" clock_target
-        set target_data           [get_nodes $clock_target]
+        set target_data           [get_nets $clock_target]
 
         set source_clocks($temp_path)   "$clk_name"
         set clock_source                "$sysclk_source"
