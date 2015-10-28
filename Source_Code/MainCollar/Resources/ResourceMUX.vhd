@@ -67,7 +67,8 @@ entity ResourceMUX is
 
   Generic (
     requester_cnt_g       : natural   :=  8 ;
-    resource_bits_g       : natural   :=  8
+    resource_bits_g       : natural   :=  8 ;
+    clock_bit_g           : integer   := -1
   ) ;
   Port (
     reset                 : in    std_logic ;
@@ -89,22 +90,73 @@ end entity ResourceMUX ;
 
 architecture rtl of ResourceMUX is
 
-  --  Library of Parameterized Modules - Multiplexer Module.
+  --  2D Multiplexing function.
 
-  component LPM_MUX is
-    Generic (
-      LPM_WIDTH           : natural ;
-      LPM_SIZE            : natural ;
-      LPM_WIDTHS          : natural ;
-      LPM_TYPE            : string
-    ) ;
-    Port (
-      data                : in  std_logic_2d (LPM_SIZE-1 downto 0,
-                                              LPM_WIDTH-1 downto 0) ;
-      sel                 : in  std_logic_vector (LPM_WIDTHS-1 downto 0) ;
-      result              : out std_logic_vector (LPM_WIDTH-1 downto 0)
-    ) ;
-  end component ;
+  function MUX_2D (signal input_tbl     : std_logic_2d ;
+                   signal select_index  : unsigned)
+  return std_logic_vector is
+    constant mux_count_c    : natural := input_tbl'length(1) ;
+    constant out_len_c      : natural := input_tbl'length(2) ;
+    variable result_v       : std_logic_vector (out_len_c-1 downto 0) ;
+  begin
+    for bitno in out_len_c-1 downto 0 loop
+      result_v (bitno) := input_tbl (0, bitno) ;
+    end loop ;
+
+    for i in mux_count_c-1 downto 1 loop
+      if (select_index = i) then
+        for bitno in out_len_c-1 downto 0 loop
+          result_v (bitno) := input_tbl (i, bitno) ;
+        end loop ;
+      end if ;
+    end loop ;
+
+    return result_v ;
+  end function MUX_2D ;
+
+  --  Clock extraction function.
+
+  function clock_extract (signal   input_tbl    : std_logic_2d ;
+                          constant clock_bitno  : integer)
+  return std_logic_vector is
+    constant in_bits_c      : natural := input_tbl'length(2) ;
+    constant out_len_c      : natural := input_tbl'length(1) ;
+    variable result_v       : std_logic_vector (out_len_c-1 downto 0) ;
+  begin
+    if (clock_bitno < 0 or clock_bitno >= in_bits_c) then
+      result_v              := (others => '0') ;
+    else
+      for i in out_len_c-1 downto 0 loop
+        result_v (i)        := input_tbl (i, clock_bitno) ;
+      end loop ;
+    end if ;
+
+    return result_v ;
+  end function clock_extract ;
+
+  --  Clock reintegration function.
+
+  function clock_insert (signal   input_tbl     : std_logic_2d ;
+                         signal   clock_bits    : std_logic_vector ;
+                         constant clock_bitno   : integer)
+  return std_logic_2d is
+    constant clock_bits_c   : natural := input_tbl'length(1) ;
+    constant length_bits_c  : natural := input_tbl'length(2) ;
+    variable result_v       : std_logic_2d (clock_bits_c-1  downto 0,
+                                            length_bits_c-1 downto 0) ;
+  begin
+    for row in clock_bits_c-1 downto 0 loop
+      for col in length_bits_c-1 downto 0 loop
+        if (col = clock_bitno) then
+          result_v (row, col) := clock_bits (row) ;
+        else
+          result_v (row, col) := input_tbl (row, col) ;
+        end if ;
+      end loop ;
+    end loop ;
+
+    return result_v ;
+  end function clock_insert ;
 
   --  Resource allocator determines who will get the memory bus.
 
@@ -132,22 +184,15 @@ architecture rtl of ResourceMUX is
 
   signal selector           : unsigned (selector_bits_c-1 downto 0) ;
 
+  signal input              : std_logic_2D (requester_cnt_g-1 downto 0,
+                                            resource_bits_g-1 downto 0) ;
+  signal clocks             : std_logic_vector (requester_cnt_g-1 downto 0) ;
+
+  attribute keep            : boolean ;
+
+  attribute keep of clocks  : signal is true ;
+
 begin
-
-  --  Multiplexer for the resource bits.
-
-  resource_mux : LPM_MUX
-    Generic Map (
-      LPM_WIDTH           => resource_bits_g,
-      LPM_SIZE            => requester_cnt_g,
-      LPM_WIDTHS          => selector_bits_c,
-      LPM_TYPE            => "LPM_MUX"
-    )
-    Port Map (
-      data                => resource_tbl_in,
-      sel                 => std_logic_vector (selector),
-      result              => resources_out
-    ) ;
 
   --  Allocate the bus signals to a requester.
 
@@ -164,6 +209,17 @@ begin
       receivers_out       => receivers_out,
       receiver_no_out     => selector
     ) ;
+
+  --  Extract the clock bits and reintegrate them in the results.
+  --  Separation allows clocks to be assigned to them.
+
+  clocks    <= clock_extract (resource_tbl_in, clock_bit_g) ;
+
+  input     <= clock_insert  (resource_tbl_in, clocks, clock_bit_g) ;
+
+  --  Multiplexer for the resource bits.
+
+  resources_out <= MUX_2D (input, selector) ;
 
 
 end rtl ;
