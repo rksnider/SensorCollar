@@ -170,7 +170,8 @@ architecture structural of GPSmessages is
 
     Generic (
       requester_cnt_g   : natural   :=  8 ;
-      resource_bits_g   : natural   :=  8
+      resource_bits_g   : natural   :=  8 ;
+      clock_bitcnt_g    : natural   :=  0
     ) ;
     Port (
       reset             : in    std_logic ;

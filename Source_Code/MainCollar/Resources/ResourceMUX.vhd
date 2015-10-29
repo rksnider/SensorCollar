@@ -48,6 +48,8 @@ use GENERAL.UTILITIES_PKG.ALL ;
 --!
 --! @param      requester_cnt_g Number of requesters of the resource.
 --! @param      resource_bits_g Number of bits the resource multiplexes.
+--! @param      clock_bitcnt_g  Number of clock bits at the end of the
+--!                             input and output vectors.
 --! @param      reset           Reset the entity to an initial state.
 --! @param      clk             Clock used to move throuth states in the
 --!                             entity and its components.
@@ -68,7 +70,7 @@ entity ResourceMUX is
   Generic (
     requester_cnt_g       : natural   :=  8 ;
     resource_bits_g       : natural   :=  8 ;
-    clock_bit_g           : integer   := -1
+    clock_bitcnt_g        : natural   :=  0
   ) ;
   Port (
     reset                 : in    std_logic ;
@@ -117,19 +119,20 @@ architecture rtl of ResourceMUX is
   --  Clock extraction function.
 
   function clock_extract (signal   input_tbl    : std_logic_2d ;
-                          constant clock_bitno  : integer)
-  return std_logic_vector is
-    constant in_bits_c      : natural := input_tbl'length(2) ;
-    constant out_len_c      : natural := input_tbl'length(1) ;
-    variable result_v       : std_logic_vector (out_len_c-1 downto 0) ;
+                          constant clock_count  : natural)
+  return std_logic_2d is
+    constant clock_bits_c   : natural := maximum (1, clock_count) ;
+    constant row_cnt_c      : natural := input_tbl'length(1) ;
+    constant col_cnt_c      : natural := input_tbl'length(2) ;
+    variable result_v       : std_logic_2d (clock_bits_c-1 downto 0,
+                                            row_cnt_c-1 downto 0) ;
   begin
-    if (clock_bitno < 0 or clock_bitno >= in_bits_c) then
-      result_v              := (others => '0') ;
-    else
-      for i in out_len_c-1 downto 0 loop
-        result_v (i)        := input_tbl (i, clock_bitno) ;
+    for row in row_cnt_c-1 downto 0 loop
+      for clock in clock_bits_c-1 downto 0 loop
+        result_v (clock, row)     := input_tbl (row, col_cnt_c -
+                                                     clock_bits_c + clock) ;
       end loop ;
-    end if ;
+    end loop ;
 
     return result_v ;
   end function clock_extract ;
@@ -137,18 +140,19 @@ architecture rtl of ResourceMUX is
   --  Clock reintegration function.
 
   function clock_insert (signal   input_tbl     : std_logic_2d ;
-                         signal   clock_bits    : std_logic_vector ;
-                         constant clock_bitno   : integer)
+                         signal   clock_bits    : std_logic_2d ;
+                         constant clock_count   : natural)
   return std_logic_2d is
-    constant clock_bits_c   : natural := input_tbl'length(1) ;
-    constant length_bits_c  : natural := input_tbl'length(2) ;
-    variable result_v       : std_logic_2d (clock_bits_c-1  downto 0,
-                                            length_bits_c-1 downto 0) ;
+    constant row_cnt_c      : natural := input_tbl'length(1) ;
+    constant col_cnt_c      : natural := input_tbl'length(2) ;
+    variable result_v       : std_logic_2d (row_cnt_c-1  downto 0,
+                                            col_cnt_c-1 downto 0) ;
   begin
-    for row in clock_bits_c-1 downto 0 loop
-      for col in length_bits_c-1 downto 0 loop
-        if (col = clock_bitno) then
-          result_v (row, col) := clock_bits (row) ;
+    for row in row_cnt_c-1 downto 0 loop
+      for col in col_cnt_c-1 downto 0 loop
+        if (col >= col_cnt_c - clock_count) then
+          result_v (row, col) := clock_bits (col + clock_count -
+                                             col_cnt_c, row) ;
         else
           result_v (row, col) := input_tbl (row, col) ;
         end if ;
@@ -181,12 +185,14 @@ architecture rtl of ResourceMUX is
   --  Internal signals.
 
   constant selector_bits_c  : natural := const_bits (requester_cnt_g - 1) ;
+  constant clock_bits_c     : natural := maximum (1, clock_bitcnt_g) ;
 
   signal selector           : unsigned (selector_bits_c-1 downto 0) ;
 
   signal input              : std_logic_2D (requester_cnt_g-1 downto 0,
                                             resource_bits_g-1 downto 0) ;
-  signal clocks             : std_logic_vector (requester_cnt_g-1 downto 0) ;
+  signal clocks             : std_logic_2D (clock_bits_c-1    downto 0,
+                                            requester_cnt_g-1 downto 0) ;
 
   attribute keep            : boolean ;
 
@@ -213,9 +219,11 @@ begin
   --  Extract the clock bits and reintegrate them in the results.
   --  Separation allows clocks to be assigned to them.
 
-  clocks    <= clock_extract (resource_tbl_in, clock_bit_g) ;
+  clocks    <= clock_extract (resource_tbl_in, clock_bitcnt_g) ;
 
-  input     <= clock_insert  (resource_tbl_in, clocks, clock_bit_g) ;
+  input     <= clock_insert  (resource_tbl_in, clocks, clock_bitcnt_g)
+                    when (clock_bitcnt_g > 0) else
+               resource_tbl_in ;
 
   --  Multiplexer for the resource bits.
 

@@ -81,6 +81,40 @@ source SystemTime.sdc
 
 pop_instance
 
+#   Process SDC file for GPS Memory MUX.  Push the new instance onto the
+#   instances stack beforehand and remove it afterwards.
+
+set sdc_file              "ResourceMUX.sdc"
+
+if { [file exists "$sdc_file"] > 0 } {
+
+  push_instance           "ResourceMUX:@use_GPS_RAM:gps_resmux"
+
+  set_instvalue           clk               "$collar_gated_clk_name"
+  set_instvalue           resource_tbl_in   "gpsmemdst_clk_"
+
+  source $sdc_file
+
+  pop_instance
+}
+
+#   Process SDC file for Magnetic Memory MUX.  Push the new instance onto
+#   the instances stack beforehand and remove it afterwards.
+
+set sdc_file              "ResourceMUX.sdc"
+
+if { [file exists "$sdc_file"] > 0 } {
+
+  push_instance           "ResourceMUX:@use_MagMemBuffer:magmem_resmux"
+
+  set_instvalue           clk               "$collar_spi_g_clk_name"
+  set_instvalue           resource_tbl_in   "magmemsrc_clk_"
+
+  source $sdc_file
+
+  pop_instance
+}
+
 #   Process SDC file for Status/Control SPI.  Push the new instance onto the
 #   instances stack beforehand and remove it afterwards.
 
@@ -94,7 +128,7 @@ if { [file exists "$sdc_file"] > 0 } {
 
   copy_instvalues         { "pc_spi_clk,sclk" }
 
-  source StatCtlSPI_FPGA.sdc
+  source $sdc_file
 
   pop_instance
 }

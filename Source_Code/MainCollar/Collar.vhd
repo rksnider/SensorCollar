@@ -2269,7 +2269,7 @@ begin
         Generic (
           requester_cnt_g       : natural   :=  8 ;
           resource_bits_g       : natural   :=  8 ;
-          clock_bit_g           : integer   := -1
+          clock_bitcnt_g        : natural   :=  0
         ) ;
         Port (
           reset                 : in    std_logic ;
@@ -2311,9 +2311,6 @@ begin
       alias gpsmemdst_clk       : std_logic is
                                   gpsmem_selected (gpsmem_addrbits_c +
                                                    gpsmem_databits_c + 2) ;
-                                                   
-      constant gpsmemdst_clkbit_c : natural := gpsmem_addrbits_c +
-                                               gpsmem_databits_c + 2 ;
 
     begin
 
@@ -2344,7 +2341,7 @@ begin
         Generic Map (
           requester_cnt_g         => gpsmemrq_count_c,
           resource_bits_g         => gpsmem_iobits_c,
-          clock_bit_g             => gpsmemdst_clkbit_c
+          clock_bitcnt_g          => 1
         )
         Port Map (
           reset                   => reset,
@@ -2734,7 +2731,7 @@ begin
         Generic (
           requester_cnt_g       : natural   :=  8 ;
           resource_bits_g       : natural   :=  8 ;
-          clock_bit_g           : integer   := -1
+          clock_bitcnt_g        : natural   :=  0
         ) ;
         Port (
           reset                 : in    std_logic ;
@@ -2777,9 +2774,6 @@ begin
                                   magmem_selected (magmem_addrbits_c +
                                                    magmem_databits_c + 2) ;
 
-      constant magmemsrc_clkbit_c   : natural := magmem_addrbits_c +
-                                                 magmem_databits_c + 2 ;
-                                                   
     begin
 
       magmem_buff_busy  <= '1' when ((unsigned (magmem_requesters) /= 0)  or
@@ -2813,7 +2807,7 @@ begin
         Generic Map (
           requester_cnt_g         => magmemrq_count_c,
           resource_bits_g         => magmem_iobits_c,
-          clock_bit_g             => magmemsrc_clkbit_c
+          clock_bitcnt_g          => 1
         )
         Port Map (
           reset                   => reset,
