@@ -1127,6 +1127,7 @@ blocks_past_crit <= std_logic_vector(blocks_past_crit_signal);
 --Signal mapping for the magnetic memory interfacing.
 fb_magram_address_a_out <= std_logic_vector(fb_magram_address_a);
 fb_magram_clk_a_out <= not(clock_sys);
+flashblock_gpsbuf_clk <= not(clock_sys);
   
 
 --
