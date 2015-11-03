@@ -232,7 +232,7 @@ architecture structural of Collar is
   signal master_clk           : std_logic ;
   signal master_gated_clk     : std_logic ;
   signal master_gated_inv_clk : std_logic ;
-  signal master_gated_en      : std_logic ;
+  signal master_gated_en_s    : std_logic ;
 
   --  Button specifications.
 
@@ -306,7 +306,7 @@ architecture structural of Collar is
   signal spi_clk              : std_logic ;
   signal spi_gated_clk        : std_logic ;
   signal spi_gated_inv_clk    : std_logic ;
-  signal spi_gated_en         : std_logic ;
+  signal spi_gated_en_s       : std_logic ;
 
   component GenClock is
 
@@ -353,6 +353,9 @@ architecture structural of Collar is
   alias STAT_PwrGood3p3       : std_logic is
         PC_StatusReg (StatusSignals'pos (Stat_PwrGood3p3_e)) ;
 
+
+  signal PC_ControlTurnOn       : std_logic_vector (ControlSignalsCnt_c-1
+                                                    downto 0) ;
 
   signal PC_ControlReg          : std_logic_vector (ControlSignalsCnt_c-1
                                                     downto 0) :=
@@ -793,16 +796,14 @@ architecture structural of Collar is
   signal SDLogging_status       : std_logic := '0' ;
   signal SDLogging_flush        : std_logic := '0' ;
 
-
-  component Startup is
+  component Startup_Shutdown is
     Port (
-      clk                 : in    std_logic ;
-      rst_n               : in    std_logic ;
-
-      pc_control_reg_out  : out std_logic_vector (ControlSignalsCnt_c-1
-                                            downto 0);
+      clk                 : in   std_logic ;
+      rst_n               : in   std_logic ;
+      pc_control_reg_out  : out  std_logic_vector (ControlSignalsCnt_c-1
+                                                   downto 0);
       pc_status_set_in        : in std_logic;
-      sd_contr_start_out        : out  std_logic ;
+      sd_contr_start_out        : out  std_logic ;       
       sd_contr_done_in          : in  std_logic ;
       sdram_start_out           : out  std_logic ;
       sdram_done_in             : in  std_logic ;
@@ -813,9 +814,11 @@ architecture structural of Collar is
       mag_start_out             : out   std_logic ;
       mag_done_in               : in    std_logic ;
       gps_start_out             : out   std_logic ;
-      gps_done_in               : in    std_logic
-    ) ;
-  end component Startup;
+      gps_done_in               : in    std_logic ;
+      txrx_start_out            : out   std_logic ;
+      txrx_done_in              : in    std_logic
+  ) ;
+  end component Startup_Shutdown ;
 
 begin
 
@@ -824,26 +827,31 @@ begin
   --  System startup sequencing and setting of the control register.
   --------------------------------------------------------------------------
 
-  i_startup_0 : Startup
+  i_startup_0 : Startup_Shutdown
 
     Port Map(
       clk                       => spi_clk,
       rst_n                     => not reset,
-      pc_control_reg_out        =>  PC_ControlReg,
+      pc_control_reg_out        => PC_ControlTurnOn,
       pc_status_set_in          => PC_StatusSet,
       sd_contr_start_out        => sdcard_start,
       sd_contr_done_in          => '1',
       --sdram_start_out             : out  std_logic ;
       sdram_done_in             => sdram_ready,
-      --imu_start_out              : out std_logic ;
+      imu_start_out             => im_startup,
       imu_done_in               => '1',
       --mems_start_out            : out std_logic ;
       mems_done_in              => '1',
-      --mag_start_out             : out   std_logic ;
-      mag_done_in               => '1',
+      mag_start_out             => mm_startup,
+      mag_done_in               => mm_startup_done,
       gps_start_out             => gps_init,
-      gps_done_in               => gps_ready
+      gps_done_in               => gps_ready,
+      --txrx_start_out            : out   std_logic ;
+      txrx_done_in              => '1'
     ) ;
+
+  PC_ControlReg                 <= PC_ControlReg or PC_ControlTurnOn ;
+
 
   --------------------------------------------------------------------------
   --  SPI clock.
@@ -866,14 +874,14 @@ begin
     Port Map (
       reset                   => reset,
       clk                     => master_clk,
-      clk_on_in               => spi_gated_en,
-      clk_off_in              => not spi_gated_en,
+      clk_on_in               => spi_gated_en_s,
+      clk_off_in              => not spi_gated_en_s,
       clk_out                 => spi_clk,
       gated_clk_out           => spi_gated_clk,
       gated_clk_inv_out       => spi_gated_inv_clk
     ) ;
 
-  spi_gated_en          <= StatCtlActive                        or
+  spi_gated_en_s        <= StatCtlActive                        or
                            magmem_buff_busy ;
 
   --------------------------------------------------------------------------
@@ -893,14 +901,14 @@ begin
     Port Map (
       reset                   => reset,
       clk                     => source_clk,
-      clk_on_in               => master_gated_en,
-      clk_off_in              => not master_gated_en,
+      clk_on_in               => master_gated_en_s,
+      clk_off_in              => not master_gated_en_s,
       clk_out                 => master_clk,
       gated_clk_out           => master_gated_clk,
       gated_clk_inv_out       => master_gated_inv_clk
     ) ;
 
-  master_gated_en       <= '1' when ((unsigned (gpsmem_requesters) /= 0)  or
+  master_gated_en_s     <= '1' when ((unsigned (gpsmem_requesters) /= 0)  or
                                      (unsigned (gpsmem_receivers)  /= 0)  or
                                      eventcnt_busy = '1')
                                else '0' ;
@@ -2134,6 +2142,7 @@ begin
           sd_outmem_buffready_out   => sdram_outready,
           mem_req_a_out             => magmem_requesters (magmemrq_sdcard_c),
           mem_rec_a_in              => magmem_receivers  (magmemrq_sdcard_c),
+          sd_magram_clk_a_out       => sdl_magmem_clk,
           sd_magram_wr_en_a_out     => sdl_magmem_wr_en,
           sd_magram_rd_en_a_out     => sdl_magmem_rd_en,
           sd_magram_address_a_out   => sdl_magmem_addr,
@@ -2891,7 +2900,6 @@ begin
       signal magmem_cs          : std_logic ;
       signal magmem_mosi        : std_logic ;
       signal magmem_miso        : std_logic ;
-      signal magmem_writeprot   : std_logic ;
 
       --  Magnetic Memory source access signals.
 
@@ -2952,22 +2960,21 @@ begin
       ----------------------------------------------------------------------
 
       magmem_miso               <= magram_miso_io ;
+      magram_writeprot_out      <= '0' ;
 
       magmem_on : process (CTL_MagMemOn, magmem_clock, magmem_cs,
-                           magmem_mosi, magmem_writeprot)
+                           magmem_mosi)
       begin
         if (CTL_MagMemOn = '0') then
           magram_clk            <= '0' ;
           magram_cs_out         <= '0' ;
           magram_mosi_out       <= '0' ;
           magram_miso_io        <= '0' ;
-          magram_writeprot_out  <= '0' ;
         else
           magram_clk            <= magmem_clock ;
           magram_cs_out         <= magmem_cs ;
           magram_mosi_out       <= magmem_mosi ;
           magram_miso_io        <= 'Z' ;
-          magram_writeprot_out  <= magmem_writeprot ;
         end if ;
       end process magmem_on ;
 
