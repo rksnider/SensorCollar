@@ -69,8 +69,13 @@ if {[get_collection_size $clock_nets] > 0} {
 
   set clock_start                 [expr $out_bits - $clock_count]
 
-  set clock_groups                [list set_clock_groups                  \
-                                        -logically_exclusive]
+  if ([array exists master_tbl]) {
+    array unset master_tbl
+  }
+
+  if ([array exists clock_tbl]) {
+    array unset clock_tbl
+  }
 
   for {set clkno 0} {$clkno < $clock_count} {incr clkno} {
     for {set reqno 0} {$reqno < $req_count} {incr reqno} {
@@ -103,15 +108,41 @@ if {[get_collection_size $clock_nets] > 0} {
       create_generated_clock -source "$source_path" -name "$clock_name"   \
                              -add    "$target_path"
 
-      lappend clock_groups "-group" "$clock_name"
+      #   Determine the master clock for the clock and add it to the
+      #   master clock table.  Add this clock to the MUX clock table with
+      #   its master clock name as the value.
+
+      set clock_info                [get_clocks "$clock_name"]
+      set clock_master              [get_clock_info -master_clock         \
+                                                    $clock_info]
+
+      set master_tbl($clock_master) ""
+      set clock_tbl($clock_name)    "$clock_master"
     }
   }
 
-  #   Create clock groups for each MUX clock.
+  #   Remove paths from the each MUX clock to master clocks other than its
+  #   own.
 
-  puts $sdc_log "Creating clock groups '$clock_groups'\n"
+  foreach clock_name [array names clock_tbl] {
+    set clock_master                $clock_tbl($clock_name)
+    set clock_data                  [get_clocks "$clock_name"]
 
-  eval $clock_groups
+    foreach master_name [array names master_tbl] {
+      if {[string compare "$clock_master" "$master_name"] != 0} {
+        set master_data             [get_clocks "$master_name"]
+
+        set_false_path -from $master_data -to $clock_data
+
+        puts $sdc_log "No MUX path from '$master_name' to '$clock_name'"
+      }
+    }
+  }
+
+  puts $sdc_log ""
+
+  array unset master_tbl
+  array unset clock_tbl
 
 } else {
   puts $sdc_log "Skipping clocks for '$source_path'\n"
