@@ -93,11 +93,12 @@ set_instvalue                 radio_clk         "DATA_TX_CLK_TO_FPGA"
 source Collar.sdc
 
 
-# Breaking all paths between asynchronous signals (*_a) and
-# synchronous counterparts (*_s)
+# Breaking all paths between asynchronous signals and
+# synchronized counterparts (*_s).
 
-
-set sync_list               [get_registers {*_s}]
+set sync_signals            [get_nets {*_s}]
+set sync_vectors            [get_nets {*_s[*]}]
+set sync_list               [add_to_collection $sync_signals $sync_vectors]
 
 if {[get_collection_size $sync_list] > 0} {
 
@@ -105,14 +106,16 @@ if {[get_collection_size $sync_list] > 0} {
 
     set sync_name           [get_object_info -name $reg]
 
-    regsub -all {^[A-Za-z0-9_]+:|(\|)[A-Za-z0-9_]+:} "$sync_name" {\1} cell_path
-    set sync                [get_cells $cell_path]
+    # regsub -all {^[A-Za-z0-9_]+:|(\|)[A-Za-z0-9_]+:} "$sync_name" {\1} cell_path
+    # set sync                [get_cells $cell_path]
+    
+    set sync                [get_cells "$sync_name"]
 
     if {[get_collection_size $sync] > 0} {
       set_false_path -through $sync
-      puts $sdc_log "Breaking async paths $sync_name\n"
+      puts $sdc_log "Breaking async paths '$sync_name'\n"
     } else {
-      puts $sdc_log "$cell_path missing\n"
+      puts $sdc_log "'$cell_path' missing\n"
     }
   }
 }
