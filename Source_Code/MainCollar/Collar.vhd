@@ -225,6 +225,11 @@ end entity Collar ;
 
 architecture structural of Collar is
 
+  --  Establish keep attribute to override optimization removal of signals
+  --  needed by SDC files.
+
+  attribute keep              : boolean ;
+
   --  Master clock information.
 
   constant master_clk_freq_c  : natural := source_clk_freq_g ;
@@ -233,6 +238,8 @@ architecture structural of Collar is
   signal master_gated_clk     : std_logic ;
   signal master_gated_inv_clk : std_logic ;
   signal master_gated_en_s    : std_logic ;
+
+  attribute keep of master_gated_en_s   : signal is true ;
 
   --  Button specifications.
 
@@ -307,6 +314,8 @@ architecture structural of Collar is
   signal spi_gated_clk        : std_logic ;
   signal spi_gated_inv_clk    : std_logic ;
   signal spi_gated_en_s       : std_logic ;
+
+  attribute keep of spi_gated_en_s  : signal is true ;
 
   component GenClock is
 
@@ -803,7 +812,7 @@ architecture structural of Collar is
       pc_control_reg_out  : out  std_logic_vector (ControlSignalsCnt_c-1
                                                    downto 0);
       pc_status_set_in        : in std_logic;
-      sd_contr_start_out        : out  std_logic ;       
+      sd_contr_start_out        : out  std_logic ;
       sd_contr_done_in          : in  std_logic ;
       sdram_start_out           : out  std_logic ;
       sdram_done_in             : in  std_logic ;
