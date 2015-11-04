@@ -7,18 +7,19 @@ set Collar_inst             [get_instance]
 
 set reset_inst              "GlobalClock:global_reset"
 set reset_comp              "GlobalClock_altclkctrl_vch_component"
-set reset_pin               "sd1|outclk"
-set reset_target            "$Collar_inst|$reset_inst|$reset_comp|$reset_pin"
+set reset_cell              "$Collar_inst|$reset_inst|$reset_comp|sd1"
 
 regsub -all {^[A-Za-z0-9_]+:|(\|)[A-Za-z0-9_]+:}                        \
-            "$reset_target" {\1}   temp_path
+            "$reset_cell" {\1}    temp_path
 regsub -all "@" "$temp_path" "\\" reset_path
 
-set reset_data              [get_pins $reset_path]
+set reset_cell_data         [get_cells "$reset_path"]
+set reset_pin_data          [get_pins  "$reset_path|outclk"]
 
-set_false_path -from $reset_data -setup
+set_false_path -through $reset_cell_data
+set_false_path -from    $reset_pin_data  -setup
 
-set_keyvalue reset          $reset_path
+set_keyvalue reset          "$reset_path|outclk"
 
 #   Find source clock frequency.
 
