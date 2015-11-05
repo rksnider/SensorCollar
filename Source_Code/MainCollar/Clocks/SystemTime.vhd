@@ -203,8 +203,8 @@ architecture rtl of SystemTime is
 
   --  Cross chip communication protects against corruption of signals
   --  travelling long distances and across clock domains.  This operation
-  --  takes to fast clock cycles to complete and so must be slowed down from
-  --  clock generation by a factor of two.
+  --  takes two fast clock cycles to complete and so must be slowed down
+  --  from clock generation by a factor of two.
 
   signal systime_ready        : std_logic := '0' ;
 
@@ -490,6 +490,8 @@ architecture rtl of SystemTime is
 
   signal gpsmem_address             : unsigned (gpsmem_addr_out'length-1
                                                 downto 0) ;
+  signal tmbank_s                   : std_logic ;
+  signal tmbank                     : std_logic ;
   signal tmbank_fwl                 : std_logic ;
   signal rtc_sec_load_fwl           : std_logic ;
 
@@ -935,6 +937,8 @@ begin
     variable difference     : signed   (div_remainder'length   downto 0) ;
   begin
     if (reset = '1') then
+      tmbank_s              <= '0' ;
+      tmbank                <= '0' ;
       tmbank_fwl            <= '0' ;
       rtc_sec_load_fwl      <= '0' ;
       gpsmem_req_out        <= '0' ;
@@ -948,6 +952,12 @@ begin
 
     elsif (rising_edge (clk)) then
 
+      --  Synchronize the time mark bank signal with this clock using the
+      --  standard double copy mechanism.
+      
+      tmbank_s              <= gpsmem_tmbank_in ;
+      tmbank                <= tmbank_s ;
+
       case (cur_state) is
 
         --  Wait until a new GPS time must be calculated because new
@@ -956,8 +966,8 @@ begin
         when gps_st_wait_e            =>
           gps_seconds_load        <= '0' ;
 
-          if (tmbank_fwl /= gpsmem_tmbank_in) then
-            tmbank_fwl <= gpsmem_tmbank_in ;
+          if (tmbank_fwl /= tmbank) then
+            tmbank_fwl <= tmbank ;
 
             gpsmem_req_out        <= '1' ;
             cur_state             <= gps_st_tmload_e ;
@@ -977,7 +987,7 @@ begin
              gpsmem_address        <=
                   TO_UNSIGNED (msg_ram_base_c +
                                msg_ubx_tim_tm2_ramaddr_c +
-                               if_set (gpsmem_tmbank_in,
+                               if_set (tmbank,
                                        msg_ubx_tim_tm2_ramused_c) +
                                MUTTm2_wnF_offset_c,
                                gpsmem_address'length) ;
@@ -998,7 +1008,7 @@ begin
             gpsmem_address        <=
                   TO_UNSIGNED (msg_ram_base_c +
                                msg_ubx_tim_tm2_ramaddr_c +
-                               if_set (gpsmem_tmbank_in,
+                               if_set (tmbank,
                                        msg_ubx_tim_tm2_ramused_c) +
                                MUTTm2_towMsF_offset_c,
                                gpsmem_address'length) ;
@@ -1018,7 +1028,7 @@ begin
             gpsmem_address        <=
                   TO_UNSIGNED (msg_ram_base_c +
                                msg_ubx_tim_tm2_ramaddr_c +
-                               if_set (gpsmem_tmbank_in,
+                               if_set (tmbank,
                                        msg_ubx_tim_tm2_ramused_c) +
                                MUTTm2_towSubMsF_offset_c,
                                gpsmem_address'length) ;
@@ -1038,7 +1048,7 @@ begin
             gpsmem_address        <=
                   TO_UNSIGNED (msg_ram_base_c +
                                msg_ram_marktime_addr_c +
-                               if_set (gpsmem_tmbank_in,
+                               if_set (tmbank,
                                        msg_ram_marktime_size_c),
                                gpsmem_address'length) ;
             count                 <= TO_UNSIGNED (gps_time_bytes_c - 1,
