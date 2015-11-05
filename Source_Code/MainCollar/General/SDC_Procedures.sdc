@@ -94,7 +94,7 @@ proc get_instvalue { key } {
 
   set cur_instance              [lindex $instance_stack 0]
   set full_key                  "$cur_instance|$key"
-  
+
   if {[llength [array names inst_mapping $full_key]] > 0} {
     return $inst_mapping($full_key)
   } else {
@@ -166,4 +166,40 @@ proc get_keyvalue { key } {
   } else {
     return { }
   }
+}
+
+
+##
+#   @brief    Put all clocks in a list into the clock set table.
+#   @details  The list of clocks becomes the value of each clock in the list.
+#
+#   @param    clocks      List of all clocks that are part of a set.
+#
+
+proc make_clockset { clocks } {
+  global clockset
+
+  foreach clk $clocks {
+    set clockset($clk)          $clocks
+  }
+}
+
+
+##
+#   @brief    Get a list of all clocks that are part of a clock's set.
+#   @details  Return the list of clocks that are part of the given clock's
+#             set.  This includes the given clock.
+#
+#   @param    clk       Clock to return the clock set list for.
+#
+
+proc get_clockset { clk } {
+  global clockset
+
+  if {[array exists clockset] > 0} {
+    if {[llength [array names clockset $clk]] > 0} {
+      return $clockset($clk)
+    }
+  }
+  return { [list $clk] }
 }

@@ -52,6 +52,8 @@ foreach clock_type $clock_net_type_list {
 
 array set source_clocks {}
 
+set created_clocks              [list]
+
 set clk_list                    {clk,clk,+ clk_inv,clk_inv,-            \
                                  gated_clk,clk,+ gated_clk_inv,clk_inv,-}
 
@@ -166,6 +168,8 @@ foreach clock_data $clk_list {
                                -divide_by "$divide_by" "$clock_target"
       }
 
+      lappend created_clocks      "$clk_name"
+
       set clk_data                [get_clocks "$clk_name"]
       set src_data                [get_clocks "$src_name"]
 
@@ -178,3 +182,7 @@ foreach clock_data $clk_list {
     }
   }
 }
+
+#   Make a clock set from all created clocks.
+
+make_clockset $created_clocks
