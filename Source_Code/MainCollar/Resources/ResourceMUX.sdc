@@ -122,20 +122,33 @@ if {[get_collection_size $clock_nets] > 0} {
   }
 
   #   Remove paths from the each MUX clock to master clocks other than its
-  #   own.
+  #   own master clock set.
 
   foreach clock_name [array names clock_tbl] {
     set clock_master                $clock_tbl($clock_name)
+
     set clock_data                  [get_clocks "$clock_name"]
 
+    if ([array exists remove_tbl]) {
+      array unset remove_tbl
+    }
+
     foreach master_name [array names master_tbl] {
-      if {[string compare "$clock_master" "$master_name"] != 0} {
-        set master_data             [get_clocks "$master_name"]
+      set master_list               [get_clockset "$master_name"]
 
-        set_false_path -from $master_data -to $clock_data
-
-        puts $sdc_log "No MUX path from '$master_name' to '$clock_name'"
+      if {[lsearch $master_list "$clock_master"] < 0} {
+        foreach master $master_list {
+          set remove_tbl($master)   ""
+        }
       }
+    }
+
+    foreach remove_name [array names remove_tbl] {
+      set remove_data               [get_clocks "$remove_name"]
+
+      set_false_path -from $remove_data -to $clock_data
+
+      puts $sdc_log "No MUX path from '$remove_name' to '$clock_name'"
     }
   }
 
