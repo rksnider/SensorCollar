@@ -16,6 +16,8 @@ set sysclk_source                 [get_clock_info -targets $sysclk_data]
 set clk_list                      {data_latch_out,clock_high            \
                                    valid_latch_out,valid_high}
 
+set latch_clocks                  [list]
+
 foreach clock_data $clk_list {
 
   set clock_list                  [split "$clock_data" ","]
@@ -41,6 +43,7 @@ foreach clock_data $clk_list {
       create_generated_clock -source "$sysclk_source"                     \
                              -name   "$clk_name" "$clock_target"
 
+      lappend latch_clocks        "$clk_name"
       set clk_data                [get_clocks "$clk_name"]
 
       set_false_path -from $sysclk_data -to $clk_data
@@ -51,4 +54,14 @@ foreach clock_data $clk_list {
                                        "'$clock_target' from '$clk_info'"]
     }
   }
+}
+
+#   The valid latch follows the data latch by one clock cycle.
+
+if {[llength $latch_clocks] >= 2} {
+  set data_latch                  [get_clocks [lindex $latch_clocks 0]]
+  set valid_latch                 [get_clocks [lindex $latch_clocks 1]]
+
+  set_false_path -from $data_latch  -to $valid_latch
+  set_false_path -from $valid_latch -to $data_latch
 }
