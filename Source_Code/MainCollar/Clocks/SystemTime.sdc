@@ -143,3 +143,13 @@ if { [file exists "$sdc_file"] > 0 } {
   pop_instance
 }
 
+#   Disconnect the data latch from the millisecond clocks.
+
+set milli_data            [get_clocks "$milliclk_name"]
+set milli8_data           [get_clocks "$milli8clk_name"]
+set latch_data            [get_clocks "$ST_data_latch_name"]
+
+set_false_path -from $milli_data  -to $latch_data
+set_false_path -from $latch_data  -to $milli_data
+set_false_path -from $milli8_data -to $latch_data
+set_false_path -from $latch_data  -to $milli8_data
