@@ -890,7 +890,14 @@ begin
       gated_clk_inv_out       => spi_gated_inv_clk
     ) ;
 
-  spi_gated_en_s        <= StatCtlActive ;
+  spi_gated_en_s        <= StatCtlActive                           or
+                           magmem_requesters (magmemrq_magmem_c)   or
+                           magmem_receivers  (magmemrq_magmem_c)   or
+                           magmem_requesters (magmemrq_flashblk_c) or
+                           magmem_receivers  (magmemrq_flashblk_c) or
+                           gpsmem_requesters (gpsmemrq_flashblk_c) or
+                           gpsmem_receivers  (gpsmemrq_flashblk_c) ;
+
 
   --------------------------------------------------------------------------
   --  Master clock.
@@ -1833,9 +1840,9 @@ begin
 
 
 
-      sdl_magmem_control    <= sdl_magmem_clk     &
-                               sdl_magmem_wr_en   & sdl_magmem_rd_en &
-                               sdl_magmem_writeto & mm_buffno &
+      sdl_magmem_control    <= master_gated_inv_clk &
+                               sdl_magmem_wr_en     & sdl_magmem_rd_en &
+                               sdl_magmem_writeto   & mm_buffno &
                                sdl_magmem_addr ;
 
       set2D_element (magmemrq_sdcard_c, sdl_magmem_control,
@@ -2170,9 +2177,9 @@ begin
           blocks_past_crit          => sdl_sdcard_critpast
         );
 
-      sdl_magmem_control    <= sdl_magmem_clk     &
-                               sdl_magmem_wr_en   & sdl_magmem_rd_en &
-                               sdl_magmem_writeto & mm_buffno &
+      sdl_magmem_control    <= master_gated_inv_clk &
+                               sdl_magmem_wr_en     & sdl_magmem_rd_en &
+                               sdl_magmem_writeto   & mm_buffno &
                                sdl_magmem_addr ;
 
       set2D_element (magmemrq_sdcard_c, sdl_magmem_control,
@@ -2967,7 +2974,7 @@ begin
           current_active_ram_buffer   => mm_buffno
         ) ;
 
-      magmemsrc_control     <= magmemsrc_clk      &
+      magmemsrc_control     <= spi_gated_inv_clk  &
                                magmemsrc_write_en & magmemsrc_read_en &
                                magmemsrc_writeto  & magmemsrc_addr ;
 
@@ -3416,7 +3423,7 @@ begin
           flashblock_gpsbuf_clk       => fb_gpsmem_clk,
           gpsbuf_flashblock_data      => gpsmemdst_readfrom,
           gps_req_out                 => gpsmem_requesters (gpsmemrq_flashblk_c),
-          gps_rec_in                  => magmem_receivers (gpsmemrq_flashblk_c),
+          gps_rec_in                  => gpsmem_receivers (gpsmemrq_flashblk_c),
           posbank                     =>
                             gps_databanks (msg_ubx_nav_sol_ramblock_c),
           tmbank                      =>
@@ -3452,14 +3459,14 @@ begin
           blocks_past_crit            => sdcard_critpast
         ) ;
 
-      fb_gpsmem_control    <= fb_gpsmem_clk       &
+      fb_gpsmem_control    <= spi_gated_inv_clk   &
                               gpsmem_wren_none_c  & fb_gpsmem_rd_en &
                               gpsmem_wrto_none_c  & fb_gpsmem_addr ;
 
       set2D_element (gpsmemrq_flashblk_c, fb_gpsmem_control,
                      gpsmem_input_tbl) ;
 
-      fb_magmem_control    <= fb_magmem_clk     &
+      fb_magmem_control    <= spi_gated_inv_clk &
                               fb_magmem_wr_en   & fb_magmem_rd_en &
                               fb_magmem_writeto & mm_buffno &
                               fb_magmem_addr ;
