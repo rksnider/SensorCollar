@@ -147,6 +147,7 @@ if {[get_collection_size $clock_nets] > 0} {
       set remove_data               [get_clocks "$remove_name"]
 
       set_false_path -from $remove_data -to $clock_data
+      set_false_path -from $clock_data  -to $remove_data
 
       puts $sdc_log "No MUX path from '$remove_name' to '$clock_name'"
     }
