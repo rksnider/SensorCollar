@@ -2535,7 +2535,11 @@ begin
 
           startup               : in    std_logic;
 
-          current_fpga_time     : in    std_logic_vector (gps_time_bytes_c*8-1 downto 0);
+          curtime_in            : in    std_logic_vector
+                                          (gps_time_bytes_c*8-1 downto 0) ;
+          curtime_latch_in      : in    std_logic ;
+          curtime_valid_in      : in    std_logic ;
+          curtime_vlatch_in     : in    std_logic ;
 
           gyro_data_rdy   : out     std_logic;
           accel_data_rdy  : out     std_logic;
@@ -2601,7 +2605,10 @@ begin
 
           startup             => im_startup,
 
-          current_fpga_time   => reset_time_bytes,
+          curtime_in          => reset_time_bytes,
+          curtime_latch_in    => systime_latch,
+          curtime_valid_in    => systime_valid,
+          curtime_vlatch_in   => systime_vlatch,
 
           gyro_data_rdy       => im_gyro_data_rdy,
           accel_data_rdy      => im_accel_data_rdy,
@@ -3211,8 +3218,11 @@ begin
 
           log_status            : in    std_logic ;
 
-          current_fpga_time     : in std_logic_vector
-                                    (gps_time_bytes_c*8-1 downto 0);
+          curtime_in            : in    std_logic_vector
+                                          (gps_time_bytes_c*8-1 downto 0) ;
+          curtime_latch_in      : in    std_logic ;
+          curtime_valid_in      : in    std_logic ;
+          curtime_vlatch_in     : in    std_logic ;
           log_events            : in    std_logic;
 
           gyro_data_rdy   : in    std_logic;
@@ -3277,7 +3287,7 @@ begin
           mag_fpga_time :in std_logic_vector (gps_time_bytes_c*8-1 downto 0);
           temp_fpga_time :in std_logic_vector (gps_time_bytes_c*8-1 downto 0);
 
-          rtc_time  : in std_logic_vector (rtc_time_bytes_g*8-1 downto 0);
+          rtc_time_in : in std_logic_vector (rtc_time_bytes_g*8-1 downto 0);
 
           flashblock_counter_rd_wr_addr  : out   std_logic_vector(
                                               counter_address_size_g-1 downto 0);
@@ -3304,13 +3314,11 @@ begin
           magram_fb_q_a_in        : in std_logic_vector(7 downto 0);
 
 
-          force_wr_en : out  std_logic;
-          sdram_empty : in  std_logic;
+          force_wr_en             : out  std_logic;
+          sdram_empty_in          : in   std_logic;
 
-          crit_event  : in  std_logic;
-          blocks_past_crit : out std_logic_vector(7 downto 0)
-
-
+          crit_event              : in   std_logic;
+          blocks_past_crit        : out  std_logic_vector(7 downto 0)
       ) ;
 
       end component FlashBlock ;
@@ -3378,7 +3386,10 @@ begin
           rst_n                       => (not reset),
           clk_enable                  => '1',
           log_status                  => SDLogging_status,
-          current_fpga_time           => reset_time_bytes,
+          curtime_in                  => reset_time_bytes,
+          curtime_latch_in            => systime_latch,
+          curtime_valid_in            => systime_valid,
+          curtime_vlatch_in           => systime_vlatch,
           log_events                  => eventcnt_changed,
           gyro_data_rdy               => im_gyro_data_rdy,
           accel_data_rdy              => im_accel_data_rdy,
@@ -3414,7 +3425,7 @@ begin
           accel_fpga_time             => im_accel_time,
           mag_fpga_time               => im_mag_time,
           temp_fpga_time              => im_temp_time,
-          rtc_time                    =>
+          rtc_time_in                 =>
                             std_logic_vector (rtc_running_seconds),
           flashblock_counter_rd_wr_addr  => evmemdst_addr,
           flashblock_counter_rd_en    => evmemdst_read_en,
@@ -3436,7 +3447,7 @@ begin
           magram_fb_q_a_in              => magmemsrc_readfrom,
 
           force_wr_en                 => sdram_forceout,
-          sdram_empty                 => sdram_empty,
+          sdram_empty_in              => sdram_empty,
           crit_event                  => SDLogging_flush,
           blocks_past_crit            => sdcard_critpast
         ) ;
