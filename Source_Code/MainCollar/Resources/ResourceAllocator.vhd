@@ -44,12 +44,15 @@ use GENERAL.UTILITIES_PKG.ALL ;
 --! @details    Grant resource usage to a single requester from a set of
 --!             requesters.
 --!
---! @param      requester_cnt_g_g Number of requesters of the resource.
+--! @param      requester_cnt_g Number of requesters of the resource.
 --! @param      number_len_g    Length of the receiver number returned.
 --! @param      prioritized_g   The resource is allocated to the highest
 --!                             priority requester (the lowest bit set) when
 --!                             this parameter is set.  Otherwise,
 --!                             round-robin allocation is used.
+--! @param      cross_clock_domain_g  Set if the requesters come from
+--!                                   different clock domains than the main
+--!                                   clock (clk).
 --! @param      reset           Reset the entity to an initial state.
 --! @param      clk             Clock used to move through states in the
 --!                             entity and its components.
@@ -70,9 +73,10 @@ use GENERAL.UTILITIES_PKG.ALL ;
 entity ResourceAllocator is
 
   Generic (
-    requester_cnt_g         : natural   :=  8 ;
+    requester_cnt_g       : natural   :=  8 ;
     number_len_g          : natural   :=  3 ;
-    prioritized_g         : std_logic := '1'
+    prioritized_g         : std_logic := '1' ;
+    cross_clock_domain_g  : std_logic := '0'
   ) ;
   Port (
     reset                 : in    std_logic ;
@@ -92,7 +96,36 @@ architecture rtl of ResourceAllocator is
   signal granted_to         : unsigned (requester_cnt_g-1 downto 0) ;
   signal low_priority_mask  : unsigned (requester_cnt_g-1 downto 0) ;
 
+  signal requesters         : std_logic_vector (requester_cnt_g-1
+                                                downto 0) ;
+  signal requesters_s       : std_logic_vector (requester_cnt_g-1
+                                                downto 0) ;
+
 begin
+
+  --------------------------------------------------------------------------
+  --  Synchronize the requestors across clock domains if that is required.
+  --------------------------------------------------------------------------
+
+  no_sync :
+    if (cross_clock_domain_g = '0') generate
+      requesters          <= requesters_in ;
+    end generate no_sync ;
+
+  sync :
+    if (cross_clock_domain_g = '1') generate
+      sync_proc : process (reset, clk)
+      begin
+        if (reset = '1') then
+          requesters      <= (others => '0') ;
+          requesters_s    <= (others => '0') ;
+        elsif (falling_edge (clk)) then
+          requesters      <= requesters_s ;
+        elsif (rising_edge (clk)) then
+          requesters_s    <= requesters_in ;
+        end if ;
+      end process sync_proc ;
+    end generate sync ;
 
   --------------------------------------------------------------------------
   --  Allocate the resource by setting the receiver's bit of the requester
@@ -113,7 +146,7 @@ begin
       --  When the requester that was granted the resource no longer wants
       --  it, allocate it to another requester.
 
-      if ((granted_to and unsigned (requesters_in)) = 0) then
+      if ((granted_to and unsigned (requesters)) = 0) then
 
         --  When round-robin allocation is being done the lower priority
         --  requests are granted if there are any.  If there aren't, the
@@ -121,9 +154,9 @@ begin
         --  requests are always those whose bits are above the bit of the
         --  last request granted.
 
-        granted_low_v     := lsb_find (unsigned (requesters_in) and
+        granted_low_v     := lsb_find (unsigned (requesters) and
                                        low_priority_mask) ;
-        granted_all_v     := lsb_find (unsigned (requesters_in)) ;
+        granted_all_v     := lsb_find (unsigned (requesters)) ;
 
         if (granted_low_v /= 0 and prioritized_g = '0') then
           granted_bit_v   := granted_low_v ;

@@ -50,6 +50,9 @@ use GENERAL.UTILITIES_PKG.ALL ;
 --! @param      resource_bits_g Number of bits the resource multiplexes.
 --! @param      clock_bitcnt_g  Number of clock bits at the end of the
 --!                             input and output vectors.
+--! @param      cross_clock_domain_g  Set if the requesters come from
+--!                                   different clock domains than the main
+--!                                   clock (clk).
 --! @param      reset           Reset the entity to an initial state.
 --! @param      clk             Clock used to move throuth states in the
 --!                             entity and its components.
@@ -70,7 +73,8 @@ entity ResourceMUX is
   Generic (
     requester_cnt_g       : natural   :=  8 ;
     resource_bits_g       : natural   :=  8 ;
-    clock_bitcnt_g        : natural   :=  0
+    clock_bitcnt_g        : natural   :=  0 ;
+    cross_clock_domain_g  : std_logic := '0'
   ) ;
   Port (
     reset                 : in    std_logic ;
@@ -169,7 +173,8 @@ architecture rtl of ResourceMUX is
     Generic (
       requester_cnt_g       : natural   :=  8 ;
       number_len_g          : natural   :=  3 ;
-      prioritized_g         : std_logic := '1'
+      prioritized_g         : std_logic := '1' ;
+      cross_clock_domain_g  : std_logic := '0'
     ) ;
     Port (
       reset                 : in    std_logic ;
@@ -204,16 +209,17 @@ begin
 
   allocate : ResourceAllocator
     Generic Map (
-      requester_cnt_g     => requester_cnt_g,
-      number_len_g        => selector_bits_c,
-      prioritized_g       => '0'
+      requester_cnt_g       => requester_cnt_g,
+      number_len_g          => selector_bits_c,
+      prioritized_g         => '0',
+      cross_clock_domain_g  => cross_clock_domain_g
     )
     Port Map (
-      reset               => reset,
-      clk                 => clk,
-      requesters_in       => requesters_in,
-      receivers_out       => receivers_out,
-      receiver_no_out     => selector
+      reset                 => reset,
+      clk                   => clk,
+      requesters_in         => requesters_in,
+      receivers_out         => receivers_out,
+      receiver_no_out       => selector
     ) ;
 
   --  Extract the clock bits and reintegrate them in the results.

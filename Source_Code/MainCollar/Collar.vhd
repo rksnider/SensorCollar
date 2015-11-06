@@ -890,8 +890,7 @@ begin
       gated_clk_inv_out       => spi_gated_inv_clk
     ) ;
 
-  spi_gated_en_s        <= StatCtlActive                        or
-                           magmem_buff_busy ;
+  spi_gated_en_s        <= StatCtlActive ;
 
   --------------------------------------------------------------------------
   --  Master clock.
@@ -919,7 +918,8 @@ begin
 
   master_gated_en_s     <= '1' when ((unsigned (gpsmem_requesters) /= 0)  or
                                      (unsigned (gpsmem_receivers)  /= 0)  or
-                                     eventcnt_busy = '1')
+                                     eventcnt_busy    = '1'               or
+                                     magmem_buff_busy = '1')
                                else '0' ;
 
 
@@ -2287,7 +2287,8 @@ begin
         Generic (
           requester_cnt_g       : natural   :=  8 ;
           resource_bits_g       : natural   :=  8 ;
-          clock_bitcnt_g        : natural   :=  0
+          clock_bitcnt_g        : natural   :=  0 ;
+          cross_clock_domain_g  : std_logic := '0'
         ) ;
         Port (
           reset                 : in    std_logic ;
@@ -2359,7 +2360,8 @@ begin
         Generic Map (
           requester_cnt_g         => gpsmemrq_count_c,
           resource_bits_g         => gpsmem_iobits_c,
-          clock_bitcnt_g          => 1
+          clock_bitcnt_g          => 1,
+          cross_clock_domain_g    => '1'
         )
         Port Map (
           reset                   => reset,
@@ -2749,7 +2751,8 @@ begin
         Generic (
           requester_cnt_g       : natural   :=  8 ;
           resource_bits_g       : natural   :=  8 ;
-          clock_bitcnt_g        : natural   :=  0
+          clock_bitcnt_g        : natural   :=  0 ;
+          cross_clock_domain_g  : std_logic := '0'
         ) ;
         Port (
           reset                 : in    std_logic ;
@@ -2825,11 +2828,12 @@ begin
         Generic Map (
           requester_cnt_g         => magmemrq_count_c,
           resource_bits_g         => magmem_iobits_c,
-          clock_bitcnt_g          => 1
+          clock_bitcnt_g          => 1,
+          cross_clock_domain_g    => '1'
         )
         Port Map (
           reset                   => reset,
-          clk                     => spi_gated_clk,
+          clk                     => master_gated_clk,
           requesters_in           => magmem_requesters,
           resource_tbl_in         => magmem_input_tbl,
           receivers_out           => magmem_receivers,
