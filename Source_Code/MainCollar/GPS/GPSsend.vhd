@@ -128,6 +128,8 @@ architecture rtl of GPSsend is
 
   signal nextout                : std_logic_vector (7 downto 0) ;
 
+  signal outready               : std_logic ;
+  signal outready_s             : std_logic ;
   signal outready_fwl           : std_logic ;
 
 begin
@@ -144,6 +146,8 @@ begin
   send_message:  process (reset, clk)
   begin
     if (reset = '1') then
+      outready        <= '0' ;
+      outready_s      <= '0' ;
       outready_fwl    <= '0' ;
       memreq_out      <= '0' ;
       memread_en_out  <= '0' ;
@@ -154,7 +158,15 @@ begin
       cur_state       <= SEND_STATE_GET_MEM ;
       next_state      <= SEND_STATE_START ;
 
+    elsif (falling_edge (clk)) then
+
+      --  Synchronize output ready line from another clock domain.
+
+      outready        <= outready_s ;
+
     elsif (rising_edge (clk)) then
+
+      outready_s      <= outready_in ;
 
       --  Always wait for output ready unless changed within a state.
       --  In most cases the output must be sent before a state can proceed.
@@ -180,10 +192,10 @@ begin
         when SEND_STATE_WAIT_READY    =>
           memreq_out          <= '0' ;
 
-          if (outready_fwl /= outready_in) then
-            outready_fwl      <= outready_in ;
+          if (outready_fwl /= outready) then
+            outready_fwl      <= outready ;
 
-            if (outready_in = '1') then
+            if (outready = '1') then
               if (calc_checksum = '1') then
                 m_checksum_B  <= m_checksum_B + m_checksum_A +
                                  unsigned (nextout) ;

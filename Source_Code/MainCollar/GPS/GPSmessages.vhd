@@ -229,29 +229,32 @@ architecture structural of GPSmessages is
       memaddr_bits_g  : natural := 8
     ) ;
     Port (
-      reset           : in    std_logic ;
-      clk             : in    std_logic ;
-      curtime_in      : in    std_logic_vector (gps_time_bits_c-1
-                                                downto 0) ;
-      markertime_in   : in    std_logic_vector (gps_time_bits_c-1
-                                                downto 0) ;
-      inbyte_in       : in    std_logic_vector (7 downto 0) ;
-      inready_in      : in    std_logic ;
-      inreceived_out  : out   std_logic ;
-      meminput_in     : in    std_logic_vector (7 downto 0) ;
-      memrcv_in       : in    std_logic ;
-      memreq_out      : out   std_logic ;
-      memoutput_out   : out   std_logic_vector (7 downto 0) ;
-      memaddr_out     : out   std_logic_vector (memaddr_bits_g-1 downto 0) ;
-      memread_en_out  : out   std_logic ;
-      memwrite_en_out : out   std_logic ;
-      datavalid_out   : out   std_logic_vector (msg_ram_blocks_c-1
-                                                downto 0) ;
-      tempbank_out    : out   std_logic ;
-      msgnumber_out   : out   std_logic_vector (msg_count_bits_c-1
-                                                downto 0) ;
-      msgreceived_out : out   std_logic ;
-      busy_out        : out   std_logic
+      reset             : in    std_logic ;
+      clk               : in    std_logic ;
+      curtime_in        : in    std_logic_vector (gps_time_bits_c-1
+                                                  downto 0) ;
+      curtime_latch_in  : in    std_logic ;
+      curtime_valid_in  : in    std_logic ;
+      curtime_vlatch_in : in    std_logic ;
+      markertime_in     : in    std_logic_vector (gps_time_bits_c-1
+                                                  downto 0) ;
+      inbyte_in         : in    std_logic_vector (7 downto 0) ;
+      inready_in        : in    std_logic ;
+      inreceived_out    : out   std_logic ;
+      meminput_in       : in    std_logic_vector (7 downto 0) ;
+      memrcv_in         : in    std_logic ;
+      memreq_out        : out   std_logic ;
+      memoutput_out     : out   std_logic_vector (7 downto 0) ;
+      memaddr_out       : out   std_logic_vector (memaddr_bits_g-1 downto 0) ;
+      memread_en_out    : out   std_logic ;
+      memwrite_en_out   : out   std_logic ;
+      datavalid_out     : out   std_logic_vector (msg_ram_blocks_c-1
+                                                  downto 0) ;
+      tempbank_out      : out   std_logic ;
+      msgnumber_out     : out   std_logic_vector (msg_count_bits_c-1
+                                                  downto 0) ;
+      msgreceived_out   : out   std_logic ;
+      busy_out          : out   std_logic
     ) ;
 
   end component GPSmessageParser ;
@@ -386,6 +389,9 @@ architecture structural of GPSmessages is
       reset           : in    std_logic ;
       clk             : in    std_logic ;
       curtime_in      : in    std_logic_vector (gps_time_bits_c-1 downto 0) ;
+      dlatch_in       : in    std_logic ;
+      vlatch_in       : in    std_logic ;
+      valid_in        : in    std_logic ;
       init_start_in   : in    std_logic ;
       init_done_out   : out   std_logic ;
       sendreq_out     : out   std_logic ;
@@ -762,6 +768,9 @@ begin
       reset                   => reset,
       clk                     => parse_clk,
       curtime_in              => curtime_in,
+      curtime_latch_in        => curtime_latch_in,
+      curtime_valid_in        => curtime_valid_in,
+      curtime_vlatch_in       => curtime_vlatch_in,
       markertime_in           => tm_marker_time,
       inbyte_in               => rx_data,
       inready_in              => rx_ready,
@@ -940,6 +949,9 @@ begin
       reset                     => reset,
       clk                       => parse_clk,
       curtime_in                => curtime_in,
+      dlatch_in                 => curtime_latch_in,
+      vlatch_in                 => curtime_vlatch_in,
+      valid_in                  => curtime_valid_in,
       init_start_in             => gps_init_start_in,
       init_done_out             => gps_init_done_out,
       sendreq_out               => sendreq (send_init_c),

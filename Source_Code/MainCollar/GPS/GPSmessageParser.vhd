@@ -53,33 +53,37 @@ use WORK.msg_ubx_tim_tm2_pkg.all ;
 --!             Port memory.  While the message is being parsed the contents
 --!             of the associated memory is marked as invalid.
 --!
---! @param      memaddr_bits_g  Bit width of the memory address.
---! @param      reset           Reset the entity to an initial state.
---! @param      clk             Clock used to move throuth states in the
---!                             entity and its components.
---! @param      curtime_in      The GPS Time to use for logging events at.
---! @param      markertime_in   The time the last Time Marker generated.
---! @param      inbyte_in       Byte received to add to message to parse.
---! @param      inready_in      The byte is ready to be parsed.
---! @param      inreceived_out  The byte has been received for parsing.
---! @param      memreq_out      Request access to memory.
---! @param      memrcv_in       Receive access to memory.
---! @param      memaddr_out     Address of the byte of memory to read/write.
---! @param      meminput_in     Data byte read from memory that is
---!                             addressed.
---! @param      memoutput_out   Data byte written to memory that is
---!                             addressed.
---! @param      memread_en_out  Enable the memory for reading.
---! @param      memwrite_en_out Enable a write to the memory.
---! @param      datavalid_out   The bank of memory with the newest valid
---!                             data if two banks are available, otherwise
---!                             set when data is valid.
---! @param      tempbank_out    The bank of memory the most recent temp
---!                             message is in.
---! @param      msgnumber_out   Message number of the most recent valid
---!                             message.
---! @param      msgreceived_out A new valid message has been received.
---! @param      busy_out        The component is busy processing data.
+--! @param      memaddr_bits_g    Bit width of the memory address.
+--! @param      reset             Reset the entity to an initial state.
+--! @param      clk               Clock used to move throuth states in the
+--!                               entity and its components.
+--! @param      curtime_in        The System Time for logging events at.
+--! @param      curtime_latch_in  Latch curtime across clock domains.
+--! @param      curtime_valid_in  Latched curtime is valid when set.
+--! @param      curtime_vlatch_in Latch curtime when valid not set.
+--! @param      markertime_in     The time the last Time Marker generated.
+--! @param      inbyte_in         Byte received to add to message to parse.
+--! @param      inready_in        The byte is ready to be parsed.
+--! @param      inreceived_out    The byte has been received for parsing.
+--! @param      memreq_out        Request access to memory.
+--! @param      memrcv_in         Receive access to memory.
+--! @param      memaddr_out       Address of the byte of memory to
+--!                               read/write.
+--! @param      meminput_in       Data byte read from memory that is
+--!                               addressed.
+--! @param      memoutput_out     Data byte written to memory that is
+--!                               addressed.
+--! @param      memread_en_out    Enable the memory for reading.
+--! @param      memwrite_en_out   Enable a write to the memory.
+--! @param      datavalid_out     The bank of memory with the newest valid
+--!                               data if two banks are available, otherwise
+--!                               set when data is valid.
+--! @param      tempbank_out      The bank of memory the most recent temp
+--!                               message is in.
+--! @param      msgnumber_out     Message number of the most recent valid
+--!                               message.
+--! @param      msgreceived_out   A new valid message has been received.
+--! @param      busy_out          The component is busy processing data.
 --
 ----------------------------------------------------------------------------
 
@@ -89,31 +93,60 @@ entity GPSmessageParser is
     memaddr_bits_g  : natural := 8
   ) ;
   Port (
-    reset           : in    std_logic ;
-    clk             : in    std_logic ;
-    curtime_in      : in    std_logic_vector (gps_time_bits_c-1 downto 0) ;
-    markertime_in   : in    std_logic_vector (gps_time_bits_c-1 downto 0) ;
-    inbyte_in       : in    std_logic_vector (7 downto 0) ;
-    inready_in      : in    std_logic ;
-    inreceived_out  : out   std_logic ;
-    memreq_out      : out   std_logic ;
-    memrcv_in       : in    std_logic ;
-    memaddr_out     : out   std_logic_vector (memaddr_bits_g-1 downto 0) ;
-    meminput_in     : in    std_logic_vector (7 downto 0) ;
-    memoutput_out   : out   std_logic_vector (7 downto 0) ;
-    memread_en_out  : out   std_logic ;
-    memwrite_en_out : out   std_logic ;
-    datavalid_out   : out   std_logic_vector (msg_ram_blocks_c-1 downto 0) ;
-    tempbank_out    : out   std_logic ;
-    msgnumber_out   : out   std_logic_vector (msg_count_bits_c-1 downto 0) ;
-    msgreceived_out : out   std_logic ;
-    busy_out        : out   std_logic
+    reset             : in    std_logic ;
+    clk               : in    std_logic ;
+    curtime_in        : in    std_logic_vector (gps_time_bits_c-1
+                                                downto 0) ;
+    curtime_latch_in  : in    std_logic ;
+    curtime_valid_in  : in    std_logic ;
+    curtime_vlatch_in : in    std_logic ;
+    markertime_in     : in    std_logic_vector (gps_time_bits_c-1
+                                                downto 0) ;
+    inbyte_in         : in    std_logic_vector (7 downto 0) ;
+    inready_in        : in    std_logic ;
+    inreceived_out    : out   std_logic ;
+    memreq_out        : out   std_logic ;
+    memrcv_in         : in    std_logic ;
+    memaddr_out       : out   std_logic_vector (memaddr_bits_g-1 downto 0) ;
+    meminput_in       : in    std_logic_vector (7 downto 0) ;
+    memoutput_out     : out   std_logic_vector (7 downto 0) ;
+    memread_en_out    : out   std_logic ;
+    memwrite_en_out   : out   std_logic ;
+    datavalid_out     : out   std_logic_vector (msg_ram_blocks_c-1
+                                                downto 0) ;
+    tempbank_out      : out   std_logic ;
+    msgnumber_out     : out   std_logic_vector (msg_count_bits_c-1
+                                                downto 0) ;
+    msgreceived_out   : out   std_logic ;
+    busy_out          : out   std_logic
   ) ;
 
 end entity GPSmessageParser ;
 
 
 architecture rtl of GPSmessageParser is
+
+  --  System time from across clock domains.
+
+  signal curtime            : std_logic_vector (curtime_in'length-1
+                                                downto 0) ;
+
+  component CrossChipReceive is
+    Generic (
+      data_bits_g           : natural := 8
+    ) ;
+    Port (
+      clk                   : in    std_logic ;
+      data_latch_in         : in    std_logic ;
+      data_valid_in         : in    std_logic ;
+      valid_latch_in        : in    std_logic ;
+      data_in               : in    std_logic_vector (data_bits_g-1
+                                                      downto 0) ;
+      data_out              : out   std_logic_vector (data_bits_g-1
+                                                      downto 0) ;
+      data_ready_out        : out   std_logic
+    ) ;
+  end component CrossChipReceive ;
 
   --  Text tree parsing component.
 
@@ -173,13 +206,17 @@ architecture rtl of GPSmessageParser is
 
   --  Character processing signals.
 
-  signal inready_fwl            : std_logic ;
+  signal inbyte_s         : std_logic_vector (inbyte_in'length-1 downto 0) ;
+  signal inready_s        : std_logic ;
+  signal inready          : std_logic ;
 
-  signal text_reset             : std_logic ;
+  signal inready_fwl      : std_logic ;
 
-  signal text_valid             : std_logic ;
+  signal text_reset       : std_logic ;
 
-  signal text_result            : unsigned (msg_count_bits_c-1 downto 0) ;
+  signal text_valid       : std_logic ;
+
+  signal text_result      : unsigned (msg_count_bits_c-1 downto 0) ;
 
   --  Memory addressed from one of several sources.
 
@@ -252,6 +289,21 @@ architecture rtl of GPSmessageParser is
 
 begin
 
+  --  System time from across clock domains.
+
+  get_curtime : CrossChipReceive
+    Generic Map (
+      data_bits_g             => curtime_in'length
+    )
+    Port Map (
+      clk                     => clk,
+      data_latch_in           => curtime_latch_in,
+      data_valid_in           => curtime_valid_in,
+      valid_latch_in          => curtime_vlatch_in,
+      data_in                 => curtime_in,
+      data_out                => curtime
+    ) ;
+
   --  The byte received state is saved in the follower signal.
 
   inreceived_out  <= inready_fwl ;
@@ -293,8 +345,8 @@ begin
     Port Map (
       reset               => text_reset,
       clk                 => clk,
-      inchar_in           => inbyte_in,
-      inready_in          => inready_in,
+      inchar_in           => inbyte_s,
+      inready_in          => inready,
       memreq_out          => text_memreq,
       memrcv_in           => memrcv_in,
       memaddr_out         => text_memaddr,
@@ -313,7 +365,10 @@ begin
   begin
     if (reset = '1') then
       text_reset      <= '1' ;
+      inready_s       <= '0' ;
+      inready         <= '0' ;
       inready_fwl     <= '0' ;
+      inbyte_s        <= (others => '0') ;
       db_nav_sol      <= '0' ;
       db_tim_tm2      <= '0' ;
       db_temp         <= '0' ;
@@ -328,7 +383,16 @@ begin
       msgreceived_out <= '0' ;
       busy_out        <= '0' ;
 
+    elsif (falling_edge (clk)) then
+
+      --  Capture the received byte from a different clock domain.
+
+      inready         <= inready_s ;
+      inbyte_s        <= inbyte_in ;
+
     elsif (rising_edge (clk)) then
+
+      inready_s       <= inready_in ;
 
       --  Always allow the write enable to be high for just one clock cycle.
 
@@ -393,14 +457,14 @@ begin
           msg_memread_en      <= '0' ;
           busy_out            <= '0' ;
 
-          if (inready_fwl /= inready_in) then
-            inready_fwl   <= inready_in ;
+          if (inready_fwl /= inready) then
+            inready_fwl   <= inready ;
 
-            if (inready_in = '1') then
+            if (inready = '1') then
               if (calc_checksum = '1') then
                 m_checksum_B  <= m_checksum_B + m_checksum_A +
-                                 unsigned (inbyte_in) ;
-                m_checksum_A  <= m_checksum_A + unsigned (inbyte_in) ;
+                                 unsigned (inbyte_s) ;
+                m_checksum_A  <= m_checksum_A + unsigned (inbyte_s) ;
               end if ;
 
               msg_memreq      <= '1' ;
@@ -422,14 +486,14 @@ begin
           text_reset          <= '1' ;
           msg_memread_en      <= '0' ;
 
-          if (inbyte_in = msg_ubx_sync_1_c) then
+          if (inbyte_s = msg_ubx_sync_1_c) then
             next_state        <= PARSE_STATE_SYNC ;
           else
             next_state        <= PARSE_STATE_WAIT ;
           end if ;
 
         when PARSE_STATE_SYNC       =>
-          if (inbyte_in = msg_ubx_sync_2_c) then
+          if (inbyte_s = msg_ubx_sync_2_c) then
             msgreceived_out       <= '0' ;
 
             m_checksum_A      <= (others => '0') ;
@@ -509,11 +573,11 @@ begin
         --  Extract the message length.
 
         when PARSE_STATE_MSG_LEN      =>
-          m_length (7 downto 0)     <= unsigned (inbyte_in) ;
+          m_length (7 downto 0)     <= unsigned (inbyte_s) ;
           next_state                <= PARSE_STATE_MSG_HIGH ;
 
         when PARSE_STATE_MSG_HIGH     =>
-          m_length (15 downto 8)    <= unsigned (inbyte_in) ;
+          m_length (15 downto 8)    <= unsigned (inbyte_s) ;
 
           --  Abort the message if we don't know what it is.
 
@@ -598,7 +662,7 @@ begin
             cur_state               <= PARSE_STATE_FLD_DONE ;
           else
             if ((not save_ramaddr) /= 0) then
-              memoutput_out         <= inbyte_in ;
+              memoutput_out         <= inbyte_s ;
               msg_memaddr           <= save_ramaddr + m_ramoffset ;
               memwrite_en_out       <= '1' ;
             end if ;
@@ -610,7 +674,7 @@ begin
         --  in permanent RAM.
 
         when PARSE_STATE_FLD_TEMP     =>
-          memoutput_out             <= inbyte_in ;
+          memoutput_out             <= inbyte_s ;
           msg_memaddr               <= temp_ramaddr + m_ramoffset ;
           memwrite_en_out           <= '1' ;
           m_ramoffset               <= m_ramoffset + 1 ;
@@ -642,13 +706,13 @@ begin
           --  NAV-SOL field checks.
 
           if (m_field_number = MUNSol_gpsFix_number_c) then
-            if (unsigned (inbyte_in) /= NAV_SOL_gpsFix_2D_c and
-                unsigned (inbyte_in) /= NAV_SOL_gpsFix_3D_c) then
+            if (unsigned (inbyte_s) /= NAV_SOL_gpsFix_2D_c and
+                unsigned (inbyte_s) /= NAV_SOL_gpsFix_3D_c) then
               cur_state             <= PARSE_STATE_ABORT ;
             end if ;
 
           elsif (m_field_number = MUNSol_flags_number_c) then
-            if ((unsigned (inbyte_in) and NAV_SOL_flags_OK_c) /=
+            if ((unsigned (inbyte_s) and NAV_SOL_flags_OK_c) /=
                                       NAV_SOL_flags_OK_c) then
               cur_state             <= PARSE_STATE_ABORT ;
             end if ;
@@ -656,7 +720,7 @@ begin
           --  TIM-TM2 field checks.
 
           elsif (m_field_number = MUTTm2_flags_number_c) then
-            if ((unsigned (inbyte_in) and TIM_TM2_flags_Check_c) /=
+            if ((unsigned (inbyte_s) and TIM_TM2_flags_Check_c) /=
                                       TIM_TM2_flags_OK_c) then
               cur_state             <= PARSE_STATE_ABORT ;
             end if ;
@@ -667,7 +731,7 @@ begin
         --  the checksum is correct.
 
         when PARSE_STATE_CHECKSUM     =>
-          if (m_checksum_A /= unsigned (inbyte_in)) then
+          if (m_checksum_A /= unsigned (inbyte_s)) then
             --  One byte left in the message.
 
             m_length                <= TO_UNSIGNED (1, m_length'length) ;
@@ -677,7 +741,7 @@ begin
           end if ;
 
         when PARSE_STATE_CHECKSUM_B   =>
-          if (m_checksum_B /= unsigned (inbyte_in)) then
+          if (m_checksum_B /= unsigned (inbyte_s)) then
             --  Zero bytes left in the message.
 
             m_length                <= (others => '0') ;
@@ -689,7 +753,7 @@ begin
 
             --  Log the time the position message was received at.
 
-            log_time                <= curtime_in ;
+            log_time                <= curtime ;
             byte_count              <= TO_UNSIGNED (gps_time_bytes_c,
                                                     byte_count'length) ;
             msg_memaddr             <= TO_UNSIGNED (msg_ram_postime_addr_c +

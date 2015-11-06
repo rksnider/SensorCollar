@@ -53,6 +53,9 @@ use WORK.gps_message_ctl_pkg.all ;  --  GPS message control definitions.
 --!                             entity and its components.
 --! @param      curtime_in      Current time since reset, continually
 --!                             updated.
+--! @param      dlatch_in       Latch the current time.
+--! @param      vlatch_in       Latch the last latched current time.
+--! @param      valid_in        The current time is valid now.
 --! @param      init_start_in   Start the initialization process.
 --! @param      init_done_out   The initialization process has finished.
 --! @param      sendreq_out     Request access to the message sender.
@@ -86,6 +89,9 @@ entity GPSinit is
     reset           : in    std_logic ;
     clk             : in    std_logic ;
     curtime_in      : in    std_logic_vector (gps_time_bits_c-1 downto 0) ;
+    dlatch_in       : in    std_logic ;
+    vlatch_in       : in    std_logic ;
+    valid_in        : in    std_logic ;
     init_start_in   : in    std_logic ;
     init_done_out   : out   std_logic ;
     sendreq_out     : out   std_logic ;
@@ -131,6 +137,28 @@ architecture rtl of GPSinit is
     ) ;
   end component SR_FlipFlop ;
 
+  --  Catch part of the startup time to use as a timer.
+
+  signal delay            : unsigned (6 downto 0) ;
+  signal milli_count      : std_logic_vector (delay'length-1 downto 0) ;
+
+  component CrossChipReceive is
+    Generic (
+      data_bits_g             : natural := 8
+    ) ;
+    Port (
+      clk                     : in    std_logic ;
+      data_latch_in           : in    std_logic ;
+      data_valid_in           : in    std_logic ;
+      valid_latch_in          : in    std_logic ;
+      data_in                 : in    std_logic_vector (data_bits_g-1
+                                                        downto 0) ;
+      data_out                : out   std_logic_vector (data_bits_g-1
+                                                        downto 0) ;
+      data_ready_out          : out   std_logic
+    ) ;
+  end component CrossChipReceive ;
+
   --  Poll Generation States.
 
   type InitState is   (
@@ -169,7 +197,6 @@ architecture rtl of GPSinit is
   signal payload_length   : unsigned (msglength_out'length-1 downto 0) ;
   signal bytecount        : unsigned (6 downto 0) ;
   signal last_message     : std_logic ;
-  signal delay            : unsigned (6 downto 0) ;
 
   --  Conversion of GPS time as a standard logic vector to GPS_Time record.
 
@@ -194,6 +221,22 @@ begin
       reset_in              => init_started,
       set_in                => init_start_in,
       result_rd_out         => start_init
+    ) ;
+
+  --  Catch a part of the startup time to use as a timer.
+
+  delay_catch : CrossChipReceive
+    Generic Map (
+      data_bits_g             => delay'length
+    )
+    Port Map (
+      clk                     => clk,
+      data_latch_in           => dlatch_in,
+      data_valid_in           => vlatch_in,
+      valid_latch_in          => valid_in,
+      data_in                 => curtime.week_millisecond (delay'length-1
+                                                           downto 0),
+      data_out                => milli_count
     ) ;
 
   --  Entity busy.
@@ -389,9 +432,7 @@ begin
               init_done_out     <= '1' ;
               cur_state         <= INIT_STATE_WAIT ;
             else
-              delay             <=
-                  RESIZE (unsigned (curtime.week_millisecond),
-                          delay'length) - 1 ;
+              delay             <= unsigned (milli_count) - 1 ;
               cur_state         <= INIT_STATE_DELAY ;
             end if ;
           else
@@ -399,8 +440,7 @@ begin
           end if ;
 
         when INIT_STATE_DELAY       =>
-          if (RESIZE (unsigned (curtime.week_millisecond),
-                      delay'length) = delay) then
+          if (unsigned (milli_count) = delay) then
             memreq_out        <= '1' ;
             cur_state         <= INIT_STATE_GET_MEM ;
           else
