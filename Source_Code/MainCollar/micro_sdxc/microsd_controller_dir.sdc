@@ -18,13 +18,15 @@ set sd_clk_name       sd_master_clk
 #If you want to cut master_clk to master_sd_clk do the following
 #Also remember to not copy_instvalues. 
 
+
 # regsub -all "@" "$sd_clk_in" "\\" clk_target
 
+
 # create_generated_clock -name "$sd_clk_name" -source "$sysclk_source" \
-                        # "$clk_target"
+                        # "C|\use_SDH:sdcard|clk_signal|combout"
                 
 # set_false_path -from [get_clocks $master_clock] -to [get_clocks $sd_clk_name]
-
+# set_false_path -to [get_clocks $master_clock]   -from [get_clocks $sd_clk_name]
 # set_instvalue       clk $sd_clk_name
 
 
@@ -32,7 +34,7 @@ set sd_clk_name       sd_master_clk
 push_instance       "microsd_controller_inner:i_microsd_controller_inner_0"
 
 copy_instvalues     [list "clk_divide_g,clk_divide_g" "clk,clk" "sd_clk,sclk"]
-
+#copy_instvalues     [list "clk_divide_g,clk_divide_g" "sd_clk,sclk"]
 source microsd_controller_inner.sdc
 
 pop_instance
