@@ -72,7 +72,7 @@ set_input_delay -clock $source_clk_name 0 $source_clk_target
 
 set gpio_ports          {ESH_FPGA_USB_*}
 
-set gpio_data           [get_ports $gpio_ports]
+set gpio_data           [get_ports -nowarn $gpio_ports]
 
 if {[get_collection_size $gpio_data] > 0} {
   set_false_path -to   $gpio_data
