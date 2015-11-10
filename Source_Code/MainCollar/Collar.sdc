@@ -134,6 +134,22 @@ if { [file exists "$sdc_file"] > 0 } {
   pop_instance
 }
 
+#   The IMU Controller.
+
+set sdc_file              "LSM9DS1_top.sdc"
+
+if { [file exists "$sdc_file"] > 0 } {
+
+  push_instance           "LSM9DS1_top:@use_Inertial:im"
+  set_instvalue           clk               [list $collar_spi_clk_name]
+
+  copy_instvalues         [list "ms_clk,sclk"]
+
+  source $sdc_file
+
+  pop_instance
+}
+
 #   The SDRAM Controller.
 
 set sdc_file              "SDRAM_Controller.sdc"
@@ -199,7 +215,7 @@ if { [file exists "$sdc_file"] > 0 } {
   set_instvalue           clk_freq_g        $shared_constants(spi_clk_freq_c)
   set_instvalue           clk               [list $collar_spi_clk_name]
 
-  copy_instvalues         { "gps_rx_in,gps_rx_in" "gps_tx_out,gps_tx_out" }
+  copy_instvalues         { "gps_rx_io,gps_rx_in" "gps_tx_out,gps_tx_out" }
 
   source $sdc_file
 

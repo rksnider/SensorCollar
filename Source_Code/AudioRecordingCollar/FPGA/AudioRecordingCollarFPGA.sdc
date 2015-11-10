@@ -86,17 +86,17 @@ push_instance                 $top_level_inst
 set_instvalue                 source_clk_freq_g $source_clk_freq
 set_instvalue                 source_clk        $source_clk_name
 
-set_instvalue                 i2c_clk_io        "SDA_TO_FPGA_CPLD"
+set_instvalue                 i2c_clk_io        "I2C_SDA"
 set_instvalue                 pc_spi_clk        "PC_SPI_CLK"
 set_instvalue                 sdram_clk         "SDRAM_CLK"
-set_instvalue                 sd_clk            "SDCARD_CLK_TO_FPGA"
+#set_instvalue                 sd_clk            "SDCARD_CLK_TO_FPGA"
 set_instvalue                 sdh_clk           "SDCARD_DI_CLK_TO_FPGA"
 set_instvalue                 gps_rx_io         "TXD_GPS_TO_FPGA"
 set_instvalue                 gps_tx_out        "RXD_GPS_TO_FPGA"
-set_instvalue                 ms_clk            "IM2_SPI_SCLK"
-set_instvalue                 magram_clk        "MRAM_SCLK_TO_FPGA"
-set_instvalue                 mic_clk           "MIC_CLK"
-set_instvalue                 radio_clk         "DATA_TX_CLK_TO_FPGA"
+set_instvalue                 ms_clk            "IM_SPI_SCLK_TO_FPGA"
+set_instvalue                 magram_clk        "MRAM_SCK_TO_FPGA"
+set_instvalue                 mic_clk           "MIC_CLK_TO_FPGA"
+#set_instvalue                 radio_clk         "DATA_TX_CLK_TO_FPGA"
 
 source Collar.sdc
 

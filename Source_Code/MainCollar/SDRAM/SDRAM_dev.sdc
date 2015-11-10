@@ -3,7 +3,8 @@
 
 #   Create input and output virtual clocks for the generated clock.
 
-set sdram_clock               [get_keyvalue "SDRAM_CLK"]
+set clock_port                [lindex [get_ioports {sdram_clk}] 0]
+set sdram_clock               [get_keyvalue $clock_port]
 
 set sdram_clock_data          [get_clocks $sdram_clock]
 set sdram_clock_period        [get_clock_info -period   $sdram_clock_data]
@@ -49,12 +50,18 @@ set CLKout_brd_min              0.080
 
 #   Set the delays for the I/O ports.
 
-set_false_path -to [get_ports SDRAM_CLK]
+set_false_path -to [get_ports $clock_port]
 
-set output_port_list          {SDRAM_data* SDRAM_address* SDRAM_bank* \
-                               SDRAM_mask* SDRAM_command* SDRAM_CKE}
+set output_port_list          [get_ioports {sdram_data_io*              \
+                                            sdram_addr_out*             \
+                                            sdram_addr_out*             \
+                                            sdram_bank_out*             \
+                                            sdram_mask_out*             \
+                                            sdram_mask_out*             \
+                                            sdram_command_out*          \
+                                            sdram_clk_en_out}]
 
-set input_port_list           {SDRAM_data*}
+set input_port_list           [get_ioports {sdram_data_io*}]
 
 set sdram_min_delay           [expr $CLKin_src_min + $CLKin_dev_min + \
                                     $CLKin_brd_min - $CLKin_dst_max]
@@ -87,7 +94,7 @@ set reset_pin                 [get_keyvalue reset]
 
 set reset_data                [get_pins $reset_pin]
 
-set dev_data                  [get_ports [concat SDRAM_CLK              \
+set dev_data                  [get_ports [concat $clock_port            \
                                                  $input_port_list       \
                                                  $output_port_list]]
 

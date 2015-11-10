@@ -170,6 +170,41 @@ proc get_keyvalue { key } {
 
 
 ##
+#   @brief    Set the entity port to I/O port mappings
+#   @details  The list of entity port to I/O port mappings is converted into
+#             an array.
+#
+
+proc set_ioports { port_list } {
+  global ioport_mapping
+
+  array set ioport_mapping      $port_list
+}
+
+
+##
+#   @brief    Translate collar entity port names into I/O port names
+#   @details  A list of collar entity port names is translated into
+#             the corresponding I/O port names.  A star appended to a port
+#             name will be appended to the I/O port name result.
+#
+
+proc get_ioports { entity_ports } {
+  global ioport_mapping
+
+  set results                   [list]
+
+  foreach port_name $entity_ports {
+    regexp {([^*]+)(\*)?} "$port_name" match_name base_name star_match
+    set ioport_name             $ioport_mapping($base_name)
+    lappend results "$ioport_name$star_match"
+  }
+
+  return $results
+}
+
+
+##
 #   @brief    Put all clocks in a list into the clock set table.
 #   @details  The list of clocks becomes the value of each clock in the list.
 #

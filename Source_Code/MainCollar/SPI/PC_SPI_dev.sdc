@@ -1,7 +1,8 @@
 #   Power Controller SPI Timing information.
 #   Perform SPI data constraining at the pins.
 
-set clock_name                [get_keyvalue "PC_SPI_CLK"]
+set clock_port                [lindex [get_ioports {pc_spi_clk}] 0]
+set clock_name                [get_keyvalue "$clock_port"]
 
 if {[get_collection_size [get_clocks $clock_name]] > 0} {
   set clock_data                [get_clocks $clock_name]
@@ -84,17 +85,20 @@ if {[get_collection_size [get_clocks $clock_name]] > 0} {
 
   #   Set the delays for the I/O ports.
 
-  set_false_path -to    [get_ports PC_SPI_CLK]
-  set_false_path -from  [get_ports PC_STATUS_CHG]
+  set async_port_list           [get_ioports {pc_statchg_in}]
 
-  set output_port_list          {PC_SPI_NCS PC_SPI_DIN}
+  set output_port_list          [get_ioports {pc_spi_cs_out               \
+                                              pc_spi_mosi_out}]
 
-  set input_port_list           {PC_SPI_DOUT}
+  set input_port_list           [get_ioports {pc_spi_miso_in}]
 
-  set in_min_delay              [expr $CLKin_src_min + $CLKin_dev_min + \
+  set_false_path -to    [get_ports $clock_port]
+  set_false_path -from  [get_ports $async_port_list]
+
+  set in_min_delay              [expr $CLKin_src_min + $CLKin_dev_min +   \
                                       $CLKin_brd_min - $CLKin_dst_max]
 
-  set in_max_delay              [expr $CLKin_src_max + $CLKin_dev_max + \
+  set in_max_delay              [expr $CLKin_src_max + $CLKin_dev_max +   \
                                       $CLKin_brd_max - $CLKin_dst_min]
 
   set_input_delay -clock $clock_name -min $in_min_delay \
@@ -116,10 +120,16 @@ if {[get_collection_size [get_clocks $clock_name]] > 0} {
   set_output_delay -clock $clock_name -max $out_max_delay \
                    -add_delay [get_ports $output_port_list]
 
-  #   The reset port can interact badly with SPI lines.
+  #   Break the connection between the reset line and the device pins.
 
-  set reset_line                  {*|power_up}
+  set reset_pin                 [get_keyvalue reset]
 
-  set_false_path -from [get_registers "$reset_line"] \
-                 -to   [get_ports $output_port_list]
+  set reset_data                [get_pins $reset_pin]
+
+  set dev_data                  [get_ports [concat $clock_port            \
+                                                   $async_port_list       \
+                                                   $input_port_list       \
+                                                   $output_port_list]]
+
+  set_false_path -hold -from $reset_data -to $dev_data
 }
