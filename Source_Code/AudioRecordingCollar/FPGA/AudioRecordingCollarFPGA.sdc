@@ -66,6 +66,19 @@ set source_clk_name     source_clk
 create_clock -name $source_clk_name -period $per -waveform $duty \
                    $source_clk_target
 
+set_input_delay -clock $source_clk_name 0 $source_clk_target
+
+#   Don't check timing on general purpose I/O pins.
+
+set gpio_ports          {ESH_FPGA_USB_*}
+
+set gpio_data           [get_ports $gpio_ports]
+
+if {[get_collection_size $gpio_data] > 0} {
+  set_false_path -to   $gpio_data
+  set_false_path -from $gpio_data
+}
+
 #create_clock -name source_clk -period 20.000 -waveform { 0.000 10.000 } \
 #             [get_ports CLK_50MHZ_TO_FPGA]
 
