@@ -150,6 +150,49 @@ if { [file exists "$sdc_file"] > 0 } {
   pop_instance
 }
 
+#   The Magnetic Memory Controller.
+
+set sdc_file              "magmem_controller.sdc"
+
+if { [file exists "$sdc_file"] > 0 } {
+
+  push_instance           "magmem_controller:@use_Magmem:magmem"
+  set_instvalue           clk               [list $collar_spi_clk_name]
+
+  copy_instvalues         [list "magram_clk,sclk"]
+
+  source $sdc_file
+
+  pop_instance
+}
+
+#   The Mems Microphone
+
+set mic_clk_port          [get_instvalue mic_clk]
+set mic_clk_clock         "$collar_spi_clk_name"
+
+set_keyvalue              "$mic_clk_port" "$mic_clk_clock"
+
+
+set sdc_file              "mems_microphone.sdc"
+
+if { [file exists "$sdc_file"] > 0 } {
+
+  push_instance           "mems_top_16:@use_PDMmic:mright"
+  set_instvalue           clk               [list $collar_spi_clk_name]
+
+  source $sdc_file
+
+  pop_instance
+
+  push_instance           "mems_top_16:@use_PDMmic:mleft"
+  set_instvalue           clk               [list $collar_spi_clk_name]
+
+  source $sdc_file
+
+  pop_instance
+}
+
 #   The SDRAM Controller.
 
 set sdc_file              "SDRAM_Controller.sdc"
