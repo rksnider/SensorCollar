@@ -40,7 +40,7 @@ set sd_400_divideby           [get_instvalue clk_divide_g]
 
 regsub -all "@" "$sd_400_signal" "\\" clk_target
 
-if {[get_collection_size [get_nodes $clk_target]] > 0} {
+if {[get_collection_size [get_nodes -nowarn $clk_target]] > 0} {
   puts $sdc_log "Creating Clock  '$sdclk_400' from '$sysclk_clock' on '$clk_target'\n"
   puts $sdc_log "Creating Clocks '$sdclk_dir' and '$sdclk_dir_400' on '$sdclk_port'\n"
 
