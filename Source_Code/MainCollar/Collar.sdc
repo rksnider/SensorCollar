@@ -193,6 +193,20 @@ if { [file exists "$sdc_file"] > 0 } {
   pop_instance
 }
 
+#   FlashBlock
+
+set sdc_file              "FlashBlock.sdc"
+
+if { [file exists "$sdc_file"] > 0 } {
+
+  push_instance           "FlashBlock:@use_FlashBlock:flashblk"
+  set_instvalue           clock_sys         [list $collar_spi_clk_name]
+
+  source $sdc_file
+
+  pop_instance
+}
+
 #   The SDRAM Controller.
 
 set sdc_file              "SDRAM_Controller.sdc"
@@ -203,6 +217,35 @@ if { [file exists "$sdc_file"] > 0 } {
   set_instvalue           sysclk            [list $collar_master_clk_name]
 
   copy_instvalues         [list "sdram_clk,sdram_clk_out"]
+
+  source $sdc_file
+
+  pop_instance
+}
+
+#   The SD Card Loader.
+
+set sdc_file              "sd_loader.sdc"
+
+if { [file exists "$sdc_file"] > 0 } {
+
+  #   Voltage shifting.
+
+  push_instance           "sd_loader:@use_SD:sdload"
+  set_instvalue           clk               [list $collar_master_clk_name]
+  set_instvalue           sd_outmem_buffready_out                       \
+                                            [list sd_loader_buff_ready]
+
+  source $sdc_file
+
+  pop_instance
+
+  #   Direct connect.
+
+  push_instance           "sd_loader:@use_SDH:sdload"
+  set_instvalue           clk               [list $collar_master_clk_name]
+  set_instvalue           sd_outmem_buffready_out                       \
+                                            [list sdh_loader_buff_ready]
 
   source $sdc_file
 
