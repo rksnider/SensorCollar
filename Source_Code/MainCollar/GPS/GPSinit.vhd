@@ -83,7 +83,7 @@ use WORK.gps_message_ctl_pkg.all ;  --  GPS message control definitions.
 entity GPSinit is
 
   Generic (
-    memaddr_bits_g  : natural := 8
+    memaddr_bits_g  : natural := 10
   ) ;
   Port (
     reset           : in    std_logic ;
@@ -360,6 +360,7 @@ begin
 
             if (meminput_in (7) = '1') then
               mem_address     <= mem_inaddress + 1 ;
+              mem_inaddress   <= mem_inaddress + 2 ;
               cur_state       <= INIT_STATE_GET_CHAR ;
             else
               memread_en_out  <= '0' ;
@@ -374,7 +375,7 @@ begin
             memread_en_out    <= '0' ;
             memreq_out        <= '0' ;
             outsend_out       <= '1' ;
-            last_message      <= meminput_in (7) ;
+            last_message      <= not meminput_in (7) ;
             cur_state         <= INIT_STATE_MSG_SEND ;
           end if ;
 
@@ -404,6 +405,7 @@ begin
             mem_outaddress    <= mem_outaddress + 1 ;
             cur_state         <= INIT_STATE_PUT_CHAR ;
           else
+            mem_inaddress     <= mem_address ;
             cur_state         <= INIT_STATE_GET_CTL ;
           end if ;
 
