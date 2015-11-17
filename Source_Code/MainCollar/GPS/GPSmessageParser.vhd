@@ -90,7 +90,7 @@ use WORK.msg_ubx_tim_tm2_pkg.all ;
 entity GPSmessageParser is
 
   Generic (
-    memaddr_bits_g  : natural := 8
+    memaddr_bits_g  : natural := 10
   ) ;
   Port (
     reset             : in    std_logic ;
@@ -217,6 +217,9 @@ architecture rtl of GPSmessageParser is
   signal text_valid       : std_logic ;
 
   signal text_result      : unsigned (msg_count_bits_c-1 downto 0) ;
+
+  constant timeout_c      : natural := 100 ;
+  signal byte_timeout     : unsigned (const_bits (timeout_c)-1 downto 0) ;
 
   --  Memory addressed from one of several sources.
 
@@ -369,6 +372,7 @@ begin
       inready         <= '0' ;
       inready_fwl     <= '0' ;
       inbyte_s        <= (others => '0') ;
+      byte_timeout    <= (others => '0') ;
       db_nav_sol      <= '0' ;
       db_tim_tm2      <= '0' ;
       db_temp         <= '0' ;
@@ -449,13 +453,20 @@ begin
             cur_state                 <= return_state ;
           end if ;
 
-       --  Wait until a new byte has been received.  Add its value to the
-       --  checksum if currently calculating the checksum.
+        --  Wait until a new byte has been received.  Add its value to the
+        --  checksum if currently calculating the checksum.
+        --  The process is busy if it is processing states other than
+        --  waiting for the first sync byte.
 
         when PARSE_STATE_WAIT_BYTE  =>
           msg_memreq          <= '0' ;
           msg_memread_en      <= '0' ;
-          busy_out            <= '0' ;
+
+          if (next_state = PARSE_STATE_WAIT) then
+            busy_out          <= '0' ;
+          else
+            busy_out          <= '1' ;
+          end if ;
 
           if (inready_fwl /= inready) then
             inready_fwl   <= inready ;
@@ -467,10 +478,18 @@ begin
                 m_checksum_A  <= m_checksum_A + unsigned (inbyte_s) ;
               end if ;
 
+              byte_timeout    <= (others => '0') ;
               msg_memreq      <= '1' ;
               busy_out        <= '1' ;
               cur_state       <= PARSE_STATE_WAIT_MEM ;
             end if ;
+
+          --  Check for message timed out.
+
+          elsif (byte_timeout /= timeout_c) then
+            byte_timeout      <= byte_timeout + 1 ;
+          else
+            next_state        <= PARSE_STATE_WAIT ;
           end if ;
 
         when PARSE_STATE_WAIT_MEM   =>
@@ -528,7 +547,28 @@ begin
           --  Keep searching until a message is found.
 
           elsif (text_result = msg_count_c) then
+            if (inready_fwl /= inready) then
+              inready_fwl     <= inready ;
+
+              if (inready = '1') then
+                m_checksum_B  <= m_checksum_B + m_checksum_A +
+                                 unsigned (inbyte_s) ;
+                m_checksum_A  <= m_checksum_A + unsigned (inbyte_s) ;
+
+                byte_timeout  <= (others => '0') ;
+              end if ;
+
             cur_state         <= PARSE_STATE_FIND_MSG ;
+
+            --  Check for message timed out.
+
+            elsif (byte_timeout /= timeout_c) then
+              byte_timeout    <= byte_timeout + 1 ;
+              cur_state       <= PARSE_STATE_FIND_MSG ;
+            else
+              text_reset      <= '1' ;
+              next_state      <= PARSE_STATE_WAIT ;
+            end if ;
 
           --  Found a message.  Turn off the text parser an find the
           --  message's length.
