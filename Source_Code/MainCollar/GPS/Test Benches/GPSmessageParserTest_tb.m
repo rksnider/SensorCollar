@@ -71,7 +71,7 @@ tim_tm2         = [0 181 98 payload calc_checksum(payload)] ;
 
 payload         = [1 32 16 0                                            ...
                    byte_store(milliweek, 4) byte_store(nanomilli, 4)    ...
-                   byte_store(week, 2) 14 7 byte_store(200, 4)]
+                   byte_store(week, 2) 14 7 byte_store(200, 4)] ;
 nav_timegps     = [0 181 98 payload calc_checksum(payload)] ;
 
 %   Invalid data.
