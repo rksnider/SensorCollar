@@ -676,12 +676,16 @@ begin
           msg_memread_en            <= '0' ;
 
           if (m_field_number = m_field_end) then
-            if m_length /= 0 then
+            if (m_length /= 0) then
               cur_state             <= PARSE_STATE_ABORT ;
             else
               calc_checksum         <= '0' ;
               next_state            <= PARSE_STATE_CHECKSUM ;
             end if ;
+
+          elsif (m_length = 0) then
+            cur_state               <= PARSE_STATE_ABORT_LOOP ;
+
           else
             m_field_length          <=
                 unsigned (meminput_in (msg_size_bits_c downto 1)) ;
@@ -785,7 +789,7 @@ begin
             --  Zero bytes left in the message.
 
             m_length                <= (others => '0') ;
-            cur_state               <= PARSE_STATE_ABORT ;
+            next_state              <= PARSE_STATE_WAIT ;
 
           --  Message successful!
 

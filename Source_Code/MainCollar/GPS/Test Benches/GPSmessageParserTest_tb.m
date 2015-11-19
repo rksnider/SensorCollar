@@ -43,12 +43,12 @@ nanomilli       = 256 * 1024 ;
 payload         = [1 96 20 0                                            ...
                    byte_store(milliweek, 4) 255 0 0 0 255 255 255 255   ...
                    byte_store(0, 4) byte_store(0, 4)] ;
-nav_aopstatus1  = [181 98 payload calc_checksum(payload)] ;
+nav_aopstatus1  = [0 181 98 payload calc_checksum(payload)] ;
 
 payload         = [1 96 20 0                                            ...
                    byte_store(milliweek, 4) 255 255 0 0 255 255 255 255 ...
                    byte_store(0, 4) byte_store(0, 4)] ;
-nav_aopstatus2  = [181 98 payload calc_checksum(payload)] ;
+nav_aopstatus2  = [0 181 98 payload calc_checksum(payload)] ;
 
 payload         = [1 6 52 0                                             ...
                    byte_store(milliweek, 4) byte_store(nanomilli, 4)    ...
@@ -58,16 +58,69 @@ payload         = [1 6 52 0                                             ...
                    byte_store(0, 4)         byte_store(0, 4)            ...
                    byte_store(0, 4)         byte_store(1000, 2)         ...
                    0 24 0 0 0 0] ;
-nav_sol1        = [181 98 payload calc_checksum(payload)] ;
+nav_sol1        = [0 181 98 payload calc_checksum(payload)] ;
 
 payload         = [13 3 28 0                                            ...
                    0 237 0 10 byte_store(week, 2) byte_store(week, 2)   ...
                    byte_store(milliweek - 1, 4)                         ...
                    byte_store(nanomilli, 4) byte_store(milliweek, 4)    ...
                    byte_store(nanomilli, 4) byte_store(1000, 4)] ;
-tim_tm2         = [181 98 payload calc_checksum(payload)] ;
+tim_tm2         = [0 181 98 payload calc_checksum(payload)] ;
 
-message_tbl     = {nav_aopstatus1 nav_aopstatus2 nav_sol1 tim_tm2} ;
+%   Unknown message.
+
+payload         = [1 32 16 0                                            ...
+                   byte_store(milliweek, 4) byte_store(nanomilli, 4)    ...
+                   byte_store(week, 2) 14 7 byte_store(200, 4)]
+nav_timegps     = [0 181 98 payload calc_checksum(payload)] ;
+
+%   Invalid data.
+
+payload         = [13 3 28 0                                            ...
+                   0 247 0 10 byte_store(week, 2) byte_store(week, 2)   ...
+                   byte_store(milliweek - 1, 4)                         ...
+                   byte_store(nanomilli, 4) byte_store(milliweek, 4)    ...
+                   byte_store(nanomilli, 4) byte_store(1000, 4)] ;
+tim_tm2_invalid = [0 181 98 payload calc_checksum(payload)] ;
+
+%   CRC missmatches.
+
+payload         = [1 96 20 0                                            ...
+                   byte_store(milliweek, 4) 255 0 0 0 255 255 255 255   ...
+                   byte_store(0, 4) byte_store(0, 4)] ;
+checksum        = calc_checksum (payload) ;
+nav_aop_chkA    = [0 181 98 payload (checksum(1)+1) checksum(2)] ;
+nav_aop_chkB    = [0 181 98 payload checksum(1) (checksum(2)+1)] ;
+
+%   Invalid sync.
+
+nav_aop_sync1   = [0 180 98 payload checksum] ;
+nav_aop_sync2   = [0 181 100 payload checksum] ;
+
+%   Short messages.
+
+payload         = [1 96 16 0                                            ...
+                   byte_store(milliweek, 4) 255 0 0 0 255 255 255 255   ...
+                   byte_store(0, 4)] ;
+nav_aop_short1   = [0 181 98 payload calc_checksum(payload)] ;
+
+payload         = [1 96 14 0                                            ...
+                   byte_store(milliweek, 4) 255 0 0 0 255 255 255 255   ...
+                   byte_store(0, 2)] ;
+nav_aop_short2   = [0 181 98 payload calc_checksum(payload)] ;
+
+%   Message timeout.
+
+payload         = [1 96 20 0                                            ...
+                   byte_store(milliweek, 4) 255 0 0 0 255 255 255 255] ;
+nav_aop_timeout1  = [200 181 98 payload] ;
+nav_aop_timeout2  = [200 181 98 payload(1)] ;
+
+message_tbl     = {nav_aopstatus1 nav_aopstatus2 nav_sol1 tim_tm2       ...
+                   nav_timegps tim_tm2_invalid nav_aop_chkA             ...
+                   nav_aop_chkB nav_aop_sync1 nav_aop_sync2             ...
+                   nav_aop_short1 nav_aop_short2 nav_aop_timeout1       ...
+                   nav_aop_timeout2} ;
 
 %-----------------------------------------------------------------
 % Memory contents
@@ -306,36 +359,43 @@ for trialno=1:Trial_count
     msg_done                = uint32 (0) ;
     clock_count             = uint32 (0) ;
     byte_clock              = uint32 (0) ;
-    byte_index              = uint32 (0) ;
+    byte_index              = uint32 (1) ;
     message_index           = uint32 (1) ;
     message                 = message_tbl {message_index} ;
+    delay                   = message (1) ;
 
     while (message_index < length (message_tbl) ||                      ...
            byte_index < length (message) ||                             ...
-           byte_clock < byte_clock_period_c - 1)
+           byte_clock < byte_clock_period_c - 1 ||                      ...
+           delay > 0)
 
       [out_vect{:}] = step (sim_hdl, in_vect {:}) ;
 
       %   Send a new byte periodically.
 
-      byte_clock            = byte_clock + 1 ;
+      byte_clock              = byte_clock + 1 ;
 
       if (byte_clock == byte_clock_period_c)
-        byte_clock          = uint32 (0) ;
+        byte_clock            = uint32 (0) ;
 
-        if (byte_index >= length (message))
-          message_index     = message_index + 1 ;
-          message           = message_tbl {message_index} ;
-          byte_index        = uint32 (0) ;
-        end
+        if (byte_index >= length (message) && delay > 0)
+          delay               = delay - 1 ;
+        else
+          if (byte_index >= length (message))
+            message_index     = message_index + 1 ;
+            message           = message_tbl {message_index} ;
+            delay             = message (1) ;
+            byte_index        = uint32 (1) ;
+          end
 
-        byte_index          = byte_index + 1 ;
+          byte_index          = byte_index + 1 ;
 
-        in_vect {inbyte_in}   = fi (message (byte_index),               ...
+          in_vect {inbyte_in} = fi (message (byte_index),               ...
                                     in_sig (inbyte_in, 3),              ...
                                     in_sig (inbyte_in, 1),              ...
                                     in_sig (inbyte_in, 2)) ;
-        in_vect {inready_in}  = fi (1, 0, 1, 0) ;
+          in_vect {inready_in}  = fi (1, 0, 1, 0) ;
+        end
       elseif (out_vect {inreceived_out} > 0)
         in_vect {inready_in}  = fi (0, 0, 1, 0) ;
       end
