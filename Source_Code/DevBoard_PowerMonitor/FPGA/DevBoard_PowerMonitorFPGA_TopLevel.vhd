@@ -109,10 +109,7 @@ use WORK.SDRAM_INFORMATION_PKG.ALL ;  --! SDRAM chip information.
 --! @param      TIMEPULSE_GPS_TO_FPGA   GPS Timepulse.
 --! @param      EXTINT_GPS_TO_FPGA      GPS interrupt from FPGA.
 --!
---! @param      GPIOSEL_0               Bank Voltage Selectable GPIO.
---! @param      GPIOSEL_1               Bank Voltage Selectable GPIO.
---! @param      GPIOSEL_2               Bank Voltage Selectable GPIO.
---! @param      GPIOSEL_3               Bank Voltage Selectable GPIO.
+--! @param      GPIOSEL                 Bank Voltage Selectable GPIO.
 --!
 --
 ----------------------------------------------------------------------------
@@ -229,10 +226,7 @@ entity DevBoard_PowerMonitorFPGA_TopLevel is
 
     -- Voltage Selectable GPIO
 
-    GPIOSEL_0                   : out   std_logic;
-    GPIOSEL_1                   : out   std_logic;
-    GPIOSEL_2                   : out   std_logic;
-    GPIOSEL_3                   : out   std_logic
+    GPIOSEL                     : out   std_logic_vector (3 downto 0)
 
 
     --  1.8V GPIO
@@ -338,10 +332,10 @@ architecture structural of DevBoard_PowerMonitorFPGA_TopLevel is
 begin
 
 
-  GPIOSEL_0 <= count (7);
-  GPIOSEL_1 <= count (6);
-  GPIOSEL_2 <= CLK_50MHZ_TO_FPGA;
-  GPIOSEL_3 <= '0';
+  GPIOSEL (0) <= count (7);
+  GPIOSEL (1) <= count (6);
+  GPIOSEL (2) <= CLK_50MHZ_TO_FPGA;
+  GPIOSEL (3) <= '0';
 
 
   C : Collar
