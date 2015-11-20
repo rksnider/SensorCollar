@@ -36,7 +36,7 @@ if {[get_collection_size $clock_nets] > 0} {
     }
   }
 
-  #   Find the number of resouces that are output.
+  #   Find the number of resources that are output.
 
   set out_cell                    [format "%s|resources_out" $mux_inst]
 
