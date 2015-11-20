@@ -140,7 +140,8 @@ begin
   gpsclk_gen : GenClock
     Generic Map (
       clk_freq_g              => clk_freq_g,
-      out_clk_freq_g          => gps_clk_freq_g
+      out_clk_freq_g          => gps_clk_freq_g,
+      net_gated_g             => 3
     )
     Port Map (
       reset                   => reset,
