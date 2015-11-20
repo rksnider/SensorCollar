@@ -236,5 +236,5 @@ proc get_clockset { clk } {
       return $clockset($clk)
     }
   }
-  return { [list $clk] }
+  return [list $clk]
 }
