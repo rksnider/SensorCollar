@@ -3476,6 +3476,27 @@ begin
 
     end generate use_FlashBlock ;
 
+  no_use_FlashBlock:
+    if (Collar_Control_useFlashBlock_c = '0') generate
+      signal fb_gpsmem_control      : std_logic_vector (gpsmem_iobits_c-1
+                                                          downto 0) :=
+                                            (others => '0') ;
+      signal fb_magmem_control      : std_logic_vector (magmem_iobits_c-1
+                                                          downto 0) :=
+                                            (others => '0') ;
+    begin
+      gpsmem_requesters (gpsmemrq_flashblk_c) <= '0' ;
+
+      set2D_element (gpsmemrq_flashblk_c, fb_gpsmem_control,
+                     gpsmem_input_tbl) ;
+
+      magmem_requesters (magmemrq_flashblk_c) <= '0' ;
+
+      set2D_element (magmemrq_flashblk_c, fb_magmem_control,
+                     magmem_input_tbl) ;
+
+    end generate no_use_FlashBlock ;
+
   --------------------------------------------------------------------------
   --  Reset occurs on power up or button press of the reset button.
   --------------------------------------------------------------------------
