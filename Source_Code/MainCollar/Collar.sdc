@@ -13,8 +13,8 @@ regsub -all {^[A-Za-z0-9_]+:|(\|)[A-Za-z0-9_]+:}                        \
             "$reset_cell" {\1}    temp_path
 regsub -all "@" "$temp_path" "\\" reset_path
 
-set reset_cell_data         [get_cells "$reset_path"]
-set reset_pin_data          [get_pins  "$reset_path|outclk"]
+set reset_cell_data         [get_pins "$reset_path|inclk"]
+set reset_pin_data          [get_pins "$reset_path|outclk"]
 
 set_false_path -through $reset_cell_data
 set_false_path -from    $reset_pin_data  -setup
@@ -36,12 +36,14 @@ set source_clock_freq       [expr {int(1.0e9 / \
 
 #   Master clock.
 
+set master_clk_freq_c       $shared_constants(source_clk_freq_c)
+
 set collar_master_clk_name  master_clk
 set collar_gated_clk_name   master_gated_clk
 set collar_inv_clk_name     master_gated_inv_clk
 push_instance               "GenClock:master_clock"
 
-set_instvalue               out_clk_freq_g    $shared_constants(source_clk_freq_c)
+set_instvalue               out_clk_freq_g    $master_clk_freq_c
 set_instvalue               clk_out           [list $collar_master_clk_name]
 set_instvalue               gated_clk_out     [list $collar_gated_clk_name]
 set_instvalue               gated_clk_inv_out [list $collar_inv_clk_name]
@@ -307,3 +309,26 @@ if { [file exists "$sdc_file"] > 0 } {
 
   pop_instance
 }
+
+#   Define the power-up clock used to drive the reset line.  This must be
+#   done after all other clocks have been defined.
+
+set all_clocks              [all_clocks]
+
+set pu_time_c               0.5
+set pu_count_c              [expr {int( $master_clk_freq_c * $pu_time_c)}]
+set pu_divide               [expr {min( $pu_count_c, 10000)}]
+
+set master_data             [get_clocks $collar_master_clk_name]
+set power_up_path           [get_clock_info -targets $master_data]
+set power_up_target         "$Collar_inst|power_up"
+
+set power_up_name           "power_up"
+
+create_generated_clock -source "$power_up_path" -divide_by $pu_divide     \
+                       -name   "$power_up_name" "$power_up_target"
+
+set clock_data              [get_clocks "$power_up_name"]
+
+set_false_path -from $clock_data -to $all_clocks
+set_false_path -from $all_clocks -to $clock_data
