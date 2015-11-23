@@ -3487,11 +3487,13 @@ begin
     begin
       gpsmem_requesters (gpsmemrq_flashblk_c) <= '0' ;
 
+      fb_gpsmem_control (gpsmem_iobits_c-1)   <= spi_gated_inv_clk ;
       set2D_element (gpsmemrq_flashblk_c, fb_gpsmem_control,
                      gpsmem_input_tbl) ;
 
       magmem_requesters (magmemrq_flashblk_c) <= '0' ;
 
+      fb_magmem_control (magmem_iobits_c-1)   <= spi_gated_inv_clk ;
       set2D_element (magmemrq_flashblk_c, fb_magmem_control,
                      magmem_input_tbl) ;
 
