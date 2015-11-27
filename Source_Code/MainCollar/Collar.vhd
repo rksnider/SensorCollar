@@ -2506,6 +2506,8 @@ begin
   no_use_GPS:
     if (Collar_Control_useGPS_c = '0') generate
 
+      gps_ready               <= '1' ;
+
       gps_rx_io               <= '0' ;
       gps_tx_out              <= '0' ;
       gps_timemark_out        <= '0' ;
@@ -3009,6 +3011,8 @@ begin
 
   no_use_MagMem:
     if (Collar_Control_useMagMem_c = '0') generate
+
+      mm_startup_done         <= '1' ;
 
       magram_clk              <= '0' ;
       magram_cs_out           <= '0' ;
