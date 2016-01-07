@@ -108,10 +108,10 @@ entity I2C_IO is
   Generic (
     clk_freq_g            : natural   := 1e6 ;
     i2c_freq_g            : natural   := 4e5 ;
-    mem_bits_g            : natural   := 9 ;
+    mem_bits_g            : natural   := 10 ;
     cmd_offset_g          : natural   := 0 ;
-    write_offset_g        : natural   := 128 ;
-    read_offset_g         : natural   := 256
+    write_offset_g        : natural   := 256 ;
+    read_offset_g         : natural   := 512
   ) ;
   Port (
     clk                   : in    std_logic ;
@@ -135,7 +135,7 @@ entity I2C_IO is
     mem_read_en_out       : out   std_logic ;
     mem_write_en_out      : out   std_logic ;
 
-    cmd_offset_in         : in    unsigned (mem_bites_g-1 downto 0) ;
+    cmd_offset_in         : in    unsigned (mem_bits_g-1 downto 0) ;
     cmd_count_in          : in    unsigned (7 downto 0) ;
     cmd_start_in          : in    std_logic ;
     cmd_busy_out          : out   std_logic
@@ -155,7 +155,7 @@ architecture rtl of I2C_IO is
   constant cycle_factor_shift_c : natural := 10 ;
 
   constant cycle_factor_mult_c  : natural :=
-              ((clk_freq_g / 1000) * (2 ** cycle_factor_shift)) / 1000 ;
+              ((clk_freq_g / 1000) * (2 ** cycle_factor_shift_c)) / 1000 ;
 
   signal subcmd_delay_cycles    : unsigned (31 downto 0) ;
   signal cmd_delay_cycles       : unsigned (31 downto 0) ;
@@ -211,7 +211,7 @@ architecture rtl of I2C_IO is
   constant cmd_struct_len_c     : natural := read_max_str_c     + 1 ;
 
   constant cmd_struct_bytes_c   : natural :=
-              natural (trunc (((real) (cmd_struct_len_c + 7)) / 8.0)) ;
+              natural (trunc (real((cmd_struct_len_c + 7) / 8))) ;
 
   --  Define the structure signal and the field aliases within it.
 
@@ -264,6 +264,8 @@ architecture rtl of I2C_IO is
   signal save_count           : unsigned (byte_count'length-1 downto 0) ;
   signal save_address         : unsigned (next_data_address'length-1
                                           downto 0) ;
+                                          
+                                          
 
   --  Command processing states.
 
@@ -277,7 +279,10 @@ architecture rtl of I2C_IO is
     state_do_reads_e,
     state_read_busy_e,
     state_save_byte_e,
-    state_cmdwait_e
+    state_cmdwait_e,
+    state_waitlatch_write_e,
+    state_waitlatch_read_e
+
   ) ;
 
   signal cur_state            : cmd_states_t ;
@@ -312,7 +317,7 @@ begin
     variable byte_address : unsigned (mem_bits_g-1 downto 0) ;
   begin
 
-    if (reset = '1')
+    if (reset = '1') then
       cur_state         <= state_wait_e ;
       mem_req_out       <= '0' ;
       i2c_req_out       <= '0' ;
@@ -322,6 +327,7 @@ begin
       save_address      <= (others => '0') ;
 
     elsif (rising_edge (clk)) then
+    
 
       --  Limit memory writes to a single clock cycle.
 
@@ -329,7 +335,7 @@ begin
 
       --  Proceed through the command processing states.
 
-      case (cur_state)
+      case (cur_state) is
 
         --  Wait until a command sequence is started.  Then allocate the
         --  I2C bus.
@@ -380,7 +386,7 @@ begin
             cmd_struct (cmd_struct_len_c-9 downto 0)                  <=
                               cmd_struct (cmd_struct_len_c-1 downto 8) ;
             cmd_struct (cmd_struct_len_c-1 downto cmd_struct_len_c-8) <=
-                              mem_data_from_in ;
+                              unsigned(mem_datafrom_in) ;
 
             mem_address_out     <= nextcmd_address ;
             nextcmd_address     <= nextcmd_address + 1 ;
@@ -452,7 +458,7 @@ begin
                 cur_state         <= state_write_busy_e ;
                 byte_max          <= byte_max + write_max ;
                 i2c_latch         <= '0' ;
-              end if ;
+              --end if ;
 
             else
               --  Send a byte to the I2C bus.
@@ -464,7 +470,9 @@ begin
                 save_address      <= next_data_address ;
               end if ;
 
-              i2c_data_wr_out     <= mem_data_from_in ;
+              
+              cur_state           <= state_waitlatch_write_e;
+              i2c_data_wr_out     <= mem_datafrom_in ;
               i2c_latch           <= '1' ;
               byte_count          <= byte_count + 1 ;
               mem_address_out     <= next_data_address ;
@@ -479,7 +487,7 @@ begin
           mem_read_en_out       <= '0' ;
 
           if (i2c_ack_error_in = '1') then
-            cur_state           <= state_do_write_e ;
+            cur_state           <= state_do_writes_e ;
             i2c_latch           <= '1' ;
             mem_req_out         <= '1' ;
 
@@ -492,7 +500,7 @@ begin
             else
               delay_count       <= (others => '0') ;
 
-              cur_state         <= state_do_write_e ;
+              cur_state         <= state_do_writes_e ;
               mem_req_out       <= '1' ;
               mem_read_en_out   <= '1' ;
             end if ;
@@ -527,18 +535,20 @@ begin
                 cur_state         <= state_read_busy_e ;
                 byte_max          <= byte_max + read_max ;
                 i2c_latch         <= '0' ;
-              end if ;
+            --end if ;
 
-            elsif (i2c_latch = '1') then
-              cur_state           <= state_read_busy_e ;
+          elsif (i2c_latch = '1') then
+            cur_state           <= state_read_busy_e ;
 
-            else
-              --  Get a byte from the I2C bus.
+          else
+            --  Get a byte from the I2C bus.
 
-              i2c_latch           <= '1' ;
-              byte_count          <= byte_count + 1 ;
-            end if ;
+            i2c_latch           <= '1' ;
+            cur_state           <= state_waitlatch_read_e ;
+            byte_count          <= byte_count + 1 ;
           end if ;
+        end if ;
+         
 
         --  Wait until the bus is not busy.
 
@@ -572,10 +582,24 @@ begin
 
         when state_save_byte_e  =>
           if (mem_rcv_in = '1') then
-            cur_state             <= state_do_read_e ;
-            mem_write_en          <= '1' ;
+            cur_state             <= state_do_reads_e ;
+            mem_write_en_out          <= '1' ;
             mem_address_out       <= next_data_address ;
             next_data_address     <= next_data_address + 1 ;
+          end if ;
+          
+        --I2C Master Latches in Command at slower
+        --Data clock. Wait for it to do that. 
+        when state_waitlatch_write_e  =>
+          if (i2c_busy_in = '1') then
+            cur_state             <= state_do_writes_e ;
+          end if ;
+          
+        --I2C Master Latches in Command at slower
+        --Data clock. Wait for it to do that. 
+        when state_waitlatch_read_e  =>
+          if (i2c_busy_in = '1') then
+            cur_state             <= state_do_reads_e ;
           end if ;
 
         --  Carry out delay after a command has finished.
@@ -603,7 +627,7 @@ begin
             end if ;
           end if ;
 
-      end ;
+      end case ;
     end if ;
   end process cmd_process ;
 

@@ -50,364 +50,365 @@ DEPTH =        1024 ;
 WIDTH =           8 ;
 ADDRESS_RADIX = DEC ;
 DATA_RADIX =    HEX ;
-CONTENT
-BEGIN
+CONTENT BEGIN
+
 
 --  Command Structure Section.
       --    Battery Monitor TI bq27520 Commands.
       --    Get Status.
+      
 
-0 :
-        66  --  Microseconds to wait between subcommands.
-        20  --  Microseconds to wait between commands (500000).
-        A1
-        07
-        55  --  I2C Address.
-        05  --  Control command with status subcommand.
-        00  --  Place to get bytes to write.
-        02  --  A control command byte and a status subcommand byte.
-        02  --  Status bytes.
-        00  --  Place to put status bytes.
-        02  --  Read all bytes in the same subcommand.
+ 
+  0 :         66;  --  Microseconds to wait between subcommands.
+  1 :         20;  --  Microseconds to wait between commands (500000).
+  2 :         A1;
+  3 :         07;
+  4 :         55;  --  I2C Address. 
+  5 :         05;  --  Control command with status subcommand.
+  6 :         00;  --  Place to get bytes to write.
+  7 :         02;  --  A control command byte and a status subcommand byte.
+  8 :         02;  --  Status bytes.
+  9 :         00;  --  Place to put status bytes.
+ 10 :         02;  --  Read all bytes in the same subcommand.
 
       --    Get Flags.
 
-        66  --  Microseconds to wait between subcommands.
-        20  --  Microseconds to wait between commands (500000).
-        A1
-        07
-        55  --  I2C Address.
-        01  --  Flags command.
-        05  --  Place to get bytes to write.
-        01  --  Only need to write one byte.
-        02  --  Flag bytes to read.
-        02  --  Place to put flags bytes.
-        02  --  Read all bytes in the same subcommand.
+ 11 :         66;  --  Microseconds to wait between subcommands.
+ 12 :         20;  --  Microseconds to wait between commands (500000).
+ 13 :         A1;
+ 14 :         07;
+ 15 :         55;  --  I2C Address.
+ 16 :         01;  --  Flags command.
+ 17 :         05;  --  Place to get bytes to write.
+ 18 :         01;  --  Only need to write one byte.
+ 19 :         02;  --  Flag bytes to read.
+ 20 :         02;  --  Place to put flags bytes.
+ 21 :         02;  --  Read all bytes in the same subcommand.
 
       --  Read the Voltage.
 
-        66  --  Microseconds to wait between subcommands.
-        20  --  Microseconds to wait between commands (500000).
-        A1
-        07
-        55  --  I2C Address.
-        01  --  Voltage command.
-        06  --  Place to get bytes to write.
-        01  --  Only need to write one byte.
-        02  --  Voltage bytes to read.
-        04  --  Place to put voltage bytes.
-        02  --  Read all bytes in the same subcommand.
+ 22 :         01;  --  Microseconds to wait between subcommands.
+ 23 :         01;  --  Microseconds to wait between commands (500000).
+ 24 :         00;
+ 25 :         00;
+ 26 :         55;  --  I2C Address.
+ 27 :         01;  --  Voltage command.
+ 28 :         06;  --  Place to get bytes to write.
+ 29 :         01;  --  Only need to write one byte.
+ 30 :         02;  --  Voltage bytes to read.
+ 31 :         04;  --  Place to put voltage bytes.
+ 32 :         02;  --  Read all bytes in the same subcommand.
 
 
       --  Read the Average Current.
 
-        66  --  Microseconds to wait between subcommands.
-        20  --  Microseconds to wait between commands (500000).
-        A1
-        07
-        55  --  I2C Address.
-        01  --  Average Current command.
-        07  --  Place to get bytes to write.
-        01  --  Only need to write one byte.
-        02  --  Voltage bytes to read.
-        06  --  Place to put voltage bytes.
-        02  --  Read all bytes in the same subcommand.
+ 33 :         66;  --  Microseconds to wait between subcommands.
+ 34 :         20;  --  Microseconds to wait between commands (500000).
+ 35 :         A1;
+ 36 :         07;
+ 37 :         55;  --  I2C Address.
+ 38 :         01;  --  Average Current command.
+ 39 :         07;  --  Place to get bytes to write.
+ 40 :         01;  --  Only need to write one byte.
+ 41 :         02;  --  Voltage bytes to read.
+ 42 :         06;  --  Place to put voltage bytes.
+ 43 :         02;  --  Read all bytes in the same subcommand.
 
 
        --  Read the State of Charge Percentage.
 
-        66  --  Microseconds to wait between subcommands.
-        20  --  Microseconds to wait between commands (500000).
-        A1
-        07
-        55  --  I2C Address.
-        01  --  State of Charge command.
-        08  --  Place to get bytes to write.
-        01  --  Only need to write one byte.
-        02  --  State of Charge bytes to read.
-        08  --  Place to put State of Charge bytes.
-        02  --  Read all bytes in the same subcommand.
+ 44 :         66;  --  Microseconds to wait between subcommands.
+ 45 :         20;  --  Microseconds to wait between commands (500000).
+ 46 :         A1;
+ 47 :         07;
+ 48 :         55;  --  I2C Address.
+ 49 :         01;  --  State of Charge command.
+ 50 :         08;  --  Place to get bytes to write.
+ 51 :         01;  --  Only need to write one byte.
+ 52 :         02;  --  State of Charge bytes to read.
+ 53 :         08;  --  Place to put State of Charge bytes.
+ 54 :         02;  --  Read all bytes in the same subcommand.
 
 
         --  Read the Time to Empty.
 
-        66  --  Microseconds to wait between subcommands.
-        20  --  Microseconds to wait between commands (500000).
-        A1
-        07
-        55  --  I2C Address.
-        01  --  Time to Empty command.
-        09  --  Place to get bytes to write.
-        01  --  Only need to write one byte.
-        02  --  Time to Empty bytes to read.
-        0A  --  Place to put Time to Empty bytes.
-        02  --  Read all bytes in the same subcommand.
+ 55 :         66;  --  Microseconds to wait between subcommands.
+ 56 :         20;  --  Microseconds to wait between commands (500000).
+ 57 :         A1;
+ 58 :         07;
+ 59 :         55;  --  I2C Address.
+ 60 :         01;  --  Time to Empty command.
+ 61 :         09;  --  Place to get bytes to write.
+ 62 :         01;  --  Only need to write one byte.
+ 63 :         02;  --  Time to Empty bytes to read.
+ 64 :         0A;  --  Place to put Time to Empty bytes.
+ 65 :         02;  --  Read all bytes in the same subcommand.
 
 
       --  Read the Battery Temperature.
 
-        66  --  Microseconds to wait between subcommands.
-        20  --  Microseconds to wait between commands (500000).
-        A1
-        07
-        55  --  I2C Address.
-        01  --  Battery Temperature command.
-        0A  --  Place to get bytes to write.
-        01  --  Only need to write one byte.
-        02  --  Battery Temperature bytes to read.
-        0C  --  Place to put Battery Temperature bytes.
-        02  --  Read all bytes in the same subcommand.
+ 66 :         66;  --  Microseconds to wait between subcommands.
+ 67 :         20;  --  Microseconds to wait between commands (500000).
+ 68 :         A1;
+ 69 :         07;
+ 70 :         55;  --  I2C Address.
+ 71 :         01;  --  Battery Temperature command.
+ 72 :         0A;  --  Place to get bytes to write.
+ 73 :         01;  --  Only need to write one byte.
+ 74 :         02;  --  Battery Temperature bytes to read.
+ 75 :         0C;  --  Place to put Battery Temperature bytes.
+ 76 :         02;  --  Read all bytes in the same subcommand.
 
 
        --  Read the Battery Monitor Temperature.
 
-        66  --  Microseconds to wait between subcommands.
-        20  --  Microseconds to wait between commands (500000).
-        A1
-        07
-        55  --  I2C Address.
-        01  --  Internal Temperature command.
-        0B  --  Place to get bytes to write.
-        01  --  Only need to write one byte.
-        02  --  Internal Temperature bytes to read.
-        0E  --  Place to put Internal Temperature bytes.
-        02  --  Read all bytes in the same subcommand.
+ 77 :         66;  --  Microseconds to wait between subcommands.
+ 78 :         20;  --  Microseconds to wait between commands (500000).
+ 79 :         A1;
+ 80 :         07;
+ 81 :         55;  --  I2C Address.
+ 82 :         01;  --  Internal Temperature command.
+ 83 :         0B;  --  Place to get bytes to write.
+ 84 :         01;  --  Only need to write one byte.
+ 85 :         02;  --  Internal Temperature bytes to read.
+ 86 :         0E;  --  Place to put Internal Temperature bytes.
+ 87 :         02;  --  Read all bytes in the same subcommand.
 
 
      --  Read the Manufacturere Info Block.
 
-        66  --  Microseconds to wait between subcommands.
-        20  --  Microseconds to wait between commands (500000).
-        A1
-        07
-        55  --  I2C Address.
-        03  --  Data Flash Block command, then Block Data command.
-        0C  --  Place to get Command bytes.
-        02  --  Data Flash Block command, then Block Data command.
-        20  --  32 bytes of Manufacture information are available.
-        10  --  Place to put the data.
-        20  --  Read all data at once.
+ 88 :         66;  --  Microseconds to wait between subcommands.
+ 89 :         20;  --  Microseconds to wait between commands (500000).
+ 90 :         A1;
+ 91 :         07;
+ 92 :         55;  --  I2C Address.
+ 93 :         03;  --  Data Flash Block command, then Block Data command.
+ 94 :         0C;  --  Place to get Command bytes.
+ 95 :         02;  --  Data Flash Block command, then Block Data command.
+ 96 :         20;  --  32 bytes of Manufacture information are available.
+ 97 :         10;  --  Place to put the data.
+ 98 :         20;  --  Read all data at once.
 
 
       --    Real Time Clock Maxim DS1371 commands.
       --    Initialize Clock.
 
-        00  --  No time is needed between subcommands.
-        00  --  No time is needed between commands.
-        00
-        00
-        68  --  I2C Address.
-        02  --  Address of Control register then its value.
-        0F  --  Place to get bytes to write.
-        02  --  No subcommands are needed.
-        00  --  Nothing to read.
-        30
-        00
+ 99 :         00;  --  No time is needed between subcommands.
+100 :         00;  --  No time is needed between commands.
+101 :         00;
+102 :         00;
+103 :         68;  --  I2C Address.
+104 :         02;  --  Address of Control register then its value.
+105 :         0F;  --  Place to get bytes to write.
+106 :         02;  --  No subcommands are needed.
+107 :         00;  --  Nothing to read.
+108 :         30;
+109 :         00;
 
       --    Set the Time.
 
-        00  --  No time is needed between subcommands.
-        00  --  No time is needed betwee commands.
-        00
-        00
-        68  --  I2C Address.
-        05  --  Address of Time of Day Counter then Counter's value.
-        11  --  Place to get bytes to write.
-        05  --  No subcommands are needed.
-        00  --  Nothing to read.
-        30
-        00
+110 :         00;  --  No time is needed between subcommands.
+111 :         00;  --  No time is needed betwee commands.
+112 :         00;
+113 :         00;
+114 :         68;  --  I2C Address.
+115 :         05;  --  Address of Time of Day Counter then Counter's value.
+116 :         11;  --  Place to get bytes to write.
+117 :         05;  --  No subcommands are needed.
+118 :         00;  --  Nothing to read.
+119 :         30;
+120 :         00;
 
       --    Set the Alarm.
 
-        00  --  No time is needed between subcommands.
-        00  --  No time is needed betwee commands.
-        00
-        00
-        68  --  I2C Address.
-        04  --  Address of Alarm Counter then Counter's value.
-        16  --  Place to get bytes to write.
-        04  --  No subcommands are needed.
-        00  --  Nothing to read.
-        30
-        00
+121 :         00;  --  No time is needed between subcommands.
+122 :         00;  --  No time is needed betwee commands.
+123 :         00;
+124 :         00;
+125 :         68;  --  I2C Address.
+126 :         04;  --  Address of Alarm Counter then Counter's value.
+127 :         16;  --  Place to get bytes to write.
+128 :         04;  --  No subcommands are needed.
+129 :         00;  --  Nothing to read.
+130 :         30;
+131 :         00;
 
       --    Get the Time.
 
-        00  --  No time is needed between subcommands.
-        00  --  No time is needed betwee commands.
-        00
-        00
-        68  --  I2C Address.
-        01  --  Address of Time of Day Counter.
-        1A  --  Place to get bytes to write.
-        01  --  No subcommands are needed.
-        04  --  Time of Day Counter.
-        30  --  Place to put the Time of Day Counter.
-        04  --  No subcommands are needed.
+132 :         00;  --  No time is needed between subcommands.
+133 :         00;  --  No time is needed betwee commands.
+134 :         00;
+135 :         00;
+136 :         68;  --  I2C Address.
+137 :         01;  --  Address of Time of Day Counter.
+138 :         1A;  --  Place to get bytes to write.
+139 :         01;  --  No subcommands are needed.
+140 :         04;  --  Time of Day Counter.
+141 :         30;  --  Place to put the Time of Day Counter.
+142 :         04;  --  No subcommands are needed.
 
       --    Get the Alarm.
 
-        00  --  No time is needed between subcommands.
-        00  --  No time is needed betwee commands.
-        00
-        00
-        68  --  I2C Address.
-        01  --  Address of Alarm Counter.
-        1B  --  Place to get bytes to write.
-        01  --  No subcommands are needed.
-        03  --  Alarm Counter.
-        34  --  Place to put the Alarm Counter.
-        03  --  No subcommands are needed.
+143 :         00;  --  No time is needed between subcommands.
+144 :         00;  --  No time is needed betwee commands.
+145 :         00;
+146 :         00;
+147 :         68;  --  I2C Address.
+148 :         01;  --  Address of Alarm Counter.
+149 :         1B;  --  Place to get bytes to write.
+150 :         01;  --  No subcommands are needed.
+151 :         03;  --  Alarm Counter.
+152 :         34;  --  Place to put the Alarm Counter.
+153 :         03;  --  No subcommands are needed.
 
 
 
-;
+
 
 --  Write Data Section.
       --    Battery Monitor Data.
       --    Get Status command.
 
-256 :
-        00  --  Control Command first byte.
-        00  --  Status Subcommand first byte.
-        01  --  Control Command second byte.
-        00  --  Status Subcommand second byte.
-        00  --  Control Command first byte to start reading from.
+ 
+256 :         00;  --  Control Command first byte.
+257 :         00;  --  Status Subcommand first byte.
+258 :         01;  --  Control Command second byte.
+259 :         00;  --  Status Subcommand second byte.
+260 :         00;  --  Control Command first byte to start reading from.
 
       --    Get Flags command.
 
-        0A  --  Command to get flag bytes.
+261 :         0A;  --  Command to get flag bytes.
 
       --    Voltage command.
 
-        08  --  Command to get voltage.
+262 :         08;  --  Command to get voltage.
 
       --    Average Current command.
 
-        14  --  Command to get average current.
+263 :         14;  --  Command to get average current.
 
       --    State of Charge Percentage command.
 
-        20  --  Command to get the State of Charge.
+264 :         20;  --  Command to get the State of Charge.
 
       --    Time to Empty command.
 
-        16  --  Command to get the Time to Empty.
+265 :         16;  --  Command to get the Time to Empty.
 
       --    Battery Temperature command.
 
-        06  --  Command to get the Battery Temperature.
+266 :         06;  --  Command to get the Battery Temperature.
 
       --    Internal Temperature command.
 
-        28  --  Command to get the Internal Temperature.
+267 :         28;  --  Command to get the Internal Temperature.
 
       --    Data Flash Block for Manufacturer Info Block.
 
-        3F  --  Data Flash Block command.
-        01  --  Manufacturer Info Block.
-        40  --  Start of the block.
+268 :         3F;  --  Data Flash Block command.
+269 :         01;  --  Manufacturer Info Block.
+270 :         40;  --  Start of the block.
 
       --    Real Time Clock Data.
       --    Initialize.
 
-        07  --  Address of the Control register.
-        49  --  Enable Oscillator, Enable Counter, Select Alarm,
+271 :         07;  --  Address of the Control register.
+272 :         49;  --  Enable Oscillator, Enable Counter, Select Alarm,
             --  Enable Interrupt, Clear Rate Select, Enable Alarm
 
       --    Write the clock.
 
-        00  --  Address of the time-of-day counter.
-        00  --  Value to write to the time-of-day counter.
-        00
-        00
-        00
+273 :         00;  --  Address of the time-of-day counter.
+274 :         00;  --  Value to write to the time-of-day counter.
+275 :         00;
+276 :         00;
+277 :         00;
 
       --    Write the Alarm Counter.
 
-        04  --  Address of the alarm counter.
-        00  --  Value to write to the alarm counter.
-        00
-        00
+278 :         04;  --  Address of the alarm counter.
+279 :         00;  --  Value to write to the alarm counter.
+280 :         00;
+281 :         00;
 
       --    Read the clock.
 
-        00  --  Address of the time-of-day counter.
+282 :         00;  --  Address of the time-of-day counter.
 
       --  Read the Alarm Counter.
 
-        04  --  Address of the alarm counter.
+283 :         04;  --  Address of the alarm counter.
 
 
 
-;
+
 
 --  Read Data Section.
       --    Battery Monitor Data.
       --    Get Status command.
 
-512 :
-        00  --  Status bytes
-        00
+ 
+512 :         00;  --  Status bytes
+513 :         00;
 
       --    Get Flags command.
 
-        00  --  Flag bytes
-        00
+514 :         00;  --  Flag bytes
+515 :         00;
 
       --    Get Voltage command.
 
-        00  --  Voltage bytes
-        00
+516 :         00;  --  Voltage bytes
+517 :         00;
 
       --    Get Average Current command.
 
-        00  --  Average current bytes
-        00
+518 :         00;  --  Average current bytes
+519 :         00;
 
       --    Get the State of Charge Percentage command.
 
-        00  --  State of charge bytes.
-        00
+520 :         00;  --  State of charge bytes.
+521 :         00;
 
       --    Get Time to Empty.
 
-        00  --  Time to Empty bytes.
-        00
+522 :         00;  --  Time to Empty bytes.
+523 :         00;
 
       --    Get the Battery Temperature command.
 
-        00  --  Battery Temperature bytes.
-        00
+524 :         00;  --  Battery Temperature bytes.
+525 :         00;
 
       --    Get the Internal Temperature command.
 
-        00  --  Internal Temperature bytes.
-        00
+526 :         00;  --  Internal Temperature bytes.
+527 :         00;
 
       --    Manufacturer Info Block.
 
-        00 00 00 00 00 00 00 00
-        00 00 00 00 00 00 00 00
-        00 00 00 00 00 00 00 00
-        00 00 00 00 00 00 00 00
+528 :         00; 00 00 00 00 00 00 00
+529 :         00; 00 00 00 00 00 00 00
+530 :         00; 00 00 00 00 00 00 00
+531 :         00; 00 00 00 00 00 00 00
 
       --    Real Time Clock.
       --    Read Time of Day.
 
-        00  --  Time of day bytes.
-        00
-        00
-        00
+532 :         00;  --  Time of day bytes.
+533 :         00;
+534 :         00;
+535 :         00;
 
       --    Read Alarm.
 
-        00  --  Alarm bytes.
-        00
-        00
+536 :         00;  --  Alarm bytes.
+537 :         00;
+538 :         00;
 
 
-;
 
-END
+
+END;
