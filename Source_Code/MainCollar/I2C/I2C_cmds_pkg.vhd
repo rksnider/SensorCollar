@@ -138,17 +138,38 @@ package I2C_cmds_pkg is
   constant I2C_BM_ManInfo_rd      : natural := I2C_BM_BattMTemp_rd +
                                                I2C_BM_BattMTemp_rdlen ;
   constant I2C_BM_ManInfo_rdlen   : natural := 32 ;
+  
+  
+  constant I2C_BM_RemCap_cmdno   : natural := I2C_BM_ManInfo_cmdno + 1 ;
+  constant I2C_BM_RemCap_cmd     : natural := I2C_BM_RemCap_cmdno *
+                                               I2C_cmddef_len ;
+  constant I2C_BM_RemCap_wr      : natural := 0 ;
+  constant I2C_BM_RemCap_wrlen   : natural := 0 ;
+  constant I2C_BM_RemCap_rd      : natural := I2C_BM_ManInfo_rd +
+                                               I2C_BM_ManInfo_rdlen ;
+  constant I2C_BM_RemCap_rdlen   : natural := 2 ;
+  
+  
+  constant I2C_BM_InstCur_cmdno   : natural := I2C_BM_RemCap_cmdno + 1 ;
+  constant I2C_BM_InstCur_cmd     : natural := I2C_BM_InstCur_cmdno *
+                                               I2C_cmddef_len ;
+  constant I2C_BM_InstCur_wr      : natural := 0 ;
+  constant I2C_BM_InstCur_wrlen   : natural := 0 ;
+  constant I2C_BM_InstCur_rd      : natural := I2C_BM_RemCap_rd +
+                                               I2C_BM_RemCap_rdlen ;
+  constant I2C_BM_InstCur_rdlen   : natural := 2 ;
+  
 
   --  Real Time Clock Commands.
 
-  constant I2C_RTC_Init_cmdno     : natural := I2C_BM_ManInfo_cmdno + 1 ;
+  constant I2C_RTC_Init_cmdno     : natural := I2C_BM_InstCur_cmdno + 1 ;
   constant I2C_RTC_Init_cmd       : natural := I2C_RTC_Init_cmdno *
                                                I2C_cmddef_len ;
   constant I2C_RTC_Init_wr        : natural := 0 ;
   constant I2C_RTC_Init_wrlen     : natural := 0 ;
-  constant I2C_RTC_Init_rd        : natural := I2C_BM_ManInfo_rd +
-                                               I2C_BM_ManInfo_rdlen ;
-  constant I2C_RCT_Init_rdlen     : natural := 0 ;
+  constant I2C_RTC_Init_rd        : natural := I2C_BM_InstCur_rd +
+                                               I2C_BM_InstCur_rdlen ;
+  constant I2C_RTC_Init_rdlen     : natural := 0 ;
 
   constant I2C_RTC_SetTime_cmdno  : natural := I2C_RTC_Init_cmdno + 1 ;
   constant I2C_RTC_SetTime_cmd    : natural := I2C_RTC_SetTime_cmdno *
@@ -169,7 +190,7 @@ package I2C_cmds_pkg is
   constant I2C_RTC_SetAlarm_rdlen : natural := 0 ;
 
   constant I2C_RTC_GetTime_cmdno  : natural := I2C_RTC_SetAlarm_cmdno + 1 ;
-  constant I2C_RTC_GetTime_cmd    : natural := I2C_RTC_SetAlart_cmdno *
+  constant I2C_RTC_GetTime_cmd    : natural := I2C_RTC_GetTime_cmdno *
                                                I2C_cmddef_len ;
   constant I2C_RTC_GetTime_wr     : natural := 0 ;
   constant I2C_RTC_GetTime_wrlen  : natural := 0 ;

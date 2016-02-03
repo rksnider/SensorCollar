@@ -188,78 +188,114 @@ CONTENT BEGIN
  96 :         20;  --  32 bytes of Manufacture information are available.
  97 :         10;  --  Place to put the data.
  98 :         20;  --  Read all data at once.
+ 
+ 
+ -- Read the Remaining Capcity().
+ 
+99 :           01;  --  Microseconds to wait between subcommands.
+100 :          01;  --  Microseconds to wait between commands (500000).
+101 :          00;
+102 :          00;
+103 :          55;  --  I2C Address.
+104 :          01;  --  RemainingCapacity() Command.
+105 :          0F;  --  Place to get Command bytes.
+106 :          01;  --  Data Flash Block command, then Block Data command.
+107 :          02;  --  Reamining capacity bytes to read.
+108 :          29;  --  Place to put the data.
+109 :          02;  --  Read all data at once.
+
+
+ --InstantaneousCurrent Reading()
+ 
+110 :          01;  --  Microseconds to wait between subcommands.
+111 :          01;  --  Microseconds to wait between commands (500000).
+112 :          00;
+113 :          00;
+114 :          55;  --  I2C Address.
+115 :          01;  --  Instant Current Command.
+116 :          10;  --  Place to get InstantCurrent command byte.
+117 :          01;  --  Only need to write one byte.
+118 :          02;  --  Current bytes to read
+119 :          2B;  --  Place to put the data.
+120 :          02;  --  Read all data at once.
+ 
+ 
+ 
+ 
+ 
+ 
 
 
       --    Real Time Clock Maxim DS1371 commands.
       --    Initialize Clock.
 
- 99 :         00;  --  No time is needed between subcommands.
-100 :         00;  --  No time is needed between commands.
-101 :         00;
-102 :         00;
-103 :         68;  --  I2C Address.
-104 :         02;  --  Address of Control register then its value.
-105 :         0F;  --  Place to get bytes to write.
-106 :         02;  --  No subcommands are needed.
-107 :         00;  --  Nothing to read.
-108 :         30;
-109 :         00;
-
-      --    Set the Time.
-
-110 :         00;  --  No time is needed between subcommands.
-111 :         00;  --  No time is needed betwee commands.
-112 :         00;
-113 :         00;
-114 :         68;  --  I2C Address.
-115 :         05;  --  Address of Time of Day Counter then Counter's value.
-116 :         11;  --  Place to get bytes to write.
-117 :         05;  --  No subcommands are needed.
-118 :         00;  --  Nothing to read.
-119 :         30;
-120 :         00;
-
-      --    Set the Alarm.
-
 121 :         00;  --  No time is needed between subcommands.
-122 :         00;  --  No time is needed betwee commands.
+122 :         00;  --  No time is needed between commands.
 123 :         00;
 124 :         00;
 125 :         68;  --  I2C Address.
-126 :         04;  --  Address of Alarm Counter then Counter's value.
-127 :         16;  --  Place to get bytes to write.
-128 :         04;  --  No subcommands are needed.
+126 :         03;  --  Address of Control register then its value.
+127 :         11;  --  Place to get bytes to write.
+128 :         03;  --  No subcommands are needed. 
 129 :         00;  --  Nothing to read.
 130 :         30;
 131 :         00;
 
-      --    Get the Time.
+      --    Set the Time.
 
 132 :         00;  --  No time is needed between subcommands.
 133 :         00;  --  No time is needed betwee commands.
 134 :         00;
 135 :         00;
 136 :         68;  --  I2C Address.
-137 :         01;  --  Address of Time of Day Counter.
-138 :         1A;  --  Place to get bytes to write.
-139 :         01;  --  No subcommands are needed.
-140 :         04;  --  Time of Day Counter.
-141 :         30;  --  Place to put the Time of Day Counter.
-142 :         04;  --  No subcommands are needed.
+137 :         05;  --  Address of Time of Day Counter then Counter's value.
+138 :         14;  --  Place to get bytes to write.
+139 :         05;  --  No subcommands are needed.
+140 :         00;  --  Nothing to read.
+141 :         30;
+142 :         00;
 
-      --    Get the Alarm.
+      --    Set the Alarm.
 
 143 :         00;  --  No time is needed between subcommands.
 144 :         00;  --  No time is needed betwee commands.
 145 :         00;
 146 :         00;
 147 :         68;  --  I2C Address.
-148 :         01;  --  Address of Alarm Counter.
-149 :         1B;  --  Place to get bytes to write.
-150 :         01;  --  No subcommands are needed.
-151 :         03;  --  Alarm Counter.
-152 :         34;  --  Place to put the Alarm Counter.
-153 :         03;  --  No subcommands are needed.
+148 :         04;  --  Address of Alarm Counter then Counter's value.
+149 :         19;  --  Place to get bytes to write.
+150 :         04;  --  No subcommands are needed.
+151 :         00;  --  Nothing to read.
+152 :         30;
+153 :         00;
+
+      --    Get the Time.
+
+154 :         00;  --  No time is needed between subcommands.
+155 :         00;  --  No time is needed betwee commands.
+156 :         00;
+157 :         00;
+158 :         68;  --  I2C Address.
+159 :         01;  --  Address of Time of Day Counter.
+160 :         1D;  --  Place to get bytes to write.
+161 :         01;  --  No subcommands are needed.
+162 :         04;  --  Time of Day Counter.
+163 :         2D;  --  Place to put the Time of Day Counter.
+164 :         04;  --  No subcommands are needed.
+
+      --    Get the Alarm.
+
+165 :         00;  --  No time is needed between subcommands.
+166 :         00;  --  No time is needed betwee commands.
+167 :         00;
+168 :         00;
+169 :         68;  --  I2C Address.
+170 :         01;  --  Address of Alarm Counter.
+171 :         1E;  --  Place to get bytes to write.
+172 :         01;  --  No subcommands are needed.
+173 :         03;  --  Alarm Counter.
+174 :         31;  --  Place to put the Alarm Counter.
+175 :         03;  --  No subcommands are needed.
 
 
 
@@ -310,35 +346,44 @@ CONTENT BEGIN
 269 :         01;  --  Manufacturer Info Block.
 270 :         40;  --  Start of the block.
 
+        --Remaining Capacity
+271:          10;
+
+        --Instant Current
+
+272:          30;
+
+
       --    Real Time Clock Data.
       --    Initialize.
 
-271 :         07;  --  Address of the Control register.
-272 :         49;  --  Enable Oscillator, Enable Counter, Select Alarm,
-            --  Enable Interrupt, Clear Rate Select, Enable Alarm
+273 :         07;  --  Address of the Control register.
+274 :         49;  --  Enable Oscillator, Enable Counter, Select Alarm,
+                    --  Enable Interrupt, Clear Rate Select, Enable Alarm
+275:          00;   --Clear the osci stopped bit and alarm bit. 
 
       --    Write the clock.
 
-273 :         00;  --  Address of the time-of-day counter.
-274 :         00;  --  Value to write to the time-of-day counter.
-275 :         00;
-276 :         00;
-277 :         00;
+276 :         00;  --  Address of the time-of-day counter.
+277 :         FF;  --  Value to write to the time-of-day counter.
+278 :         FF;
+279 :         FF;
+280 :         FF;
 
       --    Write the Alarm Counter.
 
-278 :         04;  --  Address of the alarm counter.
-279 :         00;  --  Value to write to the alarm counter.
-280 :         00;
-281 :         00;
+281 :         04;  --  Address of the alarm counter.
+282 :         00;  --  Value to write to the alarm counter.
+283 :         00;
+284 :         00;
 
       --    Read the clock.
 
-282 :         00;  --  Address of the time-of-day counter.
+285 :         00;  --  Address of the time-of-day counter.
 
       --  Read the Alarm Counter.
 
-283 :         04;  --  Address of the alarm counter.
+286 :         04;  --  Address of the alarm counter.
 
 
 
@@ -389,24 +434,35 @@ CONTENT BEGIN
 
       --    Manufacturer Info Block.
 
-528 :         00; 00 00 00 00 00 00 00
-529 :         00; 00 00 00 00 00 00 00
-530 :         00; 00 00 00 00 00 00 00
-531 :         00; 00 00 00 00 00 00 00
+528 :         00 00 00 00 00 00 00 00;
+536 :         00 00 00 00 00 00 00 00;
+544 :         00 00 00 00 00 00 00 00;
+552 :         00 00 00 00 00 00 00 00;
+
+
+
+      -- Remaining Cacpity()
+
+553:      00;
+554:      00;
+
+      -- Instant Current()
+555:      00;
+556:      00;
 
       --    Real Time Clock.
       --    Read Time of Day.
 
-532 :         00;  --  Time of day bytes.
-533 :         00;
-534 :         00;
-535 :         00;
+557 :         00;  --  Time of day bytes.
+558 :         00;
+559 :         00;
+560 :         00;
 
       --    Read Alarm.
 
-536 :         00;  --  Alarm bytes.
-537 :         00;
-538 :         00;
+561 :         00;  --  Alarm bytes.
+562 :         00;
+563 :         00;
 
 
 

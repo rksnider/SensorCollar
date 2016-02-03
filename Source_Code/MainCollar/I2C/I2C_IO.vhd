@@ -264,6 +264,10 @@ architecture rtl of I2C_IO is
   signal save_count           : unsigned (byte_count'length-1 downto 0) ;
   signal save_address         : unsigned (next_data_address'length-1
                                           downto 0) ;
+--Variable used to pump two bytes into I2C_master on start of a new 
+--command.                              
+  signal i2c_started           :std_logic;
+  signal i2c_busy_in_follower           :   std_logic ;
                                           
                                           
 
@@ -325,6 +329,9 @@ begin
       cmd_busy_out      <= '0' ;
       save_count        <= (others => '0') ;
       save_address      <= (others => '0') ;
+      
+      i2c_started         <= '0' ;
+      i2c_busy_in_follower <= '1';
 
     elsif (rising_edge (clk)) then
     
@@ -407,6 +414,7 @@ begin
             i2c_addr_out        <=
                     std_logic_vector (i2c_address (6 downto 0)) ;
             i2c_rw_out          <= '0' ;
+            i2c_started          <= '0';
           end if ;
 
         --  Start writing data to the I2C bus.  When the first write of a
@@ -452,13 +460,12 @@ begin
                 i2c_rw_out        <= '1' ;
               end if ;
 
-            elsif (byte_count = byte_max) then
+            elsif (byte_count = write_length) then
                 --  Send additional data in a new subcommand.
 
                 cur_state         <= state_write_busy_e ;
                 byte_max          <= byte_max + write_max ;
                 i2c_latch         <= '0' ;
-              --end if ;
 
             else
               --  Send a byte to the I2C bus.
@@ -485,26 +492,28 @@ begin
         when state_write_busy_e =>
           mem_req_out           <= '0' ;
           mem_read_en_out       <= '0' ;
-
+          
           if (i2c_ack_error_in = '1') then
             cur_state           <= state_do_writes_e ;
             i2c_latch           <= '1' ;
             mem_req_out         <= '1' ;
 
-          elsif (i2c_busy_in = '0') then
+          elsif (i2c_busy_in_follower /= i2c_busy_in) then
+            i2c_busy_in_follower  <= i2c_busy_in;
               --  Wait for subcommand delay when this was the last write.
+          elsif ( i2c_busy_in_follower = '0') then
+              if (i2c_latch = '0' and
+                 (delay_count /= subcmd_delay_cycles)) then
+                delay_count       <= delay_count + 1 ;
+              else
+                delay_count       <= (others => '0') ;
 
-            if (i2c_latch = '0' and
-                (delay_count /= subcmd_delay_cycles)) then
-              delay_count       <= delay_count + 1 ;
-            else
-              delay_count       <= (others => '0') ;
-
-              cur_state         <= state_do_writes_e ;
-              mem_req_out       <= '1' ;
-              mem_read_en_out   <= '1' ;
-            end if ;
-          end if ;
+                cur_state         <= state_do_writes_e ;
+                mem_req_out       <= '1' ;
+                mem_read_en_out   <= '1' ;
+              end if ;
+          end if;
+          --end if ;
 
         --  Start reading data from the I2C bus.  Checks to determine if
         --  this is the last read of a subcommand are made before waiting
@@ -589,11 +598,16 @@ begin
           end if ;
           
         --I2C Master Latches in Command at slower
-        --Data clock. Wait for it to do that. 
+        --clock.
         when state_waitlatch_write_e  =>
           if (i2c_busy_in = '1') then
-            cur_state             <= state_do_writes_e ;
-          end if ;
+            if (i2c_started = '0') then
+              i2c_started <= '1';
+              cur_state             <= state_do_writes_e ;
+            else
+              cur_state               <= state_write_busy_e ;
+            end if ;
+          end if;
           
         --I2C Master Latches in Command at slower
         --Data clock. Wait for it to do that. 

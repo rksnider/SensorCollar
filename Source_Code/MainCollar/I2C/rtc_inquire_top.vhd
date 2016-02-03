@@ -1,11 +1,11 @@
 ----------------------------------------------------------------------------
 --
---! @file       batmon_inquire.vhd
---! @brief      bq27520 polling state machine
---! @details    State machine to pull registers from bq27520g4
---!             battery monitor using I2C subsystems.
+--! @file       rtc_inquire.vhd
+--! @brief      DS1371 Real Time Clock Inquiry and Set Machine
+--! @details    State machine to pull/push registers from I2C
+--!             RTC using I2C subsystems.
 --! @author     Chris Casebeer
---! @date       1_15_2016
+--! @date       1_20_2016
 --! @copyright  
 --
 --  This program is free software: you can redistribute it and/or modify
@@ -32,25 +32,16 @@
 
 ------------------------------------------------------------------------------
 --
---! @brief      Battery Monitor G4 Information Retrieve.
+--! @brief      RTC Clock DS1371 Push/Pull/Setup Registers
 --! @details    
 --!   
 
-  
---! @param   clk_freq_g               Clk Frequency. 
---! @param   update_interval_ms_g     Interval to poll the batmon.
-  
---! @param   mem_bits_g           I2C Memory Address Bit Count
---! @param   simulate_g           Skip poll wait when simulation.
---! @param   cmd_offset_g         Location of the commands in the I2C memory
---! @param   write_offset_g       Location of the write from locations in the I2C memory
---! @param   read_offset_g        Location of the read to locations in the I2C memory
+--! @param    startup_in            Signal to push initial config register.
+--! @param    startup_done_out      Init done. 
 
---! @param    startup              The machine will begin polling the batmon.
-
---! @param    cmd_offset_out        Offset of the command structure in I2C_CMDS.mif
+--! @param    cmd_offset_in         Offset of command structures in I2C_CMDS.mif
 --!                                 as defined in I2C_cmd_pkg.vhd  
---! @param    cmd_count_out         Sequential commands to execute at I2C_IO
+--! @param    cmd_count_in          Sequential commands to execute.
 --! @param    cmd_start_out         Start the I2C_IO machine.
 --! @param    cmd_busy_in           I2C_IO is busy.
 
@@ -64,25 +55,32 @@
 --! @param    i2c_req_out           Request i2c core and b side memory.
 --! @param    i2c_rcv_in            i2c core and b side memory granted. 
     
---! @param    voltage_mv            Voltage as read by the bq27520
---! @param    current_ma            Instant mA read by the bq27520
---! @param    capacity_mah          bq27520's estimate of the bat capacity
+--! @param    time_of_day_set_in      Signal to set the time of day of RTC
+--! @param    time_of_day_in          Time to write to the RTC. 
+--! @param    tod_set_done_out        TOD setting prodedure done. 
+
+--! @param    tod_get_in           Signal to get the TOD off the RTC.
+--! @param    tod_out                Retrieved time_of_day off the RTC.    
+--! @param    tod_get_valid_out     The TOD_OUT is now valid.       
+
+
+--! @param    alarm_set_in            Signal to set the alarm of RTC   
+--! @param    alarm_in                Alarm to write to the RTC.
+--! @param    alarm_set_done_out      Alarm setting prodedure done. 
 --
 ------------------------------------------------------------------------------
 
+--Usage Instructions and Description.
 
---This machine uses the I2C_IO which uses the I2C_master machine to 
---interact with the TI bQ27520G4 Battery Monitor chip.
-
---This machine polls the following information off the G4. 
---Voltage
---Instant Current
---Remaining capacity in mAh. 
 
 
 --TODO:
---I2C Repeated Starts at this level and the I2C_IO level 
---haven't been considered yet. 
+--No repeated starts are used. 
+--This actually has to do with I2C_IO.
+--The I2C_IO EN latch needs to be held between writes and reads to 
+--enact a repeated start. So far this change isn't needed. 
+
+
 
 
 
@@ -95,15 +93,15 @@ use IEEE.MATH_REAL.ALL ;        --! Use Real math.
 library WORK ;                   --! General libraries.
 use WORK.I2C_CMDS_PKG.ALL ;
 
-entity batmon_inquire is
+entity rtc_inquire_top is
 
   Generic (
   
-  clk_freq_g               : natural  := 50E6;
-  update_interval_ms_g     : natural  := 1;
+  tod_bytes             :natural := 4;
+  alarm_bytes           :natural := 3;
   
-  mem_bits_g               : natural  := 10;
-  simulate_g               : std_logic := '0';
+  mem_bits_g            : natural  := 10;
+
   cmd_offset_g          : natural   := 0 ;
   write_offset_g        : natural   := 256 ;
   read_offset_g         : natural   := 512
@@ -113,14 +111,15 @@ entity batmon_inquire is
     clk                   : in  std_logic ;
     rst_n                 : in  std_logic ;
     
-    startup               : in std_logic;
+    startup_in               : in std_logic;
+    startup_done_out         : out std_logic;
     
     cmd_offset_out        : out   unsigned (mem_bits_g-1 downto 0) ;
     cmd_count_out         : out   unsigned (7 downto 0) ;
     cmd_start_out         : out   std_logic ;
     cmd_busy_in           : in    std_logic ;
     
-    mem_clk                           :  out std_logic;
+    mem_clk_out                           : out std_logic;
     mem_address_signal_b_out          : out unsigned (mem_bits_g-1 downto 0) ;
     mem_datafrom_signal_b_in          : in std_logic_vector (7 downto 0) ;
     mem_datato_signal_b_out           : out std_logic_vector (7 downto 0) ;
@@ -129,52 +128,78 @@ entity batmon_inquire is
     
     i2c_req_out           : out   std_logic ;
     i2c_rcv_in            : in    std_logic ;
+
+    tod_set_in            : in    std_logic;
+    tod_set_done_out      : out    std_logic;
+    tod_in                : in   std_logic_vector(tod_bytes*8-1 downto 0);
     
-    voltage_mv_out            : out   std_logic_vector (15 downto 0);
-    rem_cap_mah_out           : out   std_logic_vector (15 downto 0);
-    inst_cur_ma_out           : out   std_logic_vector (15 downto 0)
+    tod_get_in            : in   std_logic;
+    tod_out               : out   std_logic_vector(tod_bytes*8-1 downto 0);     
+    tod_get_valid_out     : out   std_logic; 
+
+    alarm_set_in          : in    std_logic;    
+    alarm_in              : in   std_logic_vector(alarm_bytes*8-1 downto 0);
+    alarm_set_done_out    : out    std_logic
+  
   
 
   ) ;
 
-end entity batmon_inquire ;
+end entity rtc_inquire_top ;
 
 
 
-architecture behavior of batmon_inquire is
+architecture behavior of rtc_inquire_top is
 
 
-    type BATMON_INQ is   (
-    BATMON_STATE_WAIT,
-    BATMON_STATE_WAIT_START,
-    BATMON_STATE_VOLTAGE_SETUP,
-    BATMON_STATE_VOLTAGE,
-    BATMON_STATE_VOLTAGE_WAIT,
-    BATMON_STATE_VOLTAGE_READ_SETUP,
-    BATMON_STATE_VOLTAGE_READ,
-    BATMON_STATE_CURRENT_SETUP,
-    BATMON_STATE_CURRENT,
-    BATMON_STATE_CURRENT_WAIT,
-    BATMON_STATE_CURRENT_READ_SETUP,
-    BATMON_STATE_CURRENT_READ,
-    BATMON_STATE_CAPACITY_SETUP,
-    BATMON_STATE_CAPACITY,
-    BATMON_STATE_CAPACITY_WAIT,
-    BATMON_STATE_CAPACITY_READ_SETUP,
-    BATMON_STATE_CAPACITY_READ,
+    type RTC_INQ is   (
+    
+    RTC_STATE_WAIT,
+    RTC_STATE_WAIT_START,
+    RTC_STATE_CONF,
+    RTC_STATE_CONF_START,
+    RTC_STATE_CONF_WAIT,
+    
+
+    RTC_STATE_TOD_GET_SETUP,
+    RTC_STATE_TOD_GET,
+    RTC_STATE_TOD_GET_WAIT,
+    RTC_STATE_TOD_GET_READ_SETUP,
+    RTC_STATE_TOD_GET_READ,
+    
+    
+    
+    RTC_STATE_ALARM_READ_CONSTANTS_SETUP,
+    RTC_STATE_ALARM_SET_WRITE_SETUP,
+    RTC_STATE_ALARM_SET_WRITE,
+    RTC_STATE_ALARM_SET_SETUP,
+    RTC_STATE_ALARM_SET,
+    RTC_STATE_ALARM_SET_WAIT,
+    RTC_STATE_ALARM_SET_WAIT_DONE,
+    
+    
+    RTC_STATE_TOD_READ_CONSTANTS_SETUP,
+    RTC_STATE_TOD_SET_WRITE_SETUP,
+    RTC_STATE_TOD_SET_WRITE,
+    RTC_STATE_TOD_SET_SETUP,
+    RTC_STATE_TOD_SET,
+    RTC_STATE_TOD_SET_WAIT,
+    RTC_STATE_TOD_SET_WAIT_DONE,
+    
+    
+    
     state_init_cmd_e,
     state_read_cmd_e
-    
 
     );
     
 
 
-  signal cur_state   : BATMON_INQ;
-  signal next_state  : BATMON_INQ; 
+  signal cur_state   : RTC_INQ;
+  signal next_state  : RTC_INQ; 
   
 --Below is Emery's code.
---I need access to the mif file stored dual port variables.
+--I need access to the mif file stored variables.
 --Most notably where to read the written values from. 
 -----------------------------------------------  
   
@@ -281,29 +306,33 @@ architecture behavior of batmon_inquire is
 
   signal byte_address : unsigned (mem_bits_g-1 downto 0) ;
   
-
+  
+  
+  
   --Do not exceed this counter with your timeout value. 
   signal inquiry_timeout : unsigned(8 downto 0);
   
 
+  
   --Fields of interset right now.
-  signal voltage_mv : std_logic_vector (I2C_BM_Voltage_rdlen*8-1 downto 0);
-  signal rem_cap_mah : std_logic_vector (I2C_BM_Voltage_rdlen*8-1 downto 0);
-  signal inst_cur_ma : std_logic_vector (I2C_BM_Voltage_rdlen*8-1 downto 0);
+  signal time_of_day : std_logic_vector (tod_bytes*8-1 downto 0);
+  signal alarm : std_logic_vector (alarm_bytes*8-1 downto 0);
+
   
   signal mem_address_signal_b     : unsigned (mem_bits_g-1 downto 0) ;
   signal mem_datato_signal_b      : std_logic_vector (7 downto 0) ;
   signal mem_read_en_signal_b     : std_logic ;
   signal mem_write_en_signal_b    : std_logic ;
-  
-
+    
+    
+    
   signal cmd_busy_in_follower : std_logic;
   
   signal cmd_offset   : unsigned (mem_bits_g-1 downto 0);
 
 begin
 
-mem_clk <= not clk;
+mem_clk_out <= not clk;
 
 
   mem_address_signal_b_out <= mem_address_signal_b;
@@ -313,65 +342,113 @@ mem_clk <= not clk;
 
 
 
-batmon_state_machine:  process (clk, rst_n)
+rtc_state_machine:  process (clk, rst_n)
 variable byte_address : unsigned (mem_bits_g-1 downto 0) ;
 begin
   if (rst_n = '0') then
   
     cmd_offset_out        <= (others => '0');
     cmd_count_out         <= (others => '0');
-    cur_state             <= BATMON_STATE_WAIT;
+    cur_state             <= RTC_STATE_WAIT;
     cmd_start_out         <= '0';
     byte_count            <= (others => '0');
     cmd_busy_in_follower  <= '1';
     inquiry_timeout <= to_unsigned(0,inquiry_timeout'length);
+    
+    
+    startup_done_out     <= '0';
  
   elsif (clk'event and clk = '1') then
 
   
+      tod_set_done_out <= '0';
+      tod_get_valid_out <= '0';
+      alarm_set_done_out <= '0';
+      
+      
+      tod_set_done_out <= '0';     
+      tod_get_valid_out <= '0';         
+      alarm_set_done_out <= '0';   
+  
   
     case cur_state is
+    
 
+      
+      when RTC_STATE_WAIT   =>
 
-      when BATMON_STATE_WAIT   =>
-
-        if (startup = '1') then
-          cur_state <=  BATMON_STATE_WAIT_START;
+        if (startup_in = '1') then
+          cur_state <=  RTC_STATE_CONF;
         end if;
         
 
-      when BATMON_STATE_WAIT_START =>
-        if (simulate_g = '1') then 
-          cur_state <= BATMON_STATE_VOLTAGE_SETUP;
-        elsif (inquiry_timeout = to_unsigned(clk_freq_g/1E6 * update_interval_ms_g,inquiry_timeout'length)) then
-          cur_state <= BATMON_STATE_VOLTAGE_SETUP;
-          inquiry_timeout <= to_unsigned(0,inquiry_timeout'length);
+      when RTC_STATE_WAIT_START =>
+
+        if (tod_set_in = '1') then 
+          cur_state <= RTC_STATE_TOD_READ_CONSTANTS_SETUP;
+          time_of_day <= tod_in;
+        elsif (tod_get_in = '1') then
+          cur_state <= RTC_STATE_TOD_GET_SETUP;
+        elsif (alarm_set_in = '1') then
+          cur_state <= RTC_STATE_ALARM_READ_CONSTANTS_SETUP;
+          alarm <= alarm_in;
         else
-          inquiry_timeout <= inquiry_timeout + 1;
+          cur_state <= RTC_STATE_WAIT_START;
         end if;
-      
-      when BATMON_STATE_VOLTAGE_SETUP   =>
-      i2c_req_out           <= '1' ;
-      if (i2c_rcv_in = '1') then 
-        if (cmd_busy_in = '0') then
-          cmd_offset_out        <= to_unsigned(I2C_BM_Voltage_cmd,cmd_offset_out'length);
-          cmd_offset            <= to_unsigned(I2C_BM_Voltage_cmd,cmd_offset_out'length);
-          cmd_count_out         <= to_unsigned(1,cmd_count_out'length);
-          cur_state            <= BATMON_STATE_VOLTAGE;      
-        end if;
+        
+        
+      when RTC_STATE_CONF   =>
+
+      if (cmd_busy_in = '0') then
+        i2c_req_out           <= '1';
+        cmd_offset_out        <= to_unsigned(I2C_RTC_Init_cmd,cmd_offset_out'length);
+        cmd_offset            <= to_unsigned(I2C_RTC_Init_cmd,cmd_offset_out'length);
+        cmd_count_out         <= to_unsigned(1,cmd_count_out'length);
+        cur_state            <= RTC_STATE_CONF_START;      
       end if;
 
 
-      when BATMON_STATE_VOLTAGE    =>
+      when RTC_STATE_CONF_START    =>
+        if (i2c_rcv_in = '1') then
+          cmd_start_out         <= '1';
+          --Make sure the I2C system started.
+          if (cmd_busy_in = '1') then
+            cur_state            <= RTC_STATE_CONF_WAIT;
+             cmd_start_out         <= '0';
+          end if;
+        end if;
+          
+      when RTC_STATE_CONF_WAIT    =>
+       
+        if (cmd_busy_in = '0') then
+          i2c_req_out           <= '0';
+          cur_state            <= RTC_STATE_WAIT_START;
+          startup_done_out     <= '1';
+        end if;
       
-      cmd_start_out         <= '1';
-      cur_state            <= BATMON_STATE_VOLTAGE_WAIT;
+      when RTC_STATE_TOD_GET_SETUP   =>
 
-      when BATMON_STATE_VOLTAGE_WAIT =>
-      cmd_start_out         <= '0';
+      if (cmd_busy_in = '0') then
+        i2c_req_out           <= '1';
+        cmd_offset_out        <= to_unsigned(I2C_RTC_GetTime_cmd,cmd_offset_out'length);
+        cmd_offset            <= to_unsigned(I2C_RTC_GetTime_cmd,cmd_offset_out'length);
+        cmd_count_out         <= to_unsigned(1,cmd_count_out'length);
+        cur_state            <= RTC_STATE_TOD_GET;      
+      end if;
+
+
+      when RTC_STATE_TOD_GET    =>
+      if (i2c_rcv_in = '1') then
+        cmd_start_out         <= '1';
+        cur_state            <= RTC_STATE_TOD_GET_WAIT;
+      end if;
+
+      when RTC_STATE_TOD_GET_WAIT =>
+      
       if (cmd_busy_in = '1') then 
+        cmd_start_out         <= '0';
         cur_state            <= state_init_cmd_e;
-        next_state            <= BATMON_STATE_VOLTAGE_READ_SETUP;
+        next_state            <= RTC_STATE_TOD_GET_READ_SETUP;
       end if;
       
       --Initialize the command sequence to execute.
@@ -412,9 +489,9 @@ begin
           cur_state           <= next_state ;
           mem_read_en_signal_b     <= '0' ;
         end if ;
-     
-      
-      when BATMON_STATE_VOLTAGE_READ_SETUP    =>
+        
+        
+      when RTC_STATE_TOD_GET_READ_SETUP    =>
         mem_read_en_signal_b      <= '1';
 
         mem_address_signal_b      <=  RESIZE (read_offset,
@@ -423,138 +500,198 @@ begin
                                      
         byte_count                <= TO_UNSIGNED (0, byte_count'length) ; 
           if ( cmd_busy_in = '0') then 
-            --mem_req_out               <= '1';
-            --if (mem_rcv_in = '1') then 
-              cur_state            <= BATMON_STATE_VOLTAGE_READ;
-          --end if;
+            cur_state            <= RTC_STATE_TOD_GET_READ;
         end if;
       
-      when BATMON_STATE_VOLTAGE_READ    =>
-        if (byte_count = I2C_BM_Voltage_rdlen) then
-          cur_state            <= BATMON_STATE_CURRENT_SETUP;
-          voltage_mv_out        <= voltage_mv;
+      when RTC_STATE_TOD_GET_READ    =>
+        if (byte_count = I2C_RTC_GetTime_rdlen) then
+          cur_state     <= RTC_STATE_WAIT_START;
+          tod_out       <= time_of_day;
+          tod_get_valid_out   <= '1';
           mem_read_en_signal_b     <= '0' ;
+          i2c_req_out               <= '0';
+          
         else
         --Low order bit shows up first on the I2C bus.
-        --They are stored little endian in the ram as well. 
-          voltage_mv <= mem_datafrom_signal_b_in & voltage_mv(I2C_BM_Voltage_rdlen*8-1 downto 8) ;
+          time_of_day <= mem_datafrom_signal_b_in & time_of_day(I2C_RTC_GetTime_rdlen*8-1 downto 8) ;
           byte_count  <= byte_count + 1 ;
           mem_address_signal_b      <=  mem_address_signal_b + 1;
         end if;
         
-        
-        ----Current
-      when BATMON_STATE_CURRENT_SETUP   =>
 
-      if (cmd_busy_in = '0') then
-        cmd_offset_out        <= to_unsigned(I2C_BM_InstCur_cmd,cmd_offset_out'length);
-        cmd_offset            <= to_unsigned(I2C_BM_InstCur_cmd,cmd_offset_out'length);
+        --Idea here.
+        --Grab all the constants. 
+        --Write the value (TOD) in memory
+        --Enage the I2C core.
+        --Set ALARM
+      when RTC_STATE_ALARM_READ_CONSTANTS_SETUP   =>
+      
+        cmd_offset_out        <= to_unsigned(I2C_RTC_SetAlarm_cmd,cmd_offset_out'length);
+        cmd_offset            <= to_unsigned(I2C_RTC_SetAlarm_cmd,cmd_offset_out'length);
+        cmd_count_out         <= to_unsigned(1,cmd_count_out'length); 
+        i2c_req_out           <= '1' ;        
+        if (i2c_rcv_in = '1') then 
+           cur_state            <= state_init_cmd_e;
+           next_state           <= RTC_STATE_ALARM_SET_WRITE_SETUP;
+        end if;
+          
+
+        
+        
+      when RTC_STATE_ALARM_SET_WRITE_SETUP    =>
+      
+
+        mem_write_en_signal_b     <= '1';
+        --We only want to fill in the tod and not the RTC address. 
+        --1 byte I2C device address 4 bytes tod. 
+        mem_address_signal_b      <=  RESIZE (write_offset + 1,
+                                             next_data_address'length) +
+                                     write_offset_g ;
+        mem_datato_signal_b       <= alarm(7 downto 0);
+        alarm                     <= x"00" & alarm(I2C_RTC_SetAlarm_wrlen*8-1 downto 8);
+        byte_count                <= TO_UNSIGNED (1, byte_count'length) ;
+        cur_state                 <= RTC_STATE_ALARM_SET_WRITE;
+
+        
+        
+        
+      when RTC_STATE_ALARM_SET_WRITE    =>
+        if (byte_count = I2C_RTC_SetAlarm_wrlen) then
+          cur_state            <= RTC_STATE_ALARM_SET_SETUP;
+          mem_write_en_signal_b     <= '0' ;
+        else
+          mem_datato_signal_b <= alarm(7 downto 0);
+          alarm <= x"00" & alarm(I2C_RTC_SetAlarm_wrlen*8-1 downto 8);
+          
+         
+          
+          
+          byte_count  <= byte_count + 1 ;
+          mem_address_signal_b      <=  mem_address_signal_b + 1;
+        end if;
+        
+      when RTC_STATE_ALARM_SET_SETUP  =>
+
+     
+       
+        cmd_offset_out        <= to_unsigned(I2C_RTC_SetAlarm_cmd,cmd_offset_out'length);
+        cmd_offset            <= to_unsigned(I2C_RTC_SetAlarm_cmd,cmd_offset_out'length);
         cmd_count_out         <= to_unsigned(1,cmd_count_out'length);
-        cur_state            <= BATMON_STATE_CURRENT;      
-      end if;
+        cur_state            <= RTC_STATE_ALARM_SET;      
 
 
-      when BATMON_STATE_CURRENT    =>
-      
-      cmd_start_out         <= '1';
-      cur_state            <= BATMON_STATE_CURRENT_WAIT;
 
-      when BATMON_STATE_CURRENT_WAIT =>
-      cmd_start_out         <= '0';
-      --mem_req_out           <= '1' ;
-      if (cmd_busy_in = '1') then 
-        cur_state            <= state_init_cmd_e;
-        next_state            <= BATMON_STATE_CURRENT_READ_SETUP;
-      end if;
-
-      when BATMON_STATE_CURRENT_READ_SETUP    =>
-        mem_read_en_signal_b      <= '1';
-
-        mem_address_signal_b      <=  RESIZE (read_offset,
-                                             next_data_address'length) +
-                                     read_offset_g ;
-                                     
-        byte_count                <= TO_UNSIGNED (0, byte_count'length) ; 
-          if ( cmd_busy_in = '0') then 
-            --mem_req_out               <= '1';
-            --if (mem_rcv_in = '1') then 
-              cur_state            <= BATMON_STATE_CURRENT_READ;
-          --end if;
-        end if;
-      
-      
-      
-      when BATMON_STATE_CURRENT_READ    =>
-        if (byte_count = I2C_BM_InstCur_rdlen) then
-          cur_state            <= BATMON_STATE_CAPACITY_SETUP;
-          inst_cur_ma_out        <= inst_cur_ma;
-          mem_read_en_signal_b     <= '0' ;
-        else
-          inst_cur_ma <= mem_datafrom_signal_b_in & inst_cur_ma(I2C_BM_InstCur_rdlen*8-1 downto 8) ;
-          byte_count  <= byte_count + 1 ;
-          mem_address_signal_b      <=  mem_address_signal_b + 1;
-        end if;
-        
-        
-      ---Capacity
-        
-        
-      when BATMON_STATE_CAPACITY_SETUP   =>
-
-        if (cmd_busy_in = '0') then
-          cmd_offset_out        <= to_unsigned(I2C_BM_RemCap_cmd,cmd_offset_out'length);
-          cmd_offset            <= to_unsigned(I2C_BM_RemCap_cmd,cmd_offset_out'length);
-          cmd_count_out         <= to_unsigned(1,cmd_count_out'length);
-          cur_state            <= BATMON_STATE_CAPACITY;      
-        end if;
-
-
-      when BATMON_STATE_CAPACITY    =>
-      
+      when RTC_STATE_ALARM_SET   =>
+      if (i2c_rcv_in = '1') then 
         cmd_start_out         <= '1';
-        cur_state            <= BATMON_STATE_CAPACITY_WAIT;
+        cur_state             <= RTC_STATE_ALARM_SET_WAIT;
+      end if;
+      
+      when RTC_STATE_ALARM_SET_WAIT =>
+      cmd_start_out         <= '0';
+      if (cmd_busy_in = '1') then 
+        cur_state           <= RTC_STATE_ALARM_SET_WAIT_DONE;
+      end if;
 
-      when BATMON_STATE_CAPACITY_WAIT =>
-        cmd_start_out         <= '0';
-        --mem_req_out           <= '1' ;
-        if (cmd_busy_in = '1') then 
-          cur_state            <= state_init_cmd_e;
-          next_state            <= BATMON_STATE_CAPACITY_READ_SETUP;
+      when RTC_STATE_ALARM_SET_WAIT_DONE    =>
+      if (cmd_busy_in = '0') then 
+      --Here I branch back to register config.
+      --To reset the WACE bit/and the AF bit. 
+        cur_state            <= RTC_STATE_CONF;
+        alarm_set_done_out  <= '1';
+        i2c_req_out     <= '0';
+      end if;
+    
+      --Idea here.
+      --Grab all the constants. 
+      --Write the value (TOD) in memory
+      --Enage the I2C core.
+      --Set TOD
+      when RTC_STATE_TOD_READ_CONSTANTS_SETUP   =>
+      
+        cmd_offset_out        <= to_unsigned(I2C_RTC_SetTime_cmd,cmd_offset_out'length);
+        cmd_offset            <= to_unsigned(I2C_RTC_SetTime_cmd,cmd_offset_out'length);
+        cmd_count_out         <= to_unsigned(1,cmd_count_out'length); 
+        i2c_req_out           <= '1' ;        
+        if (i2c_rcv_in = '1') then 
+           cur_state            <= state_init_cmd_e;
+           next_state           <= RTC_STATE_TOD_SET_WRITE_SETUP;
         end if;
+          
 
-      when BATMON_STATE_CAPACITY_READ_SETUP    =>
-        mem_read_en_signal_b      <= '1';
+        
+        
+      when RTC_STATE_TOD_SET_WRITE_SETUP    =>
+      
 
-        mem_address_signal_b      <=  RESIZE (read_offset,
+        mem_write_en_signal_b      <= '1';
+        --Skip the address in the mif file, which will be written out. 
+        mem_address_signal_b      <=  RESIZE (write_offset + 1,
                                              next_data_address'length) +
-                                     read_offset_g ;
-                                     
-        byte_count                <= TO_UNSIGNED (0, byte_count'length) ; 
-          if ( cmd_busy_in = '0') then 
-            --mem_req_out               <= '1';
-            --if (mem_rcv_in = '1') then 
-              cur_state            <= BATMON_STATE_CAPACITY_READ;
-          --end if;
-        end if;
-      
-      
-      
-      when BATMON_STATE_CAPACITY_READ    =>
-        if (byte_count = I2C_BM_RemCap_rdlen) then
-          cur_state            <= BATMON_STATE_WAIT_START;
-          rem_cap_mah_out        <= rem_cap_mah;
-          mem_read_en_signal_b     <= '0' ;
-          i2c_req_out           <= '0' ;
+                                     write_offset_g ;
+        mem_datato_signal_b <= time_of_day(7 downto 0);
+        time_of_day <= x"00" & time_of_day(I2C_RTC_SetTime_wrlen*8-1 downto 8);
+        byte_count                <= TO_UNSIGNED (1, byte_count'length) ;
+        cur_state            <= RTC_STATE_TOD_SET_WRITE;
+
+        
+        
+        
+      when RTC_STATE_TOD_SET_WRITE    =>
+        if (byte_count = I2C_RTC_SetTime_wrlen) then
+          cur_state            <= RTC_STATE_TOD_SET_SETUP;
+          mem_write_en_signal_b     <= '0' ;
+          
         else
-          rem_cap_mah <= mem_datafrom_signal_b_in & rem_cap_mah(I2C_BM_RemCap_rdlen*8-1 downto 8);
+          mem_datato_signal_b <= time_of_day(7 downto 0);
+          time_of_day <= x"00" & time_of_day(I2C_RTC_SetTime_wrlen*8-1 downto 8);
           byte_count  <= byte_count + 1 ;
           mem_address_signal_b      <=  mem_address_signal_b + 1;
         end if;
+        
+      when RTC_STATE_TOD_SET_SETUP  =>
+
+
+        cmd_offset_out        <= to_unsigned(I2C_RTC_SetTime_cmd,cmd_offset_out'length);
+        cmd_offset            <= to_unsigned(I2C_RTC_SetTime_cmd,cmd_offset_out'length);
+        cmd_count_out         <= to_unsigned(1,cmd_count_out'length);
+        cur_state            <= RTC_STATE_TOD_SET;      
+
+
+
+      when RTC_STATE_TOD_SET   =>
+      
+      --if (i2c_rcv_in = '1') then
+        cmd_start_out         <= '1';
+        cur_state            <= RTC_STATE_TOD_SET_WAIT;
+      --end if;
+      
+      
+      when RTC_STATE_TOD_SET_WAIT =>
+      
+      if (cmd_busy_in = '1') then 
+        cmd_start_out         <= '0';
+        cur_state            <= RTC_STATE_TOD_SET_WAIT_DONE;
+      end if;
+
+      when RTC_STATE_TOD_SET_WAIT_DONE    =>
+      if (cmd_busy_in = '0') then 
+        cur_state           <= RTC_STATE_WAIT_START;
+        tod_set_done_out    <= '1';
+        i2c_req_out         <= '0';
+      end if;
+      
 
       end case ;
   end if ;
-end process batmon_state_machine ;
+end process rtc_state_machine ;
 
+
+
+
+
+
+  
 
 
 end behavior ;
