@@ -163,6 +163,8 @@ architecture rtl of GPSinit is
 
   type InitState is   (
     INIT_STATE_WAIT,
+    INIT_STATE_START,
+    INIT_STATE_START_DELAY,
     INIT_STATE_GET_SENDER,
     INIT_STATE_WAIT_SENDER,
     INIT_STATE_GET_MEM,
@@ -276,16 +278,29 @@ begin
           if (start_init = '1') then
             process_busy      <= '1' ;
             init_started      <= '1' ;
-            sendreq_out       <= '1' ;
             mem_inaddress     <=
                 RESIZE (CONST_UNSIGNED (msg_rom_base_c +
                                         msg_init_table_c),
                         mem_address'length) ;
-            cur_state         <= INIT_STATE_GET_SENDER ;
+            sendreq_out       <= '1' ;
+            cur_state         <= INIT_STATE_START ;
           else
             init_started      <= '0' ;
             process_busy      <= '0' ;
             cur_state         <= INIT_STATE_WAIT ;
+          end if ;
+
+        --  Wait for the GPS to start up.
+
+        when INIT_STATE_START       =>
+          delay               <= unsigned (milli_count) - 1 ;
+          cur_state           <= INIT_STATE_START_DELAY ;
+
+        when INIT_STATE_START_DELAY =>
+          if (unsigned (milli_count) = delay) then
+            cur_state         <= INIT_STATE_GET_SENDER ;
+          else
+            cur_state         <= INIT_STATE_START_DELAY ;
           end if ;
 
         --  Wait until the message sender is available and ready.
