@@ -354,7 +354,7 @@ begin
             end if ;
 
         --  Check how current the GPS position is.  It must always be less
-        --  than one week.
+        --  than one week and have been logged since the system started.
 
           when MARK_STATE_CHECK         =>
             byte_count      <= TO_UNSIGNED (gps_time_bytes_c,
@@ -374,7 +374,10 @@ begin
             cur_state       <= MARK_STATE_CHK_CURRENT ;
 
           when MARK_STATE_CHK_CURRENT   =>
-            if ((unsigned (curtime.week_number) -
+            if ((unsigned (logtime.week_number)             = 0 and
+                 unsigned (logtime.week_millisecond)        = 0 and
+                 unsigned (logtime.millisecond_nanosecond)  = 0)        or
+                (unsigned (curtime.week_number) -
                  unsigned (logtime.week_number) > 1) or
                 ((curtime.week_number = logtime.week_number) and
                  (unsigned (curtime.week_millisecond) -
