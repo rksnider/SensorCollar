@@ -27,6 +27,12 @@
 -- 
 --------------------------------------------------------------------------------
 
+
+
+--Go here to the good documentation
+--https://eewiki.net/pages/viewpage.action?pageId=10125324
+--
+
 LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 USE ieee.std_logic_unsigned.all;
@@ -34,7 +40,7 @@ USE ieee.std_logic_unsigned.all;
 ENTITY i2c_master IS
   GENERIC(
     input_clk : INTEGER := 50_000_000; --input clock speed from user logic in Hz
-    bus_clk   : INTEGER := 400_000);   --speed the i2c bus (scl) will run at in Hz
+    bus_clk   : INTEGER := 1_000_000);   --speed the i2c bus (scl) will run at in Hz
   PORT(
     clk       : IN     STD_LOGIC;                    --system clock
     reset_n   : IN     STD_LOGIC;                    --active low reset
