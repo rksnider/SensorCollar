@@ -401,7 +401,7 @@ begin
             --  Count out a half cycle of the output clock in driver clock cycles.
 
             elsif (rising_edge (clk)) then
-              if (clk_cnt /= TO_UNSIGNED (clk_cntmax_c,
+              if (clk_cnt /= TO_UNSIGNED (clk_cntmax_c - 1,
                                           clk_cnt'length)) then
 
                 clk_cnt             <= clk_cnt + 1 ;
@@ -466,7 +466,7 @@ begin
             --  Count out a half cycle of the output clock in driver clock cycles.
 
             elsif (rising_edge (clk)) then
-              if (clk_cnt /= TO_UNSIGNED (clk_cntmax_c,
+              if (clk_cnt /= TO_UNSIGNED (clk_cntmax_c - 1,
                                           clk_cnt'length)) then
 
                 clk_cnt             <= clk_cnt + 1 ;
@@ -530,7 +530,7 @@ begin
             --  Count out a half cycle of the output clock in driver clock cycles.
 
             elsif (rising_edge (clk)) then
-              if (clk_cnt /= TO_UNSIGNED (clk_cntmax_c,
+              if (clk_cnt /= TO_UNSIGNED (clk_cntmax_c - 1,
                                           clk_cnt'length)) then
 
                 clk_cnt             <= clk_cnt + 1 ;
@@ -591,7 +591,7 @@ begin
             --  Count out a half cycle of the output clock in driver clock cycles.
 
             elsif (rising_edge (clk)) then
-              if (clk_cnt /= TO_UNSIGNED (clk_cntmax_c,
+              if (clk_cnt /= TO_UNSIGNED (clk_cntmax_c - 1,
                                           clk_cnt'length)) then
 
                 clk_cnt             <= clk_cnt + 1 ;
