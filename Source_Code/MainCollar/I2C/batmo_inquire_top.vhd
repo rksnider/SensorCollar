@@ -79,10 +79,16 @@
 --Instant Current
 --Remaining capacity in mAh. 
 
+--The bq27520 can only handle 2 read commands per second. 
+--Pushing more than this will cause the device to reset!
+--There is a wait state in the code for waiting time between commands. 
+
 
 --TODO:
 --I2C Repeated Starts at this level and the I2C_IO level 
 --haven't been considered yet. 
+
+
 
 
 
@@ -95,12 +101,17 @@ use IEEE.MATH_REAL.ALL ;        --! Use Real math.
 library WORK ;                   --! General libraries.
 use WORK.I2C_CMDS_PKG.ALL ;
 
+
+library GENERAL ;                   --! General libraries.
+use GENERAL.UTILITIES_PKG.ALL ;
+
+
 entity batmon_inquire is
 
   Generic (
   
   clk_freq_g               : natural  := 50E6;
-  update_interval_ms_g     : natural  := 1;
+  update_interval_ms_g     : natural  := 5000;
   
   mem_bits_g               : natural  := 10;
   simulate_g               : std_logic := '0';
@@ -130,6 +141,9 @@ entity batmon_inquire is
     i2c_req_out           : out   std_logic ;
     i2c_rcv_in            : in    std_logic ;
     
+    voltage_mv_valid_out      : out   std_logic ;
+    rem_cap_mah_valid_out     : out   std_logic ;
+    inst_cur_ma_valid_out     : out   std_logic ;
     voltage_mv_out            : out   std_logic_vector (15 downto 0);
     rem_cap_mah_out           : out   std_logic_vector (15 downto 0);
     inst_cur_ma_out           : out   std_logic_vector (15 downto 0)
@@ -147,6 +161,7 @@ architecture behavior of batmon_inquire is
     type BATMON_INQ is   (
     BATMON_STATE_WAIT,
     BATMON_STATE_WAIT_START,
+    BATMON_BETWEEN_COMMAND_WAIT,
     BATMON_STATE_VOLTAGE_SETUP,
     BATMON_STATE_VOLTAGE,
     BATMON_STATE_VOLTAGE_WAIT,
@@ -282,8 +297,21 @@ architecture behavior of batmon_inquire is
   signal byte_address : unsigned (mem_bits_g-1 downto 0) ;
   
 
-  --Do not exceed this counter with your timeout value. 
-  signal inquiry_timeout : unsigned(8 downto 0);
+  --These need to be changed to allow values 1-3 ms. 
+  
+  signal inquiry_timeout    :   unsigned(maximum(1,natural(
+                                trunc(log2(real(
+                                update_interval_ms_g-1))))) downto 0); 
+                                
+  constant inner_command_wait_ms : natural := 1000;  
+
+  
+  signal inner_command_timeout_ms   :  unsigned(maximum(1,natural(
+                                        trunc(log2(real(
+                                        inner_command_wait_ms-1))))) downto 0); 
+                              
+
+
   
 
   --Fields of interset right now.
@@ -325,10 +353,34 @@ begin
     byte_count            <= (others => '0');
     cmd_busy_in_follower  <= '1';
     inquiry_timeout <= to_unsigned(0,inquiry_timeout'length);
+    inner_command_timeout_ms  <= to_unsigned(0,inner_command_timeout_ms'length);
+    
+    
+    cmd_offset_out        <= (others => '0');
+    cmd_count_out         <= (others => '0');
+    cmd_start_out         <= '0';
+    
+    
+    mem_address_signal_b    <= (others => '0');
+    mem_datato_signal_b     <= (others => '0');
+    mem_read_en_signal_b    <= '0';
+    mem_write_en_signal_b   <= '0';
+    
+
+    i2c_req_out           <= '0' ;
+    
+    
+    voltage_mv_valid_out      <= '0' ;
+    rem_cap_mah_valid_out     <= '0' ;
+    inst_cur_ma_valid_out     <= '0' ;
  
   elsif (clk'event and clk = '1') then
 
   
+  
+      voltage_mv_valid_out      <= '0' ;
+      rem_cap_mah_valid_out     <= '0' ;
+      inst_cur_ma_valid_out     <= '0' ;
   
     case cur_state is
 
@@ -343,7 +395,7 @@ begin
       when BATMON_STATE_WAIT_START =>
         if (simulate_g = '1') then 
           cur_state <= BATMON_STATE_VOLTAGE_SETUP;
-        elsif (inquiry_timeout = to_unsigned(clk_freq_g/1E6 * update_interval_ms_g,inquiry_timeout'length)) then
+        elsif (inquiry_timeout = to_unsigned((clk_freq_g/1E3) * update_interval_ms_g,inquiry_timeout'length)) then
           cur_state <= BATMON_STATE_VOLTAGE_SETUP;
           inquiry_timeout <= to_unsigned(0,inquiry_timeout'length);
         else
@@ -431,8 +483,13 @@ begin
       
       when BATMON_STATE_VOLTAGE_READ    =>
         if (byte_count = I2C_BM_Voltage_rdlen) then
-          cur_state            <= BATMON_STATE_CURRENT_SETUP;
+          next_state            <= BATMON_STATE_CURRENT_SETUP;
+          cur_state           <= BATMON_BETWEEN_COMMAND_WAIT;
+                        
+          voltage_mv_valid_out      <= '1' ;
+    
           voltage_mv_out        <= voltage_mv;
+          
           mem_read_en_signal_b     <= '0' ;
         else
         --Low order bit shows up first on the I2C bus.
@@ -441,6 +498,17 @@ begin
           byte_count  <= byte_count + 1 ;
           mem_address_signal_b      <=  mem_address_signal_b + 1;
         end if;
+        
+      --Wait before polling the battery monitor again.
+      when BATMON_BETWEEN_COMMAND_WAIT =>
+        if (inner_command_timeout_ms = to_unsigned((clk_freq_g/1E3) * inner_command_wait_ms,
+                                        inner_command_timeout_ms'length)) then
+          cur_state <= next_state;
+          inner_command_timeout_ms <= to_unsigned(0,inner_command_timeout_ms'length);
+        else
+          inner_command_timeout_ms <= inner_command_timeout_ms + 1;
+        end if;
+      
         
         
         ----Current
@@ -486,7 +554,11 @@ begin
       
       when BATMON_STATE_CURRENT_READ    =>
         if (byte_count = I2C_BM_InstCur_rdlen) then
-          cur_state            <= BATMON_STATE_CAPACITY_SETUP;
+          next_state            <= BATMON_STATE_CAPACITY_SETUP;
+          cur_state             <= BATMON_BETWEEN_COMMAND_WAIT;
+                        
+    
+          inst_cur_ma_valid_out     <= '1' ;
           inst_cur_ma_out        <= inst_cur_ma;
           mem_read_en_signal_b     <= '0' ;
         else
@@ -541,7 +613,12 @@ begin
       
       when BATMON_STATE_CAPACITY_READ    =>
         if (byte_count = I2C_BM_RemCap_rdlen) then
-          cur_state            <= BATMON_STATE_WAIT_START;
+          next_state            <= BATMON_STATE_WAIT_START;
+          cur_state            <= BATMON_BETWEEN_COMMAND_WAIT;
+                        
+
+          rem_cap_mah_valid_out     <= '1' ;
+
           rem_cap_mah_out        <= rem_cap_mah;
           mem_read_en_signal_b     <= '0' ;
           i2c_req_out           <= '0' ;

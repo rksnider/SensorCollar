@@ -55,7 +55,7 @@ package PC_StatusControl_pkg is
     Stat_ForceStartup_e,
     Stat_PwrGood2p5_e,
     Stat_PwrGood3p3_e,
-    Stat_Spacer1_e,
+    Stat_RTCAlarm_e,
     Stat_Spacer2_e,
     Stat_Spacer3_e,
     Stat_Spacer4_e,
@@ -70,11 +70,12 @@ package PC_StatusControl_pkg is
       StatusSignals'pos(StatusSignals'high) + 1 ;
 
   --  Power Controller Control Register Definitions.
-
+  -- The left most element is 0. 
   type ControlSignals is (
     Ctl_MainPowerSwitch_e,
     Ctl_RechargeSwitch_e,
     Ctl_SolarCtlShutdown_e,
+    Ctl_vcc1p8_aux_ctrl_e,
     Ctl_LevelShifter3p3_e,
     Ctl_LevelShifter1p8_e,
     Ctl_InertialOn1p8_e,
@@ -87,7 +88,8 @@ package PC_StatusControl_pkg is
     Ctl_GPS_On_e,
     Ctl_DataTX_On_e,
     Ctl_FPGA_Shutdown_e,
-    Ctl_FLASH_Granted_e
+    Ctl_FLASH_Granted_e,
+    Ctl_RTC_Int_e
   ) ;
 
   constant ControlSignalsCnt_c    : natural :=

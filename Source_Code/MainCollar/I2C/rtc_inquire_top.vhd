@@ -67,6 +67,9 @@
 --! @param    alarm_set_in            Signal to set the alarm of RTC   
 --! @param    alarm_in                Alarm to write to the RTC.
 --! @param    alarm_set_done_out      Alarm setting prodedure done. 
+
+--! @param    rtc_interrupt_enable    Tell CPLD to pass RTC interrupt. 
+--!                                   Used to ignore unconfigued RTC on bootup. 
 --
 ------------------------------------------------------------------------------
 
@@ -139,7 +142,9 @@ entity rtc_inquire_top is
 
     alarm_set_in          : in    std_logic;    
     alarm_in              : in   std_logic_vector(alarm_bytes*8-1 downto 0);
-    alarm_set_done_out    : out    std_logic
+    alarm_set_done_out    : out    std_logic;
+    
+    rtc_interrupt_enable  : out   std_logic
   
   
 
@@ -357,6 +362,23 @@ begin
     
     
     startup_done_out     <= '0';
+    
+    i2c_req_out           <= '0';
+    
+    
+    cmd_offset_out        <= (others => '0');
+    cmd_count_out         <= (others => '0');
+    cmd_start_out         <= '0';
+    
+    
+    mem_address_signal_b    <= (others => '0');
+    mem_datato_signal_b     <= (others => '0');
+    mem_read_en_signal_b    <= '0';
+    mem_write_en_signal_b   <= '0';
+    
+    rtc_interrupt_enable    <= '0';
+ 
+ 
  
   elsif (clk'event and clk = '1') then
 
@@ -599,6 +621,10 @@ begin
       --To reset the WACE bit/and the AF bit. 
         cur_state            <= RTC_STATE_CONF;
         alarm_set_done_out  <= '1';
+      --Set the interrupt enable. 
+      --Once per startup. 
+      --Shutdown code should disable it. 
+        rtc_interrupt_enable <= '1';
         i2c_req_out     <= '0';
       end if;
     
