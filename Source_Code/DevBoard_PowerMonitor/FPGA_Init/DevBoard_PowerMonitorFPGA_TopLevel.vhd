@@ -33,9 +33,6 @@ library IEEE ;                        --! Use standard library.
 use IEEE.STD_LOGIC_1164.ALL ;         --! Use standard logic elements.
 use IEEE.NUMERIC_STD.ALL ;            --! Use numeric standard.
 
-library WORK ;                        --! Local libraries.
-use WORK.SHARED_SDC_VALUES_PKG.ALL ;  --! Values used by SDC as well.
-use WORK.SDRAM_INFORMATION_PKG.ALL ;  --! SDRAM chip information.
 
 
 ----------------------------------------------------------------------------
@@ -219,7 +216,7 @@ entity DevBoard_PowerMonitorFPGA_TopLevel is
 
     -- Voltage Selectable GPIO
 
-    GPIOSEL                     : out   std_logic_vector (3 downto 0)
+    GPIOSEL                     : out   std_logic_vector (15 downto 0);
 
     --  1.8V GPIO
     GPIO1P8                     : inout std_logic_vector(7 downto 0);
@@ -242,6 +239,10 @@ architecture structural of DevBoard_PowerMonitorFPGA_TopLevel is
 
 
 begin
+
+  PC_SPI_NCS                  <= '1';
+  PC_SPI_CLK                  <= '1';
+  PC_SPI_DIN                  <= '1';
 
 
   GPIOSEL (0) <= count (7);

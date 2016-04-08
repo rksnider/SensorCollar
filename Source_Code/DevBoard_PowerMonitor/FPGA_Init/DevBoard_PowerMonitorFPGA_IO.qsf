@@ -5,6 +5,7 @@ set_global_assignment -name PRE_FLOW_SCRIPT_FILE    quartus_sh:at_compile_start.
 # set_global_assignment -name POST_FLOW_SCRIPT_FILE   quartus_sh:at_compile_end.tcl
 
 set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+set_global_assignment -name TOP_LEVEL_ENTITY DevBoard_PowerMonitorFPGA_TopLevel
 
 #   Device Information
 
@@ -33,7 +34,8 @@ set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -fall
 set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -rise
 set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -fall
 set_global_assignment -name ACTIVE_SERIAL_CLOCK FREQ_100MHZ
-set_global_assignment -name DEVICE_INITIALIZATION_CLOCK INIT_INTOSC
+set_global_assignment -name RESERVE_ALL_UNUSED_PINS "AS INPUT TRI-STATED WITH WEAK PULL-UP"
+set_global_assignment -name DEVICE_INITIALIZATION_CLOCK INIT_DCLK
 
 #   System Control - Not defined in QSF file
 
