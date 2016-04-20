@@ -64,7 +64,7 @@ use WORK.MSG_UBX_TIM_TM2_PKG.ALL ;
 --! @details    Instanciates and connects all the components that make up
 --!             the Acoustic Recording Collar FPGA implementation.
 --!
---! @param      source_clk_freq_c Frequency of the system clock in cycles
+--! @param      source_clk_freq_g Frequency of the system clock in cycles
 --!                               per second.
 --! @param      button_cnt_g    Number of buttons used by the device.
 --! @param      sdram_space_g   Space available parameters for SDRAM chip.
@@ -102,38 +102,38 @@ use WORK.MSG_UBX_TIM_TM2_PKG.ALL ;
 --! @param      sd_clk          Micro SDCard clock.
 --! @param      sd_cmd_io       Command line used with the micro SDCard.
 --! @param      sd_data_io      Data lines used with the micro SDCard.
---! @param      sd_vsw_out      Voltage switch control lines.
 --! @param      sdh_clk         High voltage micro SDCard clock.
 --! @param      sdh_cmd_io      High voltage command line used with the
 --!                             micro SDCard.
 --! @param      sdh_data_io     High voltage data lines used with the micro
 --!                             SDCard.
---! @param      gps_rx_in       Receive line from the GPS UART.
+--! @param      gps_rx_io       Receive line from the GPS UART.
 --! @param      gps_tx_out      Transmit line to the GPS UART.
 --! @param      gps_timemark_out  Time mark generator line to the GPS
 --!                               external interrupt.
+--! @param      gps_timepulse_io  Time pulse signal from GPS.
 --! @param      ms_clk          Motion sensor SPI Clock.
 --! @param      ms_mosi_out     Motion sensor SPI Master Out/Slave In.
 --! @param      ms_miso_in      Motion sensor SPI Master In/Slave Out.
 --! @param      ms_int_in       Motion sensor Interrupt.
 --! @param      ms_cs_accgyro_out   Motion sensor A/G SPI chip select.
---! @param      ms_miso_accgyro_in  Motion sensor A/G SPI Master In/Slave
+--! @param      ms_miso_accgyro_io  Motion sensor A/G SPI Master In/Slave
 --!                                 Out.
---! @param      ms_int1_accgyro_in  Motion sensor A/G Interrupt 1.
---! @param      ms_int2_accgyro_in  Motion sensor A/G Interrupt 2.
+--! @param      ms_int1_accgyro_io  Motion sensor A/G Interrupt 1.
+--! @param      ms_int2_accgyro_io  Motion sensor A/G Interrupt 2.
 --! @param      ms_cs_mag_out   Motion sensor magnetic SPI chip select.
---! @param      ms_miso_mag_in  Motion sensor magnetic SPI Master In/
+--! @param      ms_miso_mag_io  Motion sensor magnetic SPI Master In/
 --!                             Slave Out.
---! @param      ms_int_mag_in   Motion sensor magnetic Interrupt.
---! @param      ms_drdy_mag_in  Motion sensor magnetic Data Ready.
+--! @param      ms_int_mag_io   Motion sensor magnetic Interrupt.
+--! @param      ms_drdy_mag_io  Motion sensor magnetic Data Ready.
 --! @param      magram_clk            Magnetic RAM SPI clock.
 --! @param      magram_cs_out         Magnetic RAM chip select.
 --! @param      magram_mosi_out       Magnetic RAM SPI Master Out/Slave In.
---! @param      magram_miso_in        Magnetic RAM SPI Master In/Slave Out.
+--! @param      magram_miso_io        Magnetic RAM SPI Master In/Slave Out.
 --! @param      magram_writeprot_out  Magnetic RAM write protect.
 --! @param      mic_clk         Microphone clock.
---! @param      mic_right_in    Right microphone data.
---! @param      mic_left_in     Left microphone data.
+--! @param      mic_right_io    Right microphone data.
+--! @param      mic_left_io     Left microphone data.
 --! @param      radio_clk       Radio trx/rcv bus clock.
 --! @param      radio_data_io   Radio data bus.
 --
@@ -914,7 +914,7 @@ begin
       net_inv_gated_g         => 1
     )
     Port Map (
-      reset                   => reset,
+      reset                   => '0',
       clk                     => source_clk,
       clk_on_in               => master_gated_en_s,
       clk_off_in              => not master_gated_en_s,
@@ -2431,6 +2431,7 @@ begin
           gps_rx_in             : in    std_logic ;
           gps_tx_out            : out   std_logic ;
           timemarker_out        : out   std_logic ;
+          gps_timepulse_in      : in    std_logic ;
           aop_running_out       : out   std_logic ;
           busy_out              : out   std_logic
         ) ;
@@ -2456,13 +2457,13 @@ begin
         )
         Port Map (
           reset                 => reset,
-          clk                   => spi_clk,
+          clk                   => master_clk,
           curtime_in            => reset_time,
           curtime_latch_in      => systime_latch,
           curtime_valid_in      => systime_valid,
           curtime_vlatch_in     => systime_vlatch,
           gps_enable_in         => CTL_GPS_On,
-          gps_init_start_in     => gps_init,
+          gps_init_start_in     => not gps_ready,
           gps_init_done_out     => gps_ready,
           pollinterval_in       => poll_int,
           datavalid_out         => gps_databanks,
@@ -2475,6 +2476,7 @@ begin
           gps_rx_in             => gps_rx,
           gps_tx_out            => gps_tx,
           timemarker_out        => gps_timemark,
+          gps_timepulse_in      => gps_timepulse,
           aop_running_out       => aop_running
         ) ;
 

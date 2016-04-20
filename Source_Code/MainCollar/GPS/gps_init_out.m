@@ -81,6 +81,8 @@ if (tot_len > msg_buff)
   msg_buff  = tot_len ;
 end
 
+mat_length  = mat_index - 1 ;
+
 %   Write out the message information to the MIF.
 
 fprintf (mif_file, '\n--  Init Message %s\n\n', m_name) ;
@@ -107,7 +109,7 @@ nz_count        = 0 ;
 last_zero       = 1 ;
 last_nz         = 1 ;
 
-for mat_index   = 1 : length (message_mat)
+for mat_index   = 1 : mat_length
 
   b_value       = message_mat {mat_index, 2} ;
 
@@ -121,7 +123,7 @@ for mat_index   = 1 : length (message_mat)
 
   %   Write out the zero count to the MIF file.
 
-  if ((mat_index == length (message_mat) || b_value ~= 0) && zero_count > 0)
+  if ((mat_index == mat_length || b_value ~= 0) && zero_count > 0)
 
     fprintf (mif_file, '%-6u : %02X ;  --  Following zero bytes\n',     ...
              rom_addr, zero_count) ;
@@ -141,7 +143,7 @@ for mat_index   = 1 : length (message_mat)
 
   %   Write out the non-zero count and corresponding bytes to the MIF file.
 
-  if ((mat_index == length (message_mat) || b_value == 0) && nz_count > 0)
+  if ((mat_index == mat_length || b_value == 0) && nz_count > 0)
 
     fprintf (mif_file, '%-6u : %02X ;  --  Following literal bytes\n',  ...
              rom_addr, 128 + nz_count) ;

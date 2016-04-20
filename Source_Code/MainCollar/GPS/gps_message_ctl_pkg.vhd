@@ -7,6 +7,7 @@ use IEEE.NUMERIC_STD.ALL ;
 use IEEE.MATH_REAL.ALL ;
 
 LIBRARY GENERAL ;
+USE GENERAL.UTILITIES_PKG.ALL ;
 USE GENERAL.GPS_CLOCK_PKG.ALL ;
 
 package gps_message_ctl_pkg is
@@ -26,7 +27,7 @@ constant msg_count_bits_c               : natural :=
 constant msg_id_tbl_c                   : natural := 53 ;
 
 constant msg_rom_base_c                 : natural := 0 ;
-constant msg_ram_base_c                 : natural := 187 ;
+constant msg_ram_base_c                 : natural := 312 ;
 constant msg_ram_blocks_c               : natural := 2 ;
 constant msg_ram_temp_addr_c            : natural := 45 * msg_ram_banks_c ;
 constant msg_ram_temp_size_c            : natural := 30 ;
@@ -41,7 +42,7 @@ constant msg_ram_marktime_size_c        : natural := gps_time_bytes_c ;
 
 constant msg_ram_msgbuff_addr_c         : natural :=
       msg_ram_marktime_addr_c + msg_ram_marktime_size_c * msg_ram_banks_c ;
-constant msg_ram_msgbuff_size_c         : natural := 40 ;
+constant msg_ram_msgbuff_size_c         : natural := 44 ;
 
 constant msg_ram_end_c                  : natural :=
       msg_ram_msgbuff_addr_c + msg_ram_msgbuff_size_c ;
@@ -59,7 +60,15 @@ constant msg_field_bits_c               : natural :=
 
 --  Initialization information.
 
-constant msg_init_table_c               : natural := 59 ;
+constant msg_init_table_c               : integer_vector :=
+(
+    59,
+    237,
+    277
+) ;
+
+constant msg_init_bits_c                : natural :=
+      natural (trunc (log2 (real (msg_init_table_c'length - 1)))) + 1 ;
 
 --  Field encoder information.
 

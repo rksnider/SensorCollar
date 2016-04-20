@@ -60,6 +60,7 @@ fprintf (vhdfile, 'use IEEE.STD_LOGIC_1164.ALL ;\n') ;
 fprintf (vhdfile, 'use IEEE.NUMERIC_STD.ALL ;\n') ;
 fprintf (vhdfile, 'use IEEE.MATH_REAL.ALL ;\n\n') ;
 fprintf (vhdfile, 'LIBRARY GENERAL ;\n') ;
+fprintf (vhdfile, 'USE GENERAL.UTILITIES_PKG.ALL ;\n') ;
 fprintf (vhdfile, 'USE GENERAL.GPS_CLOCK_PKG.ALL ;\n\n') ;
 
 fprintf (vhdfile, 'package %s_pkg is\n\n', package_name) ;
@@ -149,8 +150,25 @@ fprintf (vhdfile,                                                       ...
          'msg_field_count_c') ;
 
 fprintf (vhdfile, '\n--  Initialization information.\n\n') ;
-fprintf (vhdfile, 'constant %-30s : natural := %u ;\n',                 ...
-         'msg_init_table_c', romseg_addr (4)) ;
+fprintf (vhdfile, 'constant %-30s : integer_vector :=\n(\n',            ...
+         'msg_init_table_c') ;
+
+for ii = 4 : length (romseg_addr)
+  fprintf (vhdfile, '    %u', romseg_addr (ii)) ;
+
+  if (ii < length (romseg_addr))
+    fprintf (vhdfile, ',\n') ;
+  else
+    fprintf (vhdfile, '\n') ;
+  end
+end
+
+fprintf (vhdfile, ') ;\n\n') ;
+fprintf (vhdfile, 'constant %-30s : natural :=\n',                      ...
+         'msg_init_bits_c') ;
+fprintf (vhdfile,                                                       ...
+         '      natural (trunc (log2 (real (%s''length - 1)))) + 1 ;\n',  ...
+         'msg_init_table_c') ;
 
 fprintf (vhdfile, '\n--  Field encoder information.\n\n') ;
 fprintf (vhdfile,                                                       ...

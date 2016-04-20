@@ -51,6 +51,9 @@ USE WORK.MSG_UBX_NAV_SOL_PKG.ALL ;  --  Navagation Solution message.
 --!             information, periodically initiate a time mark event.
 --!
 --! @param      time_mark_interval_g  Milliseconds between time mark events.
+--! @param      time_mark_timeout_g   Milliseconds allowed to get time mark.
+--! @param      time_mark_wait_g      Milliseconds to wait for next time
+--!                                   mark if this one timed out.
 --! @param      min_pos_accuracy_g    Minimum position accuracy in CM.
 --! @param      max_pos_age_g         Maximum age of the last position
 --!                                   found.
@@ -61,6 +64,7 @@ USE WORK.MSG_UBX_NAV_SOL_PKG.ALL ;  --  Navagation Solution message.
 --! @param      curtime_latch_in      Latch curtime across clock domains.
 --! @param      curtime_valid_in      Latched curtime is valid when set.
 --! @param      curtime_vlatch_in     Latch curtime when valid not set.
+--! @param      initilized_in         Set when the GPS has been initialized.
 --! @param      posbank_in            Position information memory bank.
 --! @param      tmbank_in             Time mark information memory bank.
 --! @param      memreq_out            Access to the memory bus requested.
@@ -68,6 +72,10 @@ USE WORK.MSG_UBX_NAV_SOL_PKG.ALL ;  --  Navagation Solution message.
 --! @param      memaddr_out           Address of the byte of memory to read.
 --! @param      memdata_in            Data byte of memory that is addressed.
 --! @param      memread_en_out        Enable the memory for reading.
+--! @param      continuous_start_out  Put the GPS into continuous fix mode.
+--! @param      continuous_done_in    GPS in continuous fix mode.
+--! @param      powersave_start_out   Put the GPS into powersave fix mode.
+--! @param      powersave_done_in     GPS in powersave fix mode.
 --! @param      marker_out            Time marker external signal.
 --! @param      marker_time_out       Time marker was lowered.
 --! @param      req_position_out      Request a new position fix be
@@ -83,6 +91,10 @@ entity TimeMark is
 
   Generic (
     time_mark_interval_g  : natural := 5 * 60 * 1000 ;
+    time_mark_timeout_g   : natural := 20 * 1000 ;
+    time_mark_wait_g      : natural := 60 * 1000 ;
+    mark_timeout_g        : natural := 10 * 1000 ;
+    mark_retries_g        : natural := 5 ;
     min_pos_accuracy_g    : natural := 100 * 100 ;
     max_pos_age_g         : natural := 15 * 60 * 1000 ;
     memaddr_bits_g        : natural := 8
@@ -96,6 +108,8 @@ entity TimeMark is
     curtime_valid_in      : in    std_logic ;
     curtime_vlatch_in     : in    std_logic ;
 
+
+    initialized_in        : in    std_logic ;
     posbank_in            : in    std_logic ;
     tmbank_in             : in    std_logic ;
     memreq_out            : out   std_logic ;
@@ -104,6 +118,10 @@ entity TimeMark is
                                                     downto 0) ;
     memdata_in            : in    std_logic_vector (7 downto 0) ;
     memread_en_out        : out   std_logic ;
+    continuous_start_out  : out   std_logic ;
+    continuous_done_in    : in    std_logic ;
+    powersave_start_out   : out   std_logic ;
+    powersave_done_in     : in    std_logic ;
     marker_out            : out   std_logic ;
     marker_time_out       : out   std_logic_vector (gps_time_bits_c-1
                                                     downto 0) ;
@@ -141,6 +159,11 @@ architecture rtl of TimeMark is
 
   type TimeMarkState is   (
     MARK_STATE_BYTE_LOAD,
+    MARK_STATE_FUTURE,
+    MARK_STATE_INIT_CHECK,
+    MARK_STATE_CONTINUOUS,
+    MARK_STATE_READY,
+    MARK_STATE_RUNNING,
     MARK_STATE_REQMEM,
     MARK_STATE_RCVMEM,
     MARK_STATE_CHECK,
@@ -150,7 +173,9 @@ architecture rtl of TimeMark is
     MARK_STATE_ACCURACY,
     MARK_STATE_CHK_ACCURACY,
     MARK_STATE_SUCCESS,
+    MARK_STATE_MARK,
     MARK_STATE_END,
+    MARK_STATE_SCHEDULE,
     MARK_STATE_DONE
   ) ;
 
@@ -172,6 +197,10 @@ architecture rtl of TimeMark is
 
   signal time_mark_clock    : std_logic ;
   signal time_mark_target   : unsigned (gps_time_millibits_c-1 downto 0) ;
+  signal delay              : unsigned (gps_time_millibits_c-1 downto 0) ;
+  signal target_time        : unsigned (gps_time_millibits_c-1 downto 0) ;
+  signal retry              : unsigned (const_bits (mark_retries_g) - 1
+                                        downto 0) ;
 
   signal send_time_mark     : std_logic ;
   signal time_mark_pending  : std_logic ;
@@ -273,21 +302,12 @@ begin
       --  Order time mark generation when the time has arrived for one
       --  until that operation has started.
 
-      if (time_mark_target = unsigned (curtime.week_millisecond)) then
-        send_time_mark    <= '1' ;
+      if (time_mark_target = unsigned (intime.week_millisecond)) then
+        send_time_mark      <= '1' ;
 
       elsif (time_mark_pending = '1') then
         send_time_mark      <= '0' ;
 
-      else
-        --  After processing a time mark request, request a time mark
-        --  message until one is received.
-
-        if (tmbank_in = last_tmbank) then
-          req_timemark_out  <= '1' ;
-        else
-          req_timemark_out  <= '0' ;
-        end if ;
       end if ;
     end if ;
   end process marker_alarm ;
@@ -305,52 +325,118 @@ begin
       mem_address               <= (others => '0') ;
       memread_en_out            <= '0' ;
       time_mark_target          <= (others => '0') ;
+      continuous_start_out      <= '0' ;
+      powersave_start_out       <= '0' ;
       marker_out                <= '0' ;
       marker_time_out           <= (others => '0') ;
       last_posbank              <= '0' ;
       last_tmbank               <= '0' ;
       req_position_out          <= '0' ;
-      cur_state                 <= MARK_STATE_POS_WAIT ;
+      cur_state                 <= MARK_STATE_INIT_CHECK ;
 
     elsif (rising_edge (clk)) then
 
       --  Start a new time mark generation sequence.
 
       if (send_time_mark = '1') then
-        time_mark_pending   <= '1' ;
-        cur_state           <= MARK_STATE_REQMEM ;
+        time_mark_pending       <= '1' ;
+        cur_state               <= MARK_STATE_INIT_CHECK ;
 
       elsif (send_time_mark = '0' and time_mark_pending = '1') then
 
         case cur_state is
 
-          --  Wait until the memory request has been granted before continuing.
-
-          when MARK_STATE_REQMEM        =>
-            memreq_out      <= '1' ;
-            cur_state       <= MARK_STATE_RCVMEM ;
-
-          when MARK_STATE_RCVMEM        =>
-            if (memrcv_in = '1') then
-              cur_state     <= MARK_STATE_CHECK ;
-            else
-              cur_state     <= MARK_STATE_RCVMEM ;
-            end if ;
-
           --  Subroutine like state to load a value from memory into a bit
           --  vector.
 
           when MARK_STATE_BYTE_LOAD     =>
-            if (byte_count > 0) then
-              byte_count    <= byte_count - 1 ;
+            if (byte_count /= 0) then
+              byte_count        <= byte_count - 1 ;
 
-              byte_buffer   <= memdata_in &
-                               byte_buffer (byte_buffer_bytes_c*8-1
-                                            downto 8) ;
-              mem_address   <= mem_address + 1 ;
-              cur_state     <= MARK_STATE_BYTE_LOAD ;
+              byte_buffer       <= memdata_in &
+                                   byte_buffer (byte_buffer_bytes_c*8-1
+                                                downto 8) ;
+              mem_address       <= mem_address + 1 ;
+              cur_state         <= MARK_STATE_BYTE_LOAD ;
             else
-              cur_state     <= return_state ;
+              cur_state         <= return_state ;
+            end if ;
+
+          --  Subroutine like state to determine a time in the future.
+
+          when MARK_STATE_FUTURE        =>
+            if (unsigned (curtime.week_millisecond) >=
+                millisec_week_c - delay) then
+
+              target_time       <= unsigned (curtime.week_millisecond) -
+                                   (millisec_week_c - delay) ;
+            else
+              target_time       <= unsigned (curtime.week_millisecond) +
+                                   delay ;
+            end if ;
+
+            cur_state           <= return_state ;
+
+          --  Wait until the initialization system is available and
+          --  the GPS has been initialized.
+
+          when MARK_STATE_INIT_CHECK    =>
+            if (initialized_in = '0') then
+              cur_state             <= MARK_STATE_INIT_CHECK ;
+            else
+              cur_state             <= MARK_STATE_CONTINUOUS ;
+            end if ;
+
+          --  Put the GPS into continuous mode.
+
+          when MARK_STATE_CONTINUOUS    =>
+            continuous_start_out    <= '1' ;
+
+            if (continuous_done_in = '1') then
+              cur_state             <= MARK_STATE_CONTINUOUS ;
+            else
+              cur_state             <= MARK_STATE_READY ;
+            end if ;
+
+          when MARK_STATE_READY         =>
+            if (continuous_done_in = '0') then
+              continuous_start_out  <= '0' ;
+              cur_state             <= MARK_STATE_READY ;
+            else
+              last_posbank          <= posbank_in ;
+              delay                 <= TO_UNSIGNED (time_mark_timeout_g,
+                                                    delay'length) ;
+              return_state          <= MARK_STATE_RUNNING ;
+              cur_state             <= MARK_STATE_FUTURE ;
+            end if ;
+
+          when MARK_STATE_RUNNING       =>
+            if (target_time = unsigned (curtime.week_millisecond)) then
+              delay                 <= TO_UNSIGNED (time_mark_wait_g,
+                                                    delay'length) ;
+              cur_state             <= MARK_STATE_SCHEDULE ;
+            elsif (last_posbank = posbank_in) then
+              cur_state             <= MARK_STATE_RUNNING ;
+            else
+              cur_state             <= MARK_STATE_REQMEM ;
+            end if ;
+
+          --  Wait until the memory request has been granted before
+          --  continuing.
+
+          when MARK_STATE_REQMEM        =>
+            memreq_out              <= '1' ;
+            cur_state               <= MARK_STATE_RCVMEM ;
+
+          when MARK_STATE_RCVMEM        =>
+            if (target_time = unsigned (curtime.week_millisecond)) then
+              delay                 <= TO_UNSIGNED (time_mark_wait_g,
+                                                    delay'length) ;
+              cur_state             <= MARK_STATE_SCHEDULE ;
+            elsif (memrcv_in = '1') then
+              cur_state             <= MARK_STATE_CHECK ;
+            else
+              cur_state             <= MARK_STATE_RCVMEM ;
             end if ;
 
         --  Check how current the GPS position is.  It must always be less
@@ -419,49 +505,74 @@ begin
               cur_state         <= MARK_STATE_POS_WAIT ;
             else
               req_position_out  <= '0' ;
-              last_millibit     <= curtime.week_millisecond (0) ;
+              retry             <= TO_UNSIGNED (mark_retries_g - 1,
+                                                retry'length) ;
+              last_millibit     <= curtime.week_millisecond (8) ;
               cur_state         <= MARK_STATE_SUCCESS ;
             end if ;
 
-          --  Generate a time mark.  Wait for 1 millisecond between setting
-          --  the time mark line high then back low.
-          --  Exit the state machine and schedule a new time mark.
+          --  Generate a time mark.  Wait for 8 millisecond between setting
+          --  the time mark line high then back low.  The operation timeout
+          --  must be reset as the last one might have passed during this
+          --  time mark interval.
 
           when MARK_STATE_SUCCESS       =>
             memreq_out          <= '0' ;
 
-            if (last_millibit /= curtime.week_millisecond (0)) then
+            if (last_millibit /= curtime.week_millisecond (8)) then
               marker_out        <= '1' ;
-              cur_state         <= MARK_STATE_END ;
+              cur_state         <= MARK_STATE_MARK ;
             else
               cur_state         <= MARK_STATE_SUCCESS ;
             end if ;
 
-          when MARK_STATE_END           =>
-            if (last_millibit = curtime.week_millisecond (0)) then
+          when MARK_STATE_MARK          =>
+            if (last_millibit = curtime.week_millisecond (8)) then
               marker_out        <= '0' ;
               marker_time_out   <= TO_STD_LOGIC_VECTOR (curtime) ;
-
-              if (unsigned (curtime.week_millisecond) >=
-                  millisec_week_c - time_mark_interval_g) then
-
-                time_mark_target  <= unsigned (curtime.week_millisecond) -
-                                     (millisec_week_c -
-                                      time_mark_interval_g) ;
-              else
-                time_mark_target  <= unsigned (curtime.week_millisecond) +
-                                     time_mark_interval_g ;
-              end if ;
-
-              cur_state           <= MARK_STATE_DONE ;
+              last_tmbank       <= tmbank_in ;
+              delay             <= TO_UNSIGNED (mark_timeout_g,
+                                                delay'length) ;
+              return_state      <= MARK_STATE_END ;
+              cur_state         <= MARK_STATE_FUTURE ;
             else
-              cur_state           <= MARK_STATE_END ;
+              cur_state         <= MARK_STATE_MARK ;
             end if ;
 
-          when MARK_STATE_DONE          =>
-            time_mark_pending     <= '0' ;
+          when MARK_STATE_END           =>
+            if (target_time = unsigned (curtime.week_millisecond)) then
+              if (retry /= 0) then
+                retry           <= retry - 1 ;
+                last_millibit   <= curtime.week_millisecond (8) ;
+                cur_state       <= MARK_STATE_SUCCESS ;
+              else
+                delay           <= TO_UNSIGNED (time_mark_wait_g,
+                                                delay'length) ;
+                cur_state       <= MARK_STATE_SCHEDULE ;
+              end if ;
+            elsif (last_tmbank /= tmbank_in) then
+              delay             <= TO_UNSIGNED (time_mark_interval_g,
+                                                delay'length) ;
+              cur_state         <= MARK_STATE_SCHEDULE ;
+            else
+              cur_state         <= MARK_STATE_END ;
+            end if ;
 
-            last_tmbank           <= tmbank_in ;
+          --  Exit the state machine and schedule a new time mark.
+
+          when MARK_STATE_SCHEDULE      =>
+            powersave_start_out <= '1' ;
+            return_state        <= MARK_STATE_DONE ;
+            cur_state           <= MARK_STATE_FUTURE ;
+
+          when MARK_STATE_DONE          =>
+            if (powersave_done_in = '0') then
+              powersave_start_out   <= '0' ;
+              time_mark_target      <= target_time ;
+              time_mark_pending     <= '0' ;
+            end if ;
+
+            cur_state           <= MARK_STATE_DONE ;
 
           --  Wait until a new position has been received and then check
           --  it out.  When the bank the position data is stored in changes,
@@ -471,7 +582,12 @@ begin
             memreq_out            <= '0' ;
             req_position_out      <= '1' ;
 
-            if posbank_in /= last_posbank then
+            if (target_time = unsigned (curtime.week_millisecond)) then
+              req_position_out    <= '0' ;
+              delay               <= TO_UNSIGNED (time_mark_wait_g,
+                                                  delay'length) ;
+              cur_state           <= MARK_STATE_SCHEDULE ;
+            elsif (posbank_in /= last_posbank) then
               req_position_out    <= '0' ;
               cur_state           <= MARK_STATE_REQMEM ;
             else

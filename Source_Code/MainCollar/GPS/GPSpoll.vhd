@@ -55,6 +55,9 @@ use WORK.gps_message_ctl_pkg.all ;  --  GPS message control definitions.
 --!                             entity and its components.
 --! @param      curtime_in      Current time since reset, continually
 --!                             updated.
+--! @param      dlatch_in       Latch the current time.
+--! @param      vlatch_in       Latch the last latched current time.
+--! @param      valid_in        The current time is valid now.
 --! @param      pollinterval_in Number of seconds between poll starts.
 --! @param      pollmessages_in Bit vector specifying which messages to
 --!                             poll.
@@ -85,6 +88,9 @@ entity GPSpoll is
     reset           : in    std_logic ;
     clk             : in    std_logic ;
     curtime_in      : in    std_logic_vector (gps_time_bits_c-1 downto 0) ;
+    dlatch_in       : in    std_logic ;
+    vlatch_in       : in    std_logic ;
+    valid_in        : in    std_logic ;
     pollinterval_in : in    unsigned (13 downto 0) ;
     pollmessages_in : in    std_logic_vector (msg_count_c-1 downto 0) ;
     sendreq_out     : out   std_logic ;
@@ -124,6 +130,28 @@ architecture rtl of GPSpoll is
     ) ;
   end component SR_FlipFlop ;
 
+  --  Catch part of the startup time to use as a timer.
+
+  signal delay            : unsigned (6 downto 0) ;
+  signal milli_count      : std_logic_vector (delay'length-1 downto 0) ;
+
+  component CrossChipReceive is
+    Generic (
+      data_bits_g             : natural := 8
+    ) ;
+    Port (
+      clk                     : in    std_logic ;
+      data_latch_in           : in    std_logic ;
+      data_valid_in           : in    std_logic ;
+      valid_latch_in          : in    std_logic ;
+      data_in                 : in    std_logic_vector (data_bits_g-1
+                                                        downto 0) ;
+      data_out                : out   std_logic_vector (data_bits_g-1
+                                                        downto 0) ;
+      data_ready_out          : out   std_logic
+    ) ;
+  end component CrossChipReceive ;
+
   --  Resource allocator to find next message to poll.
 
   component ResourceAllocator is
@@ -150,6 +178,8 @@ architecture rtl of GPSpoll is
   type PollState is   (
     POLL_STATE_START,
     POLL_STATE_WAIT,
+    POLL_STATE_BEGIN,
+    POLL_STATE_BEGIN_DELAY,
     POLL_STATE_GET_SENDER,
     POLL_STATE_WAIT_SENDER,
     POLL_STATE_GET_MEM,
@@ -199,7 +229,8 @@ begin
 
   --  The component is busy.
 
-  busy_out          <= '1'  when (newpoll = '1' or process_busy = '1' or
+  busy_out          <= '1'  when (newpoll = '1' or clr_newpoll = '1' or
+                                  process_busy = '1' or
                                   (pollinterval_in /= 0 and
                                    unsigned (message_bit) /= 0)) else
                        '0' ;
@@ -249,6 +280,22 @@ begin
       reset_in            => clr_newpoll,
       set_in              => set_newpoll,
       result_sd_out       => newpoll
+    ) ;
+
+  --  Catch a part of the startup time to use as a timer.
+
+  delay_catch : CrossChipReceive
+    Generic Map (
+      data_bits_g             => delay'length
+    )
+    Port Map (
+      clk                     => clk,
+      data_latch_in           => dlatch_in,
+      data_valid_in           => vlatch_in,
+      valid_latch_in          => valid_in,
+      data_in                 => curtime.week_millisecond (delay'length-1
+                                                           downto 0),
+      data_out                => milli_count
     ) ;
 
 
@@ -309,6 +356,7 @@ begin
       if (newpoll = '1') then
         clr_newpoll         <= '1' ;
         polled_messages     <= (others => '0') ;
+        process_busy        <= '1' ;
       else
         clr_newpoll         <= '0' ;
       end if ;
@@ -336,11 +384,24 @@ begin
           if (pollinterval_in /= 0 and unsigned (message_bit) /= 0) then
             sendreq_out     <= '1' ;
             process_busy    <= '1' ;
-            cur_state       <= POLL_STATE_GET_SENDER ;
+            cur_state       <= POLL_STATE_BEGIN ;
           else
             sendreq_out     <= '0' ;
             process_busy    <= '0' ;
             cur_state       <= POLL_STATE_WAIT ;
+          end if ;
+
+        --  Wait a short time for messages to clear.
+
+        when POLL_STATE_BEGIN       =>
+          delay               <= unsigned (milli_count) - 1 ;
+          cur_state           <= POLL_STATE_BEGIN_DELAY ;
+
+        when POLL_STATE_BEGIN_DELAY =>
+          if (unsigned (milli_count) = delay) then
+            cur_state         <= POLL_STATE_GET_SENDER ;
+          else
+            cur_state         <= POLL_STATE_BEGIN_DELAY ;
           end if ;
 
         --  Wait until the message sender is available and ready.
@@ -393,6 +454,7 @@ begin
 
         when POLL_STATE_POLL_START  =>
           if (sendready_in = '0') then
+            polled_messages <= polled_messages or message_bit ;
             outsend_out     <= '0' ;
             cur_state       <= POLL_STATE_POLL_WAIT ;
           else
@@ -409,7 +471,6 @@ begin
 
         when POLL_STATE_RELEASE     =>
           if (sendrcv_in = '0') then
-            polled_messages <= polled_messages or message_bit ;
             cur_state       <= POLL_STATE_WAIT ;
           else
             cur_state       <= POLL_STATE_RELEASE ;

@@ -100,6 +100,7 @@ architecture rtl of GPSsend is
     SEND_STATE_WAIT_READY,
     SEND_STATE_GET_MEM,
     SEND_STATE_WAIT_MEM,
+    SEND_STATE_WAKEUP,
     SEND_STATE_START,
     SEND_STATE_SYNC,
     SEND_STATE_CLASS,
@@ -154,9 +155,9 @@ begin
       msg_memaddr     <= (others => '0') ;
       outchar_out     <= (others => '0') ;
       outsend_out     <= '0' ;
-      outdone_out     <= '0' ;
+      outdone_out     <= '1' ;
       cur_state       <= SEND_STATE_GET_MEM ;
-      next_state      <= SEND_STATE_START ;
+      next_state      <= SEND_STATE_WAKEUP ;
 
     elsif (falling_edge (clk)) then
 
@@ -202,6 +203,7 @@ begin
                 m_checksum_A  <= m_checksum_A + unsigned (nextout) ;
               end if ;
 
+              outdone_out     <= '0' ;
               outchar_out     <= nextout ;
               outsend_out     <= '1' ;
 
@@ -226,7 +228,11 @@ begin
             cur_state         <= SEND_STATE_WAIT_MEM ;
           end if ;
 
-        --  Send the message start and sync bytes.
+        --  Send the wakeup, message start, and sync bytes.
+
+        when SEND_STATE_WAKEUP        =>
+          nextout             <= (others => '1') ;
+          next_state          <= SEND_STATE_START ;
 
         when SEND_STATE_START         =>
           nextout             <= msg_ubx_sync_1_c ;

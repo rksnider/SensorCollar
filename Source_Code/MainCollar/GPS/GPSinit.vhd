@@ -47,69 +47,75 @@ use WORK.gps_message_ctl_pkg.all ;  --  GPS message control definitions.
 --! @brief      GPS Initializer.
 --! @details    Initialize the GPS by sending CFG messages to it.
 --!
---! @param      memaddr_bits_g  Bit width of the memory address.
---! @param      reset           Reset the entity to an initial state.
---! @param      clk             Clock used to move throuth states in the
---!                             entity and its components.
---! @param      curtime_in      Current time since reset, continually
---!                             updated.
---! @param      dlatch_in       Latch the current time.
---! @param      vlatch_in       Latch the last latched current time.
---! @param      valid_in        The current time is valid now.
---! @param      init_start_in   Start the initialization process.
---! @param      init_done_out   The initialization process has finished.
---! @param      sendreq_out     Request access to the message sender.
---! @param      sendrcv_in      The message sender is allocated to this
---!                             entity.
---! @param      memreq_out      Request access to memory.
---! @param      memrcv_in       Receive access to memory.
---! @param      memaddr_out     Address of the byte of memory access.
---! @param      memread_en_out  Enable the memory for reading.
---! @param      memwrite_en_out Enable the memory for writing.
---! @param      meminput_in     Data byte read from memory that is
---!                             addressed.
---! @param      memoutput_out   Data byte to write to the addessed memory.
---! @param      msgclass_out    Class of the message to send.
---! @param      msgid_out       ID of the message to sent.
---! @param      msglength_out   Payload length of the message to send.
---! @param      msgaddress_out  Address the payload starts at.
---! @param      sendready_in    The message sender is ready for another
---!                             message.
---! @param      outsend_out     Send the message.
---! @param      busy_out        The entity is busy processing.
+--! @param      memaddr_bits_g    Bit width of the memory address.
+--! @param      reset             Reset the entity to an initial state.
+--! @param      clk               Clock used to move through states in the
+--!                               entity and its components.
+--! @param      curtime_in        Current time since reset, continually
+--!                               updated.
+--! @param      dlatch_in         Latch the current time.
+--! @param      vlatch_in         Latch the last latched current time.
+--! @param      valid_in          The current time is valid now.
+--! @param      init_start_in     Start the initialization process.
+--! @param      init_done_out     The initialization process has finished.
+--! @param      init_select_in    Number of the initialization sequence to
+--!                               use.
+--! @param      gps_timepulse_in  Timepulse signal from the GPS.
+--! @param      sendreq_out       Request access to the message sender.
+--! @param      sendrcv_in        The message sender is allocated to this
+--!                               entity.
+--! @param      memreq_out        Request access to memory.
+--! @param      memrcv_in         Receive access to memory.
+--! @param      memaddr_out       Address of the byte of memory access.
+--! @param      memread_en_out    Enable the memory for reading.
+--! @param      memwrite_en_out   Enable the memory for writing.
+--! @param      meminput_in       Data byte read from memory that is
+--!                               addressed.
+--! @param      memoutput_out     Data byte to write to the addessed memory.
+--! @param      msgclass_out      Class of the message to send.
+--! @param      msgid_out         ID of the message to sent.
+--! @param      msglength_out     Payload length of the message to send.
+--! @param      msgaddress_out    Address the payload starts at.
+--! @param      sendready_in      The message sender is ready for another
+--!                               message.
+--! @param      outsend_out       Send the message.
+--! @param      busy_out          The entity is busy processing.
 --
 ----------------------------------------------------------------------------
 
 entity GPSinit is
 
   Generic (
-    memaddr_bits_g  : natural := 10
+    memaddr_bits_g    : natural := 10
   ) ;
   Port (
-    reset           : in    std_logic ;
-    clk             : in    std_logic ;
-    curtime_in      : in    std_logic_vector (gps_time_bits_c-1 downto 0) ;
-    dlatch_in       : in    std_logic ;
-    vlatch_in       : in    std_logic ;
-    valid_in        : in    std_logic ;
-    init_start_in   : in    std_logic ;
-    init_done_out   : out   std_logic ;
-    sendreq_out     : out   std_logic ;
-    sendrcv_in      : in    std_logic ;
-    memreq_out      : out   std_logic ;
-    memrcv_in       : in    std_logic ;
-    memaddr_out     : out   std_logic_vector (memaddr_bits_g-1 downto 0) ;
-    memread_en_out  : out   std_logic ;
-    memwrite_en_out : out   std_logic ;
-    meminput_in     : in    std_logic_vector (7 downto 0) ;
-    memoutput_out   : out   std_logic_vector (7 downto 0) ;
-    msgclass_out    : out   std_logic_vector (7 downto 0) ;
-    msgid_out       : out   std_logic_vector (7 downto 0) ;
-    msglength_out   : out   unsigned (15 downto 0) ;
-    msgaddress_out  : out   std_logic_vector (memaddr_bits_g-1 downto 0) ;
-    sendready_in    : in    std_logic ;
-    outsend_out     : out   std_logic ;
-    busy_out        : out   std_logic
+    reset             : in    std_logic ;
+    clk               : in    std_logic ;
+    curtime_in        : in    std_logic_vector (gps_time_bits_c-1 downto 0) ;
+    dlatch_in         : in    std_logic ;
+    vlatch_in         : in    std_logic ;
+    valid_in          : in    std_logic ;
+    init_start_in     : in    std_logic ;
+    init_done_out     : out   std_logic_vector (msg_init_table_c'length-1
+                                                downto 0) ;
+    init_select_in    : in    unsigned (msg_init_bits_c-1 downto 0) ;
+    gps_timepulse_in  : in    std_logic ;
+    sendreq_out       : out   std_logic ;
+    sendrcv_in        : in    std_logic ;
+    memreq_out        : out   std_logic ;
+    memrcv_in         : in    std_logic ;
+    memaddr_out       : out   std_logic_vector (memaddr_bits_g-1 downto 0) ;
+    memread_en_out    : out   std_logic ;
+    memwrite_en_out   : out   std_logic ;
+    meminput_in       : in    std_logic_vector (7 downto 0) ;
+    memoutput_out     : out   std_logic_vector (7 downto 0) ;
+    msgclass_out      : out   std_logic_vector (7 downto 0) ;
+    msgid_out         : out   std_logic_vector (7 downto 0) ;
+    msglength_out     : out   unsigned (15 downto 0) ;
+    msgaddress_out    : out   std_logic_vector (memaddr_bits_g-1 downto 0) ;
+    sendready_in      : in    std_logic ;
+    outsend_out       : out   std_logic ;
+    busy_out          : out   std_logic
   ) ;
 
 end entity GPSinit ;
@@ -123,6 +129,10 @@ architecture rtl of GPSinit is
 
   signal init_started       : std_logic := '0' ;
   signal start_init         : std_logic ;
+  signal timepulse_last     : std_logic ;
+  signal init_bit           : unsigned (msg_init_table_c'length-1 downto 0) ;
+  signal init_bit_last      : unsigned (msg_init_table_c'length-1 downto 0) ;
+  signal init_done          : unsigned (msg_init_table_c'length-1 downto 0) ;
 
   component SR_FlipFlop is
     Generic (
@@ -217,11 +227,14 @@ begin
   --  Catch the initialization signal.  The signal may be shorter than the
   --  clock period used for this entity.  An asynchronous SR flip flop will
   --  still be able to catch the signal.
+  --  The result will be set if the initialize start signal is set or the
+  --  timepulse signal has changed since the last initialization.
 
   init_sig : SR_FlipFlop
     Port Map (
       reset_in              => init_started,
-      set_in                => init_start_in,
+      set_in                => init_start_in or (gps_timepulse_in xor
+                                                 timepulse_last),
       result_rd_out         => start_init
     ) ;
 
@@ -241,9 +254,16 @@ begin
       data_out                => milli_count
     ) ;
 
+  --  Initialation bit for current initialization.
+
+  init_bit          <= SHIFT_LEFT (TO_UNSIGNED (1, init_bit'length),
+                                   TO_INTEGER  (init_select_in)) ;
+
+  init_done_out     <= std_logic_vector (init_done) ;
+
   --  Entity busy.
 
-  busy_out    <= start_init or process_busy ;
+  busy_out          <= start_init or process_busy ;
 
 
   --------------------------------------------------------------------------
@@ -254,14 +274,15 @@ begin
   begin
     if (reset = '1') then
       init_started          <= '0' ;
-      init_done_out         <= '0' ;
+      init_done             <= (others => '0') ;
+      init_bit_last         <= (others => '0') ;
       memreq_out            <= '0' ;
       memread_en_out        <= '0' ;
       memwrite_en_out       <= '0' ;
       mem_address           <= (others => '0') ;
       outsend_out           <= '0' ;
       sendreq_out           <= '0' ;
-      process_busy          <= '0' ;
+      process_busy          <= '1' ;
       cur_state             <= INIT_STATE_WAIT ;
 
     elsif (rising_edge (clk)) then
@@ -273,15 +294,15 @@ begin
         --  Wait until initialization requested.
 
         when INIT_STATE_WAIT        =>
-          init_done_out       <= '0' ;
-
           if (start_init = '1') then
             process_busy      <= '1' ;
             init_started      <= '1' ;
+            init_done         <= init_done and not init_bit ;
+            init_bit_last     <= init_bit ;
             mem_inaddress     <=
-                RESIZE (CONST_UNSIGNED (msg_rom_base_c +
-                                        msg_init_table_c),
-                        mem_address'length) ;
+              CONST_UNSIGNED (msg_rom_base_c) +
+              TO_UNSIGNED (msg_init_table_c (TO_INTEGER (init_select_in)),
+                           mem_inaddress'length) ;
             sendreq_out       <= '1' ;
             cur_state         <= INIT_STATE_START ;
           else
@@ -445,15 +466,16 @@ begin
         when INIT_STATE_MSG_DONE    =>
           if (sendready_in = '1') then
             if (last_message = '1') then
-              sendreq_out       <= '0' ;
-              init_done_out     <= '1' ;
-              cur_state         <= INIT_STATE_WAIT ;
+              timepulse_last  <= gps_timepulse_in ;
+              sendreq_out     <= '0' ;
+              init_done       <= init_done or init_bit_last ;
+              cur_state       <= INIT_STATE_WAIT ;
             else
-              delay             <= unsigned (milli_count) - 1 ;
-              cur_state         <= INIT_STATE_DELAY ;
+              delay           <= unsigned (milli_count) - 1 ;
+              cur_state       <= INIT_STATE_DELAY ;
             end if ;
           else
-            cur_state           <= INIT_STATE_MSG_DONE ;
+            cur_state         <= INIT_STATE_MSG_DONE ;
           end if ;
 
         when INIT_STATE_DELAY       =>
