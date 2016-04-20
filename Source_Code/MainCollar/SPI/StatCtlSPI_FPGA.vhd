@@ -37,6 +37,9 @@ use IEEE.NUMERIC_STD.ALL ;      --! Use numeric standard.
 use IEEE.MATH_REAL.ALL ;        --! Real number functions.
 
 
+library GENERAL ;               --! General libraries
+use GENERAL.UTILITIES_PKG.ALL ;
+
 library WORK ;                      --! Local Libaries
 use WORK.PC_STATUSCONTROL_PKG.All ;
 
@@ -60,6 +63,7 @@ use WORK.PC_STATUSCONTROL_PKG.All ;
 --! @param      status_set_out  The status register has been updated.
 --! @param      control_in      The FPGAs  control register.
 --! @param      busy_out        The component is busy communicating.
+--! @param      startup_in      Start the machine. Do not transact if not on.
 --! @param      sclk            SCLK of SPI
 --! @param      mosi            MOSI of SPI
 --! @param      miso            MISO of SPI
@@ -74,7 +78,7 @@ entity StatCtlSPI_FPGA is
 
   Generic (
     status_bits_g           : natural := 16 ;
-    control_bits_g          : natural := 16 ;
+    control_bits_g          : natural := 17 ;
     flash_bytes_transfer    : natural := 0 ;
     data_length_bit_width_g : natural := 8
   ) ;
@@ -88,6 +92,8 @@ entity StatCtlSPI_FPGA is
     control_in              : in    std_logic_vector (control_bits_g-1
                                                       downto 0) ;
     busy_out                : out   std_logic ;
+    
+    startup_in              : in    std_logic;
 
     sclk                    : out   std_logic ;
     mosi                    : out   std_logic ;
@@ -141,23 +147,36 @@ architecture rtl of StatCtlSPI_FPGA is
                 std_logic_vector(7 downto 0);
   signal    slave_master_data_ack_spi_signal  : std_logic;
 
+  constant control_register_byte_count_c      : natural :=
+              (control_bits_g + 7) / 8;
+  constant status_register_byte_count_c       : natural :=
+              (status_bits_g + 7) / 8;
+  
+  
+  constant max_of_ctl_status_bytes : natural 
+                                  := maximum(control_register_byte_count_c,
+                                      status_register_byte_count_c);
+  
+  
   signal    control_in_follower               :
-                std_logic_vector (control_bits_g-1 downto 0);
+                std_logic_vector (max_of_ctl_status_bytes*8-1 downto 0);
 
   signal    status_shift                      :
-                std_logic_vector (status_bits_g-1 downto 0) ;
+                std_logic_vector (max_of_ctl_status_bytes*8-1 downto 0);
 
   signal    control_shift                     :
-                std_logic_vector (control_bits_g-1 downto 0) ;
+                std_logic_vector (max_of_ctl_status_bytes*8-1 downto 0);
 
   signal    status_chg_in_follower            : std_logic;
 
-  --  Control bits must be a byte bit count.
 
-  constant control_register_byte_count_c      : natural :=
-              control_bits_g / 8;
-  constant status_register_byte_count_c       : natural :=
-              status_bits_g / 8;
+
+              
+
+                                      
+                                      
+  signal control_in_expand : std_logic_vector(max_of_ctl_status_bytes*8-1 downto 0) := 
+                                (others => '0');
 
   --  Counts used to keep track of read bytes off MISO.
 
@@ -211,13 +230,19 @@ architecture rtl of StatCtlSPI_FPGA is
 
 begin
 
+
+
+                             
   --  Determine if the entity is busy.
 
-  busy_out      <= '1' when ((process_busy   = '1')                   or
-                             (startup_en     = '1')                   or
-                             (control_in    /= control_in_follower)   or
-                             (status_chg_in /= status_chg_in_follower))
-                       else '0' ;
+  
+  
+  busy_out      <= '1'; 
+  
+  -- when ((process_busy   = '1')                   or
+                             -- (control_in    /= control_in_follower)   or
+                             -- (status_chg_in /= status_chg_in_follower))
+                       -- else '0' ;
 
 
   --------------------------------------------------------------------------
@@ -288,7 +313,7 @@ begin
           if (startup_en = '1') then
             cur_statctrl_state    <= STATCRL_SETUP;
             startup_processed     <= '1';
-            control_shift         <= control_in;
+            control_shift         <= control_in_expand;
             process_busy          <= '1' ;
           else
             process_busy          <= '0' ;
@@ -301,7 +326,7 @@ begin
           byte_read_count           <=
                 to_unsigned (0, byte_read_count'length);
           byte_read_number          <=
-                to_unsigned (status_register_byte_count_c +
+                to_unsigned (max_of_ctl_status_bytes +
                              flash_bytes_transfer,byte_read_number'length);
 
           if (command_busy_spi_signal = '0') then
@@ -311,7 +336,7 @@ begin
                       to_unsigned (0, command_spi_signal'length));
             address_en_spi_signal   <= '0';
             data_length_spi_signal  <= std_logic_vector (
-                      to_unsigned (status_register_byte_count_c +
+                      to_unsigned (max_of_ctl_status_bytes +
                                    flash_bytes_transfer,
                                    data_length_spi_signal'length));
             master_slave_data_spi_signal
@@ -367,7 +392,8 @@ begin
 
       when STATCRL_TRANSFER_DONE =>
         cur_statctrl_state      <= STATCRL_WAIT;
-        status_out              <= status_shift;
+        status_out              <= status_shift(status_shift'length-1 downto 
+                            status_shift'length-status_bits_g);
         status_set_out          <= '1' ;
 
       end case ;
@@ -453,29 +479,36 @@ begin
       startup_en                    <= '0';
 
       --This will guarantee a initial push on startup.
+      --But make sure the critical control registers are on.
 
-      control_in_follower           <= (others => '1');
-
+      control_in_follower           <= (others => '0');
+      control_in_expand             <= (others => '0');
 
     elsif (clk'event and clk = '1') then
+      if (startup_in = '1') then 
 
-      if (control_in_follower /= control_in) then
-        control_in_follower         <= control_in ;
-        startup_en                  <= '1' ;
+        control_in_expand(control_in_expand'length-1 
+                        downto control_in_expand'length  - 
+                               control_bits_g) <= control_in;
 
-      elsif (status_chg_in_follower /= status_chg_in) then
-        status_chg_in_follower      <= status_chg_in;
+        if (control_in_follower /= control_in_expand) then
+          control_in_follower         <= control_in_expand ;
+          startup_en                  <= '1' ;
 
-        if (status_chg_in = '1') then
-          startup_en                <= '1';
+        elsif (status_chg_in_follower /= status_chg_in) then
+          status_chg_in_follower      <= status_chg_in;
+
+          if (status_chg_in = '1') then
+            startup_en                <= '1';
+          end if;
+
+        elsif (startup_processed_follower /= startup_processed) then
+          startup_processed_follower  <= startup_processed ;
+
+          if (startup_processed = '1') then
+            startup_en                <= '0' ;
+          end if ;
         end if;
-
-      elsif (startup_processed_follower /= startup_processed) then
-        startup_processed_follower  <= startup_processed ;
-
-        if (startup_processed = '1') then
-          startup_en                <= '0' ;
-        end if ;
       end if;
     end if;
   end process;

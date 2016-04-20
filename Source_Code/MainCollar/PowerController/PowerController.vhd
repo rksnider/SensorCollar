@@ -187,6 +187,7 @@ entity PowerController is
     pwr_sdcard_out        : out   std_logic ;
     pwr_ls_1p8_out        : out   std_logic ;
     pwr_ls_3p3_out        : out   std_logic ;
+    pwr_vcc1p8_aux_out    : out   std_logic ;
 
     solar_max_in          : in    std_logic ;
     solar_on_in           : in    std_logic ;
@@ -196,7 +197,7 @@ entity PowerController is
     gpio_2                : out   std_logic ;
     gpio_3                : out   std_logic ;
     gpio_4                : out   std_logic ;
-    gpio_5                : in   std_logic ;
+    gpio_5                : out   std_logic ;
     gpio_6                : out   std_logic ;
     gpio_7                : out   std_logic ;
     gpio_8                : out   std_logic ;
@@ -260,6 +261,12 @@ architecture rtl of PowerController is
                                     pfl_flash_data_io (3 downto 3) ;
 
   --  Parallel Flash Loader.
+  
+  
+  --PFL clock divide signals.
+  signal pfl_clk_div                : unsigned(3 downto 0);
+  signal pfl_clk                    : std_logic;
+  --PFL clock divide signals.
 
   component PFL is
     port
@@ -408,7 +415,7 @@ begin
   PC_StatusReg (StatusSignals'pos(Stat_ForceStartup_e)) <= forced_start_in ;
   PC_StatusReg (StatusSignals'pos(Stat_PwrGood2p5_e))   <= pwr_2p5_good_in ;
   PC_StatusReg (StatusSignals'pos(Stat_PwrGood3p3_e))   <= pwr_3p3_good_in ;
-  PC_StatusReg (StatusSignals'pos(Stat_Spacer1_e))      <= '0' ;
+  PC_StatusReg (StatusSignals'pos(Stat_RTCAlarm_e))      <= '0' ;
   PC_StatusReg (StatusSignals'pos(Stat_Spacer2_e))      <= '0' ;
   PC_StatusReg (StatusSignals'pos(Stat_Spacer3_e))      <= '0' ;
   PC_StatusReg (StatusSignals'pos(Stat_Spacer4_e))      <= '0' ;
@@ -420,22 +427,14 @@ begin
 
   --  Control Register Bit Mappings and default values.
 
-    gpio_1		<=		 pwr_1p1_good_in;
-		gpio_2		<=		 pwr_3p3_good_in; 
-		gpio_3    <=     pwr_2p5_good_in;
-    --gpio_3    <=     gpio_5;
-		gpio_4		<=     master_clk;
-		-- gpio_5		<=      pwr_ls_1p8_out; 
-		-- gpio_6		<=      pwr_im_out;
-		-- gpio_7		<=	    pwr_micL_out;
-		-- gpio_8		<=	    pwr_micR_out;  
-  bat_recharge_out      <=
+
+  
+  bat_recharge_out   <=    
         '0' when (bat_good_in = '0') else
         PC_ControlReg (ControlSignals'pos(Ctl_RechargeSwitch_e))
-            when (PC_ControlUse = '1') else
-        '1' ;
+            when (PC_ControlUse = '1') else '1' ;
 
-  bat_power_out         <=
+  bat_power_out        <= 
         PC_ControlReg (ControlSignals'pos(Ctl_MainPowerSwitch_e))
         when (PC_ControlUse = '1') else '1' ;
   solar_run_out         <=
@@ -478,6 +477,12 @@ begin
         '0' when (fpga_activated = '0') else 
 		  PC_ControlReg (ControlSignals'pos(Ctl_FLASH_Granted_e))
         when (PC_ControlUse = '1') else '1';
+        
+        
+  pwr_vcc1p8_aux_out <= 
+      '0' when (fpga_activated = '0') else 
+      PC_ControlReg (ControlSignals'pos(Ctl_vcc1p8_aux_ctrl_e))
+      when (PC_ControlUse = '1') else '0';
 
   --  Parallel Flash Loader.
   --  When pfl_flash_access_granted is low all flash_* lines are
@@ -492,7 +497,7 @@ begin
       fpga_conf_done            => fpga_cnf_conf_done_in,
       fpga_nstatus              => fpga_cnf_nstatus_in,
       fpga_pgm                  => "000",
-      pfl_clk                   => master_clk,
+      pfl_clk                   => pfl_clk,
       pfl_flash_access_granted  => flash_access_granted,
       pfl_nreset                => (fpga_activated and not fpga_running),
       flash_io0                 => pfl_flash_io0,
@@ -525,6 +530,27 @@ begin
       data_in                 => spi_mosi_in,
       data_out                => spi_miso
     ) ;
+    
+    
+    
+  -- --------------------------------------------------------------------------
+  -- --  Create a divide by two clock for PFL use. 
+  -- --  Only when the FPGA has powered but has not started running.
+  -- --  This is when the PFL is running.
+  -- --------------------------------------------------------------------------
+  pfl_clk <= pfl_clk_div(0);
+  
+  div_pfl_clock : process (fpga_activated,fpga_running,master_clk)
+  begin
+    if (fpga_activated = '1' and fpga_running = '0') then
+      if (master_clk'event and master_clk = '1') then 
+        pfl_clk_div <= pfl_clk_div + 1;
+      end if;
+    else
+      pfl_clk_div <= (others => '0');
+    end if;
+
+  end process div_pfl_clock ;
 
   --------------------------------------------------------------------------
   --  Turn the FPGA on and off based on the turnon and shutdown signals.

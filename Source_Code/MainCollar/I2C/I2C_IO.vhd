@@ -280,6 +280,7 @@ architecture rtl of I2C_IO is
     state_read_cmd_e,
     state_do_writes_e,
     state_write_busy_e,
+    state_write_subcmd_wait_e,
     state_do_reads_e,
     state_read_busy_e,
     state_save_byte_e,
@@ -498,22 +499,42 @@ begin
             i2c_latch           <= '1' ;
             mem_req_out         <= '1' ;
 
+          --For me this needs to be once off. 
+          --Jump into delay state after I see two transitions on the busy line. 
+          --This accomodates both cmd_delays and no cmd_delay. 
           elsif (i2c_busy_in_follower /= i2c_busy_in) then
             i2c_busy_in_follower  <= i2c_busy_in;
               --  Wait for subcommand delay when this was the last write.
-          elsif ( i2c_busy_in_follower = '0') then
+            if ( i2c_busy_in = '0') then
               if (i2c_latch = '0' and
                  (delay_count /= subcmd_delay_cycles)) then
+                 cur_state <= state_write_subcmd_wait_e;
+              else
+                delay_count       <= (others => '0') ;
+
+                cur_state         <= state_do_writes_e ;
+
+                mem_req_out       <= '1' ;
+                mem_read_en_out   <= '1' ;
+              end if ;
+            end if;
+          end if ;
+          
+          
+        when state_write_subcmd_wait_e =>
+
+              if (delay_count /= subcmd_delay_cycles) then
                 delay_count       <= delay_count + 1 ;
               else
                 delay_count       <= (others => '0') ;
 
                 cur_state         <= state_do_writes_e ;
+                
                 mem_req_out       <= '1' ;
                 mem_read_en_out   <= '1' ;
               end if ;
-          end if;
-          --end if ;
+
+          
 
         --  Start reading data from the I2C bus.  Checks to determine if
         --  this is the last read of a subcommand are made before waiting
