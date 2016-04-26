@@ -3,7 +3,7 @@
 --              collar project
 -- @details
 -- @author     Chris Casebeer
--- @date       10_9_2015
+-- @date       2_12_2015
 -- @copyright
 --
 --  This program is free software: you can redistribute it and/or modify
@@ -40,6 +40,8 @@ LIBRARY GENERAL ;
 use WORK.PC_STATUSCONTROL_PKG.ALL;
 use WORK.Collar_Control_pkg.ALL;
 
+use WORK.SHARED_SDC_VALUES_PKG.ALL ;
+
 
 LIBRARY altera_mf;
 USE altera_mf.altera_mf_components.all;
@@ -72,16 +74,31 @@ USE altera_mf.altera_mf_components.all;
 --!
 --! @param    txrx_start_out           Transceiver startup bit out
 --! @param    txrx_done_in             Transceiver startup done in
+--!    
+--! @param    shutdown_in             Initiate shutdown of entire system
+--!    
+--! @param    statctl_startup_out     Give permissions to statctl to start.
+--!    
+--! @param    rem_cap_mah_valid_in    Bat Capcity from Batmonitor is valid. 
+--! @param    rem_cap_mah_in          Bat Capcity as read from Batmonitor.
+
+
 --!
 
 
 entity Startup_Shutdown is
 
+  Generic (
+    clk_freq_g            : natural := 50e6
+    );
   Port (
     clk                 : in    std_logic ;
     rst_n               : in    std_logic ;
 
     pc_control_reg_out  : out   std_logic_vector (ControlSignalsCnt_c-1
+                                                  downto 0) ;
+                                                  
+    pc_control_reg_in  : in   std_logic_vector (ControlSignalsCnt_c-1
                                                   downto 0) ;
 
     pc_status_set_in    : in    std_logic ;
@@ -94,6 +111,12 @@ entity Startup_Shutdown is
 
     imu_start_out       : out   std_logic ;
     imu_done_in         : in    std_logic ;
+    
+    rtc_start_out       : out   std_logic ;
+    rtc_done_in         : in    std_logic ;
+    
+    batmon_start_out    : out   std_logic ;
+    batmon_done_in      : in    std_logic ;
 
     mems_start_out      : out   std_logic ;
     mems_done_in        : in    std_logic ;
@@ -105,7 +128,14 @@ entity Startup_Shutdown is
     gps_done_in         : in    std_logic ;
 
     txrx_start_out      : out   std_logic ;
-    txrx_done_in        : in    std_logic
+    txrx_done_in        : in    std_logic ;
+    
+    shutdown_in         : in    std_logic ;
+    
+    statctl_startup_out   : out std_logic;
+    
+    rem_cap_mah_valid_in  : in   std_logic ; 
+    rem_cap_mah_in        : in   std_logic_vector (15 downto 0)
 
 ) ;
 
@@ -141,8 +171,41 @@ architecture Behavior of Startup_Shutdown is
 
     START_TXRX,
     START_TXRX_WAITDONE,
+    
+    START_RTC,
+    START_RTC_WAITDONE,
+    
+        
+    START_BATMON,
+    START_BATMON_WAITDONE,
 
-    STATE_DONE
+    
+    STATE_DONE,
+    
+    STOP_WAIT,
+    STOP_WAIT_DEBUG,
+    
+    STOP_SDCTRL,
+    --STOP_SDCTRL_WAITDONE,
+    
+    STOP_SDRAM,
+    --STOP_SDRAM_WAITDONE,
+    
+    STOP_MAGRAM,
+    --STOP_MAGRAM_WAITDONE,
+    
+    STOP_GPS,
+    --STOP_GPS_WAITDONE,
+    
+    STOP_MEMS,
+    --STOP_MEMS_WAITDONE,
+    
+    STOP_IMU,
+    --STOP_IMU_WAITDONE,
+    
+    STOP_TXRX,
+    
+    STOP_FPGA
 
   );
 
@@ -159,6 +222,9 @@ architecture Behavior of Startup_Shutdown is
   signal mag_done_s       : std_logic ;
   signal gps_done_s       : std_logic ;
   signal txrx_done_s      : std_logic ;
+  signal shutdown_s       : std_logic ;
+  signal rtc_done_s       : std_logic;
+  signal batmon_done_s    : std_logic;
 
   signal pc_status_set    : std_logic ;
   signal sd_contr_done    : std_logic ;
@@ -168,8 +234,18 @@ architecture Behavior of Startup_Shutdown is
   signal mag_done         : std_logic ;
   signal gps_done         : std_logic ;
   signal txrx_done        : std_logic ;
-
+  signal shutdown         : std_logic;
+  signal rtc_done         : std_logic;
+  signal batmon_done      : std_logic;
   signal pc_status_set_follower :std_logic;
+  
+  
+  
+  --Starting to talk to the IMU immediately after powering it on
+  --does not work. This timeout it set for one second.
+  constant imu_delay : natural := spi_clk_freq_c * 1;
+  signal    imu_delay_count :  unsigned(natural(trunc(log2(real(
+                              imu_delay-1)))) downto 0);  
 
   --Debug
   signal sd_contr_start_out_debug : std_logic_vector(0 downto 0);
@@ -178,21 +254,26 @@ architecture Behavior of Startup_Shutdown is
                                             downto 0) := (others => '0') ;
 
   --Pure Debug
-  --signal start_signal : std_logic_vector(0 downto 0);
-
+  signal start_signal : std_logic_vector(0 downto 0);
+  
+  --DEBUG SIGNALS
+  signal rtc_startup  : std_logic_vector(0 downto 0);
+  constant shutdown_delay : natural := spi_clk_freq_c * 30;
+  signal  shutdown_delay_count :  unsigned(natural(trunc(log2(real(
+                            shutdown_delay-1)))) downto 0);  
+  
+  signal main_on_debug : std_logic_vector(0 downto 0);
+  signal recharge_on_debug : std_logic_vector(0 downto 0);
+  signal solar_on_debug : std_logic_vector(0 downto 0);
+  
 begin
 
   pc_control_reg_out <= pc_control_reg;
 
-
-  --
-  --Purely Debug System Stuff
-  --
-
   -- in_system_probe0 : altsource_probe
     -- GENERIC MAP (
       -- enable_metastability => "NO",
-      -- instance_id => "sds",
+      -- instance_id => "sta",
       -- probe_width => 1,
       -- sld_auto_instance_index => "YES",
       -- sld_instance_index => 0,
@@ -201,87 +282,15 @@ begin
       -- lpm_type => "altsource_probe"
     -- )
     -- PORT MAP (
-      -- probe => sd_contr_start_out_debug,
-      -- source => sd_contr_start_out_debug
+      -- probe => start_signal,
+      -- source => start_signal
     -- );
-
-   -- sd_contr_start_out <=  sd_contr_start_out_debug(0);
-
-
-     -- in_system_probe1 : altsource_probe
-    -- GENERIC MAP (
-      -- enable_metastability => "NO",
-      -- instance_id => "cr",
-      -- probe_width => pc_control_reg'length,
-      -- sld_auto_instance_index => "YES",
-      -- sld_instance_index => 0,
-      -- source_initial_value => "0",
-      -- source_width => pc_control_reg'length,
-      -- lpm_type => "altsource_probe"
-    -- )
-    -- PORT MAP (
-      -- probe => pc_control_reg,
-      -- source => pc_control_reg
-    -- );
-
-         -- in_system_probe1 : altsource_probe
-    -- GENERIC MAP (
-      -- enable_metastability => "NO",
-      -- instance_id => "cr",
-      -- probe_width => pc_control_reg'length,
-      -- sld_auto_instance_index => "YES",
-      -- sld_instance_index => 0,
-      -- source_initial_value => "0",
-      -- source_width => pc_control_reg'length,
-      -- lpm_type => "altsource_probe"
-    -- )
-    -- PORT MAP (
-      -- probe => pc_control_reg,
-      -- source => pc_control_reg
-    -- );
-
-
-  -- in_system_probe2 : altsource_probe
-    -- GENERIC MAP (
-      -- enable_metastability => "NO",
-      -- instance_id => "rch",
-      -- probe_width => 1,
-      -- sld_auto_instance_index => "YES",
-      -- sld_instance_index => 0,
-      -- source_initial_value => "0",
-      -- source_width => 1,
-      -- lpm_type => "altsource_probe"
-    -- )
-    -- PORT MAP (
-      -- probe => PC_ControlReg (ControlSignals'pos (Ctl_RechargeSwitch_e)),
-      -- source => PC_ControlReg (ControlSignals'pos (Ctl_RechargeSwitch_e))
-    -- );
-
-      -- in_system_probe3 : altsource_probe
-    -- GENERIC MAP (
-      -- enable_metastability => "NO",
-      -- instance_id => "mai",
-      -- probe_width => 1,
-      -- sld_auto_instance_index => "YES",
-      -- sld_instance_index => 0,
-      -- source_initial_value => "0",
-      -- source_width => 1,
-      -- lpm_type => "altsource_probe"
-    -- )
-    -- PORT MAP (
-      -- probe => PC_ControlReg (ControlSignals'pos (Ctl_MainPowerSwitch_e)),
-      -- source => PC_ControlReg (ControlSignals'pos (Ctl_MainPowerSwitch_e))
-    -- );
-
-  --
-  --Purely Debug System Stuff
-  --
-
+    
 
 
 
   -- The ideas here are as follows:
-  -- Sequence the turning on of the entities.
+  -- Sequence the turning on/off of the entities.
   -- The physical component voltage is turned on via CPLD control register
   -- setting.
   -- Then the collar component is told to start its initialization.
@@ -293,12 +302,16 @@ begin
 
 
 
-  startup_state_machine:  process (clk, rst_n)
+  startup_shutdown_state_machine:  process (clk, rst_n)
   begin
     if (rst_n = '0') then
 
       cur_state               <= STATE_WAIT;
+      
       pc_control_reg          <= (others => '0');
+      pc_control_reg (ControlSignals'pos (Ctl_MainPowerSwitch_e))   <= '1';
+      pc_control_reg (ControlSignals'pos (Ctl_RechargeSwitch_e))    <= '1';
+      pc_control_reg (ControlSignals'pos (Ctl_SolarCtlShutdown_e))  <= '0';
       pc_status_set           <= '0';
       pc_status_set_s         <= '0';
       pc_status_set_follower  <= '0';
@@ -323,6 +336,15 @@ begin
       txrx_start_out          <= '0';
       txrx_done               <= '0';
       txrx_done_s             <= '0';
+      shutdown                <= '0';
+      shutdown_s              <= '0';
+      batmon_done             <= '0';
+      batmon_done_s           <= '0';
+      rtc_done                <= '0';
+      rtc_done_s              <= '0';
+      
+      
+      StatCtl_startup_out      <= '0';
 
     elsif (falling_edge (clk)) then
 
@@ -336,6 +358,9 @@ begin
       mag_done                <= mag_done_s ;
       gps_done                <= gps_done_s ;
       txrx_done               <= txrx_done_s ;
+      shutdown                <= shutdown_s;
+      batmon_done             <= batmon_done_s;
+      rtc_done                <= rtc_done_s;
 
     elsif (rising_edge (clk)) then
 
@@ -347,7 +372,9 @@ begin
       mag_done_s              <= mag_done_in ;
       gps_done_s              <= gps_done_in ;
       txrx_done_s             <= txrx_done_in ;
-
+      shutdown_s              <= shutdown_in ;
+      batmon_done_s           <= batmon_done_in;
+      rtc_done_s              <= rtc_done_in;
 
       case cur_state is
 
@@ -356,21 +383,27 @@ begin
               pc_status_set_follower <= pc_status_set;
 
             if (pc_status_set = '1') then
-              sd_contr_start_out    <= '1';
               cur_state             <= next_state;
             end if;
           end if;
 
         when STATE_WAIT =>
-  --        if (start_signal(0) = '1') then
-            cur_state <=  START_SDCTRL;
-  --        end if;
+          if (start_signal(0) = '1') then
+            cur_state <=  START_MAGRAM;
+            
+
+            StatCtl_startup_out <= '1';
+          end if;
 
 
         when START_SDCTRL =>
+        if (Collar_Control_useSDH_c = '1') then
           pc_control_reg (ControlSignals'pos (Ctl_SDCardOn_e))  <= '1';
           cur_state   <= STATE_ON_WAIT;
           next_state  <= START_SDCTRL_WAITDONE;
+        else
+         cur_state   <= START_SDRAM;
+        end if;
 
         when START_SDCTRL_WAITDONE =>
           sd_contr_start_out          <= '1';
@@ -381,9 +414,13 @@ begin
 
 
         when START_SDRAM =>
+         if (Collar_Control_useSDRAM_c = '1') then
           pc_control_reg (ControlSignals'pos (Ctl_SDRAM_On_e))  <= '1';
           next_state  <= START_SDRAM_WAITDONE;
           cur_state   <= STATE_ON_WAIT;
+          else
+          cur_state   <= START_MEMS;
+          end if;
 
         when START_SDRAM_WAITDONE =>
           sdram_start_out    <= '1';
@@ -395,6 +432,7 @@ begin
 
         when START_MEMS =>
           if (Collar_Control_usePDMmic_c = '1') then
+            pc_control_reg (ControlSignals'pos (Ctl_MicRightOn_e))  <= '1';
             pc_control_reg (ControlSignals'pos (Ctl_MicLeftOn_e))  <= '1';
             next_state  <=  START_MEMS_WAITDONE;
             cur_state   <=  STATE_ON_WAIT;
@@ -419,16 +457,23 @@ begin
             next_state  <=  START_IMU_WAITDONE;
             cur_state   <=  STATE_ON_WAIT;
           else
-            cur_state   <=  START_MAGRAM;
+            cur_state   <=  START_GPS;
           end if;
-
+          
 
         when  START_IMU_WAITDONE =>
-          imu_start_out    <= '1';
-
-          if (imu_done = '1') then
-            cur_state <=  START_MAGRAM;
+        
+          if (imu_delay_count = to_unsigned(imu_delay,imu_delay_count'length)) then
+            --imu_delay_count <= to_unsigned(0,imu_delay_count'length);
+            imu_start_out    <= '1';
+              if (imu_done = '1') then
+                cur_state <=  START_GPS;
+              end if;
+          else
+            imu_delay_count <= imu_delay_count + 1;
           end if;
+        
+        
 
 
         when START_MAGRAM =>
@@ -437,14 +482,14 @@ begin
             next_state  <=  START_MAGRAM_WAITDONE;
             cur_state   <=  STATE_ON_WAIT;
           else
-            cur_state <=  START_GPS;
+            cur_state <=  START_SDCTRL;
           end if;
 
         when START_MAGRAM_WAITDONE =>
           mag_start_out    <= '1';
 
           if (mag_done = '1') then
-            cur_state     <=  START_GPS;
+            cur_state     <=  START_SDCTRL;
           end if;
 
 
@@ -471,81 +516,172 @@ begin
             next_state  <=  START_TXRX_WAITDONE;
             cur_state   <=  STATE_ON_WAIT;
           else
-            cur_state   <=  STATE_DONE;
+            cur_state   <=  START_RTC;
           end if ;
 
         when START_TXRX_WAITDONE =>
           txrx_start_out    <= '1';
 
           if (txrx_done = '1') then
-            cur_state   <=  STATE_DONE;
+            cur_state   <=  START_RTC;
+          end if;
+          
+        when START_RTC =>
+          if(Collar_Control_useI2C_c = '1') then 
+            cur_state   <=  START_RTC_WAITDONE;
+            pc_control_reg (ControlSignals'pos (Ctl_vcc1p8_aux_ctrl_e))  <= '1';
+          else
+            cur_state   <=  START_BATMON;
           end if;
 
 
+        when START_RTC_WAITDONE =>
+          rtc_start_out    <= '1';
+                      
+          if (rtc_done = '1') then
+            cur_state   <=  START_BATMON;
+          end if;
+          
+          
+        when START_BATMON =>
+          if(Collar_Control_useI2C_c = '1') then 
+            cur_state   <=  START_BATMON_WAITDONE;
+          else
+           cur_state   <=  STATE_DONE;
+          end if;
+          
+        when START_BATMON_WAITDONE =>
+          batmon_start_out    <= '1';
+
+          if (batmon_done = '1') then
+            cur_state   <=  STATE_DONE;
+          end if;
+          
+
+          
+          
+
+
         when STATE_DONE           =>
+          cur_state <= STOP_WAIT;
+          
+          
+        --This state should be moved to individual entities which 
+        --feed startup_shutdown. 
+        --Evaluate stop conditions. 
+        when STOP_WAIT  =>
+
+          if (shutdown = '1') then
+            next_state  <=  STOP_SDCTRL;
+            cur_state   <=  STOP_WAIT_DEBUG;
+          elsif ( (unsigned(rem_cap_mah_in) < to_unsigned(50,rem_cap_mah_in'length)) AND
+            rem_cap_mah_valid_in = '1') then
+
+            
+            next_state  <=  STOP_SDCTRL;
+            cur_state   <=  STOP_WAIT_DEBUG;
+          end if;
+          
+        pc_control_reg  <= pc_control_reg OR pc_control_reg_in  ;
+
+                 
+        --Debug the main and recharge switches from here. 
+        pc_control_reg (ControlSignals'pos (Ctl_MainPowerSwitch_e))  <= main_on_debug(0);
+        pc_control_reg (ControlSignals'pos (Ctl_RechargeSwitch_e))  <= recharge_on_debug(0);
+        pc_control_reg (ControlSignals'pos (Ctl_SolarCtlShutdown_e))  <= solar_on_debug(0);
+        
+        
+        
+          
+        when STOP_WAIT_DEBUG   =>
+          if (shutdown_delay_count = to_unsigned(shutdown_delay,shutdown_delay_count'length)) then
+            cur_state <= next_state;
+          else
+            shutdown_delay_count <= shutdown_delay_count + 1;
+          end if;
+
+
+
+        when STOP_SDCTRL =>
+        if (Collar_Control_useSDH_c = '1') then
+          pc_control_reg (ControlSignals'pos (Ctl_SDCardOn_e))  <= '0';
+          cur_state   <= STATE_ON_WAIT;
+          next_state  <= STOP_SDRAM;
+        else
+           cur_state   <= STOP_SDRAM;
+        end if;
+
+        when STOP_SDRAM =>
+        if (Collar_Control_useSDRAM_c = '1') then
+          pc_control_reg (ControlSignals'pos (Ctl_SDRAM_On_e))  <= '0';
+          next_state  <= STOP_MEMS;
+          cur_state   <= STATE_ON_WAIT;
+        else
+        cur_state   <= STOP_MEMS;
+        
+        end if;
+
+        when STOP_MEMS =>
+          if (Collar_Control_usePDMmic_c = '1') then
+            pc_control_reg (ControlSignals'pos (Ctl_MicLeftOn_e))  <= '0';
+            next_state  <=  STOP_IMU;
+            cur_state   <=  STATE_ON_WAIT;
+          else
+            cur_state   <=  STOP_IMU;
+          end if;
+
+        when  STOP_IMU =>
+          if (Collar_Control_useInertial_c = '1') then
+            --Audio Recording Collar for now turns on both 1p8 and 2p5 at
+            --the same time. See the Audio_Recording_Collar CPLD top level.
+            pc_control_reg (ControlSignals'pos (Ctl_InertialOn1p8_e)) <= '0';
+            pc_control_reg (ControlSignals'pos (Ctl_InertialOn2p5_e)) <= '0';
+            next_state  <=  STOP_MAGRAM;
+            cur_state   <=  STATE_ON_WAIT;
+          else
+            cur_state   <=  STOP_MAGRAM;
+          end if;
+
+
+        when STOP_MAGRAM =>
+          if (Collar_Control_useMagMem_c = '1') then
+            pc_control_reg (ControlSignals'pos (Ctl_MagMemOn_e))  <= '0';
+            next_state  <=  STOP_GPS;
+            cur_state   <=  STATE_ON_WAIT;
+          else
+            cur_state <=  STOP_GPS;
+          end if;
+
+        when STOP_GPS =>
+          if (Collar_Control_useGPS_c = '1') then
+            pc_control_reg (ControlSignals'pos (Ctl_GPS_On_e))  <= '0';
+            next_state  <=  STOP_TXRX;
+            cur_state   <=  STATE_ON_WAIT;
+          else
+            cur_state   <=  STOP_TXRX;
+          end if ;
+
+        when STOP_TXRX =>
+          if (Collar_Control_useRadio_c = '1') then
+            pc_control_reg (ControlSignals'pos (Ctl_DataTX_On_e))  <= '0';
+            next_state  <=  STOP_FPGA;
+            cur_state   <=  STATE_ON_WAIT;
+          else
+            cur_state   <=  STOP_FPGA;
+          end if ;
+
+          
+        when STOP_FPGA =>
+          pc_control_reg (ControlSignals'pos (Ctl_FPGA_Shutdown_e))  <= '1';
+          
+          
 
 
       end case;
 
     end if;
-  end process startup_state_machine;
+  end process startup_shutdown_state_machine;
 
-
-  --
-  --Just naming reminders for me.
-  --
-    -- constant Collar_Control_useStrClk_c       : std_logic := '0' ;
-    -- constant Collar_Control_useI2C_c          : std_logic := '0' ;
-    -- constant Collar_Control_usePC_c           : std_logic := '1' ;
-    -- constant Collar_Control_useEventLogging_c : std_logic := '0' ;
-    -- constant Collar_Control_useSDRAM_c        : std_logic := '1' ;
-    -- constant Collar_Control_useSD_c           : std_logic := '0' ;
-    -- constant Collar_Control_useSDH_c          : std_logic := '1' ;
-    -- constant Collar_Control_useGPS_c          : std_logic := '0' ;
-    -- constant Collar_Control_useGPSRAM_c       : std_logic := '0' ;
-    -- constant Collar_Control_useInertial_c     : std_logic := '0' ;
-    -- constant Collar_Control_useMagMem_c       : std_logic := '0' ;
-    -- constant Collar_Control_useMagMemBuffer_c : std_logic := '0' ;
-    -- constant Collar_Control_usePDMmic_c       : std_logic := '1' ;
-    -- constant Collar_Control_useRadio_c        : std_logic := '0' ;
-    -- constant Collar_Control_useFlashBlock_c   : std_logic := '1' ;
-
-
-      -- alias CTL_MainPowerSwitch     : std_logic is
-          -- PC_ControlReg (ControlSignals'pos (Ctl_MainPowerSwitch_e)) ;
-    -- alias CTL_RechargeSwitch      : std_logic is
-          -- PC_ControlReg (ControlSignals'pos (Ctl_RechargeSwitch_e)) ;
-    -- alias CTL_SolarCtlShutdown    : std_logic is
-          -- PC_ControlReg (ControlSignals'pos (Ctl_SolarCtlShutdown_e)) ;
-    -- alias CTL_LevelShifter3p3     : std_logic is
-          -- PC_ControlReg (ControlSignals'pos (Ctl_LevelShifter3p3_e)) ;
-    -- alias CTL_LevelShifter1p8     : std_logic is
-          -- PC_ControlReg (ControlSignals'pos (Ctl_LevelShifter1p8_e)) ;
-    -- alias CTL_InertialOn1p8       : std_logic is
-          -- PC_ControlReg (ControlSignals'pos (Ctl_InertialOn1p8_e)) ;
-    -- alias CTL_InertialOn2p5       : std_logic is
-          -- PC_ControlReg (ControlSignals'pos (Ctl_InertialOn2p5_e)) ;
-    -- alias CTL_MicLeftOn           : std_logic is
-          -- PC_ControlReg (ControlSignals'pos (Ctl_MicLeftOn_e)) ;
-    -- alias CTL_MicRightOn          : std_logic is
-          -- PC_ControlReg (ControlSignals'pos (Ctl_MicRightOn_e)) ;
-    -- alias CTL_SDRAM_On            : std_logic is
-          -- PC_ControlReg (ControlSignals'pos (Ctl_SDRAM_On_e)) ;
-    -- alias CTL_SDCardOn            : std_logic is
-          -- PC_ControlReg (ControlSignals'pos (Ctl_SDCardOn_e)) ;
-    -- alias CTL_MagMemOn            : std_logic is
-          -- PC_ControlReg (ControlSignals'pos (Ctl_MagMemOn_e)) ;
-    -- alias CTL_GPS_On              : std_logic is
-          -- PC_ControlReg (ControlSignals'pos (Ctl_GPS_On_e)) ;
-    -- alias CTL_DataTX_On           : std_logic is
-          -- PC_ControlReg (ControlSignals'pos (Ctl_DataTX_On_e)) ;
-    -- alias CTL_FPGA_Shutdown       : std_logic is
-          -- PC_ControlReg (ControlSignals'pos (Ctl_FPGA_Shutdown_e)) ;
-    -- alias CTL_FLASH_Granted       : std_logic is
-          -- PC_ControlReg (ControlSignals'pos (Ctl_FLASH_Granted_e)) ;
-  --
-  --Just naming reminders for me.
-  --
 
 
 
