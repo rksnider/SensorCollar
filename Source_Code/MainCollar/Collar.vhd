@@ -730,6 +730,7 @@ architecture structural of Collar is
   constant im_databits_c    : natural := im_datalen_c * 8 ;
 
   signal im_startup         : std_logic ;
+  signal im_startup_done    : std_logic ;
   signal im_gyro_data_rdy   : std_logic ;
   signal im_accel_data_rdy  : std_logic ;
   signal im_mag_data_rdy    : std_logic ;
@@ -785,7 +786,54 @@ architecture structural of Collar is
   --  Real-time Clock constants and signals.
   --------------------------------------------------------------------------
 
-  constant rtc_time_bytes_c   : natural := epoch70_secbits_c / 8 ;
+  --constant rtc_time_bytes_c   : natural := epoch70_secbits_c / 8 ;
+
+  constant rtc_time_bytes_c   : natural := 4 ;
+  
+  constant tod_bytes : natural := 4;
+  constant alarm_bytes : natural := 3;
+
+  signal rtc_time             : std_logic_vector (rtc_time_bytes_c*8-1
+                                                  downto 0) :=
+                                                      (others => '0') ;
+                                                      
+                                                      
+             
+  signal    tod_set_signal          :     std_logic := '0';
+  signal    tod_set_done_signal     :     std_logic := '0';
+  signal    tod_set             :     std_logic_vector(tod_bytes*8-1 downto 0);
+    
+    
+  signal    tod_get_signal        :    std_logic := '0';
+  signal    tod_signal            :    std_logic_vector(tod_bytes*8-1 downto 0);     
+  signal    tod_get_valid_signal  :    std_logic := '0';
+
+  signal    alarm_set_signal          :     std_logic := '0';    
+  signal    alarm_signal              :     std_logic_vector(alarm_bytes*8-1 downto 0);
+  signal    alarm_set_done_signal     :     std_logic := '0';
+  
+  
+  signal    rtc_interrupt_enable_signal :   std_logic;
+  
+  
+  signal rtc_startup        : std_logic;  
+  signal rtc_startup_done   : std_logic;
+  
+  
+  --------------------------------------------------------------------------
+  --  Battery Monitor Inupts/Ouputs
+  --------------------------------------------------------------------------
+  
+  
+  signal batmon_startup: std_logic;
+  
+  signal rem_cap_mah_signal : std_logic_vector (15 downto 0);
+  signal inst_cur_ma_signal : std_logic_vector (15 downto 0);
+  signal voltage_mv_signal : std_logic_vector (15 downto 0);
+  
+  signal voltage_mv_valid_signal : std_logic;
+  signal inst_cur_ma_valid_signal : std_logic;
+  signal rem_cap_mah_valid_signal : std_logic;
 
 
   --------------------------------------------------------------------------
@@ -806,28 +854,42 @@ architecture structural of Collar is
   signal SDLogging_flush        : std_logic := '0' ;
 
   component Startup_Shutdown is
+    Generic (
+      clk_freq_g            : natural := 50e6
+    );
     Port (
-      clk                 : in   std_logic ;
-      rst_n               : in   std_logic ;
-      pc_control_reg_out  : out  std_logic_vector (ControlSignalsCnt_c-1
-                                                   downto 0);
-      pc_status_set_in        : in std_logic;
-      sd_contr_start_out        : out  std_logic ;
-      sd_contr_done_in          : in  std_logic ;
-      sdram_start_out           : out  std_logic ;
-      sdram_done_in             : in  std_logic ;
-      imu_start_out             : out std_logic ;
-      imu_done_in               : in std_logic ;
-      mems_start_out            : out std_logic ;
-      mems_done_in              : in  std_logic ;
+      clk                 : in    std_logic ;
+      rst_n               : in    std_logic ;
+      pc_control_reg_out  : out std_logic_vector (ControlSignalsCnt_c-1
+                                            downto 0);     
+      pc_control_reg_in  : in   std_logic_vector (ControlSignalsCnt_c-1
+                                                  downto 0) ;                                           
+      pc_status_set_in          : in      std_logic;
+      sd_contr_start_out        : out   std_logic ;       
+      sd_contr_done_in          : in    std_logic ;   
+      sdram_start_out           : out   std_logic ;
+      sdram_done_in             : in    std_logic ;
+      imu_start_out             : out   std_logic ;
+      imu_done_in               : in    std_logic ;
+      rtc_start_out             : out   std_logic ;
+      rtc_done_in               : in    std_logic ;
+      batmon_start_out          : out   std_logic ;
+      batmon_done_in            : in    std_logic ;
+      mems_start_out            : out   std_logic ;
+      mems_done_in              : in    std_logic ;
       mag_start_out             : out   std_logic ;
       mag_done_in               : in    std_logic ;
       gps_start_out             : out   std_logic ;
       gps_done_in               : in    std_logic ;
       txrx_start_out            : out   std_logic ;
-      txrx_done_in              : in    std_logic
+      txrx_done_in              : in    std_logic ;
+      shutdown_in               : in    std_logic ;
+      statctl_startup_out       : out   std_logic;
+      rem_cap_mah_valid_in      : in    std_logic ; 
+      rem_cap_mah_in            : in    std_logic_vector (15 downto 0)
   ) ;
-  end component Startup_Shutdown ;
+  
+    end component Startup_Shutdown ;
 
 begin
 
@@ -836,27 +898,46 @@ begin
   --  System startup sequencing and setting of the control register.
   --------------------------------------------------------------------------
 
+  
+  signal shutdown_master           :  std_logic := '0';
+  signal statctl_startup_signal    :  std_logic;
+  
+  
   i_startup_0 : Startup_Shutdown
-
+    Generic Map (
+      clk_freq_g              => spi_clk_freq_c
+    )
     Port Map(
-      clk                       => spi_clk,
-      rst_n                     => not reset,
-      pc_control_reg_out        => PC_ControlTurnOn,
-      pc_status_set_in          => PC_StatusSet,
-      sd_contr_start_out        => sdcard_start,
-      sd_contr_done_in          => '1',
+      clk                 => spi_clk,
+      rst_n               => not reset,
+      
+      pc_control_reg_out        =>  PC_ControlReg,   
+      pc_control_reg_in         =>  PC_ControlReg_signal,        
+      pc_status_set_in          =>  PC_StatusSet,
+      sd_contr_start_out        =>  sdcard_start,
+      sd_contr_done_in          =>  '1',
       --sdram_start_out             : out  std_logic ;
       sdram_done_in             => sdram_ready,
       imu_start_out             => im_startup,
-      imu_done_in               => '1',
+      imu_done_in               => im_startup_done,
+      rtc_start_out             => rtc_startup,
+      rtc_done_in               => rtc_startup_done,
+      batmon_start_out          => batmon_startup,
+      batmon_done_in            => '1',
       --mems_start_out            : out std_logic ;
       mems_done_in              => '1',
       mag_start_out             => mm_startup,
       mag_done_in               => mm_startup_done,
-      gps_start_out             => gps_init,
-      gps_done_in               => gps_ready,
+      --gps_start_out             : out   std_logic ;
+      gps_done_in               => '1',
       --txrx_start_out            : out   std_logic ;
-      txrx_done_in              => '1'
+      txrx_done_in              => '1',
+      shutdown_in               => shutdown_master,
+      statctl_startup_out       => statctl_startup_signal,
+      rem_cap_mah_valid_in      => rem_cap_mah_valid_signal,
+      rem_cap_mah_in            => rem_cap_mah_signal
+      
+
     ) ;
 
   PC_ControlReg                 <= PC_ControlReg or PC_ControlTurnOn ;
@@ -1146,6 +1227,8 @@ begin
           control_in              : in    std_logic_vector (control_bits_g-1
                                                             downto 0) ;
           busy_out                : out   std_logic ;
+          
+          startup_in              : in    std_logic;
 
           sclk                    : out   std_logic ;
           mosi                    : out   std_logic ;
@@ -1177,12 +1260,14 @@ begin
           status_set_out              => PC_StatusSet,
           control_in                  => PC_ControlReg,
           busy_out                    => StatCtlActive,
+          startup_in                  => statctl_startup_signal,
 
           sclk                        => pc_spi_clk,
           mosi                        => pc_spi_mosi_out,
           miso                        => pc_spi_miso_in,
           cs_n                        => pc_spi_cs_out
         ) ;
+
 
       pc_flash_clk            <= '0' ;
       pc_flash_cs_out         <= '1' ;
