@@ -369,6 +369,11 @@ architecture structural of Collar is
   signal PC_ControlReg          : std_logic_vector (ControlSignalsCnt_c-1
                                                     downto 0) :=
                                       (others => '0') ;
+                                      
+                                               
+  signal PC_ControlReg_signal    : std_logic_vector (ControlSignalsCnt_c-1
+                                                    downto 0) :=
+                                      (others => '0') ;
 
   alias CTL_MainPowerSwitch     : std_logic is
         PC_ControlReg (ControlSignals'pos (Ctl_MainPowerSwitch_e)) ;
