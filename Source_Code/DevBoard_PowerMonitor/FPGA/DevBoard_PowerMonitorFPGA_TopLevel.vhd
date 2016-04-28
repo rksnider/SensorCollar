@@ -147,11 +147,7 @@ entity DevBoard_PowerMonitorFPGA_TopLevel is
 
     -- Data Transmitter Connections
 
-    -- DATA_TX_DAT0_TO_FPGA        : inout std_logic;
-    -- DATA_TX_DAT1_TO_FPGA        : inout std_logic;
-    -- DATA_TX_DAT2_TO_FPGA        : inout std_logic;
-    -- DATA_TX_DAT3_TO_FPGA        : inout std_logic;
-    -- DATA_TX_DAT4_TO_FPGA        : inout std_logic;
+
     DATA_TX_DAT_TO_FPGA         : inout std_logic_vector(4 downto 0);
 
     -- Direct SDCard Connections
@@ -159,18 +155,14 @@ entity DevBoard_PowerMonitorFPGA_TopLevel is
     SDCARD_DI_CLK_TO_FPGA       : out   std_logic;
     SDCARD_DI_CMD_TO_FPGA       : inout std_logic;
     SDCARD_DI_DAT_TO_FPGA       : inout std_logic_vector(3 downto 0);
-    -- SDCARD_DI_DAT1_TO_FPGA      : inout std_logic;
-    -- SDCARD_DI_DAT2_TO_FPGA      : inout std_logic;
-    -- SDCARD_DI_CD_DAT3_TO_FPGA   : inout std_logic;
+
 
     -- Level Shifted SDCard Connections
 
     SDCARD_CLK_TO_FPGA          : out   std_logic;
     SDCARD_CMD_TO_FPGA          : inout std_logic;
     SDCARD_DAT_TO_FPGA          : inout std_logic_vector(3 downto 0);
-    -- SDCARD_DAT1_TO_FPGA         : inout std_logic;
-    -- SDCARD_DAT2_TO_FPGA         : inout std_logic;
-    -- SDCARD_CD_DAT3_TO_FPGA      : inout std_logic;
+
 
     --  Magnetic RAM Connections
 
@@ -196,13 +188,6 @@ entity DevBoard_PowerMonitorFPGA_TopLevel is
     MIC_DATA_R                  : inout std_logic;
     MIC_DATA_L                  : inout std_logic;
 
-    --   Inertial Module 1
-
-    -- IM_SCLK_TO_FPGA             : out   std_logic;
-    -- IM_SDI_TO_FPGA              : in    std_logic;
-    -- IM_SDO_TO_FPGA              : out   std_logic;
-    -- IM_NCS_TO_FPGA              : out   std_logic;
-    -- IM_INT_TO_FPGA              : in    std_logic;
 
     --   Inertial Module 2
 
@@ -226,7 +211,7 @@ entity DevBoard_PowerMonitorFPGA_TopLevel is
 
     -- Voltage Selectable GPIO
 
-    GPIOSEL                     : out   std_logic_vector (3 downto 0)
+    GPIOSEL                     : out   std_logic_vector (15 downto 0)
 
 
     --  1.8V GPIO
