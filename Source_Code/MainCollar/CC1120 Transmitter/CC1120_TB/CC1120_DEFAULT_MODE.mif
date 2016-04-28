@@ -1,0 +1,182 @@
+DEPTH = 256;
+WIDTH = 24;
+ADDRESS_RADIX = HEX;
+DATA_RADIX = HEX;
+CONTENT
+BEGIN
+0	:	AE	;	 -- Number of registers to change
+1	:	0000B0	;	--GPIO3 IO Pin Configuration
+2	:	000106	;	--GPIO2 IO Pin Configuration
+3	:	0002B0	;	--GPIO1 IO Pin Configuration
+4	:	000340	;	--GPIO0 IO Pin Configuration
+5	:	000493	;	--Sync Word Configuration [31:24]
+6	:	00050B	;	--Sync Word Configuration [23:16]
+7	:	000651	;	--Sync Word Configuration [15:8]
+8	:	0007DE	;	--Sync Word Configuration [7:0]
+9	:	00080B	;	--Sync Word Detection Configuration Reg. 1
+A	:	000917	;	--Sync Word Length Configuration Reg. 0
+B	:	000A06	;	--Frequency Deviation Configuration
+C	:	000B03	;	--Modulation Format and Frequency Deviation Configur..
+D	:	000C1C	;	--Digital DC Removal Configuration
+E	:	000D18	;	--Preamble Length Configuration Reg. 1
+F	:	000E2A	;	--Preamble Detection Configuration Reg. 0
+10	:	000F40	;	--RX Mixer Frequency Configuration
+11	:	0010C6	;	--Digital Image Channel Compensation Configuration
+12	:	001114	;	--Channel Filter Configuration
+13	:	001246	;	--General Modem Parameter Configuration Reg. 1
+14	:	001305	;	--General Modem Parameter Configuration Reg. 0
+15	:	001443	;	--Symbol Rate Configuration Exponent and Mantissa [1..
+16	:	0015A9	;	--Symbol Rate Configuration Mantissa [15:8]
+17	:	00162A	;	--Symbol Rate Configuration Mantissa [7:0]
+18	:	001720	;	--AGC Reference Level Configuration
+19	:	001819	;	--Carrier Sense Threshold Configuration
+1A	:	001900	;	--RSSI Offset Configuration
+1B	:	001A91	;	--Automatic Gain Control Configuration Reg. 3
+1C	:	001B20	;	--Automatic Gain Control Configuration Reg. 2
+1D	:	001CA9	;	--Automatic Gain Control Configuration Reg. 1
+1E	:	001DCF	;	--Automatic Gain Control Configuration Reg. 0
+1F	:	001E00	;	--FIFO Configuration
+20	:	001F00	;	--Device Address Configuration
+21	:	00200B	;	--Frequency Synthesizer Calibration and Settling Con..
+22	:	002114	;	--Frequency Synthesizer Configuration
+23	:	002208	;	--eWOR Configuration Reg. 1
+24	:	002321	;	--eWOR Configuration Reg. 0
+25	:	002400	;	--Event 0 Configuration MSB
+26	:	002500	;	--Event 0 Configuration LSB
+27	:	002604	;	--Packet Configuration Reg. 2
+28	:	002705	;	--Packet Configuration Reg. 1
+29	:	002820	;	--Packet Configuration Reg. 0
+2A	:	00290F	;	--RFEND Configuration Reg. 1
+2B	:	002A00	;	--RFEND Configuration Reg. 0
+2C	:	002B7F	;	--Power Amplifier Configuration Reg. 2
+2D	:	002C56	;	--Power Amplifier Configuration Reg. 1
+2E	:	002D7C	;	--Power Amplifier Configuration Reg. 0
+2F	:	002EFF	;	--Packet Length Configuration
+30	:	2F0000	;	--IF Mix Configuration
+31	:	2F0122	;	--Frequency Offset Correction Configuration
+32	:	2F020B	;	--Timing Offset Correction Configuration
+33	:	2F0300	;	--MARC Spare
+34	:	2F0400	;	--External Clock Frequency Configuration
+35	:	2F0500	;	--Custom frequency modulation enable
+36	:	2F0601	;	--External Control Configuration
+37	:	2F0700	;	--RC Oscillator Calibration Fine
+38	:	2F0800	;	--RC Oscillator Calibration Coarse
+39	:	2F0900	;	--RC Oscillator Calibration Clock Offset
+3A	:	2F0A00	;	--Frequency Offset MSB
+3B	:	2F0B00	;	--Frequency Offset LSB
+3C	:	2F0C6E	;	--Frequency Configuration [23:16]
+3D	:	2F0D0C	;	--Frequency Configuration [15:8]
+3E	:	2F0ECD	;	--Frequency Configuration [7:0]
+3F	:	2F0F02	;	--Analog to Digital Converter Configuration Reg. 2
+40	:	2F10A6	;	--Analog to Digital Converter Configuration Reg. 1
+41	:	2F1104	;	--Analog to Digital Converter Configuration Reg. 0
+42	:	2F1200	;	--Frequency Synthesizer Digital Reg. 1
+43	:	2F135F	;	--Frequency Synthesizer Digital Reg. 0
+44	:	2F1400	;	--Frequency Synthesizer Calibration Reg. 3
+45	:	2F1520	;	--Frequency Synthesizer Calibration Reg. 2
+46	:	2F1640	;	--Frequency Synthesizer Calibration Reg. 1
+47	:	2F170E	;	--Frequency Synthesizer Calibration Reg. 0
+48	:	2F1828	;	--Frequency Synthesizer Charge Pump Configuration
+49	:	2F1903	;	--Frequency Synthesizer Divide by 2
+4A	:	2F1A00	;	--FS Digital Synthesizer Module Configuration Reg. 1
+4B	:	2F1B33	;	--FS Digital Synthesizer Module Configuration Reg. 0
+4C	:	2F1CFF	;	--Frequency Synthesizer Divider Chain Configuration ..
+4D	:	2F1D17	;	--Frequency Synthesizer Divider Chain Configuration ..
+4E	:	2F1E00	;	--Frequency Synthesizer Local Bias Configuration
+4F	:	2F1F50	;	--Frequency Synthesizer Phase Frequency Detector Con..
+50	:	2F206E	;	--Frequency Synthesizer Prescaler Configuration
+51	:	2F2114	;	--Frequency Synthesizer Divider Regulator Configurat..
+52	:	2F22AC	;	--Frequency Synthesizer Spare
+53	:	2F2314	;	--FS Voltage Controlled Oscillator Configuration Reg..
+54	:	2F2400	;	--FS Voltage Controlled Oscillator Configuration Reg..
+55	:	2F2500	;	--FS Voltage Controlled Oscillator Configuration Reg..
+56	:	2F2600	;	--FS Voltage Controlled Oscillator Configuration Reg..
+57	:	2F27B4	;	--FS Voltage Controlled Oscillator Configuration Reg..
+58	:	2F2800	;	--Global Bias Configuration Reg. 6
+59	:	2F2902	;	--Global Bias Configuration Reg. 5
+5A	:	2F2A00	;	--Global Bias Configuration Reg. 4
+5B	:	2F2B00	;	--Global Bias Configuration Reg. 3
+5C	:	2F2C10	;	--Global Bias Configuration Reg. 2
+5D	:	2F2D00	;	--Global Bias Configuration Reg. 1
+5E	:	2F2E00	;	--Global Bias Configuration Reg. 0
+5F	:	2F2F01	;	--Intermediate Frequency Amplifier Configuration
+60	:	2F3001	;	--Low Noise Amplifier Configuration
+61	:	2F3101	;	--RX Mixer Configuration
+62	:	2F320E	;	--Crystal Oscillator Configuration Reg. 5
+63	:	2F33A0	;	--Crystal Oscillator Configuration Reg. 4
+64	:	2F3403	;	--Crystal Oscillator Configuration Reg. 3
+65	:	2F3504	;	--Crystal Oscillator Configuration Reg. 2
+66	:	2F3603	;	--Crystal Oscillator Configuration Reg. 1
+67	:	2F3700	;	--Crystal Oscillator Configuration Reg. 0
+68	:	2F3800	;	--Analog Spare
+69	:	2F3900	;	--Power Amplifier Configuration Reg. 3
+6A	:	2F6400	;	--eWOR Timer Counter Value MSB
+6B	:	2F6500	;	--eWOR Timer Counter Value LSB
+6C	:	2F6600	;	--eWOR Timer Capture Value MSB
+6D	:	2F6700	;	--eWOR Timer Capture Value LSB
+6E	:	2F6800	;	--MARC Built-In Self-Test
+6F	:	2F6900	;	--DC Filter Offset I MSB
+70	:	2F6A00	;	--DC Filter Offset I LSB
+71	:	2F6B00	;	--DC Filter Offset Q MSB
+72	:	2F6C00	;	--DC Filter Offset Q LSB
+73	:	2F6D00	;	--IQ Imbalance Value I MSB
+74	:	2F6E00	;	--IQ Imbalance Value I LSB
+75	:	2F6F00	;	--IQ Imbalance Value Q MSB
+76	:	2F7000	;	--IQ Imbalance Value Q LSB
+77	:	2F7180	;	--Received Signal Strength Indicator Reg. 1
+78	:	2F7200	;	--Received Signal Strength Indicator Reg.0
+79	:	2F7341	;	--MARC State
+7A	:	2F7400	;	--Link Quality Indicator Value
+7B	:	2F75FF	;	--Preamble and Sync Word Error
+7C	:	2F7600	;	--Demodulator Status
+7D	:	2F7700	;	--Frequency Offset Estimate MSB
+7E	:	2F7800	;	--Frequency Offset Estimate LSB
+7F	:	2F7900	;	--Automatic Gain Control Reg. 3
+80	:	2F7AD1	;	--Automatic Gain Control Reg. 2
+81	:	2F7B00	;	--Automatic Gain Control Reg. 1
+82	:	2F7C3F	;	--Automatic Gain Control Reg. 0
+83	:	2F7D00	;	--Custom Frequency Modulation RX Data
+84	:	2F7E00	;	--Custom Frequency Modulation TX Data
+85	:	2F7F30	;	--ASK Soft Decision Output
+86	:	2F807F	;	--Random Number Generator Value
+87	:	2F8100	;	--Signal Magnitude after CORDIC [16]
+88	:	2F8200	;	--Signal Magnitude after CORDIC [15:8]
+89	:	2F8300	;	--Signal Magnitude after CORDIC [7:0]
+8A	:	2F8400	;	--Signal Angular after CORDIC [9:8]
+8B	:	2F8500	;	--Signal Angular after CORDIC [7:0]
+8C	:	2F8608	;	--Channel Filter Data Real Part [18:16]
+8D	:	2F8700	;	--Channel Filter Data Real Part [15:8]
+8E	:	2F8800	;	--Channel Filter Data Real Part [7:0]
+8F	:	2F8900	;	--Channel Filter Data Imaginary Part [18:16]
+90	:	2F8A00	;	--Channel Filter Data Imaginary Part [15:8]
+91	:	2F8B00	;	--Channel Filter Data Imaginary Part [7:0]
+92	:	2F8C00	;	--General Purpose Input/Output Status
+93	:	2F8D01	;	--Frequency Synthesizer Calibration Control
+94	:	2F8E00	;	--Frequency Synthesizer Phase Adjust
+95	:	2F8F00	;	--Part Number
+96	:	2F9000	;	--Part Revision
+97	:	2F9100	;	--Serial Status
+98	:	2F9201	;	--Modem Status Reg. 1
+99	:	2F9300	;	--Modem Status Reg. 0
+9A	:	2F9400	;	--MARC Status Reg. 1
+9B	:	2F9500	;	--MARC Status Reg. 0
+9C	:	2F9600	;	--Power Amplifier Intermediate Frequency Amplifier T..
+9D	:	2F9700	;	--Frequency Synthesizer Test
+9E	:	2F9800	;	--Frequency Synthesizer Prescaler Test
+9F	:	2F9900	;	--Frequency Synthesizer Prescaler Override
+A0	:	2F9A00	;	--Analog to Digital Converter Test
+A1	:	2F9B0B	;	--Digital Divider Chain Test
+A2	:	2F9C40	;	--Analog Test
+A3	:	2F9D00	;	--Analog Test LVDS
+A4	:	2F9E00	;	--Analog Test Mode
+A5	:	2F9F3C	;	--Crystal Oscillator Test Reg. 1
+A6	:	2FA000	;	--Crystal Oscillator Test Reg. 0
+A7	:	2FD200	;	--RX FIFO Pointer First Entry
+A8	:	2FD300	;	--TX FIFO Pointer First Entry
+A9	:	2FD400	;	--RX FIFO Pointer Last Entry
+AA	:	2FD500	;	--TX FIFO Pointer Last Entry
+AB	:	2FD600	;	--TX FIFO Status
+AC	:	2FD700	;	--RX FIFO Status
+AD	:	2FD80F	;	--TX FIFO Status
+AE	:	2FD900	;	--RX FIFO Status
+END;

@@ -2498,7 +2498,6 @@ begin
           gps_rx_in             => gps_rx,
           gps_tx_out            => gps_tx,
           timemarker_out        => gps_timemark,
-          gps_timepulse_in      => gps_timepulse,
           aop_running_out       => aop_running
         ) ;
 
