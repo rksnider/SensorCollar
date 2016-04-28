@@ -365,7 +365,8 @@ architecture structural of Collar is
 
 
   signal PC_ControlTurnOn       : std_logic_vector (ControlSignalsCnt_c-1
-                                                    downto 0) ;
+                                                    downto 0) :=
+                                      (others => '0') ;
 
   signal PC_ControlReg          : std_logic_vector (ControlSignalsCnt_c-1
                                                     downto 0) :=
@@ -683,6 +684,7 @@ architecture structural of Collar is
 
   signal sdcard_start           : std_logic ;
 
+  signal sdcard_done            : std_logic ;
   signal sdcard_critdone        : std_logic ;
   signal sdcard_critpast        : std_logic_vector (7 downto 0) ;
 
@@ -942,7 +944,7 @@ begin
       pc_control_reg_in         =>  PC_ControlReg_signal,        
       pc_status_set_in          =>  PC_StatusSet,
       sd_contr_start_out        =>  sdcard_start,
-      sd_contr_done_in          =>  '1',
+      sd_contr_done_in          =>  sdcard_done,
       --sdram_start_out             : out  std_logic ;
       sdram_done_in             => sdram_ready,
       imu_start_out             => im_startup,
@@ -967,7 +969,7 @@ begin
 
     ) ;
 
-  PC_ControlReg                 <= PC_ControlReg or PC_ControlTurnOn ;
+  --PC_ControlReg                 <= PC_ControlReg or PC_ControlTurnOn ;
 
 
   --------------------------------------------------------------------------
@@ -1795,6 +1797,7 @@ begin
           v_1_8_on_off                    :out     std_logic;
 
           init_start                      :in     std_logic;
+          init_done_out                   :out    std_logic;
           user_led_n_out                  :out    std_logic_vector(3 downto 0);
           ext_trigger                     :out    std_logic
 
@@ -2091,6 +2094,7 @@ begin
           v_1_8_on_off                    :out     std_logic;
 
           init_start                      :in     std_logic;
+          init_done_out                   :out    std_logic;
           user_led_n_out                  :out    std_logic_vector(3 downto 0);
           ext_trigger                     :out    std_logic
 
@@ -2319,6 +2323,7 @@ begin
           data_nblocks                => sdl_sdcard_nblocks,
           data_current_block_written  => sdl_sdcard_lastblk,
           sd_block_written_flag       => sdl_sdcard_lastflag,
+          buffer_level                => sdl_sdcard_bufflevel,
 
           sd_clk                      => sd_clock,
           sd_cmd_in                   => sd_incmd,
@@ -2329,6 +2334,7 @@ begin
           sd_dat_dir                  => sd_dirdata,
 
           init_start                  => not sdcard_start
+          init_done_out               => sdcard_done
         ) ;
 
       ----------------------------------------------------------------------

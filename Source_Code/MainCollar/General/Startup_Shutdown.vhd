@@ -148,9 +148,6 @@ architecture Behavior of Startup_Shutdown is
     STATE_WAIT,
     STATE_ON_WAIT,
 
-    -- START_SDLOADER,
-    -- START_SDLOADER_WAITDONE,
-
     START_SDCTRL,
     START_SDCTRL_WAITDONE,
 
@@ -246,26 +243,26 @@ architecture Behavior of Startup_Shutdown is
   constant imu_delay : natural := spi_clk_freq_c * 1;
   signal    imu_delay_count :  unsigned(natural(trunc(log2(real(
                               imu_delay-1)))) downto 0);  
+                              
+  signal pc_control_reg : std_logic_vector (ControlSignalsCnt_c-1
+                              downto 0) := (others => '0') ;
 
   --Debug
   signal sd_contr_start_out_debug : std_logic_vector(0 downto 0);
-
-  signal pc_control_reg : std_logic_vector (ControlSignalsCnt_c-1
-                                            downto 0) := (others => '0') ;
-
-  --Pure Debug
   signal start_signal : std_logic_vector(0 downto 0);
-  
-  --DEBUG SIGNALS
   signal rtc_startup  : std_logic_vector(0 downto 0);
   constant shutdown_delay : natural := spi_clk_freq_c * 30;
   signal  shutdown_delay_count :  unsigned(natural(trunc(log2(real(
                             shutdown_delay-1)))) downto 0);  
-  
   signal main_on_debug : std_logic_vector(0 downto 0);
   signal recharge_on_debug : std_logic_vector(0 downto 0);
   signal solar_on_debug : std_logic_vector(0 downto 0);
   
+  
+  
+  
+  
+
 begin
 
   pc_control_reg_out <= pc_control_reg;
@@ -286,7 +283,56 @@ begin
       -- source => start_signal
     -- );
     
-
+  -- in_system_probe4 : altsource_probe
+    -- GENERIC MAP (
+      -- enable_metastability => "NO",
+      -- instance_id => "mai",
+      -- probe_width => 1,
+      -- sld_auto_instance_index => "YES",
+      -- sld_instance_index => 0,
+      -- source_initial_value => "1",
+      -- source_width => 1,
+      -- lpm_type => "altsource_probe"
+    -- )
+    -- PORT MAP (
+      -- probe => main_on_debug,
+      -- source => main_on_debug
+    -- );
+    
+  -- in_system_probe5 : altsource_probe
+    -- GENERIC MAP (
+      -- enable_metastability => "NO",
+      -- instance_id => "rec",
+      -- probe_width => 1,
+      -- sld_auto_instance_index => "YES",
+      -- sld_instance_index => 0,
+      -- source_initial_value => "1",
+      -- source_width => 1,
+      -- lpm_type => "altsource_probe"
+    -- )
+    -- PORT MAP (
+      -- probe => recharge_on_debug,
+      -- source => recharge_on_debug
+    -- );
+    
+    -- in_system_probe6 : altsource_probe
+    -- GENERIC MAP (
+      -- enable_metastability => "NO",
+      -- instance_id => "sol",
+      -- probe_width => 1,
+      -- sld_auto_instance_index => "YES",
+      -- sld_instance_index => 0,
+      -- source_initial_value => "0",
+      -- source_width => 1,
+      -- lpm_type => "altsource_probe"
+    -- )
+    -- PORT MAP (
+      -- probe => solar_on_debug,
+      -- source => solar_on_debug
+    -- );
+    
+    
+    
 
 
   -- The ideas here are as follows:
@@ -388,10 +434,10 @@ begin
           end if;
 
         when STATE_WAIT =>
-        
+          --if (start_signal(0) = '1') then
             cur_state <=  START_MAGRAM;
             StatCtl_startup_out <= '1';
-
+          --end if;
 
 
         when START_SDCTRL =>
@@ -526,16 +572,16 @@ begin
           
         when START_RTC =>
           if(Collar_Control_useI2C_c = '1') then 
-            cur_state   <=  START_RTC_WAITDONE;
             pc_control_reg (ControlSignals'pos (Ctl_vcc1p8_aux_ctrl_e))  <= '1';
+            cur_state   <=  START_RTC_WAITDONE;
           else
-            cur_state   <=  START_BATMON;
+            cur_state   <=  STATE_DONE;
           end if;
 
 
         when START_RTC_WAITDONE =>
           rtc_start_out    <= '1';
-                      
+
           if (rtc_done = '1') then
             cur_state   <=  START_BATMON;
           end if;
@@ -561,7 +607,7 @@ begin
 
 
         when STATE_DONE           =>
-          cur_state <= STOP_WAIT;
+          --cur_state <= STOP_WAIT;
           
           
         --This state should be moved to individual entities which 
