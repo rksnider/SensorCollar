@@ -388,12 +388,10 @@ begin
           end if;
 
         when STATE_WAIT =>
-          if (start_signal(0) = '1') then
+        
             cur_state <=  START_MAGRAM;
-            
-
             StatCtl_startup_out <= '1';
-          end if;
+
 
 
         when START_SDCTRL =>
