@@ -80,10 +80,10 @@ def RFXMLtoMIF (filename,fileoutput='output.mif',width=16,depth=256, \
         lines.append(line)
         #mif.writelines(line)
         cntr+=1
-        if addr_radix.upper() == 'HEX':
-            mif.write('0\t:\t'+str(hex(cntr)) + '\t;\t -- Number of registers to change\n')
-        if addr_radix.upper() == 'DEC':
-            mif.write('0\t:\t'+str(cntr) + '\t;\t -- Number of registers to change\n')
+    if addr_radix.upper() == 'HEX':
+        mif.write('0\t:\t'+str(hex(cntr)[2:].upper()) + '\t;\t -- Number of registers to change\n')
+    if addr_radix.upper() == 'DEC':
+        mif.write('0\t:\t'+str(cntr) + '\t;\t -- Number of registers to change\n')
     mif.writelines(lines)
     mif.write('END;')
     mif.close()
@@ -122,7 +122,7 @@ def default_mif(fileoutput='output.mif',width=16,depth=256,
     for i in range(0,depth):
         # Check to see how the address radix should be formatted
         if addr_radix.upper() == 'DEC':
-                line = str(i) + '\t:\t' + str(default_val) + ';\n'
+            line = str(i) + '\t:\t' + str(default_val) + ';\n'
         elif addr_radix.upper() == 'HEX':
             line = hex(i)[2:].upper() + '\t:\t' + hex(default_val)[2:].upper() + ';\n'
         lines.append(line)
