@@ -119,8 +119,8 @@ use IEEE.MATH_REAL.ALL ;
 --! @param      D1_signal_in        Read value of the tri-stated line.   
 --! @param      D2_signal_in        Read value of the tri-stated line.   
 --! @param      D3_signal_in        Read value of the tri-stated line.   
---! @param      card_rca            Card RCA is passed from init.
---! @param      init_done           Card has passed init phase.
+--! @param      card_rca_in         Card RCA is passed from init.
+--! @param      init_done_in        Card has passed init phase.
 --! @param      hs_sdr25_mode_en    Card should transition to 
 --!                                 hs_sdr25 mode before first CMD25. 
 --! @param      voltage_switch_en   Enable voltage switching sequence.    
@@ -172,11 +172,11 @@ entity microsd_data is
     prev_block_write_sd_addr 			      :out	std_logic_vector(31 downto 0);		
     prev_block_write_sd_addr_pulse      :out	std_logic;
   
-    cmd_write_en					    :out    std_logic;                          
-    D0_write_en					      :out    std_logic;
-    D1_write_en					      :out    std_logic;
-    D2_write_en					      :out    std_logic;
-    D3_write_en					      :out    std_logic;
+    cmd_write_en_out					    :out    std_logic;                          
+    D0_write_en_out						      :out    std_logic;
+    D1_write_en_out						      :out    std_logic;
+    D2_write_en_out						      :out    std_logic;
+    D3_write_en_out						      :out    std_logic;
   
     cmd_signal_in					    :in 	  std_logic;                          
     D0_signal_in					    :in	    std_logic;
@@ -184,10 +184,10 @@ entity microsd_data is
     D2_signal_in					    :in	    std_logic;
     D3_signal_in					    :in	    std_logic;
     
-    card_rca 					        :in	    std_logic_vector(15 downto 0);      
+    card_rca_in 					        :in	    std_logic_vector(15 downto 0);      
   
 
-    init_done						      :in     std_logic;                           
+    init_done_in						      :in     std_logic;                           
                    
     hs_sdr25_mode_en				  :in     std_logic;                           
 
@@ -213,10 +213,52 @@ end microsd_data;
 --! It also handles switching into 4 bit mode 
 --! and also switching  into different speed modes. 
 
+
+
+--!TODO
+--Check the COM_CRC_ERROR and ILLEGAL_COMMAND on the command which was sent
+--does not make any sense. Those bits are supposed to examined with a CMD13
+--after the previous command failed. 
+--Illegal command and CRC error will result in a timeout for any command.  
+--All those checks should be removed. 
+
+--All the following state are protected against CRC failure. 
+-- CMD7_INIT      
+-- CMD55_INIT_ACMD6       
+-- ACMD6_INIT        
+-- CMD6_INIT_4       
+-- CMD25_INIT_4       
+-- CMD12_INIT        
+-- CMD12_INIT_ABORT    
+-- CMD13_INIT_MULTI_4  
+-- CMD13_INIT_TIMEOUT_REC  
+-- CMD13_INIT
+          
+
 architecture Behavioral of microsd_data is
 
+--DEBUG SWITCH--
 
-	
+
+--Turn on debug processes. 
+--If debugging, turn this on.
+--If not, save the logic/timing. 
+constant DEBUG_ON   : std_logic := '0';
+
+
+--Turn off/on simulating CRC errors in commands/data.
+constant data_errors_enabled    :std_logic := '0';
+constant cmd_errors_enabled     :std_logic := '0';
+--Every N cmds/blocks sent to device, insert incorrect CRC.
+--This is the way I test failure. 
+constant cmd_error_rate_control     :natural := 1024;
+constant data_error_rate_control    :natural := 1024;
+
+
+--DEBUG SWITCH--
+
+
+
 component microsd_crc_7 is
   port (
     bitval				:in std_logic;
@@ -296,8 +338,7 @@ type sd_data_state is (ENTRY,
 
 
 signal current_state	:sd_data_state;
-signal next_state		  :sd_data_state;
-signal return_state   :sd_data_state;
+signal return_state   :sd_data_state; 
 
 --Return state is a way for exiting a shared CMD, such as CMD55!
 --signal return_state		:	sd_data_state;
@@ -433,7 +474,8 @@ signal	crc16_send_bit_count_D3		:   integer range 0 to 2**4 - 1;
 signal	crc16_send_byte_count_D3	:   integer range 0 to 2**9 - 1;	        
 
 --Store the SD cards relative card address
-signal   card_rca_signal		      :   std_logic_vector(15 downto 0) := x"0000"; 	
+signal   card_rca_signal    :   std_logic_vector(15 downto 0) ;
+signal   card_rca_s		      :   std_logic_vector(15 downto 0) ;
 
 
 --Master Block write process signals.
@@ -513,39 +555,57 @@ signal 	new_block_write_follower		    :   std_logic;
 --Used to track first block of multiblock tranmission.   
 signal 	first_block_of_multiblock 		  :   std_logic; 
 
-
+--Sclk Enable
+signal  sclk_en                 :std_logic;
 
 
 --Command Timeout Signals
 signal  cmd_resend_en               :std_logic;
 --Calculation of 100ms timeout counter.
-constant  cmd_timeout :natural := integer(trunc((real(clk_freq_g)) * 100.0E-3));
+constant  cmd_timeout :natural := integer(trunc((real(clk_freq_g)) * 500.0E-3));
 
+--Signals related to tracking data/cmd retry.
 signal  cmd_response_timeout        :natural;
-signal  error_count                 :unsigned (5 downto 0);
+signal  cmd_resend_count            :unsigned (15 downto 0);
 signal  restart_response     	      :std_logic;  
 signal  cmd_resend_timer_en         :std_logic;    
-signal  cmd_error_rate              :unsigned(4 downto 0);   
+signal  cmd_error_rate              :unsigned(natural(trunc(log2(real(cmd_error_rate_control)))) downto 0);
+signal  block_resend_count          :unsigned (15 downto 0);
+signal  data_error_rate             :unsigned(natural(trunc(log2(real(data_error_rate_control)))) downto 0);
+
+
+
 
 
 --CRC Error Data Resend Signals
 signal  resend                      :std_logic;
---Once resend pulses high, resending stays high until block_success.
---This avoids a latch in the output logic.
 signal  resending                   :std_logic;
 signal  resend_f                    :std_logic; 
-signal  resend_count                :unsigned(5 downto 0);
 signal  restart_crc                 :std_logic;
 
-signal  data_error_rate             :unsigned(3 downto 0);
+--Command Error Checking Process Signals
+signal  start_error     : std_logic;
+signal  CMD7_INIT_check : std_logic;
+signal  CMD55_INIT_ACMD6_check : std_logic;        
+signal  ACMD6_INIT_check  : std_logic;      
+signal  CMD6_INIT_4_check : std_logic; 
+signal  CMD25_INIT_4_check  : std_logic;      
+signal  CMD12_INIT_check    : std_logic;     
+signal  CMD12_INIT_ABORT_check  : std_logic;  
+signal  CMD13_INIT_MULTI_4_check  : std_logic;
+signal  CMD13_INIT_TIMEOUT_REC_check  : std_logic;
+
+
+
 
 
 attribute noprune: boolean;
 attribute noprune of response_1_status : signal is true;
 attribute noprune of response_1_current_state_bits : signal is true;
-attribute noprune of cmd_error_rate : signal is true;
-attribute noprune of resend_count : signal is true;
-
+attribute noprune of cmd_error_rate     : signal is true;
+attribute noprune of data_error_rate     : signal is true;
+attribute noprune of block_resend_count : signal is true;
+attribute noprune of cmd_resend_count   : signal is true;
 
 --DEBUG COUNTERS. Used in profilings inter-write delays. 
 signal  cmd13multi_counter						  :   unsigned(31 downto 0);
@@ -560,8 +620,33 @@ signal	cmd25_setup_counter				      :   unsigned(31 downto 0);
 signal  cmd25_setup_counter_reg 		    :   unsigned(31 downto 0);
 
 
-signal init_done_follower : std_logic;
+signal init_done_signal : std_logic;
+signal init_done_s      : std_logic;
 
+signal  clk_inv  : std_logic;
+signal  cmd_write_en  : std_logic;                 
+signal  D0_write_en	  : std_logic;            
+signal  D1_write_en	  : std_logic;            
+signal  D2_write_en	  : std_logic;            
+signal  D3_write_en	  : std_logic;  
+  
+
+
+--Throughput Calculation Signals
+
+constant counts_per_second : natural := clk_freq_g;
+
+constant  throughput_array_length : natural := 4;
+constant  kbps_length_bits        :natural := 16;
+signal    second_counter : unsigned(natural(trunc(log2(real(clk_freq_g)))) downto 0);
+signal    kilobytes_per_second : unsigned(kbps_length_bits-1 downto 0);  
+type      kilobytes_per_second_t is array (throughput_array_length-1 downto 0) of unsigned(kbps_length_bits-1 downto 0);  
+signal    kilobytes_per_second_a : kilobytes_per_second_t; 
+signal    tp_array_pos : unsigned(throughput_array_length-1 downto 0);         
+signal    prev_block_write_sd_addr_tp_track : unsigned (31 downto 0);           
+
+attribute noprune of kilobytes_per_second : signal is true;         
+ attribute noprune of kilobytes_per_second_a : signal is true;     
 
 begin
 
@@ -660,33 +745,35 @@ port map (
 -- output as well as the valid pulse which accompanies it. 
 --
 
-init_done_sync : process (rst_n, clk)
-begin
-  if (rst_n = '0') then
-    init_done_follower <= '0';
-  elsif (clk'event and clk = '1') then
-    init_done_follower <= init_done;
-  end if;
-end process ; 
 					
 					
 
-process(clk)
+process(clk,rst_n)
 begin
-	if (falling_edge(clk)) then				
+  if (rst_n = '0') then
+	elsif (falling_edge(clk)) then
+    CMD  <= CMD_signal;  
 		dat0 <= dat0_signal;					
 		dat1 <= dat1_signal;
 		dat2 <= dat2_signal;		
-		dat3 <= dat3_signal;					
+		dat3 <= dat3_signal;	
+    cmd_write_en_out	  <=  cmd_write_en;                  
+    D0_write_en_out		  <=  D0_write_en;
+    D1_write_en_out		  <=	D1_write_en;
+    D2_write_en_out		  <=	D2_write_en;
+    D3_write_en_out		  <=	D3_write_en;	    
 	end if;
 end process;
+
 	
 					
 -- I/O Signal Assignments
-
+clk_inv <= not clk;
 --Shut the clock to the sd card off when in the APP_WAIT state. 
-sclk <= '0' when (sd_status_signal = x"01") else clk;	
-CMD <= CMD_signal;					                    	
+sclk <= '0' when (sclk_en = '0') else clk;	
+
+
+   	
 
 
 sd_control_signal <= sd_control;
@@ -704,894 +791,13 @@ block_byte_addr <= ram_write_address_signal;
 prev_block_write_sd_addr 	 <= block_write_sd_addr_interal;
     
 
---
---
---STATE MEMORY PROCESS			     
---
---
-state_transition:process(clk, rst_n)
+--Main State Machine. 
+next_state_logic : process(clk, rst_n)
 begin
-  if(rst_n = '0') then
-    current_state <= ENTRY;		
-  elsif (rising_edge(clk)) then
-    current_state	<= next_state;	
-  end if;
-end process;
-	
-	
-	
-	--
-	--
-	--NEXT-STATE LOGIC PROCESS						
-	--
-  --
-next_state_logic: process(current_state,init_done_follower,
-                  delay_done,sd_control_signal,
-                  command_send_done,read_r1_response_done,block_write_done,
-                  multiblock_write_done,hs_sdr25_mode_en,
-                  ac_mode_switch_done,widedone,
-                  read_data_token_reponse_done,CMD6_D0_read_done,
-                  read_data_token_byte,cmd_resend_en)
-
-begin
-
-	next_state <= current_state;		--Default to current state	
-
-  case current_state is
-    when ENTRY =>			
-      if (init_done_follower = '1') then
-        next_state <= DELAY;
-      end if;
-       --Early on in development a delay after initialization proved useful.
-    when DELAY =>                                           
-      if (delay_done = '1') then
-        --Transition to SD's "Transfer State" where we can read and write from.
-        next_state <= CMD7_INIT;			                
-      end if;	
-
-
-      --With some slight modifications the block read, single block 
-      --write, multiblock single bit, multiblock with preerase, and erase can be 
-      -- brought functional. Focus on 1.8V,4bit,CMD25 development
-      --resulted in these other pathways going somewhat unmaintained.
-      --Mutliblock read however has never been worked on. 
-      --The commands for these operations are already researched.
-      --Simply excercising the appropriate process enable
-      --bits and tweaking FSM pathways would result in these other 
-      --paths becoming operational. 
-      --Only the CMD25 pathway is fully functional at this moment. 
-      --MAIN STATE MACHINE BRANCH
-    when APP_WAIT =>                                            
-      case sd_control_signal is
-        -- Perform a block read
-        when x"01" =>                                        
-          next_state <= CMD17_INIT;
-        --Perform a multiple block read
-        --when x"02" =>                                     
-        --next_state <= APP_CMD18_INIT;
-        --Perform a block write
-        when x"03" =>                                       
-          next_state <= CMD24_INIT;
-                      
-        -- Perform a multiblock write single bit
-        when x"04" => 
-          --If the hs_sdr25 bit set, insert a CMD6 to switch to sdr25 mode. 
-          if (hs_sdr25_mode_en = '1') then                
-            if ( ac_mode_switch_done = '0') then
-              next_state 	<=  CMD6_INIT;
-            --Else start writing. 
-            else                                    
-              next_state <= CMD25_INIT;
-            end if;
-          else
-            next_state <= CMD25_INIT;
-          end if;
-        -- Perform a multiblock write with pre-erase	
-        when x"05" =>                                       
-        --return_state <= ACMD23_INIT;
-          next_state <= CMD55_INIT;
-        -- Perform a multiblock erase.
-        when x"0E" =>                                    
-          next_state <= CMD32_INIT;
-                      
-                      
-        -- Perform a multiblock write 4 bit   
-        --**This is the only pathway currently in operation.**--    
-        when x"44" =>                                       
-          if (widedone = '0') then
-            --Do a wide mode (4bit switch).
-            --This requires a CMD55 followed by an ACMD6. 
-            next_state <= CMD55_INIT_ACMD6;
-            --hs_sdr25_mode_en check and switch is tied into the 
-            --next state logic. Unlike in the single bit case above.                             
-          else 
-            --If already in 4 bit mode, start or continue writing. 
-            next_state <= CMD25_INIT_4;                 
-          end if;
-
-        when others =>
-          next_state <= APP_WAIT;
-        end case;
-				
-                
-    -----------
-    --CMD24(WRITE_SINGLE_BLOCK)  
-    --Single block write. 
-    --Not efficient (10x slower) compared to mutliblock (128) writes. 
-    -----------	
-
-    when CMD24_INIT =>
-      next_state <= CMD24_SEND;
-      
-      
-    when CMD24_SEND =>				
-      if (command_send_done = '1') then
-        next_state <= CMD24_READ;
-      end if;
-      
-    when CMD24_READ =>			
-      if (read_r1_response_done = '1') then
-        
-        next_state <= CMD24_DATA_INIT;
-        
-      end if;
-      
-    when CMD24_DATA_INIT =>	
-      next_state <= CMD24_DATA;
-
-      
-    when CMD24_DATA =>	
-      if(block_write_done = '1') then
-        next_state <= CMD13_INIT;
-      end if;
-                
-    -----------
-    --CMD25(WRITE_MULTIPLE_BLOCK)  
-    --The multiblock write command. 
-    --Begins a streaming write to the 
-    --sd card. This is the 1 bit pathway.
-    -----------	
-      
-    when CMD25_INIT =>
-      if(multiblock_write_done = '1') then
-        next_state <= CMD12_INIT;
-      else
-        next_state <= CMD25_SEND;
-      end if;				
-      
-    when CMD25_SEND =>				
-      if (command_send_done = '1') then
-        next_state <= CMD25_READ;
-      end if;
-      
-    when CMD25_READ =>			
-      if (read_r1_response_done = '1') then
-      --RDY FOR DATA BIT
-        if (response_1_status(8) = '1') then   
-          next_state <= CMD25_DATA_INIT;
-        else 
-          next_state <= ERROR;
-        end if;
-      end if;
-      
-      
-
-    when CMD25_DATA_INIT =>		
-      next_state <= CMD25_DATA;  
-         
-
-      
-    when CMD25_DATA =>	
-      if (multiblock_write_done = '1') then
-        next_state <= CMD25_DATA_READ_12;
-      elsif(block_write_done = '1') then
-        next_state <= CMD25_DATA_READ_13MULTI;   				
-      end if;
-        
-    when CMD25_DATA_READ_12 =>	
-      if(read_data_token_reponse_done = '1') then
-        --Check that data was received okay. 
-        --SPI Data token of SD card mode. 
-        if(read_data_token_byte(3 downto 1) = "010") then	
-          next_state <= CMD12_INIT;	
-        else
-          next_state <= ERROR;	
-        end if;
-      else
-          next_state <= CMD25_DATA_READ_12;
-      end if;
-					
-    when CMD25_DATA_READ_13MULTI =>	
-      if(read_data_token_reponse_done = '1') then
-        --Check that data was received okay. 
-        --SPI Data token of SD card mode. 
-        if(read_data_token_byte(3 downto 1) = "010") then	
-          next_state <= CMD13_INIT_MULTI;	
-        else
-          next_state <= ERROR;	
-        end if;
-      else
-        next_state <= CMD25_DATA_READ_13MULTI;
-      end if;
-
-
-
-    -----------
-    --CMD25(WRITE_MULTIPLE_BLOCK) 
-    --The multiblock write command. 
-    --Begins a streaming write to the sd card. This is the 4 bit pathway.
-    -----------
-					
-    when CMD25_INIT_4 =>
-      if(multiblock_write_done = '1') then
-        next_state <= CMD12_INIT;
-      else
-        next_state <= CMD25_SEND_4;
-      end if;				
-      
-    when CMD25_SEND_4 =>				
-      if (command_send_done = '1') then
-        next_state <= CMD25_READ_4;
-      end if;
-				
-    when CMD25_READ_4 =>			
-      if (read_r1_response_done = '1') then
-        if (response_1_status(8) = '1') then   --RDY FOR DATA BIT
-          next_state <= CMD25_DATA_INIT_4;
-        else 
-          next_state <= ERROR;
-        end if;
-        --This will not work in the resend instance. 
-        --Must jump back to either resend or none resend.
-        -- elsif(cmd_resend_en = '1') then
-        -- next_state <= CMD25_INIT_4;
-      end if;
-				
-
-    when CMD25_DATA_INIT_4 =>		
-      next_state <= CMD25_DATA_4;  
-  
-      
-    when CMD25_DATA_4 =>
-      if(block_write_done = '1') then     
-        next_state <= CMD25_DATA_4_READ_TOKEN;   				
-      end if;
-                    
-                    
-					
-    when CMD25_DATA_4_READ_TOKEN =>	
-      if(read_data_token_reponse_done = '1') then
-        --Check that data was received okay.SPI Data token of SD card mode. 
-        if(read_data_token_byte(3 downto 1) = "010") then	
-          next_state <= CMD25_DATA_4_READ_CRC_SUCCESS;	
-        else
-        --Else crc token indicates failure.
-        --Interesting note here. If a crc error occurs mid
-        --multiblock, all further blocks are ignored! Must resend
-        --CMD25.
-          next_state <= CMD25_DATA_4_RESEND;	
-        end if;
-      else
-        next_state <= CMD25_DATA_4_READ_TOKEN;    
-      end if;
-                
-    --Resend bit set in this state to trigger address handling due to error.
-    when CMD25_DATA_4_RESEND =>
-      next_state <= CMD12_INIT_ABORT;
-                    
-    when CMD25_INIT_4_RESEND =>
-      if(multiblock_write_done = '1') then
-        next_state <= CMD12_INIT;
-      else
-        next_state <= CMD25_SEND_4_RESEND;
-      end if;				
-    --This CMD25 contains the address we wish to try write again.
-    when CMD25_SEND_4_RESEND =>				
-      if (command_send_done = '1') then
-        next_state <= CMD25_READ_4;
-      end if;
-                    
-                    
-    -----------
-    --CRC SUCCESS state. This state are included to detect 
-    --if the last block was received correctly.
-    -----------
-    when CMD25_DATA_4_READ_CRC_SUCCESS  =>	
-      next_state <= CMD25_DATA_4_READ_DECIDE;
-              
-    when CMD25_DATA_4_READ_DECIDE =>
-      if (multiblock_write_done = '1') then
-        next_state <= CMD12_INIT;
-      else
-        next_state <= CMD13_INIT_MULTI_4;
-      end if;
-                
-
-							
-
-
-    -----------
-    --CMD13(SEND_STATUS)   
-    --Card Status is returned. 
-    --This is used to check if the card 
-    --is ready for data before sending 
-    --another block to the card in a 
-    --multiblock stream/write.
-    -----------
-
-    --CMD 13's are broken into single bit and multi bit and inbetween 
-    --blocks and at the end of a CMD25/CMD12 
-    --CMD13 Returns card status field in an R1 response. 
-    --Used for checking 
-    --that card is READY_FOR_DATA inbetween blocks of 
-    --a multiblock write primarily. 
-    --Other bits of interest are APP_CMD, ILLEGAL COMMAND, etc.
-    --CMD13_ is used anywhere but inbetween blocks of a multiblock write. 
-    when CMD13_INIT => 								
-      next_state <= CMD13_SEND;
-				
-    when CMD13_SEND =>
-      if (command_send_done = '1') then
-        next_state <= CMD13_READ;
-      end if;
-    
-    when CMD13_READ =>
-      if (read_r1_response_done = '1') then
-      --Card Status READY_FOR_DATA Page 76 SD Spec.
-        if (response_1_status(8) = '1') then 
-          next_state <= APP_WAIT;
-        else
-          next_state <= CMD13_INIT;
-        end if;
-      end if;
-                
-            
-    --This is an example recovery path for command crc error
-    --error recovery. 
-                  
-    when CMD13_INIT_TIMEOUT_REC => 								
-      next_state <= CMD13_SEND_TIMEOUT_REC;
-      
-    when CMD13_SEND_TIMEOUT_REC =>
-      if (command_send_done = '1') then
-        next_state <= CMD13_READ_TIMEOUT_REC;
-      end if;
-      
-    when CMD13_READ_TIMEOUT_REC =>
-      if (read_r1_response_done = '1') then
-        --Card Status READY_FOR_DATA Page 76 SD Spec.
-        if (response_1_status(8) = '1') then 
-          next_state <= return_state;
-        else
-          next_state <= CMD13_INIT_TIMEOUT_REC;
-        end if;
-      end if;
-                
-                
-                
-                
-    -----------
-    --CMD13(SEND_STATUS)  
-    --SD Status is returned. 
-    --This is used to check if the 
-    --card is ready for data before 
-    --sending another block to the 
-    --card in a multiblock stream/write.
-    -----------
-    --**The CMD13 for the 1 bit multiblock path**
-    --CMD13 string of commands used with CMD25 Multiblock write. 
-    --Used between blocks of a multiblock write.	
-    when CMD13_INIT_MULTI => 						
-      next_state <= CMD13_SEND_MULTI;
-      
-    when CMD13_SEND_MULTI =>
-      if (command_send_done = '1') then
-        next_state <= CMD13_READ_MULTI;
-      end if;
-      
-    when CMD13_READ_MULTI =>
-      if (read_r1_response_done = '1') then
-        --Card Status READY_FOR_DATA
-        if (response_1_status(8) = '1') then 
-          next_state <= CMD25_DATA_INIT;
-        else
-          next_state <= CMD13_INIT_MULTI;
-        end if;
-      end if;
-                
-                
-    -----------
-    --CMD13(SEND_STATUS)  
-    --SD Status is returned. 
-    --This is used to check if the card is ready for 
-    --data before sending another block to the card 
-    --in a multiblock stream/write.
-    -----------
-    --The 4 bit multiblock path
-
-    --CMD13 string of commands used with CMD25 Multiblock write. 
-    --Used between blocks of a multiblock write.	
-    when CMD13_INIT_MULTI_4 => 						
-      next_state <= CMD13_SEND_MULTI_4;
-      
-    when CMD13_SEND_MULTI_4 =>
-      if (command_send_done = '1') then
-        next_state <= CMD13_READ_MULTI_4;
-      end if;
-      
-    when CMD13_READ_MULTI_4 =>
-      if (read_r1_response_done = '1') then
-        if (response_1_status(8) = '1') then --Card Status READY_FOR_DATA
-          if (resending = '0') then
-            next_state <= CMD25_DATA_INIT_4;
-          else
-            next_state <= CMD25_INIT_4_RESEND;
-          end if;
-        else
-          next_state <= CMD13_INIT_MULTI_4;
-        end if;
-        -- elsif(cmd_resend_en = '1') then
-          -- next_state <= CMD13_SEND_MULTI_4;
-      end if;
-                
-                
-    -----------
-    --CMD7(SELECT/DESELECT_CARD) 
-    --Take card from Standby to Transfer State.
-    ----------- 
-    --After init, take the card from standby to transfer mode.
-    --A nice state diagram exists in the SD SPEC. Page 27.            
-    --Command to take SD card from standby mode to transfer mode, 
-    --from which data writing is initiated. 
-    when CMD7_INIT =>				  
-      next_state <= CMD7_SEND;
-
-				
-    when CMD7_SEND =>
-      if (command_send_done = '1') then
-        next_state <= CMD7_READ;
-      end if;
-      
-    when CMD7_READ =>
-      if (read_r1_response_done = '1') then
-        --If the bad command or crc error flags are not set.
-        if (response_1_status(23 downto 22) = "00") then    
-          next_state <= APP_WAIT;	
-        else
-          next_state <= CMD7_INIT;	
-        end if;
-      --An example recovery scenario. Additional paths needed
-      --for the entire protocol but this is proof that this scheme
-      --will work. 
-      elsif(cmd_resend_en = '1') then
-        return_state <= CMD7_INIT;
-        next_state <= CMD13_INIT_TIMEOUT_REC;
-      end if;
-                
-                
-    -----------
-    --CMD6(SWITCH_FUNC)  
-    --Put card into HS_SDR25 Mode for 25-50Mhz.
-    -----------
-    --CMD6 is the function switch command. Page 41 SD Spec 3.01
-    --1 bit pathway               
-
-    --CMD6 is the function switch command.
-    --We can change speeds and current levels. See page 44 Sd Spec 3.01
-    when CMD6_INIT =>				                   
-      next_state <= CMD6_SEND;
-
-				
-    when CMD6_SEND =>
-      if (command_send_done = '1') then
-        next_state <= CMD6_READ;
-      end if;
-				
-    when CMD6_READ =>
-      --CMD6 inquiry and set function both included 512 bits sent 
-      --back to the host over D0. We must wait for these even if 
-      --we don't do anything with them currently.
-      --Response was checked and written up to verify it was done correctly. 
-      if (CMD6_D0_read_done = '1') then 			
-        next_state <= CMD25_INIT;	      
-      end if;
-
-				
-    -----------
-    --CMD6(SWITCH_FUNC)  
-    --Put card into HS_SDR25 Mode for 25-50Mhz.
-    -----------
-    --CMD6 is the function switch command. Page 41 SD Spec 3.01
-    --4 bit pathway	
-    --CMD6 is the function switch command. 
-    --We can change speeds and current levels. 
-    --See page 44 Sd Spec 3.01	
-            
-    when CMD6_INIT_4 =>				                    
-      next_state <= CMD6_SEND_4;
-
-				
-    when CMD6_SEND_4 =>
-      if (command_send_done = '1') then
-        next_state <= CMD6_READ_4;
-      end if;
-				
-    when CMD6_READ_4 =>
-      --CMD6 inquiry and set function both included 
-      --512 bits sent to the host over D0. 
-      --We must wait for these bit before proceeding,
-      --even if they aren't checked
-      --with program
-
-      if (CMD6_D0_read_done = '1') then 
-        next_state <= CMD25_INIT_4;
-        --end if;
-        -- elsif(cmd_resend_en = '1') then
-        -- next_state <= CMD6_INIT_4;
-      end if;
-				
-				
-				
-		--		
-    --CMD32/33/38 are the ERASE COMMANDS
-    --
-    --CMD32(ERASE_WR_BLK_START)  Set start of erase.
-    -----------
-    when CMD32_INIT =>  
-      next_state <= CMD32_SEND;
-      
-    when CMD32_SEND =>
-      if (command_send_done = '1') then
-          next_state <= CMD32_READ;
-      end if;
-				
-    when CMD32_READ =>
-      if (read_r1_response_done = '1') then
-        --check for COM_CRC_ERROR and ILLEGAL COMMAND
-        if (response_1_status(23 downto 22) = "00") then    
-          next_state <= CMD33_INIT;
-        else
-          next_state <= ERROR;
-        end if;
-      end if;
-    -----------
-    --CMD33(ERASE_WR_BLK_END)  Set end of erase.
-    -----------
-    when CMD33_INIT =>  
-      next_state <= CMD33_SEND;
-				
-    when CMD33_SEND =>
-      if (command_send_done = '1') then
-        next_state <= CMD33_READ;
-      end if;
-				
-    when CMD33_READ =>
-      if (read_r1_response_done = '1') then
-        --check for COM_CRC_ERROR and ILLEGAL COMMAND
-        if (response_1_status(23 downto 22) = "00") then    
-          next_state <= CMD38_INIT;
-        else
-          next_state <= ERROR;
-        end if;
-      end if;
-    -----------
-    --CMD38(ERASE_WR_BLK_END)  Erase!
-    -----------
-    when CMD38_INIT =>  
-      next_state <= CMD38_SEND;
-          
-    when CMD38_SEND =>
-      if (command_send_done = '1') then
-        next_state <= CMD38_READ;
-      end if;
-				
-    when CMD38_READ =>
-      if (read_r1_response_done = '1') then
-        --check for COM_CRC_ERROR and ILLEGAL COMMAND
-        if (response_1_status(23 downto 22) = "00") then        
-          next_state <= CMD13_INIT;
-        else
-          next_state <= ERROR;
-        end if;
-      end if;	
-					
-    -----------
-    --CMD12(STOP_TRANSMISSION)  
-    --Stop a multiblock write transmission.
-    -----------
-    --CMD12 is the stop data send command. Used to cap a 
-    --multiblock stream during a CMD25. 
-    when CMD12_INIT =>  
-      next_state <= CMD12_SEND;
-				
-    when CMD12_SEND =>
-      if (command_send_done = '1') then
-        next_state <= CMD12_READ;
-      end if;
-				
-    when CMD12_READ =>
-      if (read_r1_response_done = '1') then
-        --check for COM_CRC_ERROR and ILLEGAL COMMAND
-        if (response_1_status(23 downto 22) = "00") then 
-          next_state <= CMD13_INIT;
-        else
-          next_state <= ERROR;
-        end if;
-      end if;	
-                
-      
-    --These CMD12's are jumped to following a data response token
-    --indicating anything besides succesfull receive of a data 
-    --block by the sd card.
-    when CMD12_INIT_ABORT =>  
-      next_state <= CMD12_SEND_ABORT;
-				
-    when CMD12_SEND_ABORT =>
-      if (command_send_done = '1') then
-        next_state <= CMD12_READ_ABORT;
-      end if;
-				
-    when CMD12_READ_ABORT =>
-      if (read_r1_response_done = '1') then
-        --check for COM_CRC_ERROR and ILLEGAL COMMAND
-        if (response_1_status(23 downto 22) = "00") then 
-          next_state <= CMD13_INIT_MULTI_4;
-        else
-          next_state <= ERROR;
-        end if;
-      end if;	
-					
-					
-    -----------
-    --CMD55(APP_CMD) 
-    --This command is sent before any ACMD. 
-    --This simply tells the card that an expanded command 
-    --is coming next.
-    -----------
-    -- Send CMD55 (APP_CMD) to the SD card to preface impending 
-    -- application-specific command
-    when CMD55_INIT =>  
-      next_state <= CMD55_SEND;
-				
-    when CMD55_SEND =>
-      if (command_send_done = '1') then
-        next_state <= CMD55_READ;
-      end if;
-				
-    when CMD55_READ =>
-      if (read_r1_response_done = '1') then
-        --This bit is the APP_CMD bit of the status register. 
-        --The other bit set on CMD55 response is READY FOR DATA.				
-        if (r1_response_bytes(13) = '1') then
-          --next_state <= return_state;			
-        else
-          next_state <= ERROR;
-        end if;
-      end if;
-				
-				
-    -----------
-    --ACMD23(SET_WR_BLK_ERASE_COUNT) 
-    --Used to pre-erase before a write.
-    -----------
-                
-    when ACMD23_INIT =>  
-      next_state <= ACMD23_SEND;
-      
-    when ACMD23_SEND =>
-      if (command_send_done = '1') then
-        next_state <= ACMD23_READ;
-      end if;
-      
-    when ACMD23_READ =>
-      if (read_r1_response_done = '1') then
-        --Checksum is okay and command valid.
-        if (response_1_status(23 downto 22) = "00") then  
-          next_state <= CMD25_INIT;
-        else
-          next_state <= ERROR;
-        end if;
-      end if;
-
-    -----------
-    --ACMD6(SET_BUS_WIDTH) 
-    --Switch to 4 bit mode. Use D1-D3 now.   
-    -----------
-    --Switches to Wide Mode. 4 bit mode. Data0-Data3 now used. 
-    when ACMD6_INIT =>  
-      next_state <= ACMD6_SEND;
-      
-    when ACMD6_SEND =>
-      if (command_send_done = '1') then
-        next_state <= ACMD6_READ;
-      end if;
-				
-    when ACMD6_READ =>
-      if (read_r1_response_done = '1') then
-        --Checksum is okay and command valid.
-        if (response_1_status(23 downto 22) = "00") then  
-          if (hs_sdr25_mode_en = '1') then
-            next_state <= CMD6_INIT_4;
-          else
-            next_state <= CMD25_INIT_4;	
-          end if;
-        else
-            next_state <= ERROR;
-        end if;
-      -- elsif(cmd_resend_en = '1') then
-          -- next_state <= ACMD6_INIT;
-      end if;
-					
-                    
-    -----------
-    --ACMD13(SD_STATUS)  
-    --Send back the sd status. 
-    --Used for Debug. 
-    --512 status bits will come back on the D0 line. 
-        -----------                    
-					
-    when ACMD13_INIT =>				  
-      next_state <= ACMD13_SEND;
-
-				
-    when ACMD13_SEND =>
-      if (command_send_done = '1') then
-        next_state <= ACMD13_READ;
-      end if;
-				
-    when ACMD13_READ =>
-      --512 bits sent to the host over D0. We must wait for these. 
-      if (CMD6_D0_read_done = '1') then 			
-        next_state <= CMD25_INIT_4;			
-      end if;
-
-                
-                
-    -----------
-    --ACMD42(SET_CLR_CARD_DETECT)  
-    --Program/Deprogram the pullup resistor on D3.
-    --Tested but never used.
-    -----------      
-    --Never implemented, but played with during debugging.       
-      
-    --Turn off the pullup resistor on DAT3.		
-    when ACMD42_INIT =>				 					
-      next_state <= ACMD42_SEND;
-
-				
-    when ACMD42_SEND =>
-      if (command_send_done = '1') then
-        next_state <= ACMD42_READ;
-      end if;
-				
-    when ACMD42_READ =>
-      if (read_r1_response_done = '1') then
-        if (response_1_status(23 downto 22) = "00") then
-          next_state <= CMD55_INIT_ACMD13;
-        else
-          next_state <= ERROR;
-        end if;
-      end if;	
-					
-    -----------
-    --CMD17(READ_SINGLE_BLOCK) Read a single block.
-    -----------	
-    --Not completely working but close. 				
-					
-					
-    when CMD17_INIT =>				  
-      next_state <= CMD17_SEND;
-
-				
-    when CMD17_SEND =>
-      if (command_send_done = '1') then
-        next_state <= CMD17_READ;
-      end if;
-      
-    when CMD17_READ =>
-      if (read_r1_response_done = '1') then
-        next_state <= CMD17_READ_DATA;				
-      end if;
-      
-    when CMD17_READ_DATA =>
-      if (singleblock_read_done = '1') then
-        next_state <= APP_WAIT;			
-      end if;
-        
-        
-    when IDLE 	=>
-      next_state <= IDLE;
-
-    when ERROR 	=>
-      next_state <= ERROR;
-				
-				
-  --The following CMD55s are pathways to get to particular APP CMDS. 
-  --Each APP CMD has its one CMD55 pathway. 
-  --This method was done as creating a 
-  --return_state enumeration caused warnings initially. 
-  --Send CMD55 (APP_CMD) to the SD card to preface impending 
-  --application-specific command
-    when CMD55_INIT_ACMD6 =>  
-      next_state <= CMD55_SEND_ACMD6;
-      
-    when CMD55_SEND_ACMD6 =>
-      if (command_send_done = '1') then
-        next_state <= CMD55_READ_ACMD6;
-      end if;
-				
-    when CMD55_READ_ACMD6 =>
-      if (read_r1_response_done = '1') then
-        --This bit is the APP_CMD bit of the status register. 
-        --The other bit set on first CMD55 response is READY FOR DATA.					
-        if (r1_response_bytes(13) = '1') then   
-          next_state <= ACMD6_INIT;			 
-        else
-          next_state <= ERROR;
-        end if;
-        -- elsif(cmd_resend_en = '1') then
-        -- next_state <= CMD55_INIT_ACMD6;
-      end if;
-				
-    -- Send CMD55 (APP_CMD) to the SD card 
-    --to preface impending application-specific command	
-    when CMD55_INIT_ACMD42 =>  
-      next_state <= CMD55_SEND_ACMD42;
-      
-    when CMD55_SEND_ACMD42 =>
-      if (command_send_done = '1') then
-        next_state <= CMD55_READ_ACMD42;
-      end if;
-				
-    when CMD55_READ_ACMD42 =>
-      if (read_r1_response_done = '1') then
-      --This bit is the APP_CMD bit of the status register. 
-      --The other bit set on first CMD55 response is READY FOR DATA.					
-        if (r1_response_bytes(13) = '1') then   
-          next_state <= ACMD42_INIT;			
-        else
-          next_state <= ERROR;
-        end if;
-        -- elsif(cmd_resend_en = '1') then
-        -- next_state <= CMD55_INIT_ACMD42;
-      end if;
-				
-    -- Send CMD55 (APP_CMD) to the SD card to preface impending application-specific command	
-    when CMD55_INIT_ACMD13 =>  
-      next_state <= CMD55_SEND_ACMD13;
-				
-    when CMD55_SEND_ACMD13 =>
-      if (command_send_done = '1') then
-        next_state <= CMD55_READ_ACMD13;
-      end if;
-				
-    when CMD55_READ_ACMD13 =>
-      if (read_r1_response_done = '1') then
-        --This bit is the APP_CMD bit of the status register. 
-        --The other bit set on first CMD55 response is READY FOR DATA.					
-        if (r1_response_bytes(13) = '1') then   
-          next_state <= ACMD13_INIT;			 
-        else
-          next_state <= ERROR;
-        end if;
-      end if;
-
-
-  end case;
-
-end process;
-
-
---
---	
---OUTPUT LOGIC PROCESS			   
---
-
-
-process(current_state)
-begin
-
-		
+ if(rst_n = '0') then
+ 
+ 
+ 
   -- Default Signal Values
   command_load_en 			<= '0';
   command_send_en 			<= '0';
@@ -1614,1081 +820,331 @@ begin
   multiblock_en  			    <= '0';
   block_read_process_en 	<= '0';
   read_data_token_reponse_en 	<= '0';
+  	
+
+  card_rca_signal   <= (others => '0');
+  card_rca_s        <= (others => '0');
+  delay_en        <= '0';
+
+  resend <= '0';
   
-  crc16_bitval_signal_D0 <= '0';				
-  crc16_bitval_signal_D1 <= '0';
-  crc16_bitval_signal_D2 <= '0';
-  crc16_bitval_signal_D3 <= '0';
-
-  dat0_signal <= '1';
-  dat1_signal <= '1';
-  dat2_signal <= '1';
-  dat3_signal <= '1';			
-
-  card_rca_signal <= card_rca;
-
-  resend <= '0';        
-
+  sclk_en <= '1';
         
   block_success   <= '0';
   ext_trigger		  <= '0';
   new_block_write <= '0';
-
+ 
+  init_done_signal <= '0';
+  init_done_s <= '0';
+ 
+  current_state <= ENTRY;	
+ 
+  elsif (rising_edge(clk)) then
   
+  
+  cmd_write_en	  <= '0';
+  D0_write_en     <= '0';
+  D1_write_en     <= '0';
+  D2_write_en     <= '0';
+  D3_write_en     <= '0';
+  command_send_en <= '0';
+ 
+  read_r1_response_en		<= '0';
+  read_r6_response_en		<= '0';
+  
+  crc7_gen_en					  <= '0';
+  crc16_gen_en_D0 			<= '0';
+  crc16_gen_en_D1 			<= '0';
+  crc16_gen_en_D2 			<= '0';
+  crc16_gen_en_D3 			<= '0';
+ 
+ 
+  sclk_en <= '1';
+  
+  block_write_process_en 	  <= '0';
+  block_write_process_en_4 	<= '0';
+  
+ --This bit held through many states.  
+  --multiblock_en  			    <= '0';
+  
+  block_read_process_en 	    <= '0';
+  read_data_token_reponse_en 	<= '0';
+  delay_en                    <= '0';
+  new_block_write             <= '0';
+  resend                      <= '0';
+  block_success               <= '0';
+  
+  sd_status_signal <= x"FF"; 
+  
+  
+
+
   case current_state is
-      
-    -----------
-    --ENTRY is the state where the FSM sits while init is done.   
-    -----------
-      
-    when ENTRY =>
-                  
-      CMD_signal <= '1';
-      
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';							
+    when ENTRY =>			
 
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-        
-        
-      card_rca_signal <= card_rca;
-      state_leds <= "0000";							
+    
       sd_status_signal <= x"00";
+      init_done_s <= init_done_in;
+      init_done_signal <= init_done_s;
+      
+      card_rca_s      <= card_rca_in;  
+      card_rca_signal <= card_rca_s;
+      
+      if (init_done_signal = '1') then
+        --Set false path through this signal. 
 
-    -----------
-    --APP_WAIT is the central state from 
-    --which a control signal launches 
-    --the state machine.  
-    -----------
-      
-      
-    when APP_WAIT =>
-              
-    
-      CMD_signal <= '1';
+        current_state <= CMD7_INIT;
+      end if;
+       --Early on in development a delay after initialization proved useful.
+    when DELAY =>        
+    delay_en        <= '1';
+      if (delay_done = '1') then
+        --Transition to SD's "Transfer State" where we can read and write from.
+        current_state <= CMD7_INIT;			                
+      end if;	
 
 
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      
-      state_leds <= "0001";
+      --With some slight modifications the block read, single block 
+      --write, multiblock single bit, multiblock with preerase, and erase can be 
+      -- brought functional. Focus on 1.8V,4bit,CMD25 development
+      --resulted in these other pathways going somewhat unmaintained.
+      --Mutliblock read however has never been worked on. 
+      --The commands for these operations are already researched.
+      --Simply excercising the appropriate process enable
+      --bits and tweaking FSM pathways would result in these other 
+      --paths becoming operational. 
+      --Only the CMD25 pathway is fully functional at this moment. 
+      --MAIN STATE MACHINE BRANCH
+    when APP_WAIT => 
       sd_status_signal <= x"01";
-    
-    -----------
-    --CMD24(Send Single Block). 
-    --Send a single block to the sd card. 
-    -----------
+      sclk_en <= '0';
+      
+      
+      case sd_control_signal is
+        -- Perform a block read
+        -- when x"01" =>                                        
+          -- current_state <= CMD17_INIT;
+        --Perform a multiple block read
+        --when x"02" =>                                     
+        --current_state <= APP_CMD18_INIT;
+        -- --Perform a block write
+        -- when x"03" =>                                       
+          -- current_state <= CMD24_INIT;
+                      
+        -- -- Perform a multiblock write single bit
+        -- when x"04" => 
+          -- --If the hs_sdr25 bit set, insert a CMD6 to switch to sdr25 mode. 
+          -- if (hs_sdr25_mode_en = '1') then                
+            -- if ( ac_mode_switch_done = '0') then
+              -- current_state 	<=  CMD6_INIT;
+            -- --Else start writing. 
+            -- else                                    
+              -- current_state <= CMD25_INIT;
+            -- end if;
+          -- else
+            -- current_state <= CMD25_INIT;
+          -- end if;
+        -- -- Perform a multiblock write with pre-erase	
+        -- when x"05" =>                                       
+        -- --return_state <= ACMD23_INIT;
+          -- current_state <= CMD55_INIT;
+        -- -- Perform a multiblock erase.
+        -- when x"0E" =>                                    
+          -- current_state <= CMD32_INIT;
+                      
+                      
+        -- Perform a multiblock write 4 bit   
+        --**This is the only pathway currently in operation.**--    
+        when x"44" =>                                       
+          if (widedone = '0') then
+            --Do a wide mode (4bit switch).
+            --This requires a CMD55 followed by an ACMD6. 
+            current_state <= CMD55_INIT_ACMD6;
+            --hs_sdr25_mode_en check and switch is tied into the 
+            --next state logic. Unlike in the single bit case above.                             
+          else 
+            --If already in 4 bit mode, start or continue writing. 
+            current_state <= CMD25_INIT_4;                 
+          end if;
+          
+      -- -- Perform a multiblock read 4 bit   
+        -- when x"48" =>                                       
+          -- if (widedone = '0') then
+            -- --Do a wide mode (4bit switch).
+            -- --This requires a CMD55 followed by an ACMD6. 
+            -- current_state <= CMD55_INIT_ACMD6;
+            -- return_state <= CMD25_INIT_4
+            -- --hs_sdr25_mode_en check and switch is tied into the 
+            -- --next state logic. Unlike in the single bit case above.                             
+          -- else 
+            -- --If already in 4 bit mode, start or continue writing. 
+            -- current_state <= CMD25_INIT_4;                 
+          -- end if;
 
+        when others =>
+          current_state <= APP_WAIT;
+        end case;
+				
+                
+    -----------
+    --CMD24(WRITE_SINGLE_BLOCK)  
+    --Single block write. 
+    --Not efficient (10x slower) compared to mutliblock (128) writes. 
+    -----------	
 
     when CMD24_INIT =>
-              
-    
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
+      current_state <= CMD24_SEND;
+      
+      
+    when CMD24_SEND =>				
+      if (command_send_done = '1') then
+        current_state <= CMD24_READ;
+      end if;
+      
+    when CMD24_READ =>			
+      if (read_r1_response_done = '1') then
+        
+        current_state <= CMD24_DATA_INIT;
+        
+      end if;
+      
+    when CMD24_DATA_INIT =>	
+      current_state <= CMD24_DATA;
 
-      command_signal <= '0' & '1' & "011000" & block_write_sd_addr & x"01"; 
-      command_load_en <= '1';
       
-      state_leds <= "0010";
-      sd_status_signal <= x"02";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      
-    when CMD24_SEND =>
-          
-      CMD_signal <= output_command(47);
-      
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      
-      command_send_en <= '1';
-      crc7_gen_en <= '1';
-      
-      state_leds <= "0011";
-      sd_status_signal <= x"03";
-      cmd_write_en			<= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      
-    when CMD24_READ =>
-              
-    
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-    
-      read_r1_response_en <= '1';
-      
-      state_leds <= "0100";
-      sd_status_signal <= x"04";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      
-    when CMD24_DATA_INIT =>
-              
-    
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      
-      
-        
-      state_leds <= "1111";
-      sd_status_signal <= x"05";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '1';
-      D1_write_en 			<= '1';
-      D2_write_en 			<= '1';
-      D3_write_en 			<= '1';
-      
-    when CMD24_DATA =>
-              
-      dat0_signal <= wr_block_byte_data(7);
-      
-      CMD_signal <= '1';
-
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      
-      
-      block_write_process_en <= '1';
-      
-      state_leds <= "0101";
-      sd_status_signal <= x"06";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '1';
-            
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      crc16_gen_en_D0   <= '1';
-      
-      
-    -----------
-    --Custom state. Delay inserted when coming into DATA FSM. 
-    --Card was found unresponsive immediately after init.
-    -----------             
-
-    when DELAY =>
-        
-      CMD_signal <= '1';
-
-      state_leds <= "0110";
-      sd_status_signal <= x"0D";
-      cmd_write_en			<= '0';
-      
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      delay_en          <= '1';
-    
-    
-    -----------
-    --CMD13(SEND_STATUS)  
-    --SD Status is returned. This is used to check if the card is 
-    --ready for data before sending another block to the card in 
-    --a multiblock stream/write.
-    --This CMD13 is used once after CMD12 and not inbetween 
-    --blocks of multiblock write. 
-          
-  
-    when CMD13_INIT =>
-                                        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';
-      --IMPORTANT: The CRC7 is defaulted to x"01".
-      --It will be filled by CRC7GEN and cmdsend processes.                
-      command_signal <= '0' & '1' & "001101" 
-                        &  card_rca_signal  &  x"000001";      
-      command_load_en <= '1';
-      state_leds <= "0100";							
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-    
-    when CMD13_SEND =>
-        
-      CMD_signal <= output_command(47);
-      --IMPORTANT: The CRC7 is defaulted to x"01".
-      --It will be filled by CRC7GEN and CMD_SEND
-      command_signal <= '0' & '1' & "001101" 
-                        &  card_rca_signal  &  x"000001";      
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      command_send_en <= '1';
-      state_leds <= "0101";
-      cmd_write_en			<= '1';
-      crc7_gen_en <= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-
-    when CMD13_READ =>
-        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      read_r1_response_en <= '1';
-      state_leds <= "0110";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      sd_status_signal <= x"68";
-
-
-
-    -----------
-    --CMD7(SELECT/DESELECT_CARD)  
-    --Take card from Standby to Transfer State.
-    -----------
-
-
-    when CMD7_INIT =>
-                            
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      command_signal <= '0' & '1' & "000111"
-                        &  card_rca_signal  &  x"000001"; 
-      
-      command_load_en <= '1';
-      state_leds <= "0100";							
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-        
-        
-    when CMD7_SEND =>
-        
-      CMD_signal <= output_command(47);
-      command_signal <= '0' & '1' & "000111" 
-                        &  card_rca_signal  &  x"000001"; 
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      command_send_en <= '1';
-      state_leds <= "0101";
-      cmd_write_en			<= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      crc7_gen_en       <= '1';
-    
-
-        
-        
-        
-    when CMD7_READ =>
-        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      read_r1_response_en <= '1';
-      state_leds <= "0110";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      ext_trigger       <= '1';
-    
-    
-    
-    -----------
-    --CMD6(SELECT/DESELECT_CARD)  
-    --Put card into HS_SDR25 Mode for 25-50Mhz.
-    -----------
-    --CMD6 is the function switch command. Page 41 SD Spec 3.01
-    
-    when CMD6_INIT =>
-                            
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';	
-      --This command it attempting an actual switch "80" rather 
-      --than a check [most sig bit] and changing
-      --to high speed mode, "FFFFF1", the '1' being the mode switch.                
-      command_signal <= '0' & '1' & "000110" 
-                        & x"80" & x"FFFFF1"  &  x"01";  
-      
-      command_load_en <= '1';
-      state_leds <= "0100";							
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-        
-        
-    when CMD6_SEND =>
-        
-      CMD_signal <= output_command(47);
-      --This command it attempting an actual switch "80" rather
-      --than a check [most sig bit] and changing
-      --to high speed mode, "FFFFF1", the '1' being the mode switch.
-      command_signal <= '0' & '1' & "000110" 
-                        & x"80" & x"FFFFF1"  &  x"01";  
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      command_send_en <= '1';
-      state_leds <= "0101";
-      cmd_write_en			<= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      crc7_gen_en       <= '1';
-        
-        
-        
-    when CMD6_READ =>
-        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      read_r1_response_en <= '1';
-      state_leds <= "0110";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      block_read_process_en 	<= '1';
-    
-    -----------
-    --CMD6(SWITCH_FUNC)  
-    --Put card into HS_SDR25 Mode for 25-50Mhz.
-    -----------
-    --CMD6 is the function switch command. Page 41 SD Spec 3.01
-    --4 bit pathway
-    when CMD6_INIT_4 =>
-                        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';
-      --This command does a function switch "80" rather 
-      --than a function check [most sig bit].
-      --We change to  high speed mode, "FFFFF1",
-      --the '1' being the mode switch.               
-      command_signal <= '0' & '1' & "000110" 
-                        & x"80" & x"FFFFF1"  &  x"01";  
-      
-      command_load_en <= '1';
-      state_leds <= "0100";							
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-        
-        
-    when CMD6_SEND_4 =>
-        
-      CMD_signal <= output_command(47);
-      --This command it attempting an actual switch "80" rather
-      --than a check [most sig bit] and changing
-      --to high speed mode, "FFFFF1", the '1' being the mode switch.
-      command_signal <= '0' & '1' & "000110" & x"80" 
-                        & x"FFFFF1"  &  x"01";  
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      command_send_en <= '1';
-      state_leds <= "0101";
-      --Here I am driving all the lines into a known state.
-      --I am sensing the data lines start bit,
-      --so they need to be in a known state.
-      --Hopefully these lines won't droop 
-      --(or level translator won't change them)
-      --before the sd card starts to drive them. 
-      cmd_write_en			<= '1';
-      D0_write_en 			<= '1';
-      D1_write_en 			<= '1';
-      D2_write_en 			<= '1';
-      D3_write_en 			<= '1';
-      crc7_gen_en       <= '1';
-        
-        
-        
-    when CMD6_READ_4 =>
-        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      read_r1_response_en <= '1';
-      state_leds <= "0110";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      block_read_process_en 	<= '1';
-
-        
-    -----------
-    --ACMD13(SD_STATUS)  
-    --Send back the sd status. 
-    --Only used for debug currently. 
-    --512 status bits will come back on the D0 line.
-    -----------
-
-    when ACMD13_INIT =>
-                                
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      command_signal <= '0' & '1' & "001101" & x"00" & x"000000"  &  x"01";  
-      
-      command_load_en <= '1';
-      state_leds <= "0100";							
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-        
-        
-    when ACMD13_SEND =>
-        
-      CMD_signal <= output_command(47);
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      command_send_en <= '1';
-      state_leds <= "0101";
-      cmd_write_en			<= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      crc7_gen_en       <= '1';
-        
-        
-        
-    when ACMD13_READ =>
-        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      read_r1_response_en <= '1';
-      state_leds <= "0110";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      --ACMD13 sends back 512 bit SD STATUS register on D0.
-      block_read_process_en 	<= '1';						
-    
-    
-    -----------
-    --ACMD42(SET_CLR_CARD_DETECT)  
-    --Program/Deprogram the pullup resistor on D3.
-    --Tested but never used.
-    -----------      
-    --Never implemented, but played with during debugging. 
-    
-    when ACMD42_INIT =>
-        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';
-      --Least signficant bit '0' in 32 bit stuff bits is disabling
-      --the pullup resistor on DAT3.                 
-      command_signal <= '0' & '1' & "101010" & x"00" & x"000000"  &  x"01";  
-      
-      command_load_en <= '1';
-      state_leds <= "0100";							
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-        
-        
-    when ACMD42_SEND =>
-        
-      CMD_signal <= output_command(47);
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      command_send_en <= '1';
-      state_leds <= "0101";
-      cmd_write_en			<= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      crc7_gen_en       <= '1';
-        
-        
-        
-    when ACMD42_READ =>
-        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      read_r1_response_en <= '1';
-      state_leds <= "0110";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-    
-        
-    -----------
-    --CMD32(ERASE_WR_BLK_START)  
-    --Set start of erase.
-    -----------
-    when CMD32_INIT =>
-                    
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      command_signal <= '0' & '1' & "100000" & erase_start & x"01";
-      
-      command_load_en <= '1';
-      state_leds <= "0100";							
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-            
-        
-    when CMD32_SEND =>
-
-      CMD_signal <= output_command(47);
-      command_signal <= '0' & '1' & "100000" & erase_start & x"01";
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      command_send_en <= '1';
-      state_leds <= "0101";
-      sd_status_signal <= x"E0";
-      cmd_write_en			<= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-  
-      
-      crc7_gen_en       <= '1';
-
-    when CMD32_READ =>
-        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      read_r1_response_en <= '1';
-      state_leds <= "0110";
-      sd_status_signal <= x"E0";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-        
-    -----------
-    --CMD33(ERASE_WR_BLK_END)  
-    --Set end of erase.
-    -----------
-    when CMD33_INIT =>
+    when CMD24_DATA =>	
+      if(block_write_done = '1') then
+        current_state <= CMD13_INIT;
+      end if;
                 
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      command_signal <= '0' & '1' & "100001" & erase_end & x"01"; 
-      
-      command_load_en <= '1';
-      state_leds <= "0100";							
-      sd_status_signal <= x"E0";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-    
-        
-        
-        
-        
-    when CMD33_SEND =>
-
-      CMD_signal <= output_command(47);
-      command_signal <= '0' & '1' & "100001" & erase_end & x"01"; 
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      command_send_en <= '1';
-      state_leds <= "0101";
-      sd_status_signal <= x"E0";
-      cmd_write_en			<= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-  
-      
-      crc7_gen_en       <= '1';
-        
-        
-        
-    when CMD33_READ =>
-
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      read_r1_response_en <= '1';
-      state_leds <= "0110";
-      sd_status_signal <= x"E0";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-    
-    -----------
-    --CMD38(ERASE_WR_BLK_END)  
-    --Erase!
-    -----------
-    
-    when CMD38_INIT =>
-    
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      command_signal <= '0' & '1' & "100110" & x"0000000001"; 
-      
-      command_load_en <= '1';
-      state_leds <= "0100";						
-      sd_status_signal <= x"E0";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-        
-        
-    when CMD38_SEND =>
-    
-      CMD_signal <= output_command(47);
-      command_signal <= '0' & '1' & "100110" & x"0000000001"; 
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      command_send_en <= '1';
-      state_leds <= "0101";
-      sd_status_signal <= x"E0";
-      cmd_write_en			<= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-  
-      
-      crc7_gen_en       <= '1';
-        
-        
-        
-    when CMD38_READ =>
-    
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      read_r1_response_en <= '1';
-      state_leds <= "0110";
-      sd_status_signal <= x"E0";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-        
-
     -----------
     --CMD25(WRITE_MULTIPLE_BLOCK)  
-    --The multiblock write command. Begins a streaming 
-    --write to the sd card. This is the 1 bit pathway.
+    --The multiblock write command. 
+    --Begins a streaming write to the 
+    --sd card. This is the 1 bit pathway.
     -----------	
-    
+      
     when CMD25_INIT =>
-    
-    
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
+      if(multiblock_write_done = '1') then
+        current_state <= CMD12_INIT;
+      else
+        current_state <= CMD25_SEND;
+      end if;				
+      
+    when CMD25_SEND =>				
+      if (command_send_done = '1') then
+        current_state <= CMD25_READ;
+      end if;
+      
+    when CMD25_READ =>			
+      if (read_r1_response_done = '1') then
+      --RDY FOR DATA BIT
+        if (response_1_status(8) = '1') then   
+          current_state <= CMD25_DATA_INIT;
+        else 
+          current_state <= ERROR;
+        end if;
+      end if;
+      
+      
 
-      command_signal <= '0' & '1' & "011001" & block_write_sd_addr & x"01"; 
-      command_load_en <= '1';
-      
-      state_leds <= "0010";
-      sd_status_signal <= x"02";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      sd_status_signal <= x"40";
-      
-      multiblock_en     <= '1';
+    when CMD25_DATA_INIT =>		
+      current_state <= CMD25_DATA;  
+         
 
-    
-    when CMD25_SEND =>
+      
+    when CMD25_DATA =>	
+      if (multiblock_write_done = '1') then
+        current_state <= CMD25_DATA_READ_12;
+      elsif(block_write_done = '1') then
+        current_state <= CMD25_DATA_READ_13MULTI;   				
+      end if;
         
-      CMD_signal <= output_command(47);
-      command_signal <= '0' & '1' & "011001" & block_write_sd_addr & x"01"; 
-      
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      
-      command_send_en <= '1';
-      crc7_gen_en <= '1';
-      
-      state_leds <= "0011";
-      sd_status_signal <= x"03";
-      cmd_write_en			<= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      sd_status_signal <= x"41";
-      
-      multiblock_en <= '1';
-    
-    when CMD25_READ =>
-        
-    
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      read_r1_response_en <= '1';
-      state_leds <= "0100";
-      sd_status_signal <= x"04";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '1';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      sd_status_signal  <= x"42";
-      
-      multiblock_en     <= '1';
-    
-    when CMD25_DATA_INIT =>
-        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      state_leds <= "1111";
-      sd_status_signal <= x"05";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      sd_status_signal <= x"43";
-      
-      multiblock_en <= '1';
-    
-    when CMD25_DATA =>
-        
-      dat0_signal <= wr_block_byte_data(7);
-      crc16_bitval_signal_D0 <= wr_block_byte_data(7);
-      crc16_gen_en_D0 <= '1';
-      CMD_signal <= '1';
-          
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      block_write_process_en <= '1';
-      multiblock_en <= '1';
-      state_leds <= "0101";
-      sd_status_signal <= x"06";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '1';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      crc16_gen_en_D0 <= '1';
-      sd_status_signal <= x"44";
-    
-    when CMD25_DATA_READ_12 =>
-        
-      read_data_token_reponse_en <= '1';
-      CMD_signal <= '1';
-      state_leds <= "0101";
-      sd_status_signal <= x"06";
-      
-      block_write_process_en <= '1';
-      multiblock_en <= '1';
-      
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      
-      sd_status_signal <= x"44";
-    
-    
-    when CMD25_DATA_READ_13MULTI =>
-        
-      read_data_token_reponse_en <= '1';
-      CMD_signal <= '1';
-      state_leds <= "0101";
-      sd_status_signal <= x"06";
-      
-      block_write_process_en <= '1';
-      multiblock_en <= '1';
-      
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      
-      sd_status_signal <= x"44";
-        
-        
+    when CMD25_DATA_READ_12 =>	
+      if(read_data_token_reponse_done = '1') then
+        --Check that data was received okay. 
+        --SPI Data token of SD card mode. 
+        if(read_data_token_byte(3 downto 1) = "010") then	
+          current_state <= CMD12_INIT;	
+        else
+          current_state <= ERROR;	
+        end if;
+      else
+          current_state <= CMD25_DATA_READ_12;
+      end if;
+					
+    when CMD25_DATA_READ_13MULTI =>	
+      if(read_data_token_reponse_done = '1') then
+        --Check that data was received okay. 
+        --SPI Data token of SD card mode. 
+        if(read_data_token_byte(3 downto 1) = "010") then	
+          current_state <= CMD13_INIT_MULTI;	
+        else
+          current_state <= ERROR;	
+        end if;
+      else
+        current_state <= CMD25_DATA_READ_13MULTI;
+      end if;
+
+
+
     -----------
-    --CMD25(WRITE_MULTIPLE_BLOCK)   
-    --The multiblock write command.                               
+    --CMD25(WRITE_MULTIPLE_BLOCK) 
+    --The multiblock write command. 
     --Begins a streaming write to the sd card. This is the 4 bit pathway.
     -----------
-              
-          
+					
     when CMD25_INIT_4 =>
-        
     
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-
-      command_signal <= '0' & '1' & "011001" & block_write_sd_addr & x"01"; 
-      command_load_en <= '1';
-      
-      state_leds <= "0010";
-      sd_status_signal <= x"02";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      sd_status_signal <= x"40";
-      
-      multiblock_en <= '1';
+    command_signal <= '0' & '1' & "011001" & block_write_sd_addr & x"01";
+    --Multiblock is set on here.
+    --It is latched on until CMD12 completes a multiblock. 
+    --All retry paths do not turn off this bit. 
+    multiblock_en <= '1';
     
-
+    
+      if(multiblock_write_done = '1') then
+        current_state <= CMD12_INIT;
+      else
+        current_state <= CMD25_SEND_4;
+      end if;				
+      
     when CMD25_SEND_4 =>
-        
-      CMD_signal <= output_command(47);
-      command_signal <= '0' & '1' & "011001" & block_write_sd_addr & x"01"; 
-      
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      
-      command_send_en <= '1';
-      crc7_gen_en <= '1';
-      
-      state_leds <= "0011";
-      sd_status_signal <= x"03";
-      cmd_write_en			<= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      sd_status_signal <= x"41";
-      
-      multiblock_en <= '1';
+    command_send_en   <= '1';
+    crc7_gen_en       <= '1';
+    cmd_write_en			<= '1';    
     
+      if (command_send_done = '1') then
+        current_state <= CMD25_READ_4;
+      end if;
+				
     when CMD25_READ_4 =>
-
-    
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
       read_r1_response_en <= '1';
-      state_leds <= "0100";
-      sd_status_signal <= x"04";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      sd_status_signal <= x"42";
+
+    
+      if (read_r1_response_done = '1') then
+        if (response_1_status(8) = '1') then   --RDY FOR DATA BIT
+          current_state <= CMD25_DATA_INIT_4;
+        else 
+          return_state <= CMD25_INIT_4;
+          current_state <= CMD13_INIT_TIMEOUT_REC;
+        end if;
+      elsif(cmd_resend_en = '1') then
+        return_state <= CMD25_INIT_4;
+        current_state <= CMD13_INIT_TIMEOUT_REC;
+      end if;
+				
+
+    when CMD25_DATA_INIT_4 =>	
+
+      new_block_write <= '1';    
+      current_state <= CMD25_DATA_4;  
+  
       
-      multiblock_en <= '1';
-    
-    when CMD25_DATA_INIT_4 =>
-    
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      state_leds <= "1111";
-      sd_status_signal <= x"05";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      sd_status_signal <= x"43";
-      
-      multiblock_en <= '1';
-      new_block_write <= '1';
-    
     when CMD25_DATA_4 =>
-
-      if (append_crc_4_bit = '0') then
-        dat0_signal <= wr_block_byte_data(4);
-      else 
-        dat0_signal <= crc16_signal_D0_fin(15);
-      end if;
-  
-      if (append_crc_4_bit = '0') then 
-        dat1_signal <= wr_block_byte_data(5) ;
-      --Point to test crc errors in stream and resend.
-      --To disable to not increment data_error_rate.
-      elsif (data_error_rate = to_unsigned(9,data_error_rate'length)) then
-        dat1_signal <= '1';
-      else
-        dat1_signal <= crc16_signal_D1_fin(15);
-      end if;
-      
-      if (append_crc_4_bit = '0') then 
-        dat2_signal <= wr_block_byte_data(6);
-      else
-        dat2_signal <= crc16_signal_D2_fin(15);
-      end if;
-      
-      if (append_crc_4_bit = '0') then 
-        dat3_signal <= wr_block_byte_data(7);
-      else
-        dat3_signal <=	crc16_signal_D3_fin(15);
-      end if;
-      --Send data into CRC components											
-      crc16_bitval_signal_D0 <= wr_block_byte_data(4);
-      crc16_bitval_signal_D1 <= wr_block_byte_data(5);
-      crc16_bitval_signal_D2 <= wr_block_byte_data(6);
-      crc16_bitval_signal_D3 <= wr_block_byte_data(7);
-  
-      CMD_signal <= '1';
+    
+    
       block_write_process_en_4 <= '1';
-      multiblock_en <= '1';
-      state_leds <= "0101";
-      sd_status_signal <= x"06";
-      
-      cmd_write_en			<= '0';
-
       D0_write_en 			<= '1';
       D1_write_en 			<= '1';
       D2_write_en 			<= '1';
@@ -2698,953 +1154,2842 @@ begin
       crc16_gen_en_D1 <= '1';
       crc16_gen_en_D2 <= '1';
       crc16_gen_en_D3 <= '1';
-      
-      sd_status_signal <= x"44";
     
-    -----------
-    --Read the data response token that comes after a sent block.
-    --Jump to appropriate CMD (12/13) depending if we want to send more blocks.
-    -----------
-
     
+      if(block_write_done = '1') then     
+        current_state <= CMD25_DATA_4_READ_TOKEN;   				
+      end if;
+                    
+                    
+					
     when CMD25_DATA_4_READ_TOKEN =>
-        
+
       read_data_token_reponse_en <= '1';
-      CMD_signal <= '1';
-      state_leds <= "0101";
-      sd_status_signal <= x"06";
+
       
-      
-      multiblock_en <= '1';
-      
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      
-      sd_status_signal <= x"44";
-    
-    
+      if(read_data_token_reponse_done = '1') then
+        --Check that data was received okay.SPI Data token of SD card mode. 
+        if(read_data_token_byte(3 downto 1) = "010") then	
+          current_state <= CMD25_DATA_4_READ_CRC_SUCCESS;
+          block_success <= '1';          
+        else
+        --Else crc token indicates failure.
+        --Interesting note here. If a crc error occurs mid
+        --multiblock, all further blocks are ignored! Must resend
+        --CMD25.
+          current_state <= CMD25_DATA_4_RESEND;	
+        end if;
+      else
+        current_state <= CMD25_DATA_4_READ_TOKEN;    
+      end if;
+                
+    --Resend bit set in this state to trigger address handling due to error.
+    when CMD25_DATA_4_RESEND =>
+      resend <= '1';
+ 
+      current_state <= CMD12_INIT_ABORT;
+                    
+    when CMD25_INIT_4_RESEND =>
+      command_signal <= '0' & '1' & "011001" 
+                        & block_write_sd_addr_interal & x"01";
+
+      if(multiblock_write_done = '1') then
+        current_state <= CMD12_INIT;
+      else
+        current_state <= CMD25_SEND_4_RESEND;
+      end if;				
+    --This CMD25 contains the address we wish to try write again.
+    when CMD25_SEND_4_RESEND =>
+      command_send_en <= '1';
+      crc7_gen_en <= '1';
+      cmd_write_en			<= '1';
+
+      if (command_send_done = '1') then
+        current_state <= CMD25_READ_4;
+      end if;
+                    
+                    
     -----------
-    --CRC SUCCESS states. 
-    --These are included to detect                     
+    --CRC SUCCESS state. This state are included to detect 
     --if the last block was received correctly.
     -----------
-    
+    when CMD25_DATA_4_READ_CRC_SUCCESS  =>	
 
-    
-    when CMD25_DATA_4_READ_CRC_SUCCESS =>
-        
-      CMD_signal <= '1';
-      state_leds <= "0101";
-      sd_status_signal <= x"06";
-      
-      
-      multiblock_en <= '1';
-      
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      
-      sd_status_signal <= x"44";
-      
-      block_success <= '1';
-    
-    
+      current_state <= CMD25_DATA_4_READ_DECIDE;
+              
     when CMD25_DATA_4_READ_DECIDE =>
-        
-      CMD_signal <= '1';
-      state_leds <= "0101";
-      sd_status_signal <= x"06";
-      
-      
-      multiblock_en <= '1';
-      
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      
-      sd_status_signal <= x"44";
 
+      if (multiblock_write_done = '1') then
+        current_state <= CMD12_INIT;
+      else
+        current_state <= CMD13_INIT_MULTI_4;
+      end if;
+                
 
-    
-    when CMD25_DATA_4_RESEND =>
-        
-      CMD_signal <= '1';
-      state_leds <= "0101";
-      sd_status_signal <= x"06";
-      resend <= '1';
-      
-      
-      multiblock_en <= '1';
-      
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      
-      sd_status_signal <= x"44";
-    
-    when CMD25_INIT_4_RESEND =>
-        
-    
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-
-      command_signal <= '0' & '1' & "011001" 
-                        & block_write_sd_addr_interal & x"01"; 
-      command_load_en <= '1';
-      
-      state_leds <= "0010";
-      sd_status_signal <= x"02";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      sd_status_signal <= x"40";
-      
-      multiblock_en <= '1';
-      
-
-    when CMD25_SEND_4_RESEND =>
-        
-      CMD_signal <= output_command(47);
-      command_signal <= '0' & '1' & "011001" 
-                        & block_write_sd_addr_interal & x"01"; 
-      
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      
-      command_send_en <= '1';
-      crc7_gen_en <= '1';
-      
-      state_leds <= "0011";
-      sd_status_signal <= x"03";
-      cmd_write_en			<= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      sd_status_signal  <= x"41";
-      
-      multiblock_en     <= '1';
-    
-        
-
-
-    when ERROR =>
-        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      state_leds <= "1111";
-      --state_val <= x"11";
-      sd_status_signal <= x"08";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-    
-    when IDLE =>
-        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-
-      state_leds <= "1000";								
-      --state_val <= x"12";
-      sd_status_signal <= x"09";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-        
     -----------
-    --CMD13(SEND_STATUS)    
+    --CMD13(SEND_STATUS)   
     --Card Status is returned. 
-    --This is used to check if the card is ready                      
-    --for data before sending another block to the card                      
-    --in a multiblock stream/write.
-    -----------	
-        
-    when CMD13_INIT_MULTI =>
-                        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
+    --This is used to check if the card 
+    --is ready for data before sending 
+    --another block to the card in a 
+    --multiblock stream/write.
+    -----------
+
+    --CMD 13's are broken into single bit and multi bit and inbetween 
+    --blocks and at the end of a CMD25/CMD12 
+    --CMD13 Returns card status field in an R1 response. 
+    --Used for checking 
+    --that card is READY_FOR_DATA inbetween blocks of 
+    --a multiblock write primarily. 
+    --Other bits of interest are APP_CMD, ILLEGAL COMMAND, etc.
+    --CMD13_ is used anywhere but inbetween blocks of a multiblock write. 
+    when CMD13_INIT => 			
       command_signal <= '0' & '1' & "001101" 
-                        &  card_rca_signal  &  x"000001"; 
-      command_load_en <= '1';
-      state_leds <= "0100";							
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      multiblock_en <= '1';
-      sd_status_signal <= x"45";
+                         &  card_rca_signal  &  x"000001";  
+
     
+      current_state <= CMD13_SEND;
+				
+    when CMD13_SEND =>
+    command_send_en   <= '1';
+    cmd_write_en			<= '1';
+    crc7_gen_en       <= '1';
+      if (command_send_done = '1') then
+        current_state <= CMD13_READ;
+      end if;
+    
+    when CMD13_READ =>
+    read_r1_response_en <= '1';
+      if (read_r1_response_done = '1') then
+      --Card Status READY_FOR_DATA Page 76 SD Spec.
+        if (response_1_status(8) = '1') then 
+          current_state <= APP_WAIT;
+        else
+          current_state <= CMD13_INIT;
+        end if;
+      elsif(cmd_resend_en = '1') then
+        current_state <= CMD13_INIT;
+      end if;
+      
+                
+            
+    --This is an example recovery path for command crc error
+    --error recovery. 
+                  
+    when CMD13_INIT_TIMEOUT_REC => 
+      command_signal <= '0' & '1' & "001101" 
+                    &  card_rca_signal  &  x"000001";
+      current_state <= CMD13_SEND_TIMEOUT_REC;
+      
+    when CMD13_SEND_TIMEOUT_REC =>
+    command_send_en   <= '1';
+    cmd_write_en			<= '1';
+    crc7_gen_en       <= '1';
+    
+      if (command_send_done = '1') then
+        current_state <= CMD13_READ_TIMEOUT_REC;
+      end if;
+      
+    when CMD13_READ_TIMEOUT_REC =>
+      read_r1_response_en <= '1';
+      if (read_r1_response_done = '1') then
+        --The Card Status READY_FOR_DATA never will go high again in 
+        --this instance. Send CMD12 again.
+        if (return_state = CMD12_INIT_ABORT) then
+          current_state <= return_state;
+        else
+          --Card Status READY_FOR_DATA Page 76 SD Spec.
+          if (response_1_status(8) = '1') then 
+            current_state <= return_state;
+          else
+            current_state <= CMD13_INIT_TIMEOUT_REC;
+          end if;
+        end if;
+
+      elsif(cmd_resend_en = '1') then
+        current_state <= CMD13_INIT_TIMEOUT_REC;
+      end if;
+                
+                
+                
+                
+    -----------
+    --CMD13(SEND_STATUS)  
+    --SD Status is returned. 
+    --This is used to check if the 
+    --card is ready for data before 
+    --sending another block to the 
+    --card in a multiblock stream/write.
+    -----------
+    --**The CMD13 for the 1 bit multiblock path**
+    --CMD13 string of commands used with CMD25 Multiblock write. 
+    --Used between blocks of a multiblock write.	
+    when CMD13_INIT_MULTI => 						
+      current_state <= CMD13_SEND_MULTI;
+      
     when CMD13_SEND_MULTI =>
-        
-      CMD_signal <= output_command(47);
-      command_signal <= '0' & '1' & "001101" 
-                        &  card_rca_signal  &  x"000001";
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      command_send_en <= '1';
-      state_leds <= "0101";
-      cmd_write_en			<= '1';
-      crc7_gen_en <= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      multiblock_en <= '1';
-      sd_status_signal <= x"46";
-    
+      if (command_send_done = '1') then
+        current_state <= CMD13_READ_MULTI;
+      end if;
+      
     when CMD13_READ_MULTI =>
-        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      read_r1_response_en <= '1';
-      state_leds <= "0110";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      multiblock_en <= '1';
-      sd_status_signal <= x"47";
-    
+      if (read_r1_response_done = '1') then
+        --Card Status READY_FOR_DATA
+        if (response_1_status(8) = '1') then 
+          current_state <= CMD25_DATA_INIT;
+        else
+          current_state <= CMD13_INIT_MULTI;
+        end if;
+      end if;
+                
+                
     -----------
-    --CMD13(SEND_STATUS)    
-    --Card Status is returned. This is used to check         
-    --if the card is ready for data before sending another         
-    --block to the card in a multiblock stream/write.
-    --4 bit path.
+    --CMD13(SEND_STATUS)  
+    --SD Status is returned. 
+    --This is used to check if the card is ready for 
+    --data before sending another block to the card 
+    --in a multiblock stream/write.
     -----------
+    --The 4 bit multiblock path
 
-    when CMD13_INIT_MULTI_4 =>
-                        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
+    --CMD13 string of commands used with CMD25 Multiblock write. 
+    --Used between blocks of a multiblock write.	
+    when CMD13_INIT_MULTI_4 => 
       command_signal <= '0' & '1' & "001101" 
-                        &  card_rca_signal  &  x"000001"; 
-      command_load_en <= '1';
-      state_leds <= "0100";							
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      multiblock_en <= '1';
-      sd_status_signal <= x"45";
-    
+                    &  card_rca_signal  &  x"000001";
+      current_state <= CMD13_SEND_MULTI_4;
 
-    
+      
     when CMD13_SEND_MULTI_4 =>
-    
-      CMD_signal <= output_command(47);
-      command_signal <= '0' & '1' & "001101" 
-                        &  card_rca_signal  &  x"000001"; 
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      command_send_en <= '1';
-      state_leds <= "0101";
-      cmd_write_en			<= '1';
-      crc7_gen_en <= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      multiblock_en <= '1';
-      sd_status_signal <= x"46";
-    
+    command_send_en <= '1';
+    crc7_gen_en <= '1';
+
+    cmd_write_en			<= '1';
+      if (command_send_done = '1') then
+        current_state <= CMD13_READ_MULTI_4;
+      end if;
+      
     when CMD13_READ_MULTI_4 =>
-        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      read_r1_response_en <= '1';
-      state_leds <= "0110";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      multiblock_en <= '1';
-      sd_status_signal <= x"47";
+     read_r1_response_en <= '1';
+
+      if (read_r1_response_done = '1') then
+        if (response_1_status(8) = '1') then --Card Status READY_FOR_DATA
+          if (resending = '0') then
+            current_state <= CMD25_DATA_INIT_4;
+          else
+            current_state <= CMD25_INIT_4_RESEND;
+          end if;
+        else
+          current_state <= CMD13_INIT_MULTI_4;
+        end if;
+      elsif(cmd_resend_en = '1') then
+        current_state <= CMD13_INIT_MULTI_4;
+      end if;
+                
+                
+    -----------
+    --CMD7(SELECT/DESELECT_CARD) 
+    --Take card from Standby to Transfer State.
+    ----------- 
+    --After init, take the card from standby to transfer mode.
+    --A nice state diagram exists in the SD SPEC. Page 27.            
+    --Command to take SD card from standby mode to transfer mode, 
+    --from which data writing is initiated. 
+    when CMD7_INIT =>			
+    command_signal <= '0' & '1' & "000111"
+                  &  card_rca_signal  &  x"000001"; 
+
+
+	  
+      current_state <= CMD7_SEND;
+
+				
+    when CMD7_SEND =>
+    cmd_write_en			<= '1';
+    command_send_en <= '1';
+    crc7_gen_en       <= '1';
+      if (command_send_done = '1') then
+        current_state <= CMD7_READ;
+      end if;
+      
+    when CMD7_READ =>
     
+    read_r1_response_en <= '1';
+    
+      if (read_r1_response_done = '1') then
+        --If the bad command or crc error flags are not set.
+        if (response_1_status(23 downto 22) = "00") then    
+          current_state <= APP_WAIT;	
+        else
+          current_state <= CMD7_INIT;	
+        end if;
+      --An example recovery scenario. Additional paths needed
+      --for the entire protocol but this is proof that this scheme
+      --will work. 
+      elsif(cmd_resend_en = '1') then
+        return_state <= CMD7_INIT;
+        current_state <= CMD13_INIT_TIMEOUT_REC;
+      end if;
+                
+                
+    -----------
+    --CMD6(SWITCH_FUNC)  
+    --Put card into HS_SDR25 Mode for 25-50Mhz.
+    -----------
+    --CMD6 is the function switch command. Page 41 SD Spec 3.01
+    --1 bit pathway               
+
+    --CMD6 is the function switch command.
+    --We can change speeds and current levels. See page 44 Sd Spec 3.01
+    when CMD6_INIT =>				                   
+      current_state <= CMD6_SEND;
+
+				
+    when CMD6_SEND =>
+      if (command_send_done = '1') then
+        current_state <= CMD6_READ;
+      end if;
+				
+    when CMD6_READ =>
+      --CMD6 inquiry and set function both included 512 bits sent 
+      --back to the host over D0. We must wait for these even if 
+      --we don't do anything with them currently.
+      --Response was checked and written up to verify it was done correctly. 
+      if (CMD6_D0_read_done = '1') then 			
+        current_state <= CMD25_INIT;	      
+      end if;
+
+				
+    -----------
+    --CMD6(SWITCH_FUNC)  
+    --Put card into HS_SDR25 Mode for 25-50Mhz.
+    -----------
+    --CMD6 is the function switch command. Page 41 SD Spec 3.01
+    --4 bit pathway	
+    --CMD6 is the function switch command. 
+    --We can change speeds and current levels. 
+    --See page 44 Sd Spec 3.01	
+            
+    when CMD6_INIT_4 =>		
+
+      command_signal <= '0' & '1' & "000110" 
+                        & x"80" & x"FFFFF1"  &  x"01";
+
+                        
+      current_state <= CMD6_SEND_4;
+
+				
+    when CMD6_SEND_4 =>
+      command_send_en <= '1';
+      crc7_gen_en       <= '1';
+      cmd_write_en			<= '1';
+      if (command_send_done = '1') then
+        current_state <= CMD6_READ_4;
+      end if;
+				
+    when CMD6_READ_4 =>
+       read_r1_response_en <= '1';
+       block_read_process_en 	<= '1';
+      --CMD6 inquiry and set function both included 
+      --512 bits sent to the host over D0. 
+      --We must wait for these bit before proceeding,
+      --even if they aren't checked
+      --with program
+
+      if (CMD6_D0_read_done = '1') then 
+        current_state <= CMD25_INIT_4;
+        --end if;
+      elsif(cmd_resend_en = '1') then
+        current_state <= CMD13_INIT_TIMEOUT_REC;
+        return_state <= CMD6_INIT_4;
+      end if;
+				
+				
+				
+		--		
+    --CMD32/33/38 are the ERASE COMMANDS
+    --
+    --CMD32(ERASE_WR_BLK_START)  Set start of erase.
+    -----------
+    when CMD32_INIT =>  
+    command_signal <= '0' & '1' & "100000" & erase_start & x"01";
+      current_state <= CMD32_SEND;
+      
+    when CMD32_SEND =>
+    command_send_en <= '1';
+    cmd_write_en			<= '1';
+    crc7_gen_en       <= '1';
+      if (command_send_done = '1') then
+          current_state <= CMD32_READ;
+      end if;
+				
+    when CMD32_READ =>
+    read_r1_response_en <= '1';
+      if (read_r1_response_done = '1') then
+        --check for COM_CRC_ERROR and ILLEGAL COMMAND
+        if (response_1_status(23 downto 22) = "00") then    
+          current_state <= CMD33_INIT;
+        else
+          current_state <= ERROR;
+        end if;
+      end if;
+    -----------
+    --CMD33(ERASE_WR_BLK_END)  Set end of erase.
+    -----------
+    when CMD33_INIT =>  
+    command_signal <= '0' & '1' & "100001" & erase_end & x"01";
+      current_state <= CMD33_SEND;
+				
+    when CMD33_SEND =>
+    command_send_en <= '1';
+    cmd_write_en			<= '1';
+    crc7_gen_en       <= '1';
+      if (command_send_done = '1') then
+        current_state <= CMD33_READ;
+      end if;
+				
+    when CMD33_READ =>
+    read_r1_response_en <= '1';
+      if (read_r1_response_done = '1') then
+        --check for COM_CRC_ERROR and ILLEGAL COMMAND
+        if (response_1_status(23 downto 22) = "00") then    
+          current_state <= CMD38_INIT;
+        else
+          current_state <= ERROR;
+        end if;
+      end if;
+    -----------
+    --CMD38(ERASE_WR_BLK_END)  Erase!
+    -----------
+    when CMD38_INIT =>  
+    command_signal <= '0' & '1' & "100110" & x"0000000001";
+      
+    current_state <= CMD38_SEND;
+          
+    when CMD38_SEND =>
+    command_send_en <= '1';
+    cmd_write_en			<= '1';
+    crc7_gen_en       <= '1';
+      if (command_send_done = '1') then
+        current_state <= CMD38_READ;
+      end if;
+				
+    when CMD38_READ =>
+    read_r1_response_en <= '1';
+      if (read_r1_response_done = '1') then
+        --check for COM_CRC_ERROR and ILLEGAL COMMAND
+        if (response_1_status(23 downto 22) = "00") then        
+          current_state <= CMD13_INIT;
+        else
+          current_state <= ERROR;
+        end if;
+      end if;	
+					
     -----------
     --CMD12(STOP_TRANSMISSION)  
     --Stop a multiblock write transmission.
-    -----------             
-    
+    -----------
+    --CMD12 is the stop data send command. Used to cap a 
+    --multiblock stream during a CMD25. 
     when CMD12_INIT =>
-                    
-      CMD_signal <= '1';
-                  
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';					
-      command_signal <= '0' & '1' & "001100" & x"0000000001"; 
-      command_load_en <= '1';
-      state_leds <= "0100";							
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      sd_status_signal <= x"48";
-    
-    
-    
+    sd_status_signal <= x"48";    
+    command_signal <= '0' & '1' & "001100" & x"0000000001";
+    multiblock_en <= '0';
+    current_state <= CMD12_SEND;
+				
     when CMD12_SEND =>
-    
-      CMD_signal <= output_command(47);
-      command_signal <= '0' & '1' & "001100" & x"0000000001"; 
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';
-      command_send_en <= '1';
-      state_leds <= "0101";
-      cmd_write_en			<= '1';
-      crc7_gen_en 			<= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      sd_status_signal <= x"49";
-    
-    
+    command_send_en <= '1';
+    cmd_write_en			<= '1';
+    crc7_gen_en 			<= '1';
+      if (command_send_done = '1') then
+        current_state <= CMD12_READ;
+      end if;
+				
     when CMD12_READ =>
-        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';
-      read_r1_response_en <= '1';
-      state_leds <= "0110";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      sd_status_signal <= x"4A";
+    read_r1_response_en <= '1';
     
+      if (read_r1_response_done = '1') then
+        --check for COM_CRC_ERROR and ILLEGAL COMMAND
+        if (response_1_status(23 downto 22) = "00") then 
+          current_state <= CMD13_INIT;
+        else
+          current_state <= CMD13_INIT_TIMEOUT_REC;
+          return_state <= CMD12_INIT;
+        end if;
+      elsif(cmd_resend_en = '1') then
+        current_state <= CMD13_INIT_TIMEOUT_REC;
+        return_state <= CMD12_INIT;
+      end if;	
+                
+      
+    --These CMD12's are jumped to following a data response token
+    --indicating anything besides succesfull receive of a data 
+    --block by the sd card.
+    when CMD12_INIT_ABORT => 
+     command_signal <= '0' & '1' & "001100" & x"0000000001"; 
     
-    when CMD12_INIT_ABORT =>
-                    
-      CMD_signal <= '1';
-                  
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';					
-      command_signal <= '0' & '1' & "001100" & x"0000000001"; 
-      command_load_en <= '1';
-      state_leds <= "0100";							
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      sd_status_signal <= x"58";
-      multiblock_en <= '1';
-    
-    
-    
+      current_state <= CMD12_SEND_ABORT;
+				
     when CMD12_SEND_ABORT =>
-    
-      CMD_signal <= output_command(47);
-      command_signal <= '0' & '1' & "001100" & x"0000000001"; 
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';
-      command_send_en <= '1';
-      state_leds <= "0101";
-      cmd_write_en			<= '1';
-      crc7_gen_en 			<= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      sd_status_signal <= x"59";
-      multiblock_en <= '1';
-    
-    
+    cmd_write_en			<= '1';
+    crc7_gen_en 			<= '1';
+    command_send_en <= '1';
+    multiblock_en     <= '1';
+      if (command_send_done = '1') then
+        current_state <= CMD12_READ_ABORT;
+      end if;
+				
     when CMD12_READ_ABORT =>
-        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';
-      read_r1_response_en <= '1';
-      state_leds <= "0110";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      sd_status_signal <= x"5A";
-      multiblock_en <= '1';
-    
+    read_r1_response_en <= '1';
+      if (read_r1_response_done = '1') then
+        --check for COM_CRC_ERROR and ILLEGAL COMMAND
+        -- if (response_1_status(23 downto 22) = "00") then 
+          current_state <= CMD13_INIT_MULTI_4;
+        -- else
+          -- current_state <= ERROR;
+        -- end if;
+      elsif(cmd_resend_en = '1') then
+        current_state <= CMD13_INIT_TIMEOUT_REC;
+        return_state <= CMD12_INIT_ABORT;
+      end if;	
+					
+					
     -----------
     --CMD55(APP_CMD) 
     --This command is sent before any ACMD. 
-    --This simply tells the card that an expanded command is coming next.
-    -----------	
-        
-    when CMD55_INIT =>
-        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      
-      command_signal <= '0' & '1' & "110111" 
-                        & card_rca_signal  &  x"000001";  
-      command_load_en <= '1';
-      state_leds <= "0111";							
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-        
+    --This simply tells the card that an expanded command 
+    --is coming next.
+    -----------
+    -- Send CMD55 (APP_CMD) to the SD card to preface impending 
+    -- application-specific command
+    when CMD55_INIT =>  
+      current_state <= CMD55_SEND;
+				
     when CMD55_SEND =>
-        
-      CMD_signal <= output_command(47);
-      
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      
-      command_send_en <= '1';
-      state_leds <= "1000";
-      crc7_gen_en 			<= '1';
-      cmd_write_en			<= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-        
+      if (command_send_done = '1') then
+        current_state <= CMD55_READ;
+      end if;
+				
     when CMD55_READ =>
-        
-    
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      
-      read_r1_response_en <= '1';
-      state_leds <= "1001";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-    
+      if (read_r1_response_done = '1') then
+        --This bit is the APP_CMD bit of the status register. 
+        --The other bit set on CMD55 response is READY FOR DATA.				
+        if (r1_response_bytes(13) = '1') then
+          --current_state <= return_state;			
+        else
+          current_state <= ERROR;
+        end if;
+      end if;
+				
+				
     -----------
     --ACMD23(SET_WR_BLK_ERASE_COUNT) 
     --Used to pre-erase before a write.
     -----------
-    
-        
-    when ACMD23_INIT =>
-        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
+                
+    when ACMD23_INIT =>  
+      current_state <= ACMD23_SEND;
       
-      command_signal <= '0' & '1' & "010111" & x"00" & '0' & 
-      std_logic_vector(to_unsigned(num_blocks_to_write,23)) & x"01";
-      
-      command_load_en <= '1';
-      state_leds <= "0111";							
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-        
     when ACMD23_SEND =>
-        
-      CMD_signal <= output_command(47);
+      if (command_send_done = '1') then
+        current_state <= ACMD23_READ;
+      end if;
       
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      
-      command_send_en <= '1';
-      state_leds <= "1000";
-      crc7_gen_en 			<= '1';
-      cmd_write_en			<= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-        
     when ACMD23_READ =>
-        
-    
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      
-      read_r1_response_en <= '1';
-      state_leds <= "1001";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-    
+      if (read_r1_response_done = '1') then
+        --Checksum is okay and command valid.
+        if (response_1_status(23 downto 22) = "00") then  
+          current_state <= CMD25_INIT;
+        else
+          current_state <= ERROR;
+        end if;
+      end if;
+
     -----------
     --ACMD6(SET_BUS_WIDTH) 
     --Switch to 4 bit mode. Use D1-D3 now.   
     -----------
-    
-    
-    when ACMD6_INIT =>
-        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      --Bit 0 indicates bus width. 0 = 1 bit 1 = 4 bit. 
-      --The rest are stuff bits. Page 66 SD Protocol. 
+    --Switches to Wide Mode. 4 bit mode. Data0-Data3 now used. 
+    when ACMD6_INIT =>  
       command_signal <= '0' & '1' & "000110"
-                        & x"000000" & "000000" & "10" & x"01";				
-      command_load_en <= '1';
-      state_leds <= "0111";							
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
+                  & x"000000" & "000000" & "10" & x"01";
+      current_state <= ACMD6_SEND;
+      
+    when ACMD6_SEND =>
+    
+    command_send_en   <= '1';
+    crc7_gen_en 			<= '1';
+    cmd_write_en			<= '1';
+    
+      if (command_send_done = '1') then
+        current_state <= ACMD6_READ;
+      end if;
+				
+    when ACMD6_READ =>
+    read_r1_response_en <= '1';
+      if (read_r1_response_done = '1') then
+        --Checksum is okay and command valid.
+        if (response_1_status(23 downto 22) = "00") then  
+          if (hs_sdr25_mode_en = '1') then
+            current_state <= CMD6_INIT_4;
+          else
+            current_state <= CMD25_INIT_4;	
+          end if;
+        else
+            current_state <= CMD13_INIT_TIMEOUT_REC;
+            return_state <= CMD55_INIT_ACMD6;
+        end if;
+      elsif(cmd_resend_en = '1') then
+        current_state <= CMD13_INIT_TIMEOUT_REC;
+        return_state <= CMD55_INIT_ACMD6;
+      end if;
+					
+                    
+    -----------
+    --ACMD13(SD_STATUS)  
+    --Send back the sd status. 
+    --Used for Debug. 
+    --512 status bits will come back on the D0 line. 
+        -----------                    
+					
+    when ACMD13_INIT =>				  
+      current_state <= ACMD13_SEND;
+
+				
+    when ACMD13_SEND =>
+      if (command_send_done = '1') then
+        current_state <= ACMD13_READ;
+      end if;
+				
+    when ACMD13_READ =>
+      --512 bits sent to the host over D0. We must wait for these. 
+      if (CMD6_D0_read_done = '1') then 			
+        current_state <= CMD25_INIT_4;			
+      end if;
+
+                
+                
+    -----------
+    --ACMD42(SET_CLR_CARD_DETECT)  
+    --Program/Deprogram the pullup resistor on D3.
+    --Tested but never used.
+    -----------      
+    --Never implemented, but played with during debugging.       
+      
+    --Turn off the pullup resistor on DAT3.		
+    when ACMD42_INIT =>				 					
+      current_state <= ACMD42_SEND;
+
+				
+    when ACMD42_SEND =>
+      if (command_send_done = '1') then
+        current_state <= ACMD42_READ;
+      end if;
+				
+    when ACMD42_READ =>
+      if (read_r1_response_done = '1') then
+        if (response_1_status(23 downto 22) = "00") then
+          current_state <= CMD55_INIT_ACMD13;
+        else
+          current_state <= ERROR;
+        end if;
+      end if;	
+					
+    -----------
+    --CMD17(READ_SINGLE_BLOCK) Read a single block.
+    -----------	
+    --Not completely working but close. 				
+					
+					
+    when CMD17_INIT =>				  
+      current_state <= CMD17_SEND;
+
+				
+    when CMD17_SEND =>
+      if (command_send_done = '1') then
+        current_state <= CMD17_READ;
+      end if;
+      
+    when CMD17_READ =>
+      if (read_r1_response_done = '1') then
+        current_state <= CMD17_READ_DATA;				
+      end if;
+      
+    when CMD17_READ_DATA =>
+      if (singleblock_read_done = '1') then
+        current_state <= APP_WAIT;			
+      end if;
+        
+        
+    when IDLE 	=>
+      current_state <= IDLE;
+
+    when ERROR 	=>
+      current_state <= ERROR;
+				
+				
+  --The following CMD55s are pathways to get to particular APP CMDS. 
+  --Each APP CMD has its one CMD55 pathway. 
+  --This method was done as creating a 
+  --return_state enumeration caused warnings initially. 
+  --Send CMD55 (APP_CMD) to the SD card to preface impending 
+  --application-specific command
+    when CMD55_INIT_ACMD6 =>  
+    
+    command_signal <= '0' & '1' & "110111" 
+                  & card_rca_signal  &  x"000001";  
+    
+    
+      current_state <= CMD55_SEND_ACMD6;
+      
+    when CMD55_SEND_ACMD6 =>
+    
+    command_send_en <= '1';
+    crc7_gen_en 			<= '1';
+    cmd_write_en			<= '1';
+    
+      if (command_send_done = '1') then
+        current_state <= CMD55_READ_ACMD6;
+      end if;
+				
+    when CMD55_READ_ACMD6 =>
+    
+    read_r1_response_en <= '1';
+    
+    
+      if (read_r1_response_done = '1') then
+        --This bit is the APP_CMD bit of the status register. 
+        --The other bit set on first CMD55 response is READY FOR DATA.					
+        if (r1_response_bytes(13) = '1') then   
+          current_state <= ACMD6_INIT;			 
+        elsif (response_1_status(23 downto 22) /= "00") then 
+          current_state <= CMD55_INIT_ACMD6;
+          return_state <= CMD55_INIT_ACMD6;
+        else
+          current_state <= ERROR;       
+        end if;
+      elsif(cmd_resend_en = '1') then
+        current_state <= CMD13_INIT_TIMEOUT_REC;
+        return_state <= CMD55_INIT_ACMD6;
+      end if;
+				
+    -- Send CMD55 (APP_CMD) to the SD card 
+    --to preface impending application-specific command	
+    when CMD55_INIT_ACMD42 =>  
+      current_state <= CMD55_SEND_ACMD42;
+      
+    when CMD55_SEND_ACMD42 =>
+      if (command_send_done = '1') then
+        current_state <= CMD55_READ_ACMD42;
+      end if;
+				
+    when CMD55_READ_ACMD42 =>
+      if (read_r1_response_done = '1') then
+      --This bit is the APP_CMD bit of the status register. 
+      --The other bit set on first CMD55 response is READY FOR DATA.					
+        if (r1_response_bytes(13) = '1') then   
+          current_state <= ACMD42_INIT;			
+        else
+          current_state <= ERROR;
+        end if;
+        -- elsif(cmd_resend_en = '1') then
+        -- current_state <= CMD55_INIT_ACMD42;
+      end if;
+				
+    -- Send CMD55 (APP_CMD) to the SD card to preface impending application-specific command	
+    when CMD55_INIT_ACMD13 =>  
+      current_state <= CMD55_SEND_ACMD13;
+				
+    when CMD55_SEND_ACMD13 =>
+      if (command_send_done = '1') then
+        current_state <= CMD55_READ_ACMD13;
+      end if;
+				
+    when CMD55_READ_ACMD13 =>
+      if (read_r1_response_done = '1') then
+        --This bit is the APP_CMD bit of the status register. 
+        --The other bit set on first CMD55 response is READY FOR DATA.					
+        if (r1_response_bytes(13) = '1') then   
+          current_state <= ACMD13_INIT;			 
+        else
+          current_state <= ERROR;
+        end if;
+      end if;
+
+
+  end case;
+end if;
+end process;
+
+
+--
+-- --	
+-- --OUTPUT LOGIC PROCESS			   
+-- --
+
+
+-- process(current_state)
+-- begin
+
+		
+  -- -- Default Signal Values
+  -- command_load_en 			<= '0';
+  -- command_send_en 			<= '0';
+    
+  -- read_r1_response_en		<= '0';
+  -- read_r6_response_en		<= '0';
+  
+  -- command_signal				<= x"FFFFFFFFFFFF";
+  -- sd_status_signal 			<= x"FF";
+
+  -- crc7_gen_en					  <= '0';
+  -- crc16_gen_en_D0 			<= '0';
+  -- crc16_gen_en_D1 			<= '0';
+  -- crc16_gen_en_D2 			<= '0';
+  -- crc16_gen_en_D3 			<= '0';
+
+  -- block_write_process_en 	  <= '0';
+  -- block_write_process_en_4 	<= '0';
+
+  -- multiblock_en  			    <= '0';
+  -- block_read_process_en 	<= '0';
+  -- read_data_token_reponse_en 	<= '0';
+  
+  -- crc16_bitval_signal_D0 <= '0';				
+  -- crc16_bitval_signal_D1 <= '0';
+  -- crc16_bitval_signal_D2 <= '0';
+  -- crc16_bitval_signal_D3 <= '0';
+
+  -- dat0_signal <= '1';
+  -- dat1_signal <= '1';
+  -- dat2_signal <= '1';
+  -- dat3_signal <= '1';			
+
+  -- card_rca_signal <= card_rca;
+
+  -- resend <= '0';        
+
+        
+  -- block_success   <= '0';
+  -- ext_trigger		  <= '0';
+  -- new_block_write <= '0';
+
+  
+  -- case current_state is
+      
+    -- -----------
+    -- --ENTRY is the state where the FSM sits while init is done.   
+    -- -----------
+      
+    -- when ENTRY =>
+                  
+      -- CMD_signal <= '1';
+      
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';							
+
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+        
+        
+      -- card_rca_signal <= card_rca;
+      -- state_leds <= "0000";							
+      -- sd_status_signal <= x"00";
+
+    -- -----------
+    -- --APP_WAIT is the central state from 
+    -- --which a control signal launches 
+    -- --the state machine.  
+    -- -----------
+      
+      
+    -- when APP_WAIT =>
+              
+    
+      -- CMD_signal <= '1';
+
+
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      
+      -- state_leds <= "0001";
+      -- sd_status_signal <= x"01";
+    
+    -- -----------
+    -- --CMD24(Send Single Block). 
+    -- --Send a single block to the sd card. 
+    -- -----------
+
+
+    -- when CMD24_INIT =>
+              
+    
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+
+      -- command_signal <= '0' & '1' & "011000" & block_write_sd_addr & x"01"; 
+      -- command_load_en <= '1';
+      
+      -- state_leds <= "0010";
+      -- sd_status_signal <= x"02";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      
+    -- when CMD24_SEND =>
+          
+      -- CMD_signal <= output_command(47);
+      
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      
+      -- command_send_en <= '1';
+      -- crc7_gen_en <= '1';
+      
+      -- state_leds <= "0011";
+      -- sd_status_signal <= x"03";
+      -- cmd_write_en			<= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      
+    -- when CMD24_READ =>
+              
+    
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+    
+      -- read_r1_response_en <= '1';
+      
+      -- state_leds <= "0100";
+      -- sd_status_signal <= x"04";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      
+    -- when CMD24_DATA_INIT =>
+              
+    
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      
+      
+        
+      -- state_leds <= "1111";
+      -- sd_status_signal <= x"05";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '1';
+      -- D1_write_en 			<= '1';
+      -- D2_write_en 			<= '1';
+      -- D3_write_en 			<= '1';
+      
+    -- when CMD24_DATA =>
+              
+      -- dat0_signal <= wr_block_byte_data(7);
+      
+      -- CMD_signal <= '1';
+
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      
+      
+      -- block_write_process_en <= '1';
+      
+      -- state_leds <= "0101";
+      -- sd_status_signal <= x"06";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '1';
+            
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- crc16_gen_en_D0   <= '1';
+      
+      
+    -- -----------
+    -- --Custom state. Delay inserted when coming into DATA FSM. 
+    -- --Card was found unresponsive immediately after init.
+    -- -----------             
+
+    -- when DELAY =>
+        
+      -- CMD_signal <= '1';
+
+      -- state_leds <= "0110";
+      -- sd_status_signal <= x"0D";
+      -- cmd_write_en			<= '0';
+      
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- delay_en          <= '1';
+    
+    
+    -- -----------
+    -- --CMD13(SEND_STATUS)  
+    -- --SD Status is returned. This is used to check if the card is 
+    -- --ready for data before sending another block to the card in 
+    -- --a multiblock stream/write.
+    -- --This CMD13 is used once after CMD12 and not inbetween 
+    -- --blocks of multiblock write. 
+          
+  
+    -- when CMD13_INIT =>
+                                        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';
+      -- --IMPORTANT: The CRC7 is defaulted to x"01".
+      -- --It will be filled by CRC7GEN and cmdsend processes.                
+      -- command_signal <= '0' & '1' & "001101" 
+                        -- &  card_rca_signal  &  x"000001";      
+      -- command_load_en <= '1';
+      -- state_leds <= "0100";							
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+    
+    -- when CMD13_SEND =>
+        
+      -- CMD_signal <= output_command(47);
+      -- --IMPORTANT: The CRC7 is defaulted to x"01".
+      -- --It will be filled by CRC7GEN and CMD_SEND
+      -- command_signal <= '0' & '1' & "001101" 
+                        -- &  card_rca_signal  &  x"000001";      
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- command_send_en <= '1';
+      -- state_leds <= "0101";
+      -- cmd_write_en			<= '1';
+      -- crc7_gen_en <= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+
+    -- when CMD13_READ =>
+        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- read_r1_response_en <= '1';
+      -- state_leds <= "0110";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- sd_status_signal <= x"68";
+
+
+
+    -- -----------
+    -- --CMD7(SELECT/DESELECT_CARD)  
+    -- --Take card from Standby to Transfer State.
+    -- -----------
+
+
+    -- when CMD7_INIT =>
+                            
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- command_signal <= '0' & '1' & "000111"
+                        -- &  card_rca_signal  &  x"000001"; 
+      
+      -- command_load_en <= '1';
+      -- state_leds <= "0100";							
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+        
+        
+    -- when CMD7_SEND =>
+        
+      -- CMD_signal <= output_command(47);
+      -- command_signal <= '0' & '1' & "000111" 
+                        -- &  card_rca_signal  &  x"000001"; 
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- command_send_en <= '1';
+      -- state_leds <= "0101";
+      -- cmd_write_en			<= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- crc7_gen_en       <= '1';
     
 
         
-    when ACMD6_SEND =>
         
-      CMD_signal <= output_command(47);
-      --Bit 0 indicates bus width. 0 = 1 bit 1 = 4 bit. 
-      --The rest are stuff bits. Page 66 SD Protocol. 
-      command_signal <= '0' & '1' & "000110" 
-                        & x"000000" & "000000" & "10" & x"01";				
-      
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      
-      command_send_en <= '1';
-      state_leds <= "1000";
-      crc7_gen_en 			<= '1';
-      cmd_write_en			<= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
         
-    when ACMD6_READ =>
+    -- when CMD7_READ =>
+        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- read_r1_response_en <= '1';
+      -- state_leds <= "0110";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- ext_trigger       <= '1';
+    
+    
+    
+    -- -----------
+    -- --CMD6(SELECT/DESELECT_CARD)  
+    -- --Put card into HS_SDR25 Mode for 25-50Mhz.
+    -- -----------
+    -- --CMD6 is the function switch command. Page 41 SD Spec 3.01
+    
+    -- when CMD6_INIT =>
+                            
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';	
+      -- --This command it attempting an actual switch "80" rather 
+      -- --than a check [most sig bit] and changing
+      -- --to high speed mode, "FFFFF1", the '1' being the mode switch.                
+      -- command_signal <= '0' & '1' & "000110" 
+                        -- & x"80" & x"FFFFF1"  &  x"01";  
+      
+      -- command_load_en <= '1';
+      -- state_leds <= "0100";							
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+        
+        
+    -- when CMD6_SEND =>
+        
+      -- CMD_signal <= output_command(47);
+      -- --This command it attempting an actual switch "80" rather
+      -- --than a check [most sig bit] and changing
+      -- --to high speed mode, "FFFFF1", the '1' being the mode switch.
+      -- command_signal <= '0' & '1' & "000110" 
+                        -- & x"80" & x"FFFFF1"  &  x"01";  
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- command_send_en <= '1';
+      -- state_leds <= "0101";
+      -- cmd_write_en			<= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- crc7_gen_en       <= '1';
+        
+        
+        
+    -- when CMD6_READ =>
+        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- read_r1_response_en <= '1';
+      -- state_leds <= "0110";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- block_read_process_en 	<= '1';
+    
+    -- -----------
+    -- --CMD6(SWITCH_FUNC)  
+    -- --Put card into HS_SDR25 Mode for 25-50Mhz.
+    -- -----------
+    -- --CMD6 is the function switch command. Page 41 SD Spec 3.01
+    -- --4 bit pathway
+    -- when CMD6_INIT_4 =>
+                        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';
+      -- --This command does a function switch "80" rather 
+      -- --than a function check [most sig bit].
+      -- --We change to  high speed mode, "FFFFF1",
+      -- --the '1' being the mode switch.               
+      -- command_signal <= '0' & '1' & "000110" 
+                        -- & x"80" & x"FFFFF1"  &  x"01";  
+      
+      -- command_load_en <= '1';
+      -- state_leds <= "0100";							
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+        
+        
+    -- when CMD6_SEND_4 =>
+        
+      -- CMD_signal <= output_command(47);
+      -- --This command it attempting an actual switch "80" rather
+      -- --than a check [most sig bit] and changing
+      -- --to high speed mode, "FFFFF1", the '1' being the mode switch.
+      -- command_signal <= '0' & '1' & "000110" & x"80" 
+                        -- & x"FFFFF1"  &  x"01";  
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- command_send_en <= '1';
+      -- state_leds <= "0101";
+      -- --Here I am driving all the lines into a known state.
+      -- --I am sensing the data lines start bit,
+      -- --so they need to be in a known state.
+      -- --Hopefully these lines won't droop 
+      -- --(or level translator won't change them)
+      -- --before the sd card starts to drive them. 
+      -- cmd_write_en			<= '1';
+      
+      -- --Might not want to do this. 
+      -- --Either use bus hold or pull up or
+      -- --a level translator which will translate this. 
+      
+      -- D0_write_en 			<= '1';
+      -- D1_write_en 			<= '1';
+      -- D2_write_en 			<= '1';
+      -- D3_write_en 			<= '1';
+      -- crc7_gen_en       <= '1';
+        
+        
+        
+    -- when CMD6_READ_4 =>
+        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- read_r1_response_en <= '1';
+      -- state_leds <= "0110";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- block_read_process_en 	<= '1';
+
+        
+    -- -----------
+    -- --ACMD13(SD_STATUS)  
+    -- --Send back the sd status. 
+    -- --Only used for debug currently. 
+    -- --512 status bits will come back on the D0 line.
+    -- -----------
+
+    -- when ACMD13_INIT =>
+                                
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- command_signal <= '0' & '1' & "001101" & x"00" & x"000000"  &  x"01";  
+      
+      -- command_load_en <= '1';
+      -- state_leds <= "0100";							
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+        
+        
+    -- when ACMD13_SEND =>
+        
+      -- CMD_signal <= output_command(47);
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- command_send_en <= '1';
+      -- state_leds <= "0101";
+      -- cmd_write_en			<= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- crc7_gen_en       <= '1';
+        
+        
+        
+    -- when ACMD13_READ =>
+        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- read_r1_response_en <= '1';
+      -- state_leds <= "0110";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- --ACMD13 sends back 512 bit SD STATUS register on D0.
+      -- block_read_process_en 	<= '1';						
+    
+    
+    -- -----------
+    -- --ACMD42(SET_CLR_CARD_DETECT)  
+    -- --Program/Deprogram the pullup resistor on D3.
+    -- --Tested but never used.
+    -- -----------      
+    -- --Never implemented, but played with during debugging. 
+    
+    -- when ACMD42_INIT =>
+        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';
+      -- --Least signficant bit '0' in 32 bit stuff bits is disabling
+      -- --the pullup resistor on DAT3.                 
+      -- command_signal <= '0' & '1' & "101010" & x"00" & x"000000"  &  x"01";  
+      
+      -- command_load_en <= '1';
+      -- state_leds <= "0100";							
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+        
+        
+    -- when ACMD42_SEND =>
+        
+      -- CMD_signal <= output_command(47);
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- command_send_en <= '1';
+      -- state_leds <= "0101";
+      -- cmd_write_en			<= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- crc7_gen_en       <= '1';
+        
+        
+        
+    -- when ACMD42_READ =>
+        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- read_r1_response_en <= '1';
+      -- state_leds <= "0110";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+    
+        
+    -- -----------
+    -- --CMD32(ERASE_WR_BLK_START)  
+    -- --Set start of erase.
+    -- -----------
+    -- when CMD32_INIT =>
+                    
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- command_signal <= '0' & '1' & "100000" & erase_start & x"01";
+      
+      -- command_load_en <= '1';
+      -- state_leds <= "0100";							
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+            
+        
+    -- when CMD32_SEND =>
+
+      -- CMD_signal <= output_command(47);
+      -- command_signal <= '0' & '1' & "100000" & erase_start & x"01";
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- command_send_en <= '1';
+      -- state_leds <= "0101";
+      -- sd_status_signal <= x"E0";
+      -- cmd_write_en			<= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+  
+      
+      -- crc7_gen_en       <= '1';
+
+    -- when CMD32_READ =>
+        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- read_r1_response_en <= '1';
+      -- state_leds <= "0110";
+      -- sd_status_signal <= x"E0";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+        
+    -- -----------
+    -- --CMD33(ERASE_WR_BLK_END)  
+    -- --Set end of erase.
+    -- -----------
+    -- when CMD33_INIT =>
+                
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- command_signal <= '0' & '1' & "100001" & erase_end & x"01"; 
+      
+      -- command_load_en <= '1';
+      -- state_leds <= "0100";							
+      -- sd_status_signal <= x"E0";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+    
+        
+        
+        
+        
+    -- when CMD33_SEND =>
+
+      -- CMD_signal <= output_command(47);
+      -- command_signal <= '0' & '1' & "100001" & erase_end & x"01"; 
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- command_send_en <= '1';
+      -- state_leds <= "0101";
+      -- sd_status_signal <= x"E0";
+      -- cmd_write_en			<= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+  
+      
+      -- crc7_gen_en       <= '1';
+        
+        
+        
+    -- when CMD33_READ =>
+
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- read_r1_response_en <= '1';
+      -- state_leds <= "0110";
+      -- sd_status_signal <= x"E0";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+    
+    -- -----------
+    -- --CMD38(ERASE_WR_BLK_END)  
+    -- --Erase!
+    -- -----------
+    
+    -- when CMD38_INIT =>
+    
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- command_signal <= '0' & '1' & "100110" & x"0000000001"; 
+      
+      -- command_load_en <= '1';
+      -- state_leds <= "0100";						
+      -- sd_status_signal <= x"E0";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+        
+        
+    -- when CMD38_SEND =>
+    
+      -- CMD_signal <= output_command(47);
+      -- command_signal <= '0' & '1' & "100110" & x"0000000001"; 
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- command_send_en <= '1';
+      -- state_leds <= "0101";
+      -- sd_status_signal <= x"E0";
+      -- cmd_write_en			<= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+  
+      
+      -- crc7_gen_en       <= '1';
+        
+        
+        
+    -- when CMD38_READ =>
+    
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- read_r1_response_en <= '1';
+      -- state_leds <= "0110";
+      -- sd_status_signal <= x"E0";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+        
+
+    -- -----------
+    -- --CMD25(WRITE_MULTIPLE_BLOCK)  
+    -- --The multiblock write command. Begins a streaming 
+    -- --write to the sd card. This is the 1 bit pathway.
+    -- -----------	
+    
+    -- when CMD25_INIT =>
+    
+    
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+
+      -- command_signal <= '0' & '1' & "011001" & block_write_sd_addr & x"01"; 
+      -- command_load_en <= '1';
+      
+      -- state_leds <= "0010";
+      -- sd_status_signal <= x"02";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- sd_status_signal <= x"40";
+      
+      -- multiblock_en     <= '1';
+
+    
+    -- when CMD25_SEND =>
+        
+      -- CMD_signal <= output_command(47);
+      -- command_signal <= '0' & '1' & "011001" & block_write_sd_addr & x"01"; 
+      
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      
+      -- command_send_en <= '1';
+      -- crc7_gen_en <= '1';
+      
+      -- state_leds <= "0011";
+      -- sd_status_signal <= x"03";
+      -- cmd_write_en			<= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- sd_status_signal <= x"41";
+      
+      -- multiblock_en <= '1';
+    
+    -- when CMD25_READ =>
         
     
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- read_r1_response_en <= '1';
+      -- state_leds <= "0100";
+      -- sd_status_signal <= x"04";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '1';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- sd_status_signal  <= x"42";
+      
+      -- multiblock_en     <= '1';
+    
+    -- when CMD25_DATA_INIT =>
+        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- state_leds <= "1111";
+      -- sd_status_signal <= x"05";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- sd_status_signal <= x"43";
+      
+      -- multiblock_en <= '1';
+    
+    -- when CMD25_DATA =>
+        
+      -- dat0_signal <= wr_block_byte_data(7);
+      -- crc16_bitval_signal_D0 <= wr_block_byte_data(7);
+      -- crc16_gen_en_D0 <= '1';
+      -- CMD_signal <= '1';
+          
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- block_write_process_en <= '1';
+      -- multiblock_en <= '1';
+      -- state_leds <= "0101";
+      -- sd_status_signal <= x"06";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '1';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- crc16_gen_en_D0 <= '1';
+      -- sd_status_signal <= x"44";
+    
+    -- when CMD25_DATA_READ_12 =>
+        
+      -- read_data_token_reponse_en <= '1';
+      -- CMD_signal <= '1';
+      -- state_leds <= "0101";
+      -- sd_status_signal <= x"06";
+      
+      -- block_write_process_en <= '1';
+      -- multiblock_en <= '1';
+      
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      
+      -- sd_status_signal <= x"44";
+    
+    
+    -- when CMD25_DATA_READ_13MULTI =>
+        
+      -- read_data_token_reponse_en <= '1';
+      -- CMD_signal <= '1';
+      -- state_leds <= "0101";
+      -- sd_status_signal <= x"06";
+      
+      -- block_write_process_en <= '1';
+      -- multiblock_en <= '1';
+      
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      
+      -- sd_status_signal <= x"44";
+        
+        
+    -- -----------
+    -- --CMD25(WRITE_MULTIPLE_BLOCK)   
+    -- --The multiblock write command.                               
+    -- --Begins a streaming write to the sd card. This is the 4 bit pathway.
+    -- -----------
+              
+          
+    -- when CMD25_INIT_4 =>
+        
+    
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+
+      -- command_signal <= '0' & '1' & "011001" & block_write_sd_addr & x"01"; 
+      -- command_load_en <= '1';
+      
+      -- state_leds <= "0010";
+      -- sd_status_signal <= x"02";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- sd_status_signal <= x"40";
+      
+      -- multiblock_en <= '1';
+    
+
+    -- when CMD25_SEND_4 =>
+        
+      -- CMD_signal <= output_command(47);
+      -- command_signal <= '0' & '1' & "011001" & block_write_sd_addr & x"01"; 
+      
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      
+      -- command_send_en <= '1';
+      -- crc7_gen_en <= '1';
+      
+      -- state_leds <= "0011";
+      -- sd_status_signal <= x"03";
+      -- cmd_write_en			<= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- sd_status_signal <= x"41";
+      
+      -- multiblock_en <= '1';
+    
+    -- when CMD25_READ_4 =>
+
+    
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- read_r1_response_en <= '1';
+      -- state_leds <= "0100";
+      -- sd_status_signal <= x"04";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- sd_status_signal <= x"42";
+      
+      -- multiblock_en <= '1';
+    
+    -- when CMD25_DATA_INIT_4 =>
+    
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- state_leds <= "1111";
+      -- sd_status_signal <= x"05";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- sd_status_signal <= x"43";
+      
+      -- multiblock_en <= '1';
+      -- new_block_write <= '1';
+    
+    -- when CMD25_DATA_4 =>
+
+      -- if (append_crc_4_bit = '0') then
+        -- dat0_signal <= wr_block_byte_data(4);
+      -- else 
+        -- dat0_signal <= crc16_signal_D0_fin(15);
+      -- end if;
+  
+      -- if (append_crc_4_bit = '0') then 
+        -- dat1_signal <= wr_block_byte_data(5) ;
+      -- --Point to test crc errors in stream and resend.
+      -- --To disable do not increment data_error_rate.
+      -- elsif (data_error_rate = to_unsigned(data_error_rate_control,data_error_rate'length)) then
+        -- dat1_signal <= '1';
+      -- else
+        -- dat1_signal <= crc16_signal_D1_fin(15);
+      -- end if;
+      
+      -- if (append_crc_4_bit = '0') then 
+        -- dat2_signal <= wr_block_byte_data(6);
+      -- else
+        -- dat2_signal <= crc16_signal_D2_fin(15);
+      -- end if;
+      
+      -- if (append_crc_4_bit = '0') then 
+        -- dat3_signal <= wr_block_byte_data(7);
+      -- else
+        -- dat3_signal <=	crc16_signal_D3_fin(15);
+      -- end if;
+      -- --Send data into CRC components											
+      -- crc16_bitval_signal_D0 <= wr_block_byte_data(4);
+      -- crc16_bitval_signal_D1 <= wr_block_byte_data(5);
+      -- crc16_bitval_signal_D2 <= wr_block_byte_data(6);
+      -- crc16_bitval_signal_D3 <= wr_block_byte_data(7);
+  
+      -- CMD_signal <= '1';
+      -- block_write_process_en_4 <= '1';
+      -- multiblock_en <= '1';
+      -- state_leds <= "0101";
+      -- sd_status_signal <= x"06";
+      
+      -- cmd_write_en			<= '0';
+
+      -- D0_write_en 			<= '1';
+      -- D1_write_en 			<= '1';
+      -- D2_write_en 			<= '1';
+      -- D3_write_en 			<= '1';
+      
+      -- crc16_gen_en_D0 <= '1';
+      -- crc16_gen_en_D1 <= '1';
+      -- crc16_gen_en_D2 <= '1';
+      -- crc16_gen_en_D3 <= '1';
+      
+      -- sd_status_signal <= x"44";
+    
+    -- -----------
+    -- --Read the data response token that comes after a sent block.
+    -- --Jump to appropriate CMD (12/13) depending if we want to send more blocks.
+    -- -----------
+
+    
+    -- when CMD25_DATA_4_READ_TOKEN =>
+        
+      -- read_data_token_reponse_en <= '1';
+      -- CMD_signal <= '1';
+      -- state_leds <= "0101";
+      -- sd_status_signal <= x"06";
+      
+      
+      -- multiblock_en <= '1';
+      
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      
+      -- sd_status_signal <= x"44";
+    
+    
+    -- -----------
+    -- --CRC SUCCESS states. 
+    -- --These are included to detect                     
+    -- --if the last block was received correctly.
+    -- -----------
+    
+
+    
+    -- when CMD25_DATA_4_READ_CRC_SUCCESS =>
+        
+      -- CMD_signal <= '1';
+      -- state_leds <= "0101";
+      -- sd_status_signal <= x"06";
+      
+      
+      -- multiblock_en <= '1';
+      
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      
+      -- sd_status_signal <= x"44";
+      
+      -- block_success <= '1';
+    
+    
+    -- when CMD25_DATA_4_READ_DECIDE =>
+        
+      -- CMD_signal <= '1';
+      -- state_leds <= "0101";
+      -- sd_status_signal <= x"06";
+      
+      
+      -- multiblock_en <= '1';
+      
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      
+      -- sd_status_signal <= x"44";
+
+
+    
+    -- when CMD25_DATA_4_RESEND =>
+        
+      -- CMD_signal <= '1';
+      -- state_leds <= "0101";
+      -- sd_status_signal <= x"06";
+      -- resend <= '1';
+      
+      
+      -- multiblock_en <= '1';
+      
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      
+      -- sd_status_signal <= x"44";
+    
+    -- when CMD25_INIT_4_RESEND =>
+        
+    
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+
+      -- command_signal <= '0' & '1' & "011001" 
+                        -- & block_write_sd_addr_interal & x"01"; 
+      -- command_load_en <= '1';
+      
+      -- state_leds <= "0010";
+      -- sd_status_signal <= x"02";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- sd_status_signal <= x"40";
+      
+      -- multiblock_en <= '1';
+      
+
+    -- when CMD25_SEND_4_RESEND =>
+        
+      -- CMD_signal <= output_command(47);
+      -- command_signal <= '0' & '1' & "011001" 
+                        -- & block_write_sd_addr_interal & x"01"; 
+      
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      
+      -- command_send_en <= '1';
+      -- crc7_gen_en <= '1';
+      
+      -- state_leds <= "0011";
+      -- sd_status_signal <= x"03";
+      -- cmd_write_en			<= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- sd_status_signal  <= x"41";
+      
+      -- multiblock_en     <= '1';
+    
+        
+
+
+    -- when ERROR =>
+        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- state_leds <= "1111";
+      -- --state_val <= x"11";
+      -- sd_status_signal <= x"08";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+    
+    -- when IDLE =>
+        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+
+      -- state_leds <= "1000";								
+      -- --state_val <= x"12";
+      -- sd_status_signal <= x"09";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+        
+    -- -----------
+    -- --CMD13(SEND_STATUS)    
+    -- --Card Status is returned. 
+    -- --This is used to check if the card is ready                      
+    -- --for data before sending another block to the card                      
+    -- --in a multiblock stream/write.
+    -- -----------	
+        
+    -- when CMD13_INIT_MULTI =>
+                        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- command_signal <= '0' & '1' & "001101" 
+                        -- &  card_rca_signal  &  x"000001"; 
+      -- command_load_en <= '1';
+      -- state_leds <= "0100";							
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- multiblock_en <= '1';
+      -- sd_status_signal <= x"45";
+    
+    -- when CMD13_SEND_MULTI =>
+        
+      -- CMD_signal <= output_command(47);
+      -- command_signal <= '0' & '1' & "001101" 
+                        -- &  card_rca_signal  &  x"000001";
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- command_send_en <= '1';
+      -- state_leds <= "0101";
+      -- cmd_write_en			<= '1';
+      -- crc7_gen_en <= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- multiblock_en <= '1';
+      -- sd_status_signal <= x"46";
+    
+    -- when CMD13_READ_MULTI =>
+        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- read_r1_response_en <= '1';
+      -- state_leds <= "0110";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- multiblock_en <= '1';
+      -- sd_status_signal <= x"47";
+    
+    -- -----------
+    -- --CMD13(SEND_STATUS)    
+    -- --Card Status is returned. This is used to check         
+    -- --if the card is ready for data before sending another         
+    -- --block to the card in a multiblock stream/write.
+    -- --4 bit path.
+    -- -----------
+
+    -- when CMD13_INIT_MULTI_4 =>
+                        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- command_signal <= '0' & '1' & "001101" 
+                        -- &  card_rca_signal  &  x"000001"; 
+      -- command_load_en <= '1';
+      -- state_leds <= "0100";							
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- multiblock_en <= '1';
+      -- sd_status_signal <= x"45";
+    
+
+    
+    -- when CMD13_SEND_MULTI_4 =>
+    
+      -- CMD_signal <= output_command(47);
+      -- command_signal <= '0' & '1' & "001101" 
+                        -- &  card_rca_signal  &  x"000001"; 
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- command_send_en <= '1';
+      -- state_leds <= "0101";
+      -- cmd_write_en			<= '1';
+      -- crc7_gen_en <= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- multiblock_en <= '1';
+      -- sd_status_signal <= x"46";
+    
+    -- when CMD13_READ_MULTI_4 =>
+        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- read_r1_response_en <= '1';
+      -- state_leds <= "0110";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- multiblock_en <= '1';
+      -- sd_status_signal <= x"47";
+    
+    -- -----------
+    -- --CMD12(STOP_TRANSMISSION)  
+    -- --Stop a multiblock write transmission.
+    -- -----------             
+    
+    -- when CMD12_INIT =>
+                    
+      -- CMD_signal <= '1';
+                  
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';					
+      -- command_signal <= '0' & '1' & "001100" & x"0000000001"; 
+      -- command_load_en <= '1';
+      -- state_leds <= "0100";							
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- sd_status_signal <= x"48";
+    
+    
+    
+    -- when CMD12_SEND =>
+    
+      -- CMD_signal <= output_command(47);
+      -- command_signal <= '0' & '1' & "001100" & x"0000000001"; 
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';
+      -- command_send_en <= '1';
+      -- state_leds <= "0101";
+      -- cmd_write_en			<= '1';
+      -- crc7_gen_en 			<= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- sd_status_signal <= x"49";
+    
+    
+    -- when CMD12_READ =>
+        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';
+      -- read_r1_response_en <= '1';
+      -- state_leds <= "0110";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- sd_status_signal <= x"4A";
+    
+    
+    -- when CMD12_INIT_ABORT =>
+                    
+      -- CMD_signal <= '1';
+                  
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';					
+      -- command_signal <= '0' & '1' & "001100" & x"0000000001"; 
+      -- command_load_en <= '1';
+      -- state_leds <= "0100";							
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- sd_status_signal <= x"58";
+      -- multiblock_en <= '1';
+    
+    
+    
+    -- when CMD12_SEND_ABORT =>
+    
+      -- CMD_signal <= output_command(47);
+      -- command_signal <= '0' & '1' & "001100" & x"0000000001"; 
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';
+      -- command_send_en <= '1';
+      -- state_leds <= "0101";
+      -- cmd_write_en			<= '1';
+      -- crc7_gen_en 			<= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- sd_status_signal <= x"59";
+      -- multiblock_en <= '1';
+    
+    
+    -- when CMD12_READ_ABORT =>
+        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';
+      -- read_r1_response_en <= '1';
+      -- state_leds <= "0110";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- sd_status_signal <= x"5A";
+      -- multiblock_en <= '1';
+    
+    -- -----------
+    -- --CMD55(APP_CMD) 
+    -- --This command is sent before any ACMD. 
+    -- --This simply tells the card that an expanded command is coming next.
+    -- -----------	
+        
+    -- when CMD55_INIT =>
+        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      
+      -- command_signal <= '0' & '1' & "110111" 
+                        -- & card_rca_signal  &  x"000001";  
+      -- command_load_en <= '1';
+      -- state_leds <= "0111";							
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+        
+    -- when CMD55_SEND =>
+        
+      -- CMD_signal <= output_command(47);
+      
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      
+      -- command_send_en <= '1';
+      -- state_leds <= "1000";
+      -- crc7_gen_en 			<= '1';
+      -- cmd_write_en			<= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+        
+    -- when CMD55_READ =>
+        
+    
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      
+      -- read_r1_response_en <= '1';
+      -- state_leds <= "1001";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+    
+    -- -----------
+    -- --ACMD23(SET_WR_BLK_ERASE_COUNT) 
+    -- --Used to pre-erase before a write.
+    -- -----------
+    
+        
+    -- when ACMD23_INIT =>
+        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      
+      -- command_signal <= '0' & '1' & "010111" & x"00" & '0' & 
+      -- std_logic_vector(to_unsigned(num_blocks_to_write,23)) & x"01";
+      
+      -- command_load_en <= '1';
+      -- state_leds <= "0111";							
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+        
+    -- when ACMD23_SEND =>
+        
+      -- CMD_signal <= output_command(47);
+      
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      
+      -- command_send_en <= '1';
+      -- state_leds <= "1000";
+      -- crc7_gen_en 			<= '1';
+      -- cmd_write_en			<= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+        
+    -- when ACMD23_READ =>
+        
+    
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      
+      -- read_r1_response_en <= '1';
+      -- state_leds <= "1001";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+    
+    -- -----------
+    -- --ACMD6(SET_BUS_WIDTH) 
+    -- --Switch to 4 bit mode. Use D1-D3 now.   
+    -- -----------
+    
+    
+    -- when ACMD6_INIT =>
+        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- --Bit 0 indicates bus width. 0 = 1 bit 1 = 4 bit. 
+      -- --The rest are stuff bits. Page 66 SD Protocol. 
+      -- command_signal <= '0' & '1' & "000110"
+                        -- & x"000000" & "000000" & "10" & x"01";				
+      -- command_load_en <= '1';
+      -- state_leds <= "0111";							
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+    
+
+        
+    -- when ACMD6_SEND =>
+        
+      -- CMD_signal <= output_command(47);
+      -- --Bit 0 indicates bus width. 0 = 1 bit 1 = 4 bit. 
+      -- --The rest are stuff bits. Page 66 SD Protocol. 
+      -- command_signal <= '0' & '1' & "000110" 
+                        -- & x"000000" & "000000" & "10" & x"01";				
+      
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      
+      -- command_send_en <= '1';
+      -- state_leds <= "1000";
+      -- crc7_gen_en 			<= '1';
+      -- cmd_write_en			<= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+        
+    -- when ACMD6_READ =>
+        
+    
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
           
 
       
-      read_r1_response_en <= '1';
-      state_leds <= "1001";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
+      -- read_r1_response_en <= '1';
+      -- state_leds <= "1001";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
     
     
     
-    -----------
-    --CMD17(READ_SINGLE_BLOCK) Read a single block.
-    -----------
+    -- -----------
+    -- --CMD17(READ_SINGLE_BLOCK) Read a single block.
+    -- -----------
     
 
-    when CMD17_INIT =>
+    -- when CMD17_INIT =>
                             
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      command_signal <= '0' & '1' & "010001" 
-                        &  block_read_sd_addr  &  x"01"; 
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- command_signal <= '0' & '1' & "010001" 
+                        -- &  block_read_sd_addr  &  x"01"; 
       
-      command_load_en <= '1';
-      state_leds <= "0100";							
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
+      -- command_load_en <= '1';
+      -- state_leds <= "0100";							
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
         
         
-    when CMD17_SEND =>
+    -- when CMD17_SEND =>
         
-      CMD_signal <= output_command(47);
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      command_send_en <= '1';
-      state_leds <= "0101";
-      sd_status_signal <= x"43";
-      cmd_write_en			<= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      crc7_gen_en <= '1';
+      -- CMD_signal <= output_command(47);
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- command_send_en <= '1';
+      -- state_leds <= "0101";
+      -- sd_status_signal <= x"43";
+      -- cmd_write_en			<= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- crc7_gen_en <= '1';
         
         
         
-    when CMD17_READ =>
+    -- when CMD17_READ =>
         
-      CMD_signal 			<= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      read_r1_response_en 	<= '1';
-      state_leds				 <= "0110";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
+      -- CMD_signal 			<= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- read_r1_response_en 	<= '1';
+      -- state_leds				 <= "0110";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
     
-    when CMD17_READ_DATA =>
+    -- when CMD17_READ_DATA =>
         
-      CMD_signal 			<= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      state_leds				 <= "0110";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      block_read_process_en	 <= '1';
-    
-    
-    -----------
-    --  Different exit paths for CMD55 are below. 
-    --  ACMD's must be preceded with CMD55. 
-    -----------
-    
-    when CMD55_INIT_ACMD6 =>
-        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      
-      command_signal <= '0' & '1' & "110111" 
-                        & card_rca_signal  &  x"000001";  
-      command_load_en <= '1';
-      state_leds <= "0111";							
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-        
-    when CMD55_SEND_ACMD6 =>
-        
-      CMD_signal <= output_command(47);
-      command_signal <= '0' & '1' & "110111" 
-                        & card_rca_signal  &  x"000001";  
-      
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      
-      command_send_en <= '1';
-      state_leds <= "1000";
-      crc7_gen_en 			<= '1';
-      cmd_write_en			<= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-        
-    when CMD55_READ_ACMD6 =>
-        
-    
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      
-      read_r1_response_en <= '1';
-      state_leds <= "1001";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-    
-    when CMD55_INIT_ACMD42 =>
-        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      
-      command_signal <= '0' & '1' & "110111" 
-                        & card_rca_signal  &  x"000001";  
-      command_load_en <= '1';
-      state_leds <= "0111";							
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-        
-    when CMD55_SEND_ACMD42 =>
-        
-      CMD_signal <= output_command(47);
-      
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      
-      command_send_en <= '1';
-      state_leds <= "1000";
-      crc7_gen_en 			<= '1';
-      cmd_write_en			<= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-        
-    when CMD55_READ_ACMD42 =>
-        
-    
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      
-      read_r1_response_en <= '1';
-      state_leds <= "1001";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-    
-    when CMD55_INIT_ACMD13 =>
-        
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      
-      command_signal <= '0' & '1' & "110111" 
-                        & card_rca_signal  &  x"000001";  
-      command_load_en <= '1';
-      state_leds <= "0111";							
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-        
-    when CMD55_SEND_ACMD13 =>
-        
-      CMD_signal <= output_command(47);
-      
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      
-      command_send_en <= '1';
-      state_leds <= "1000";
-      crc7_gen_en 			<= '1';
-      cmd_write_en			<= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-        
-    when CMD55_READ_ACMD13 =>
-        
-    
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      
-      read_r1_response_en <= '1';
-      state_leds <= "1001";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
+      -- CMD_signal 			<= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- state_leds				 <= "0110";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- block_read_process_en	 <= '1';
     
     
+    -- -----------
+    -- --  Different exit paths for CMD55 are below. 
+    -- --  ACMD's must be preceded with CMD55. 
+    -- -----------
+    
+    -- when CMD55_INIT_ACMD6 =>
+        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      
+      -- command_signal <= '0' & '1' & "110111" 
+                        -- & card_rca_signal  &  x"000001";  
+      -- command_load_en <= '1';
+      -- state_leds <= "0111";							
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+        
+    -- when CMD55_SEND_ACMD6 =>
+        
+      -- CMD_signal <= output_command(47);
+      -- command_signal <= '0' & '1' & "110111" 
+                        -- & card_rca_signal  &  x"000001";  
+      
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      
+      -- command_send_en <= '1';
+      -- state_leds <= "1000";
+      -- crc7_gen_en 			<= '1';
+      -- cmd_write_en			<= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+        
+    -- when CMD55_READ_ACMD6 =>
+        
+    
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      
+      -- read_r1_response_en <= '1';
+      -- state_leds <= "1001";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+    
+    -- when CMD55_INIT_ACMD42 =>
+        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      
+      -- command_signal <= '0' & '1' & "110111" 
+                        -- & card_rca_signal  &  x"000001";  
+      -- command_load_en <= '1';
+      -- state_leds <= "0111";							
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+        
+    -- when CMD55_SEND_ACMD42 =>
+        
+      -- CMD_signal <= output_command(47);
+      
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      
+      -- command_send_en <= '1';
+      -- state_leds <= "1000";
+      -- crc7_gen_en 			<= '1';
+      -- cmd_write_en			<= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+        
+    -- when CMD55_READ_ACMD42 =>
+        
+    
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      
+      -- read_r1_response_en <= '1';
+      -- state_leds <= "1001";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+    
+    -- when CMD55_INIT_ACMD13 =>
+        
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      
+      -- command_signal <= '0' & '1' & "110111" 
+                        -- & card_rca_signal  &  x"000001";  
+      -- command_load_en <= '1';
+      -- state_leds <= "0111";							
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+        
+    -- when CMD55_SEND_ACMD13 =>
+        
+      -- CMD_signal <= output_command(47);
+      
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      
+      -- command_send_en <= '1';
+      -- state_leds <= "1000";
+      -- crc7_gen_en 			<= '1';
+      -- cmd_write_en			<= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+        
+    -- when CMD55_READ_ACMD13 =>
+        
+    
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      
+      -- read_r1_response_en <= '1';
+      -- state_leds <= "1001";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
     
     
-    when CMD13_INIT_TIMEOUT_REC =>
+    
+    
+    -- when CMD13_INIT_TIMEOUT_REC =>
                                         
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';
-      --IMPORTANT: The CRC7 is defaulted to x"01".
-      --It will be filled by CRC7GEN and cmdsend processes.                
-      command_signal <= '0' & '1' & "001101" 
-                        &  card_rca_signal  &  x"000001";      
-      command_load_en <= '1';
-      state_leds <= "0100";							
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';
+      -- --IMPORTANT: The CRC7 is defaulted to x"01".
+      -- --It will be filled by CRC7GEN and cmdsend processes.                
+      -- command_signal <= '0' & '1' & "001101" 
+                        -- &  card_rca_signal  &  x"000001";      
+      -- command_load_en <= '1';
+      -- state_leds <= "0100";							
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
     
-    when CMD13_SEND_TIMEOUT_REC =>
+    -- when CMD13_SEND_TIMEOUT_REC =>
         
-      CMD_signal <= output_command(47);
-      --IMPORTANT: The CRC7 is defaulted to x"01".
-      --It will be filled by CRC7GEN and CMD_SEND
-      command_signal <= '0' & '1' & "001101" 
-                        &  card_rca_signal  &  x"000001";      
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      command_send_en <= '1';
-      state_leds <= "0101";
-      cmd_write_en			<= '1';
-      crc7_gen_en <= '1';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
+      -- CMD_signal <= output_command(47);
+      -- --IMPORTANT: The CRC7 is defaulted to x"01".
+      -- --It will be filled by CRC7GEN and CMD_SEND
+      -- command_signal <= '0' & '1' & "001101" 
+                        -- &  card_rca_signal  &  x"000001";      
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- command_send_en <= '1';
+      -- state_leds <= "0101";
+      -- cmd_write_en			<= '1';
+      -- crc7_gen_en <= '1';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
 
-    when CMD13_READ_TIMEOUT_REC =>
+    -- when CMD13_READ_TIMEOUT_REC =>
         
-      CMD_signal <= '1';
-      dat0_signal <= '1';
-      dat1_signal <= '1';
-      dat2_signal <= '1';
-      dat3_signal <= '1';		
-      read_r1_response_en <= '1';
-      state_leds <= "0110";
-      cmd_write_en			<= '0';
-      D0_write_en 			<= '0';
-      D1_write_en 			<= '0';
-      D2_write_en 			<= '0';
-      D3_write_en 			<= '0';
-      sd_status_signal <= x"68";
+      -- CMD_signal <= '1';
+      -- dat0_signal <= '1';
+      -- dat1_signal <= '1';
+      -- dat2_signal <= '1';
+      -- dat3_signal <= '1';		
+      -- read_r1_response_en <= '1';
+      -- state_leds <= "0110";
+      -- cmd_write_en			<= '0';
+      -- D0_write_en 			<= '0';
+      -- D1_write_en 			<= '0';
+      -- D2_write_en 			<= '0';
+      -- D3_write_en 			<= '0';
+      -- sd_status_signal <= x"68";
 				
 				
 
 			
 
-  end case;	
+  -- end case;	
 
-end process;
+-- end process;
 	
 --
 --Delay Process 
 --Used upon first coming into microsd_data.
 --
 	
-first_delay :	process(rst_n, clk) is
-begin
-  if(rst_n = '0') then 
-    delay_count <= 0;
-    delay_done <= '0';
-	elsif rising_edge(clk) then
-    if (delay_en = '1') then
-      if (delay_count = 8) then
-        delay_done <= '1';
-      else	
-        delay_count <= delay_count + 1;
-        delay_done <= '0';
-      end if;
-    else		
-        delay_count <= 0;
-        delay_done <= '0';
-    end if;
-  end if;
-end process first_delay ;
+-- first_delay :	process(rst_n, clk) is
+-- begin
+  -- if(rst_n = '0') then 
+    -- delay_count <= 0;
+    -- delay_done <= '0';
+	-- elsif rising_edge(clk) then
+    -- if (delay_en = '1') then
+      -- if (delay_count = 8) then
+        -- delay_done <= '1';
+      -- else	
+        -- delay_count <= delay_count + 1;
+        -- delay_done <= '0';
+      -- end if;
+    -- else		
+        -- delay_count <= 0;
+        -- delay_done <= '0';
+    -- end if;
+  -- end if;
+-- end process first_delay ;
 	
 --Overview of data flow, crc7 gen, and sampling.
 --Data is moved on the negative edge of the clock so its ready for 
@@ -3841,54 +4186,51 @@ end process CRC16_GEN3;
 --SD card. 
 --
 
+
+cmd_signal <= output_command(47) when (cmdstartbit = '1') else '1';
+
+--SEND ANY CMD with CRC7 APPEND
 cmd_send:	process(rst_n, clk)
 begin					
   if (rst_n = '0') then
-    command_send_done <= '0';  
-    command_send_bit_count <= 0;
-    output_command <= x"FFFFFFFFFFFF";
-    cmdstartbit <= '0';
-    cmd_error_rate <= to_unsigned(0,cmd_error_rate'length);
-  elsif falling_edge(clk) then       
-    if (command_load_en = '1') then				
+    cmdstartbit             <= '0';
+    command_send_done       <= '0';
+    command_send_bit_count  <= 0;
+    output_command          <= x"FFFFFFFFFFFF";
+  --Data is shifted on falling edge of clock.
+  elsif falling_edge(clk) then  
+    
+  --cmdstarbit is a once off start bit align. 
+    if (command_send_en = '1' and cmdstartbit = '0') then	
+      output_command <= command_signal;
       cmdstartbit <= '1';
-    end if;
-    command_send_done <= '0';  
-    if (command_send_en = '1') then						
-      if (command_send_bit_count = 48) then
-        command_send_done <= '1';
-        command_send_bit_count <= 0;
-      elsif (crc7_done = '1') then
-        --Below is a framework for introducing crc errors into 
-        --specific commands. This is taken out for now. Not all cmds
-        --have recovery next state logic.
-        -- if (current_state = CMD7_SEND) then
-        -- if(cmd_error_rate = 0) then
-        -- output_command <= "1010101" & '1' & output_command(39 downto 0);	
-        -- command_send_bit_count <= command_send_bit_count + 1;
-        -- cmd_error_rate <= cmd_error_rate + 1;
-        -- else
-        output_command <= crc7_signal & '1' & output_command(39 downto 0);	
-        command_send_bit_count <= command_send_bit_count + 1;
-        -- cmd_error_rate <= cmd_error_rate + 1;
-        -- end if;
-        --else
-        --output_command <= crc7_signal & '1' & output_command(39 downto 0);	
-        --command_send_bit_count <= command_send_bit_count + 1;
-        --end if;
-                  
-      elsif (cmdstartbit = '1') then
-        output_command <= command_signal;
-        cmdstartbit <= '0';
-      else
-        command_send_bit_count <= command_send_bit_count + 1;
-        output_command <= output_command(46 downto 0) & '1';							
-      end if;
+    elsif (command_send_en = '1' and cmdstartbit = '1') then 					
+        if (command_send_bit_count = 48) then
+          command_send_done <= '1';
+          command_send_bit_count <= 0;
+        elsif (crc7_done = '1') then
+          if (cmd_error_rate = to_unsigned(cmd_error_rate_control,cmd_error_rate'length) or
+                                start_error = '1') then 
+            output_command <= "1010101" & '1' & x"FFFFFFFFFF";	
+            command_send_bit_count <= command_send_bit_count + 1;
+          else
+            output_command <= crc7_signal & '1' & x"FFFFFFFFFF";	
+            command_send_bit_count <= command_send_bit_count + 1;
+          end if;
+        else
+          command_send_bit_count <= command_send_bit_count + 1;
+          output_command <= output_command(46 downto 0) & '1';							
+        end if;
     else
       output_command <= x"FFFFFFFFFFFF";
+      command_send_done <= '0';  -- Default Values
+      cmdstartbit       <= '0';
     end if;
   end if;
-end process cmd_send;
+end process  cmd_send;
+
+
+
 	
 --Below are incoming response handlers which sample the cmd lines
 --for response sent after commands. 
@@ -3950,6 +4292,31 @@ end process read_r6_response;
 --multi block writing to the sd card. Supporting processes such as the
 --crc gen processes aid it, but the actual data movement is here.
 --
+
+
+
+--Data is all coming from clocked processes.
+
+  dat0_signal <= wr_block_byte_data(4) when (append_crc_4_bit = '0') else
+  crc16_signal_D0_fin(15);
+                
+  dat1_signal <= wr_block_byte_data(5) when (append_crc_4_bit = '0') else
+  crc16_signal_D1_fin(15);
+
+  dat2_signal <= wr_block_byte_data(6) when (append_crc_4_bit = '0') else
+  crc16_signal_D2_fin(15);
+
+  dat3_signal <= wr_block_byte_data(7) when (append_crc_4_bit = '0') else
+  crc16_signal_D3_fin(15);
+
+  --Send data into CRC components											
+  crc16_bitval_signal_D0 <= wr_block_byte_data(4);
+  crc16_bitval_signal_D1 <= wr_block_byte_data(5);
+  crc16_bitval_signal_D2 <= wr_block_byte_data(6);
+  crc16_bitval_signal_D3 <= wr_block_byte_data(7);
+
+
+
 master_block_write: process(rst_n, clk) is
 begin
   if (rst_n = '0') then
@@ -4000,8 +4367,7 @@ begin
             elsif (wr_block_byte_count = 512) then
               wr_block_byte_data <= crc16_signal_D0_fin(7 downto 0);
               wr_block_byte_count <= wr_block_byte_count + 1;
-              wr_block_bit_count <= 1;	
-                    
+              wr_block_bit_count <= 1;	     
             elsif (wr_block_byte_count = 513) then
               wr_block_byte_data <= x"FF";
               wr_block_byte_count <= wr_block_byte_count + 1;
@@ -4021,14 +4387,25 @@ begin
                  
               --Append the first 8 bits of the crc16
               append_crc_4_bit <= '1';
-              --Grab/Store the entire crc16 at this moment
-              crc16_signal_D0_fin <= crc16_signal_D0; 
-              crc16_signal_D1_fin <= crc16_signal_D1; 
-              crc16_signal_D2_fin <= crc16_signal_D2; 
-              crc16_signal_D3_fin <= crc16_signal_D3;
+               if (data_error_rate = to_unsigned(data_error_rate_control,data_error_rate'length)) then 
+                --Test an incorrect CRC.
+                crc16_signal_D0_fin <= x"AAAA"; 
+                crc16_signal_D1_fin <= crc16_signal_D1; 
+                crc16_signal_D2_fin <= crc16_signal_D2; 
+                crc16_signal_D3_fin <= crc16_signal_D3;
               
-              wr_block_byte_count <= wr_block_byte_count + 1; 
-              wr_block_bit_count <= 1;
+                wr_block_byte_count <= wr_block_byte_count + 1; 
+                wr_block_bit_count <= 1;
+              else
+              --Grab/Store the entire crc16 at this moment
+                crc16_signal_D0_fin <= crc16_signal_D0; 
+                crc16_signal_D1_fin <= crc16_signal_D1; 
+                crc16_signal_D2_fin <= crc16_signal_D2; 
+                crc16_signal_D3_fin <= crc16_signal_D3;
+              
+                wr_block_byte_count <= wr_block_byte_count + 1; 
+                wr_block_bit_count <= 1;
+              end if;
 
 
             elsif (wr_block_byte_count = 512) then
@@ -4184,6 +4561,18 @@ begin
         --Shift the current value in but only if start bit has passed.
         block_byte_data_signal <= block_byte_data_signal(6 downto 0) 
                                   & D0_signal_in_signal; 
+        -- if (multiblock)
+        -- block_byte_data_signal <= block_byte_data_signal(3 downto 0) 
+                                  -- & D0_signal_in_signal;  
+        -- block_byte_data_signal <= block_byte_data_signal(3 downto 0) 
+                                  -- & D1_signal_in_signal;     
+        -- block_byte_data_signal <= block_byte_data_signal(3 downto 0) 
+                                  -- & D2_signal_in_signal;     
+        -- block_byte_data_signal <= block_byte_data_signal(3 downto 0) 
+                                  -- & D3_signal_in_signal;                                       
+                                  
+                                  
+                                  
         if (block_bit_count = 7) then
           block_bit_count <= 0;					
         else
@@ -4371,11 +4760,9 @@ end process READ_DATA_TOKEN_RESPONSE;
 --
 --Cmd response timeout process and explanation.
 --
---If a response is not received in ~100ms, resend the command.
+--If a response is not received in ~500ms, resend the command.
 --If total error count becomes too high, pipe out restart signal
---The resend bit is checked in the next state logic. Not all
---response have this check but most do. The CMD25_4 pathways of importance
---have the check currently. 
+--The resend bit is checked in the next state logic. 
 
 --The below process does indeed work. However after a crc command timeout
 --a cmd 13 must be sent to clear the status register bits before the card
@@ -4390,16 +4777,24 @@ end process READ_DATA_TOKEN_RESPONSE;
 --APPCMDS might be handled by resending CMD55 if that errors and resending 
 --CMD55 if the APPCMD itself fails.
 
+--CMD CRC error in response as well as timeout error due to no 
+--error follow the same pathways for now. A CMD13 is sent and then 
+--the offending cmd is tried again. 
+
+--Exception this are CMD12. Here I just proceed to CMD13. Card seems to 
+--program anyway. 
+--APPCMDS. The CMD55 must be resent again. 
+
+
 cmd_response_timeout_handler:	process(rst_n, clk)
 begin
   if (rst_n = '0') then
 
     cmd_response_timeout <= 0;
     cmd_resend_en <= '0';
-    error_count <= (others => '0');
+    cmd_resend_count <= (others => '0');
     restart_response <= '0';
     cmd_resend_timer_en <= '0';
-
   elsif rising_edge(clk) then
 
     if (command_send_done = '1') then
@@ -4409,11 +4804,12 @@ begin
     end if;
     
     if (cmd_resend_timer_en = '1') then
-      --100ms timeout 
+
       if (cmd_response_timeout = cmd_timeout) then
         cmd_resend_en <= '1';
         cmd_resend_timer_en <= '0';
-        if (error_count = to_unsigned(63,error_count'length)) then
+        cmd_resend_count <= cmd_resend_count + 1;
+        if (cmd_resend_count = to_unsigned(63,cmd_resend_count'length)) then
           restart_response <= '1';
         end if;
       else
@@ -4443,30 +4839,114 @@ end process cmd_response_timeout_handler;
 --the failure.  The data crc error handling is local to microsd_data. The above
 --processes which involve buffers are immune to block resends at this level.
 --This is a very good thing.
+--Also includes code for inserting data block errors at interval. 
+
 resend_count_tracker : process(rst_n, clk)
 begin
   if (rst_n = '0') then
     resend_f <= '0';
-    resend_count <= (others => '0');
+    block_resend_count <= (others => '0');
     resending <= '0';
+    data_error_rate <= to_unsigned(0,data_error_rate'length);
   elsif rising_edge(clk) then
       if(resend_f  /= resend) then
         resend_f <= resend;
         if (resend = '1') then
           resending <= '1';
-          --data_error_rate <= data_error_rate + 1;
-          if (resend_count =  to_unsigned(63,resend_count'length)) then
+          if (data_errors_enabled = '1') then 
+            data_error_rate <= data_error_rate + 1;
+          end if;
+          if (block_resend_count =  to_unsigned(63,block_resend_count'length)) then
             restart_crc <= '1';
           end if;
-          resend_count <= resend_count + 1;
+          block_resend_count <= block_resend_count + 1;
         end if;
       end if;
+      
       if (block_success = '1') then
         resending <= '0';
-      --data_error_rate <= data_error_rate + 1;
+        if (data_errors_enabled = '1') then 
+            data_error_rate <= data_error_rate + 1;
+          end if;
       end if;
   end if;
 end process resend_count_tracker;
+
+--Debug process to insert command errors. 
+insert_cmd_errors : process(rst_n, clk)
+begin
+  if (rst_n = '0') then
+    cmd_error_rate <= (others => '0');
+  elsif rising_edge(clk) then
+    if (cmd_errors_enabled = '1' and command_send_done = '1') then 
+      cmd_error_rate <= cmd_error_rate + 1;
+    end if;
+    
+  end if;
+end process insert_cmd_errors;
+
+
+--
+-- data_current_block_written 
+-- and
+-- sd_block_written_flag 
+-- generation. 
+-- Generate the last successful address written global 
+-- output as well as the valid pulse which accompanies it. 
+--
+
+address_success : process (rst_n, clk)
+begin
+  if (rst_n = '0') then
+
+    first_block_of_multiblock <= '0';
+    prev_block_write_sd_addr_pulse <= '0';
+    block_write_sd_addr_interal <= (others => '0'); 
+
+  elsif rising_edge(clk) then
+    --Use a follower to do the following only once per change.
+    if (block_success_follower /= block_success) then          
+      block_success_follower <= block_success;
+      --We have passed the data token check successfully
+      --based on hitting CRC Success States. Create pulse 
+      --and increment block count. 
+			if(block_success = '1') then 
+        prev_block_write_sd_addr_pulse <= '1';
+			else
+        prev_block_write_sd_addr_pulse <= '0';
+			end if;
+    end if;
+    --Once on a new CMD25_DATA_INIT_4
+    if(new_block_write_follower /= new_block_write) then                
+        new_block_write_follower <= new_block_write;
+			
+        --Handling of the block_write_sd_addr_internal is delicate around
+        --resending of blocks. However if a resend events doesn't happen on the 
+        --very first block of the multiblock this process will not be effected.
+		if (new_block_write = '1' and resending /= '1') then
+      --Here we only increment the success address if the first block 
+      --of a multiblock has passed. This allows for address 0 to be passed out.
+      if(first_block_of_multiblock = '1') then                
+        block_write_sd_addr_interal <= block_write_sd_addr;
+        first_block_of_multiblock <= '0';
+      else
+        block_write_sd_addr_interal <= std_logic_vector(unsigned(block_write_sd_addr_interal) + 1);
+      end if;
+		end if;
+	end if;
+    --If we have returned to APP_WAIT reset the first block flag. 
+    if (SD_status_signal = x"01") then 
+        first_block_of_multiblock <= '1';
+    end if;
+	
+  end if;
+
+end process address_success; 
+
+
+
+use_debug:
+	if ( DEBUG_ON = '1') generate
 
 -- Debug Process to Characterize Inner Multiblock Write Waits. 
 inner_multiblock_wait: process(clk)
@@ -4485,7 +4965,7 @@ begin
     -- CMD25_number_1 <= '0';
   if rising_edge(clk) then
 
-    if (init_done = '1') then
+    if (init_done_signal = '1') then
 
       if (current_state = CMD13_INIT_MULTI_4 
                             OR current_state = CMD13_READ_MULTI_4 
@@ -4547,63 +5027,144 @@ begin
 end process inner_multiblock_wait; 
 
 
-
---
--- data_current_block_written 
--- and
--- sd_block_written_flag 
--- generation. 
--- Generate the last successful address written global 
--- output as well as the valid pulse which accompanies it. 
---
-
-address_success : process (rst_n, clk)
+--Calculate throughput based on sucess address increment. 
+--Calculate throughput based on last throughput_array_length multiblocks. 
+throughput_calculate : process (rst_n, clk)
 begin
   if (rst_n = '0') then
+  prev_block_write_sd_addr_tp_track <= (others => '0');
+  kilobytes_per_second_a <= (others => (others => '0'));
+  kilobytes_per_second <= (others => '0');
+  second_counter <= (others => '0');
+  tp_array_pos <=  (others => '0');
+  
+  
+  elsif rising_edge(clk) then
+    
+    if(second_counter = to_unsigned(counts_per_second,second_counter'length)) then
+      kilobytes_per_second <= (others => '0');
+      second_counter <= (others => '0');
+    end if;
+    
+   case current_state is 
+   
+     when  CMD12_INIT =>
+        kilobytes_per_second_a(to_integer(tp_array_pos)) <= kilobytes_per_second;
+        tp_array_pos <= tp_array_pos + 1;
+      when  CMD25_DATA_4 => 
+        second_counter <= second_counter + 1;
+        if ( prev_block_write_sd_addr_tp_track /= unsigned(block_write_sd_addr_interal)) then
+          if ( prev_block_write_sd_addr_tp_track = (unsigned(block_write_sd_addr_interal) - 2)) then
+            kilobytes_per_second <= kilobytes_per_second + 1;
+            prev_block_write_sd_addr_tp_track <= unsigned(block_write_sd_addr_interal);
+          end if;
+        end if;
+      when APP_WAIT =>
+      
+      when others =>
+        second_counter <= second_counter + 1;
+    
+    
+    end case;
+    
+  end if;
+end process throughput_calculate; 
 
-    first_block_of_multiblock <= '0';
-    prev_block_write_sd_addr_pulse <= '0';
-    block_write_sd_addr_interal <= (others => '0'); 
+
+
+
+--Test all command recovery paths. 
+--One by one insert an error into each command to test recovery path. 
+-- This test process was successfully used to insert one error into each
+--of the below command types. The commands were verified robust. 
+cmd_error_check : process (rst_n, clk)
+begin
+  if (rst_n = '0') then
+    start_error <= '0';
+    CMD7_INIT_check <= '0';
+    CMD55_INIT_ACMD6_check <= '0';      
+    ACMD6_INIT_check  <= '0';   
+    CMD6_INIT_4_check <= '0';
+    CMD25_INIT_4_check  <= '0';    
+    CMD12_INIT_check    <= '0'; 
+    CMD12_INIT_ABORT_check  <= '0'; 
+    CMD13_INIT_MULTI_4_check  <= '0';
+    CMD13_INIT_TIMEOUT_REC_check  <= '0';
+
+  
 
   elsif rising_edge(clk) then
-    --Use a follower to do the following only once per change.
-    if (block_success_follower /= block_success) then          
-      block_success_follower <= block_success;
-      --We have passed the data token check successfully
-      --based on hitting CRC Success States. Create pulse 
-      --and increment block count. 
-			if(block_success = '1') then 
-        prev_block_write_sd_addr_pulse <= '1';
-			else
-        prev_block_write_sd_addr_pulse <= '0';
-			end if;
+    
+    if ( start_error = '1' and command_send_done = '1') then
+      start_error <= '0';
     end if;
-    --Once on a new CMD25_DATA_INIT_4
-    if(new_block_write_follower /= new_block_write) then                
-        new_block_write_follower <= new_block_write;
-			
-        --Handling of the block_write_sd_addr_internal is delicate around
-        --resending of blocks. However if a resend events doesn't happen on the 
-        --very first block of the multiblock this process will not be effected.
-		if (new_block_write = '1' and resending /= '1') then
-      --Here we only increment the success address if the first block 
-      --of a multiblock has passed. This allows for address 0 to be passed out.
-      if(first_block_of_multiblock = '1') then                
-        block_write_sd_addr_interal <= block_write_sd_addr;
-        first_block_of_multiblock <= '0';
-      else
-        block_write_sd_addr_interal <= std_logic_vector(unsigned(block_write_sd_addr_interal) + 1);
-      end if;
-		end if;
-	end if;
-    --If we have returned to APP_WAIT reset the first block flag. 
-    if (SD_status_signal = x"01") then 
-        first_block_of_multiblock <= '1';
-    end if;
-	
+    
+   case current_state is 
+   
+      when CMD7_INIT =>
+        if (CMD7_INIT_check = '0') then 
+          start_error <= '1';
+          CMD7_INIT_check <= '1';
+        end if;
+      when CMD55_INIT_ACMD6  =>
+        if (CMD55_INIT_ACMD6_check = '0') then 
+          start_error <= '1';
+          CMD55_INIT_ACMD6_check <= '1'; 
+        end if;
+      when ACMD6_INIT  =>
+        if (ACMD6_INIT_check = '0') then 
+          start_error <= '1';
+          ACMD6_INIT_check <= '1';
+        end if;
+      when CMD6_INIT_4  =>
+        if (CMD6_INIT_4_check = '0') then 
+          start_error <= '1';
+          CMD6_INIT_4_check <= '1';
+        end if;
+      when CMD25_INIT_4  =>
+        if (CMD25_INIT_4_check = '0') then 
+          start_error <= '1';
+          CMD25_INIT_4_check <= '1';
+        end if;
+      when CMD12_INIT  =>
+        if (CMD12_INIT_check = '0') then 
+          start_error <= '1';
+          CMD12_INIT_check <= '1';
+        end if;
+      when CMD12_INIT_ABORT  =>
+        if (CMD12_INIT_ABORT_check = '0') then 
+          start_error <= '1';
+          CMD12_INIT_ABORT_check <= '1';
+        end if;
+      when CMD13_INIT_MULTI_4  =>
+        if (CMD13_INIT_MULTI_4_check = '0') then 
+          start_error <= '1';
+          CMD13_INIT_MULTI_4_check <= '1';
+        end if;
+      when CMD13_INIT_TIMEOUT_REC  =>
+        if (CMD13_INIT_TIMEOUT_REC_check = '0') then 
+          start_error <= '1';
+          CMD13_INIT_TIMEOUT_REC_check <= '1';
+        end if;
+        
+        
+      when others =>
+      
+    end case;
   end if;
+end process cmd_error_check; 
 
-end process address_success; 
+
+
+end generate use_debug;
+
+
+
+
+
+
+
+
 
 
 
