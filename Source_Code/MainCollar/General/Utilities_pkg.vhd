@@ -44,6 +44,7 @@ package UTILITIES_PKG is
   --  Map the bits of a vector into an element of a 2D vector.
   procedure set2D_element (constant elem_no : in    natural ;
                            signal   value   : in    std_logic_vector ;
+                           signal   source  : in    std_logic_2D;
                            signal   dest    : out   std_logic_2D) ;
 
   --  Determine the maximum value from a (constant) array of integers.
@@ -204,10 +205,19 @@ package body UTILITIES_PKG is
 
   procedure set2D_element (constant elem_no : in    natural ;
                            signal   value   : in    std_logic_vector ;
+                           signal   source  : in    std_logic_2D;
                            signal   dest    : out   std_logic_2D) is
+                           
   begin
     for i in value'range loop
-      dest (elem_no, i) <= value (i) ;
+      dest (elem_no,i)  <=  value(i) ;
+    end loop ;
+    for src in source'length(1)-1 downto 0 loop
+      if (src /= elem_no) then
+        for i in value'range loop
+          dest (src,i)  <=  source(src,i) ;
+        end loop ;
+      end if;
     end loop ;
   end set2D_element ;
 

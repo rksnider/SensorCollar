@@ -219,6 +219,7 @@ entity Collar is
 
     radio_clk             : out   std_logic ;
     radio_data_io         : inout std_logic_vector (3 downto 0)
+    
   ) ;
 
 end entity Collar ;
@@ -453,7 +454,17 @@ architecture structural of Collar is
   signal gpsmem_receivers         : std_logic_vector (gpsmemrq_count_c-1
                                                       downto 0) ;
 
-  signal gpsmem_input_tbl         : std_logic_2D (gpsmemrq_count_c-1
+  signal gpsmem_input_tbl_start         : std_logic_2D (gpsmemrq_count_c-1
+                                                  downto 0,
+                                                  gpsmem_iobits_c-1
+                                                  downto 0) ;
+                                                  
+  signal gpsmem_input_tbl_flashblock    : std_logic_2D (gpsmemrq_count_c-1
+                                                  downto 0,
+                                                  gpsmem_iobits_c-1
+                                                  downto 0) ;
+                                                  
+  signal gpsmem_input_tbl               : std_logic_2D (gpsmemrq_count_c-1
                                                   downto 0,
                                                   gpsmem_iobits_c-1
                                                   downto 0) ;
@@ -497,6 +508,15 @@ architecture structural of Collar is
   signal magmem_receivers       : std_logic_vector (magmemrq_count_c-1
                                                     downto 0) ;
 
+  signal magmem_input_tbl_start   : std_logic_2D (magmemrq_count_c-1 downto 0,
+                                                magmem_iobits_c-1 downto 0) ;
+                                                
+  signal magmem_input_tbl_flashblock       : std_logic_2D (magmemrq_count_c-1 downto 0,
+                                                magmem_iobits_c-1 downto 0) ; 
+
+  signal magmem_input_tbl_sdcard       : std_logic_2D (magmemrq_count_c-1 downto 0,
+                                                magmem_iobits_c-1 downto 0) ;                                             
+                                                
   signal magmem_input_tbl       : std_logic_2D (magmemrq_count_c-1 downto 0,
                                                 magmem_iobits_c-1 downto 0) ;
 
@@ -830,7 +850,7 @@ architecture structural of Collar is
              
   signal    tod_set_signal          :     std_logic := '0';
   signal    tod_set_done_signal     :     std_logic := '0';
-  signal    tod_set             :     std_logic_vector(tod_bytes*8-1 downto 0);
+  signal    tod_set                 :     std_logic_vector(tod_bytes*8-1 downto 0);
     
     
   signal    tod_get_signal        :    std_logic := '0';
@@ -848,6 +868,188 @@ architecture structural of Collar is
   signal rtc_startup        : std_logic;  
   signal rtc_startup_done   : std_logic;
   
+  
+--------------------------------------------------------------------------
+  --  I2C Multiplexer constants and signals.
+  --------------------------------------------------------------------------
+  --  Memory requestors.
+
+  constant i2cmemrq_batmon_c    : natural := 0 ;
+  constant i2cmemrq_rtc_c       : natural := i2cmemrq_batmon_c    + 1 ;
+
+  constant i2cmemrq_count_c     : natural := i2cmemrq_rtc_c         + 1 ;
+
+  signal i2cmem_requesters      : std_logic_vector (i2cmemrq_count_c-1
+                                                    downto 0) ;
+  signal i2cmem_receivers       : std_logic_vector (i2cmemrq_count_c-1
+                                                    downto 0) ;
+
+  signal i2cmem_input_tbl       : std_logic_2D (i2cmemrq_count_c-1 downto 0,
+                                                gpsmem_iobits_c-1 downto 0) ;
+
+  signal i2cmemdst_readfrom     : std_logic_vector (gpsmem_databits_c-1
+                                                    downto 0) ;
+                                                    
+                                                    
+  --------------------------------------------------------------------------
+  --  I2C Interconnects
+  --------------------------------------------------------------------------                                              
+    constant mem_bits_g            : natural   := 10 ;
+  
+    signal i2c_req_signal             : std_logic ;
+    signal i2c_rcv_signal             : std_logic ;
+    signal i2c_ena_signal             : std_logic ;
+    signal i2c_addr_signal            : std_logic_vector (6 downto 0) ;
+    signal i2c_rw_signal              : std_logic ;
+    signal i2c_data_wr_signal         : std_logic_vector (7 downto 0) ;
+    signal i2c_busy_signal            : std_logic ;
+    signal i2c_data_rd_signal         : std_logic_vector (7 downto 0) ;
+    signal i2c_ack_error_signal       : std_logic ;
+    
+    signal mem_clk_a                    :std_logic;
+    signal mem_address_signal_a         : unsigned (mem_bits_g-1 downto 0) ;
+    signal mem_datafrom_signal_a        : std_logic_vector (7 downto 0) ;
+    signal mem_datato_signal_a          : std_logic_vector (7 downto 0) ;
+    signal mem_read_en_signal_a         : std_logic ;
+    signal mem_write_en_signal_a        : std_logic ;
+    
+--I2C Resource Mux Input Signals. 
+
+    signal rtc_mem_address_signal_b         : unsigned (mem_bits_g-1 downto 0) ;
+
+    signal rtc_mem_datato_signal_b          : std_logic_vector (7 downto 0) ;
+    signal rtc_mem_read_en_signal_b         : std_logic ;
+    signal rtc_mem_write_en_signal_b        : std_logic ;
+
+    signal rtc_cmd_offset_signal          :   unsigned (mem_bits_g-1 downto 0) ;
+    signal rtc_cmd_count_signal           :   unsigned (7 downto 0) ;
+    signal rtc_cmd_start_signal           :   std_logic ;
+
+    
+
+    signal batmon_mem_address_signal_b         : unsigned (mem_bits_g-1 downto 0) ;
+
+    signal batmon_mem_datato_signal_b          : std_logic_vector (7 downto 0) ;
+    signal batmon_mem_read_en_signal_b         : std_logic ;
+    signal batmon_mem_write_en_signal_b        : std_logic ;
+
+    signal batmon_cmd_offset_signal          :   unsigned (mem_bits_g-1 downto 0) ;
+    signal batmon_cmd_count_signal           :   unsigned (7 downto 0) ;
+    signal batmon_cmd_start_signal           :   std_logic ;
+    signal batmon_cmd_busy_signal            :   std_logic ;
+    
+    --I2C System Outputs are not mapped into the resourced vectors. 
+    signal i2c_mem_datafrom_signal_b        : std_logic_vector (7 downto 0) ;
+    signal i2c_cmd_busy_signal            :   std_logic ;
+    signal i2c_mem_clk_b                  :   std_logic ;
+  
+  
+  -- I2C System Requesters and Receivers Signals and Constants
+  -- Everything needs to use the ResourceMux System with I2C. 
+
+  constant i2c_mem_bytecnt_c     : natural := 1024 ;
+  constant i2c_mem_databits_c    : natural := 8 ;
+  constant i2c_mem_elementcnt_c  : natural := 8 * i2c_mem_bytecnt_c /
+                                                 i2c_mem_databits_c ;
+
+  constant i2c_mem_addrbits_c    : natural :=
+                                      const_bits (i2c_mem_elementcnt_c-1) ;
+  constant i2c_mem_rdwr_enbits_c : natural := 2 ;
+  constant i2c_mem_clkbits_c     : natural := 0 ;
+  constant i2c_mem_iobits_c      : natural := i2c_mem_databits_c +
+                                             i2c_mem_addrbits_c +
+                                             i2c_mem_rdwr_enbits_c +
+                                             i2c_mem_clkbits_c ;
+
+  constant  i2c_cmd_offset_bits_c      : natural := i2c_mem_addrbits_c;
+  constant  i2c_cmd_count_bits_c       : natural := 8 ;
+  constant  i2c_cmd_start_bits_c       : natural := 1 ;
+
+  
+  constant i2c_io_bits_c : natural := i2c_cmd_offset_bits_c +
+                                      i2c_cmd_count_bits_c  +
+                                      i2c_cmd_start_bits_c ;
+  
+  
+  constant i2c_io_mem_total_bits_c : natural :=  i2c_mem_iobits_c + i2c_io_bits_c; 
+
+  constant i2c_rq_batmon_c      : natural := 0 ;
+  constant i2c_rq_rtc_c         : natural := i2c_rq_batmon_c    + 1 ;
+
+  constant i2c_rq_count_c       : natural := i2c_rq_rtc_c  + 1 ;
+
+  signal i2c_requesters        : std_logic_vector (i2c_rq_count_c-1
+                                                      downto 0) ;
+  signal i2c_receivers         : std_logic_vector (i2c_rq_count_c-1
+                                                      downto 0) ;
+                                                      
+  signal i2c_input_tbl_start      : std_logic_2D (i2c_rq_count_c-1
+                                                  downto 0,
+                                                  i2c_io_mem_total_bits_c-1
+                                                  downto 0) := (others => (others => '0'));
+
+  signal i2c_input_tbl_batmon     : std_logic_2D (i2c_rq_count_c-1
+                                                  downto 0,
+                                                  i2c_io_mem_total_bits_c-1
+                                                  downto 0) ;
+                                                  
+  signal i2c_input_tbl            : std_logic_2D (i2c_rq_count_c-1
+                                                  downto 0,
+                                                  i2c_io_mem_total_bits_c-1
+                                                  downto 0) ;
+
+  signal i2c_selected    : std_logic_vector (i2c_io_mem_total_bits_c-1
+                                                    downto 0) ;
+
+  alias i2c_mem_addr      : std_logic_vector (i2c_mem_addrbits_c-1
+                                                    downto 0) is
+                                  i2c_selected (i2c_mem_addrbits_c-1
+                                                   downto 0) ;
+  alias i2c_mem_writeto   : std_logic_vector (i2c_mem_databits_c-1
+                                                    downto 0) is
+                                  i2c_selected (i2c_mem_addrbits_c +
+                                                   i2c_mem_databits_c - 1
+                                                   downto
+                                                   i2c_mem_addrbits_c) ;
+  alias i2c_mem_read_en   : std_logic is
+                                  i2c_selected (i2c_mem_addrbits_c +
+                                                   i2c_mem_databits_c) ;
+  alias i2c_mem_write_en  : std_logic is
+                                  i2c_selected (i2c_mem_addrbits_c +
+                                                   i2c_mem_databits_c + 1) ;
+                                
+  alias i2c_cmd_offset    : std_logic_vector is
+                                  i2c_selected (i2c_mem_iobits_c + 
+                                  i2c_cmd_offset_bits_c - 1 downto 
+                                                   i2c_mem_iobits_c ) ;
+                                                   
+  alias i2c_cmd_count       : std_logic_vector is
+                                  i2c_selected (i2c_mem_iobits_c + 
+                                  i2c_cmd_offset_bits_c + 
+                                  i2c_cmd_count_bits_c - 1 downto 
+                                  i2c_mem_iobits_c + i2c_cmd_offset_bits_c) ;
+                                                   
+  alias i2c_cmd_start       : std_logic is
+                                  i2c_selected (i2c_mem_iobits_c + 
+                                  i2c_cmd_offset_bits_c + 
+                                  i2c_cmd_count_bits_c ) ;
+                                  
+                                  
+      
+  
+
+  --------------------------------------------------------------------------
+  --  I2C Interconnects
+  --------------------------------------------------------------------------
+  
+  --------------------------------------------------------------------------
+  --  Startup_Shutdown Interconnects.
+  --------------------------------------------------------------------------     
+  signal shutdown_master           :  std_logic := '0';
+  signal statctl_startup_signal    :  std_logic;
+  
+  signal StartupShutdownActive       : std_logic ;
+
   
   --------------------------------------------------------------------------
   --  Battery Monitor Inupts/Ouputs
@@ -881,6 +1083,9 @@ architecture structural of Collar is
 
   signal SDLogging_status       : std_logic := '0' ;
   signal SDLogging_flush        : std_logic := '0' ;
+  
+  
+
 
   component Startup_Shutdown is
     Generic (
@@ -889,6 +1094,7 @@ architecture structural of Collar is
     Port (
       clk                 : in    std_logic ;
       rst_n               : in    std_logic ;
+      busy_out            : out   std_logic;
       pc_control_reg_out  : out std_logic_vector (ControlSignalsCnt_c-1
                                             downto 0);     
       pc_control_reg_in  : in   std_logic_vector (ControlSignalsCnt_c-1
@@ -937,30 +1143,30 @@ begin
       clk_freq_g              => spi_clk_freq_c
     )
     Port Map(
-      clk                 => spi_clk,
-      rst_n               => not reset,
-      
-      pc_control_reg_out        =>  PC_ControlReg,   
-      pc_control_reg_in         =>  PC_ControlReg_signal,        
-      pc_status_set_in          =>  PC_StatusSet,
-      sd_contr_start_out        =>  sdcard_start,
-      sd_contr_done_in          =>  sdcard_done,
+      clk                   => spi_gated_clk,
+      rst_n                 => not reset,
+      busy_out              => StartupShutdownActive, 
+      pc_control_reg_out    =>  PC_ControlReg,   
+      pc_control_reg_in     =>   PC_ControlReg_signal,        
+      pc_status_set_in      => PC_StatusSet,
+      sd_contr_start_out    => sdcard_start,
+      sd_contr_done_in      => sdcard_done,
       --sdram_start_out             : out  std_logic ;
-      sdram_done_in             => sdram_ready,
-      imu_start_out             => im_startup,
-      imu_done_in               => im_startup_done,
-      rtc_start_out             => rtc_startup,
-      rtc_done_in               => rtc_startup_done,
-      batmon_start_out          => batmon_startup,
-      batmon_done_in            => '1',
+      sdram_done_in         => sdram_ready,
+      imu_start_out         => im_startup,
+      imu_done_in           => im_startup_done,
+      rtc_start_out         => rtc_startup,
+      rtc_done_in           => rtc_startup_done,
+      batmon_start_out      => batmon_startup,
+      batmon_done_in        => '1',
       --mems_start_out            : out std_logic ;
-      mems_done_in              => '1',
-      mag_start_out             => mm_startup,
-      mag_done_in               => mm_startup_done,
+      mems_done_in          => '1',
+      mag_start_out         => mm_startup,
+      mag_done_in           => mm_startup_done,
       --gps_start_out             : out   std_logic ;
-      gps_done_in               => '1',
-      txrx_start_out            => txrx_startup, 
-      txrx_done_in              => txrx_startup_complete
+      gps_done_in           => '1',
+      --txrx_start_out            : out   std_logic ;
+      txrx_done_in              => '1',
       shutdown_in               => shutdown_master,
       statctl_startup_out       => statctl_startup_signal,
       rem_cap_mah_valid_in      => rem_cap_mah_valid_signal,
@@ -1001,6 +1207,7 @@ begin
     ) ;
 
   spi_gated_en_s        <= StatCtlActive                           or
+                           StartupShutdownActive                   or
                            magmem_requesters (magmemrq_magmem_c)   or
                            magmem_receivers  (magmemrq_magmem_c)   or
                            magmem_requesters (magmemrq_flashblk_c) or
@@ -1192,8 +1399,8 @@ begin
                              gpsmem_wren_none_c   & st_gpsmem_rd_en   &
                              gpsmem_wrto_none_c   & st_gpsmem_addr ;
 
-      set2D_element (gpsmemrq_systemtime_c, st_gpsmem_control,
-                     gpsmem_input_tbl) ;
+      set2D_element (gpsmemrq_systemtime_c, st_gpsmem_control, gpsmem_input_tbl_start,
+                     gpsmem_input_tbl_flashblock) ;
 
       --  Calculate the sunrise/sunset times.
 
@@ -1222,9 +1429,563 @@ begin
   --  I2C bus.
   --------------------------------------------------------------------------
 
+  use_I2C:
+
+    if (Collar_Control_useI2C_c = '1') generate
+
+    component ResourceMUX is
+      Generic (
+        requester_cnt_g       : natural   :=  8 ;
+        resource_bits_g       : natural   :=  8 ;
+        clock_bitcnt_g        : natural   :=  0 ;
+        cross_clock_domain_g  : std_logic := '0'
+      ) ;
+      Port (
+        reset                 : in    std_logic ;
+        clk                   : in    std_logic ;
+        requesters_in         : in    std_logic_vector (requester_cnt_g-1
+                                                            downto 0) ;
+        resource_tbl_in       : in    std_logic_2D (requester_cnt_g-1
+                                                            downto 0,
+                                                    resource_bits_g-1
+                                                            downto 0) ;
+        receivers_out         : out   std_logic_vector (requester_cnt_g-1
+                                                            downto 0) ;
+        resources_out         : out   std_logic_vector (resource_bits_g-1
+                                                            downto 0)
+      ) ;
+    end component ResourceMUX ;
+    
+  component i2c_master IS
+    GENERIC(
+      input_clk : INTEGER := 3_600_000; --input clock speed from user logic in Hz
+      bus_clk   : INTEGER := 400_000);   --speed the i2c bus (scl) will run at in Hz
+    PORT(
+      clk       : IN     STD_LOGIC;                    --system clock
+      reset_n   : IN     STD_LOGIC;                    --active low reset
+      ena       : IN     STD_LOGIC;                    --latch in command
+      addr      : IN     STD_LOGIC_VECTOR(6 DOWNTO 0); --address of target slave
+      rw        : IN     STD_LOGIC;                    --'0' is write, '1' is read
+      data_wr   : IN     STD_LOGIC_VECTOR(7 DOWNTO 0); --data to write to slave
+      busy      : OUT    STD_LOGIC;                    --indicates transaction in progress
+      data_rd   : OUT    STD_LOGIC_VECTOR(7 DOWNTO 0); --data read from slave
+      ack_error : BUFFER STD_LOGIC;                    --flag if improper acknowledge from slave
+      sda       : INOUT  STD_LOGIC;                    --serial data output of i2c bus
+      scl       : INOUT  STD_LOGIC);                   --serial clock output of i2c bus
+  END component i2c_master;
+
+  component I2C_cmds IS
+    PORT
+    (
+      address_a		: IN STD_LOGIC_VECTOR (9 DOWNTO 0);
+      address_b		: IN STD_LOGIC_VECTOR (9 DOWNTO 0);
+      clock_a		: IN STD_LOGIC  := '1';
+      clock_b		: IN STD_LOGIC ;
+      data_a		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+      data_b		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+      rden_a		: IN STD_LOGIC  := '1';
+      rden_b		: IN STD_LOGIC  := '1';
+      wren_a		: IN STD_LOGIC  := '0';
+      wren_b		: IN STD_LOGIC  := '0';
+      q_a		: OUT STD_LOGIC_VECTOR (7 DOWNTO 0);
+      q_b		: OUT STD_LOGIC_VECTOR (7 DOWNTO 0)
+    );
+  END component I2C_cmds;
+
+component rtc_inquire_top is
+
+  Generic (
+  
+  tod_bytes             :natural := 4;
+  alarm_bytes           :natural := 3;
+  
+  mem_bits_g            : natural  := 10;
+
+  cmd_offset_g          : natural   := 0 ;
+  write_offset_g        : natural   := 256 ;
+  read_offset_g         : natural   := 512
+
+  ) ;
+  Port (
+    clk                   : in  std_logic ;
+    rst_n                 : in  std_logic ;
+    
+    startup_in               : in std_logic;
+    startup_done_out         : out std_logic;
+    
+    cmd_offset_out        : out   unsigned (mem_bits_g-1 downto 0) ;
+    cmd_count_out         : out   unsigned (7 downto 0) ;
+    cmd_start_out         : out   std_logic ;
+    cmd_busy_in           : in    std_logic ;
+    
+    mem_clk_out                           : out std_logic;
+    mem_address_signal_b_out          : out unsigned (mem_bits_g-1 downto 0) ;
+    mem_datafrom_signal_b_in          : in std_logic_vector (7 downto 0) ;
+    mem_datato_signal_b_out           : out std_logic_vector (7 downto 0) ;
+    mem_read_en_signal_b_out          : out std_logic ;
+    mem_write_en_signal_b_out         : out std_logic ;
+    
+    i2c_req_out           : out   std_logic ;
+    i2c_rcv_in            : in    std_logic ;
+
+    tod_set_in            : in    std_logic;
+    tod_set_done_out      : out    std_logic;
+    tod_in                : in   std_logic_vector(tod_bytes*8-1 downto 0);
+    
+    tod_get_in            : in   std_logic;
+    tod_out               : out   std_logic_vector(tod_bytes*8-1 downto 0);     
+    tod_get_valid_out     : out   std_logic; 
+
+    alarm_set_in          : in    std_logic;    
+    alarm_in              : in   std_logic_vector(alarm_bytes*8-1 downto 0);
+    alarm_set_done_out    : out    std_logic;
+    
+    rtc_interrupt_enable  : out   std_logic
+  
+  
+
+  ) ;
+end component rtc_inquire_top ;
+
+component batmon_inquire is
+
+  Generic (
+  
+  clk_freq_g               : natural  := 50E6;
+  update_interval_ms_g     : natural  := 5000;
+  
+  mem_bits_g               : natural  := 10;
+
+  cmd_offset_g          : natural   := 0 ;
+  write_offset_g        : natural   := 256 ;
+  read_offset_g         : natural   := 512
+
+  ) ;
+  Port (
+    clk                   : in  std_logic ;
+    rst_n                 : in  std_logic ;
+    
+    startup               : in std_logic;
+    
+    cmd_offset_out        : out   unsigned (mem_bits_g-1 downto 0) ;
+    cmd_count_out         : out   unsigned (7 downto 0) ;
+    cmd_start_out         : out   std_logic ;
+    cmd_busy_in           : in    std_logic ;
+    
+    mem_clk                           :  out std_logic;
+    mem_address_signal_b_out          : out unsigned (mem_bits_g-1 downto 0) ;
+    mem_datafrom_signal_b_in          : in std_logic_vector (7 downto 0) ;
+    mem_datato_signal_b_out           : out std_logic_vector (7 downto 0) ;
+    mem_read_en_signal_b_out          : out std_logic ;
+    mem_write_en_signal_b_out         : out std_logic ;
+    
+    i2c_req_out           : out   std_logic ;
+    i2c_rcv_in            : in    std_logic ;
+    
+        
+    voltage_mv_valid_out      : out   std_logic ;
+    rem_cap_mah_valid_out     : out   std_logic ;
+    inst_cur_ma_valid_out     : out   std_logic ;
+    voltage_mv_out            : out   std_logic_vector (15 downto 0);
+    rem_cap_mah_out           : out   std_logic_vector (15 downto 0);
+    inst_cur_ma_out           : out   std_logic_vector (15 downto 0)
+  ) ;
+
+end component batmon_inquire ;
+    
+  component I2C_IO is
+
+    Generic (
+      clk_freq_g            : natural   := spi_clk_freq_c ;
+      i2c_freq_g            : natural   := 4e5 ;
+      mem_bits_g            : natural   := 10 ;
+      cmd_offset_g          : natural   := 0 ;
+      write_offset_g        : natural   := 256 ;
+      read_offset_g         : natural   := 512
+    ) ;
+    Port (
+      clk                   : in    std_logic ;
+      reset                 : in    std_logic ;
+
+      i2c_req_out           : out   std_logic ;
+      i2c_rcv_in            : in    std_logic ;
+      i2c_ena_out           : out   std_logic ;
+      i2c_addr_out          : out   std_logic_vector (6 downto 0) ;
+      i2c_rw_out            : out   std_logic ;
+      i2c_data_wr_out       : out   std_logic_vector (7 downto 0) ;
+      i2c_busy_in           : in    std_logic ;
+      i2c_data_rd_in        : in    std_logic_vector (7 downto 0) ;
+      i2c_ack_error_in      : in    std_logic ;
+
+      mem_req_out           : out   std_logic ;
+      mem_rcv_in            : in    std_logic ;
+      mem_address_out       : out   unsigned (mem_bits_g-1 downto 0) ;
+      mem_datafrom_in       : in    std_logic_vector (7 downto 0) ;
+      mem_datato_out        : out   std_logic_vector (7 downto 0) ;
+      mem_read_en_out       : out   std_logic ;
+      mem_write_en_out      : out   std_logic ;
+
+      cmd_offset_in         : in    unsigned (mem_bits_g-1 downto 0) ;
+      cmd_count_in          : in    unsigned (7 downto 0) ;
+      cmd_start_in          : in    std_logic ;
+      cmd_busy_out          : out   std_logic
+
+    ) ;
+    
+
+
+end component I2C_IO ;
+
+
+  
+  
+    signal rtc_i2c_control  : std_logic_vector (i2c_io_mem_total_bits_c-1
+                                                      downto 0) ;
+    signal batmon_i2c_control  : std_logic_vector (i2c_io_mem_total_bits_c-1
+                                                      downto 0) ;
+    
+    --DEBUG SIGNALS
+    -- signal rtc_startup  : std_logic_vector(0 downto 0);
+    -- signal batmon_startup      : std_logic_vector(0 downto 0);
+    constant shutdown_delay : natural := spi_clk_freq_c * 30;
+    signal  shutdown_delay_count :  unsigned(natural(trunc(log2(real(
+                              shutdown_delay-1)))) downto 0);  
+    
+    begin
+    
+    
+    mem_clk_a <= not spi_clk;
+    i2c_mem_clk_b <= not spi_clk;
+
+    
+    
+i2c_cmds_i0: I2C_cmds 
+	PORT MAP
+	(
+		address_a		=> std_logic_vector(mem_address_signal_a),
+		address_b		=> std_logic_vector(i2c_mem_addr),
+		clock_a		  => mem_clk_a,
+		clock_b		  => i2c_mem_clk_b,
+		data_a		  => mem_datato_signal_a,
+		data_b		  => i2c_mem_writeto,
+		rden_a		  => mem_read_en_signal_a,
+		rden_b		  => i2c_mem_read_en,
+		wren_a		  => mem_write_en_signal_a,
+		wren_b		  => i2c_mem_write_en,
+		q_a		      => mem_datafrom_signal_a,
+		q_b		      => i2c_mem_datafrom_signal_b
+	);
+
+
+
+
+ i2c_master_i0 :i2c_master 
+
+  PORT MAP(
+    clk         => spi_clk,
+    reset_n     => not reset,
+    ena         => i2c_ena_signal,
+    addr        => i2c_addr_signal,
+    rw          => i2c_rw_signal,
+    data_wr     => i2c_data_wr_signal,
+    busy        => i2c_busy_signal,
+    data_rd     => i2c_data_rd_signal,
+    ack_error   => i2c_ack_error_signal,
+    sda         => i2c_data_io,
+    scl         => i2c_clk_io
+    
+  );
+
+
+i2c_io_i0: I2C_IO
+
+  Generic Map (
+    clk_freq_g           =>  spi_clk_freq_c,
+    i2c_freq_g            => 4e5
+  ) 
+  Port Map (
+    clk                   => spi_clk,
+    reset                 => reset, 
+
+    --i2c_req_out           => i2c_req_signal
+    i2c_rcv_in            => '1',
+    i2c_ena_out           => i2c_ena_signal,
+    i2c_addr_out          => i2c_addr_signal,
+    i2c_rw_out            => i2c_rw_signal,
+    i2c_data_wr_out       => i2c_data_wr_signal,
+    i2c_busy_in           => i2c_busy_signal,
+    i2c_data_rd_in        => i2c_data_rd_signal,
+    i2c_ack_error_in      => i2c_ack_error_signal,
+
+   -- mem_req_out           => mem_req_signal_b
+    mem_rcv_in            => '1',
+    mem_address_out       => mem_address_signal_a,
+    mem_datafrom_in       => mem_datafrom_signal_a,
+    mem_datato_out        => mem_datato_signal_a,
+    mem_read_en_out       => mem_read_en_signal_a,
+    mem_write_en_out      =>  mem_write_en_signal_a,
+
+    
+    cmd_offset_in        =>  unsigned(i2c_cmd_offset),
+    cmd_count_in         =>  unsigned(i2c_cmd_count),
+    cmd_start_in         =>  i2c_cmd_start,
+    
+    cmd_busy_out         =>  i2c_cmd_busy_signal
+
+  ) ;
+
+
+rtc_inquire_top_i0 : rtc_inquire_top
+
+  Port Map (
+    clk                  => spi_clk,
+    rst_n                => not reset,
+    
+    startup_in              => rtc_startup,
+    startup_done_out        => rtc_startup_done,
+    
+    
+    cmd_offset_out       => rtc_cmd_offset_signal,
+    cmd_count_out        => rtc_cmd_count_signal,
+    cmd_start_out        => rtc_cmd_start_signal,
+    cmd_busy_in          => i2c_cmd_busy_signal,
+    
+    
+    --mem_clk_out                       => mem_clk_b,
+    mem_address_signal_b_out          => rtc_mem_address_signal_b,
+    mem_datafrom_signal_b_in         => i2c_mem_datafrom_signal_b,
+    mem_datato_signal_b_out           => rtc_mem_datato_signal_b,
+    mem_read_en_signal_b_out          => rtc_mem_read_en_signal_b,
+    mem_write_en_signal_b_out         => rtc_mem_write_en_signal_b,
+    
+
+    i2c_req_out        => i2c_requesters(i2c_rq_rtc_c),
+    i2c_rcv_in         => i2c_receivers(i2c_rq_rtc_c),
+    
+    tod_set_in              => tod_set_signal,
+    tod_set_done_out        => tod_set_done_signal,
+    tod_in                  => tod_set,
+    
+    
+    tod_get_in              => tod_get_signal,
+    tod_out                 => tod_signal,
+    tod_get_valid_out       => tod_get_valid_signal,
+
+    alarm_set_in            => alarm_set_signal,
+    alarm_in                => alarm_signal,
+    alarm_set_done_out      => alarm_set_done_signal,
+    rtc_interrupt_enable    => rtc_interrupt_enable_signal
+ 
+
+  ) ;
+  
+
+    
+    rtc_i2c_control   <=  rtc_cmd_start_signal        & std_logic_vector(rtc_cmd_count_signal) &
+                           std_logic_vector(rtc_cmd_offset_signal)       & rtc_mem_write_en_signal_b &
+                           rtc_mem_read_en_signal_b    & rtc_mem_datato_signal_b &
+                           std_logic_vector(rtc_mem_address_signal_b);
+
+    set2D_element (i2c_rq_rtc_c, rtc_i2c_control,i2c_input_tbl_start,
+                     i2c_input_tbl_batmon) ;
+                     
+    PC_ControlReg_signal (ControlSignals'pos (Ctl_RTC_Int_e)) <= rtc_interrupt_enable_signal;                 
+
+     
+                     
+                     
+                     
+  bm_inquire_i0 : batmon_inquire
+    Generic Map (
+    
+    clk_freq_g    =>  spi_clk_freq_c,
+    update_interval_ms_g    =>  5000
+    
+    )
+    Port Map (
+      clk                  => spi_clk,
+      rst_n                => not reset,
+      
+      startup              => batmon_startup,
+
+      cmd_offset_out       => batmon_cmd_offset_signal,
+      cmd_count_out        => batmon_cmd_count_signal,
+      cmd_start_out        => batmon_cmd_start_signal,
+      cmd_busy_in          => i2c_cmd_busy_signal,
+      
+      --mem_clk                           => mem_clk_b,
+      mem_address_signal_b_out          => batmon_mem_address_signal_b,
+      mem_datafrom_signal_b_in          => i2c_mem_datafrom_signal_b,
+      mem_datato_signal_b_out           => batmon_mem_datato_signal_b,
+      mem_read_en_signal_b_out          => batmon_mem_read_en_signal_b,
+      mem_write_en_signal_b_out         => batmon_mem_write_en_signal_b,
+      
+      i2c_req_out        => i2c_requesters(i2c_rq_batmon_c),
+      i2c_rcv_in         => i2c_receivers(i2c_rq_batmon_c),
+      
+      
+          
+      voltage_mv_valid_out      => voltage_mv_valid_signal,
+      rem_cap_mah_valid_out     => rem_cap_mah_valid_signal,
+      inst_cur_ma_valid_out     => inst_cur_ma_valid_signal,
+      
+      voltage_mv_out            => voltage_mv_signal,
+      rem_cap_mah_out           => rem_cap_mah_signal,
+      inst_cur_ma_out           => inst_cur_ma_signal
+
+    ) ;
+    
+
+    
+
+    batmon_i2c_control   <=  batmon_cmd_start_signal        & std_logic_vector(batmon_cmd_count_signal) &
+                          std_logic_vector(batmon_cmd_offset_signal)       & batmon_mem_write_en_signal_b &
+                          batmon_mem_read_en_signal_b    & batmon_mem_datato_signal_b &
+                          std_logic_vector(batmon_mem_address_signal_b);
+                          
+
+                          
+                          
+    set2D_element (i2c_rq_batmon_c, batmon_i2c_control,i2c_input_tbl_batmon,
+                     i2c_input_tbl) ;     
+    
+
+ --  I2C Resource multiplexer.
+
+  i2c_mux : ResourceMUX
+      Generic Map (
+        requester_cnt_g         => i2c_rq_count_c,
+        resource_bits_g         => i2c_io_mem_total_bits_c,
+        clock_bitcnt_g          => 0,
+        cross_clock_domain_g    => '0'
+      )
+      Port Map (
+        reset                   => reset,
+        clk                     => spi_clk,
+        requesters_in           => i2c_requesters,
+        resource_tbl_in         => i2c_input_tbl,
+        receivers_out           => i2c_receivers,
+        resources_out           => i2c_selected
+      ) ;
+    
+
+--  RTC TEST MACHINE
+      -- rtc_excercise:	process(spi_clk, reset)
+      
+      -- type TEST is   (
+      -- one,
+      -- two,
+      -- three,
+      -- four
+
+      -- );
+      -- variable cur_state   : TEST;
+      
+     
+
+      -- begin
+      -- if (reset = '1') then
+      -- cur_state := one;
+      -- shutdown_master <= '0';
+      -- shutdown_delay_count <= to_unsigned(0,shutdown_delay_count'length);
+      -- elsif (spi_clk'event and spi_clk = '1') then
+        -- case cur_state is
+          -- when one => 
+          -- tod_set_signal <= '1';
+          -- tod_get_signal <= '0';
+          -- alarm_set_signal <= '0';
+          -- tod_set  <= x"0000000A";
+          -- if ( tod_set_done_signal = '1') then 
+            -- cur_state := three;
+          -- end if;
+          -- when two =>
+          -- tod_set_signal <= '0';
+          -- tod_get_signal <= '1';
+          -- alarm_set_signal <= '0';
+          -- if ( tod_get_valid_signal = '1') then 
+            -- cur_state := two;
+          -- end if;
+          -- when three =>
+          -- tod_set_signal <= '0';
+          -- tod_get_signal <= '0';
+          -- alarm_set_signal <= '1';
+          -- alarm_signal <= x"00003C";
+          -- if ( alarm_set_done_signal = '1') then 
+              -- cur_state := four;
+          -- end if;
+
+          -- when four =>
+          
+          
+          -- if (shutdown_delay_count = to_unsigned(shutdown_delay,shutdown_delay_count'length)) then
+            -- shutdown_delay_count <= to_unsigned(0,shutdown_delay_count'length);
+            -- shutdown_master <= '1';
+          -- else
+            -- shutdown_delay_count <= shutdown_delay_count + 1;
+          -- end if;
+          
+          -- tod_set_signal <= '0';
+          -- tod_get_signal <= '1';
+          -- alarm_set_signal <= '0';
+          -- if ( tod_get_valid_signal = '1') then 
+            -- cur_state := four;
+          -- end if;
+            
+        -- end case;
+
+      -- end if;
+      -- end process;
+--  RTC TEST MACHINE
+    
+
+    
+  -- --DEBUG
+    -- in_system_probe5 : altsource_probe
+    -- GENERIC MAP (
+      -- enable_metastability => "NO",
+      -- instance_id => "bat",
+      -- probe_width => 1,
+      -- sld_auto_instance_index => "YES",
+      -- sld_instance_index => 0,
+      -- source_initial_value => "0",
+      -- source_width => 1,
+      -- lpm_type => "altsource_probe"
+    -- )
+    -- PORT MAP (
+      -- probe => batmon_startup,
+      -- source => batmon_startup
+    -- );
+    
+    -- in_system_probe6 : altsource_probe
+    -- GENERIC MAP (
+      -- enable_metastability => "NO",
+      -- instance_id => "rtc",
+      -- probe_width => 1,
+      -- sld_auto_instance_index => "YES",
+      -- sld_instance_index => 0,
+      -- source_initial_value => "0",
+      -- source_width => 1,
+      -- lpm_type => "altsource_probe"
+    -- )
+    -- PORT MAP (
+      -- probe => rtc_startup,
+      -- source => rtc_startup
+    -- );
+    
+    
+  --DEBUG 
+
+
+
+ end generate use_I2C ;
+  
+  
   no_use_I2C:
     if (Collar_Control_useI2C_c = '0') generate
 
+    begin
+
+    
       i2c_clk_io              <= 'Z' ;
       i2c_data_io             <= 'Z' ;
 
@@ -1960,8 +2721,8 @@ begin
                                sdl_magmem_writeto   & mm_buffno &
                                sdl_magmem_addr ;
 
-      set2D_element (magmemrq_sdcard_c, sdl_magmem_control,
-                     magmem_input_tbl) ;
+      set2D_element (magmemrq_sdcard_c, sdl_magmem_control,magmem_input_tbl_start,
+                     magmem_input_tbl_flashblock) ;
 
       --  SD Card mapping.
 
@@ -2095,6 +2856,7 @@ begin
 
           init_start                      :in     std_logic;
           init_done_out                   :out    std_logic;
+          card_serial_out                 :out    std_logic_vector(31 downto 0);
           user_led_n_out                  :out    std_logic_vector(3 downto 0);
           ext_trigger                     :out    std_logic
 
@@ -2149,7 +2911,7 @@ begin
         sdram_outbuf_size_bytes_g : natural := 4096;
         buf_size_g            :   natural := 2048;
         block_size_g          :   natural := 512;
-        enable_magmem_g       :   std_logic := '0'
+        enable_magmem_g       :   std_logic := '1'
       );
       port(
 
@@ -2234,7 +2996,8 @@ begin
                                   downto 0) ;
       signal sdl_sdcard_critdone  : std_logic ;
       signal sdl_sdcard_critpast  : std_logic_vector (7 downto 0) ;
-
+      signal sdl_sdcard_serial    : std_logic_vector (31 downto 0) ;
+      
       --  Signals for I/O mapping.
 
       signal sd_clock     : std_logic ;
@@ -2298,7 +3061,7 @@ begin
                                sdl_magmem_writeto   & mm_buffno &
                                sdl_magmem_addr ;
 
-      set2D_element (magmemrq_sdcard_c, sdl_magmem_control,
+      set2D_element (magmemrq_sdcard_c, sdl_magmem_control, magmem_input_tbl_sdcard,
                      magmem_input_tbl) ;
 
       --  SD Card mapping.
@@ -2332,9 +3095,10 @@ begin
           sd_dat_in                   => sd_indata,
           sd_dat_out                  => sd_outdata,
           sd_dat_dir                  => sd_dirdata,
-
-          init_start                  => not sdcard_start
-          init_done_out               => sdcard_done
+   
+          init_start                  => not sdcard_start,
+          init_done_out               => sdcard_done,
+          card_serial_out             => sdl_sdcard_serial
         ) ;
 
       ----------------------------------------------------------------------
@@ -2345,15 +3109,15 @@ begin
       sd_incmd                <= sdh_cmd_io ;
       sd_indata               <= sdh_data_io ;
 
-      sdcard_on : process (CTL_SDCardOn, sd_clock,
+      sdcard_on : process (sd_clock,
                            sd_dircmd,  sd_outcmd,
                            sd_dirdata, sd_outdata)
       begin
-        if (CTL_SDCardOn = '0') then
-          sdh_clk             <= '0' ;
-          sdh_cmd_io          <= '0' ;
-          sdh_data_io         <= (others => '0') ;
-        else
+        -- if (CTL_SDCardOn = '0') then
+          -- sdh_clk             <= '0' ;
+          -- sdh_cmd_io          <= '0' ;
+          -- sdh_data_io         <= (others => '0') ;
+        -- else
           sdh_clk             <= sd_clock ;
 
           if (sd_dircmd = '1') then
@@ -2369,14 +3133,28 @@ begin
               sdh_data_io (i) <= 'Z' ;
             end if ;
           end loop ;
-        end if ;
+        -- end if ;
       end process sdcard_on ;
 
   end generate use_SDH ;
 
   no_use_SDH:
     if (Collar_Control_useSDH_c = '0') generate
+    
+      signal sdl_magmem_control   : std_logic_vector (magmem_iobits_c-1
+                                                      downto 0) :=
+                                                      (others => '0') ;
+      
+    begin
+    
+      magmem_receivers  (magmemrq_sdcard_c) <= '0';
+      
+      sdl_magmem_control (magmem_iobits_c-1)   <= master_gated_inv_clk ;
+      
+      set2D_element (magmemrq_sdcard_c, sdl_magmem_control, magmem_input_tbl_sdcard,
+                     magmem_input_tbl) ;
 
+   
       sdh_clk        <= '0' ;
       sdh_cmd_io     <= '0' ;
       sdh_data_io    <= (others => '0') ;
@@ -2857,7 +3635,6 @@ begin
       im_temp_time            <= (others => '0') ;
 
     end generate no_use_Inertial ;
-			
 
   --------------------------------------------------------------------------
   --  Magnetic Memory Buffer
@@ -3001,7 +3778,7 @@ begin
         Generic (
           clk_freq_g              : natural := 50E6;
           mag_interval_ms_g       : natural := 2;
-          tRDP_sleep_mode_exit_time_us  : natural := 2;
+          tRDP_sleep_mode_exit_time_us  : natural := 400;
           buffer_bytes_g          : natural := 1024;
           buffer_num_g            : natural := 2;
 
@@ -3009,7 +3786,7 @@ begin
           address_used_g          : std_logic := '1';
           command_width_bytes_g   : natural := 1;
           address_width_bytes_g   : natural := 3;
-          data_length_bit_width_g : natural := 10
+          data_length_bit_width_g : natural := 11
         ) ;
         Port (
           clk               : in  std_logic ;
@@ -3040,7 +3817,8 @@ begin
 
           fpga_time         : in  std_logic_vector(gps_time_bits_c-1 downto 0);
           current_active_ram_buffer : out   std_logic_vector(natural(trunc(log2(real(
-                                        buffer_num_g-1)))) downto 0)
+                                        buffer_num_g-1)))) downto 0);
+          erase_all_in      : in std_logic
         ) ;
       end component magmem_controller ;
 
@@ -3062,12 +3840,16 @@ begin
                                                     downto 0) ;
       signal magmemsrc_control  : std_logic_vector (magmem_iobits_c-1
                                                     downto 0) ;
+                                                    
+                                                    
+      signal magmem_erase       : std_logic_vector(0 downto 0) := "0";
 
     begin
 
       magmem : magmem_controller
         Generic Map (
           clk_freq_g        => spi_clk_freq_c,
+          mag_interval_ms_g => 2,
           buffer_bytes_g    => mm_buffbytes_c,
           buffer_num_g      => mm_buffnum_c
         )
@@ -3094,15 +3876,16 @@ begin
           sclk              => magmem_clock,
           cs_n              => magmem_cs,
           fpga_time         => reset_time,
-          current_active_ram_buffer   => mm_buffno
+          current_active_ram_buffer   => mm_buffno,
+          erase_all_in      => '0'
         ) ;
 
       magmemsrc_control     <= spi_gated_inv_clk  &
                                magmemsrc_write_en & magmemsrc_read_en &
                                magmemsrc_writeto  & magmemsrc_addr ;
 
-      set2D_element (magmemrq_magmem_c, magmemsrc_control,
-                     magmem_input_tbl) ;
+      set2D_element (magmemrq_magmem_c, magmemsrc_control,magmem_input_tbl_start,
+                     magmem_input_tbl_flashblock) ;
 
       ----------------------------------------------------------------------
       --  All I/O lines forced low when device is off, otherwise they are
@@ -3132,7 +3915,18 @@ begin
 
   no_use_MagMem:
     if (Collar_Control_useMagMem_c = '0') generate
-
+      signal magmemsrc_control  : std_logic_vector (magmem_iobits_c-1
+                                                    downto 0) :=
+                                            (others => '0') ;
+    
+    begin
+    
+      magmem_requesters (magmemrq_magmem_c) <= '0';
+      magmemsrc_control (magmem_iobits_c-1)   <= spi_gated_inv_clk ;
+      set2D_element (magmemrq_magmem_c, magmemsrc_control,
+                        magmem_input_tbl_start,
+                        magmem_input_tbl_flashblock) ;
+    
       mm_startup_done         <= '1' ;
 
       magram_clk              <= '0' ;
@@ -3377,6 +4171,7 @@ begin
       component FlashBlock is
 
         Generic (
+          sysclk_freq_g             : natural := 36e5;
           fpga_time_length_bytes_g  : natural := 9;
           time_bytes_g              : natural := 9 ;
           event_bytes_g             : natural := 2 ;
@@ -3391,7 +4186,8 @@ begin
           gps_buffer_bytes_g            : natural := 512;
           imu_axis_word_length_bytes_g  : natural := 2;
           sdram_input_buffer_bytes_g    : natural := 4096;
-          audio_word_bytes_g            : natural := 2
+          audio_word_bytes_g            : natural := 2;
+          status_update_interval_ms     : natural := 500
       ) ;
         Port (
           clock_sys             : in    std_logic ;
@@ -3550,6 +4346,7 @@ begin
 
       flashblk : FlashBlock
         Generic Map (
+          sysclk_freq_g                 => spi_clk_freq_c,
           fpga_time_length_bytes_g      => gps_time_bytes_c,
           time_bytes_g                  => gps_time_bytes_c,
           event_bytes_g                 => eventcnt_bytes_c,
@@ -3561,7 +4358,8 @@ begin
           gps_buffer_bytes_g            => gpsmem_bytecnt_c,
           imu_axis_word_length_bytes_g  => im_datalen_c,
           sdram_input_buffer_bytes_g    => inmem_bytecnt_c,
-          audio_word_bytes_g            => 2
+          audio_word_bytes_g            => 2,
+          status_update_interval_ms     => 500
         )
         Port Map (
           clock_sys                   => spi_clk,
@@ -3638,7 +4436,7 @@ begin
                               gpsmem_wren_none_c  & fb_gpsmem_rd_en &
                               gpsmem_wrto_none_c  & fb_gpsmem_addr ;
 
-      set2D_element (gpsmemrq_flashblk_c, fb_gpsmem_control,
+      set2D_element (gpsmemrq_flashblk_c, fb_gpsmem_control,gpsmem_input_tbl_flashblock,
                      gpsmem_input_tbl) ;
 
       fb_magmem_control    <= spi_gated_inv_clk &
@@ -3646,8 +4444,8 @@ begin
                               fb_magmem_writeto & mm_buffno &
                               fb_magmem_addr ;
 
-      set2D_element (magmemrq_flashblk_c, fb_magmem_control,
-                     magmem_input_tbl) ;
+      set2D_element (magmemrq_flashblk_c, fb_magmem_control,magmem_input_tbl_flashblock,
+                     magmem_input_tbl_sdcard) ;
 
     end generate use_FlashBlock ;
 
@@ -3663,14 +4461,14 @@ begin
       gpsmem_requesters (gpsmemrq_flashblk_c) <= '0' ;
 
       fb_gpsmem_control (gpsmem_iobits_c-1)   <= spi_gated_inv_clk ;
-      set2D_element (gpsmemrq_flashblk_c, fb_gpsmem_control,
+      set2D_element (gpsmemrq_flashblk_c, fb_gpsmem_control, gpsmem_input_tbl_flashblock,
                      gpsmem_input_tbl) ;
 
       magmem_requesters (magmemrq_flashblk_c) <= '0' ;
 
       fb_magmem_control (magmem_iobits_c-1)   <= spi_gated_inv_clk ;
-      set2D_element (magmemrq_flashblk_c, fb_magmem_control,
-                     magmem_input_tbl) ;
+      set2D_element (magmemrq_flashblk_c, fb_magmem_control,magmem_input_tbl_flashblock,
+                     magmem_input_tbl_sdcard) ;
 
     end generate no_use_FlashBlock ;
 
@@ -3716,6 +4514,6 @@ begin
       end if ;
     end if ;
   end process reset_pb ;
-
+  
 
 end architecture structural ;
