@@ -452,8 +452,27 @@ architecture structural of GPSmessages is
   signal memread_from         : std_logic_vector (mem_databits_g-1
                                                   downto 0) ;
 
-  signal meminput_tbl         : std_logic_2D (mem_user_cnt_c-1 downto 0,
+  signal meminput_tbl_start   : std_logic_2D (mem_user_cnt_c-1 downto 0,
                                               mem_io_bits_c-1 downto 0) ;
+                                              
+  signal meminput_tbl_send    : std_logic_2D (mem_user_cnt_c-1 downto 0,
+                                              mem_io_bits_c-1 downto 0) ;   
+
+  signal meminput_tbl_poll    : std_logic_2D (mem_user_cnt_c-1 downto 0,
+                                              mem_io_bits_c-1 downto 0) ; 
+
+  signal meminput_tbl_aopstatus   : std_logic_2D (mem_user_cnt_c-1 downto 0,
+                                              mem_io_bits_c-1 downto 0) ; 
+
+  signal meminput_tbl_timemark    : std_logic_2D (mem_user_cnt_c-1 downto 0,
+                                              mem_io_bits_c-1 downto 0) ;
+
+
+  signal meminput_tbl_init    : std_logic_2D (mem_user_cnt_c-1 downto 0,
+                                              mem_io_bits_c-1 downto 0) ; 
+
+  signal meminput_tbl   : std_logic_2D (mem_user_cnt_c-1 downto 0,
+                                              mem_io_bits_c-1 downto 0) ;                                               
 
   signal memselected          : std_logic_vector (mem_io_bits_c-1
                                                   downto 0) ;
@@ -817,7 +836,8 @@ begin
   memctl_parser               <= memwrite_en_parser & memread_en_parser &
                                  memwrite_to_parser & memaddr_parser ;
 
-  set2D_element (memreq_parser_c, memctl_parser, meminput_tbl) ;
+  set2D_element (memreq_parser_c, memctl_parser, meminput_tbl_start,
+                         meminput_tbl_send) ;
 
   --  GPS Message sender multiplexer allows multiple entities to share
   --  access to the message sender module.
@@ -863,7 +883,8 @@ begin
   memctl_send                 <= memwrite_en_none_c & memread_en_send &
                                  memwrite_to_none_c & memaddr_send ;
 
-  set2D_element (memreq_send_c, memctl_send, meminput_tbl) ;
+  set2D_element (memreq_send_c, memctl_send, meminput_tbl_send,
+                            meminput_tbl_poll) ;
 
   --  Message poller.
 
@@ -897,7 +918,8 @@ begin
   memctl_poll                 <= memwrite_en_none_c & memread_en_poll &
                                  memwrite_to_none_c & memaddr_poll ;
 
-  set2D_element (memreq_poll_c, memctl_poll, meminput_tbl) ;
+  set2D_element (memreq_poll_c, memctl_poll, meminput_tbl_poll,
+                                meminput_tbl_aopstatus) ;
 
   --  GPS message sender multiplexing entry.
 
@@ -932,7 +954,8 @@ begin
   memctl_aopstat              <= memwrite_en_none_c & memread_en_aopstat &
                                  memwrite_to_none_c & memaddr_aopstat ;
 
-  set2D_element (memreq_aopstat_c, memctl_aopstat, meminput_tbl) ;
+  set2D_element (memreq_aopstat_c, memctl_aopstat, meminput_tbl_aopstatus,
+                        meminput_tbl_timemark) ;
 
   --  Time mark generator.
 
@@ -976,7 +999,8 @@ begin
                                  memread_en_timemark &
                                  memwrite_to_none_c & memaddr_timemark ;
 
-  set2D_element (memreq_timemark_c, memctl_timemark, meminput_tbl) ;
+  set2D_element (memreq_timemark_c, memctl_timemark, meminput_tbl_timemark,
+                                    meminput_tbl_init) ;
 
   --  Select the initialization to do.
 
@@ -1036,7 +1060,7 @@ begin
   memctl_init                   <= memwrite_en_init   & memread_en_init   &
                                    memwrite_to_init   & memaddr_init ;
 
-  set2D_element (memreq_init_c, memctl_init, meminput_tbl) ;
+  set2D_element (memreq_init_c, memctl_init,meminput_tbl_init,meminput_tbl);
 
   --  GPS message sender multiplexing entry.
 
