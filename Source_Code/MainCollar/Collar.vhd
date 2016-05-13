@@ -1036,11 +1036,7 @@ architecture structural of Collar is
                                   
                                   
       
-  
 
-  --------------------------------------------------------------------------
-  --  I2C Interconnects
-  --------------------------------------------------------------------------
   
   --------------------------------------------------------------------------
   --  Startup_Shutdown Interconnects.
@@ -1084,8 +1080,6 @@ architecture structural of Collar is
   signal SDLogging_status       : std_logic := '0' ;
   signal SDLogging_flush        : std_logic := '0' ;
   
-  
-
 
   component Startup_Shutdown is
     Generic (
@@ -1128,16 +1122,6 @@ architecture structural of Collar is
 
 begin
 
-  --------------------------------------------------------------------------
-  --  Startup Machine
-  --  System startup sequencing and setting of the control register.
-  --------------------------------------------------------------------------
-
-  
-  signal shutdown_master           :  std_logic := '0';
-  signal statctl_startup_signal    :  std_logic;
-  
-  
   i_startup_0 : Startup_Shutdown
     Generic Map (
       clk_freq_g              => spi_clk_freq_c
