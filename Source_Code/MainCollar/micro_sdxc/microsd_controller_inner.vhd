@@ -109,11 +109,11 @@ use IEEE.NUMERIC_STD.ALL;
 --!
 --! @param      prev_block_write_sd_addr_pulse  prev_block_write_sd_addr is valid
 --!
---! @param      cmd_write_en        Tri State Enable
---! @param      D0_write_en         Tri State Enable  
---! @param      D1_write_en         Tri State Enable  
---! @param      D2_write_en         Tri State Enable
---! @param      D3_write_en         Tri State Enable 
+--! @param      cmd_write_en_out        Tri State Enable
+--! @param      D0_write_en_out         Tri State Enable  
+--! @param      D1_write_en_out         Tri State Enable  
+--! @param      D2_write_en_out         Tri State Enable
+--! @param      D3_write_en_out         Tri State Enable 
 --!
 --! @param      cmd_signal_in       Read value of the tri-stated line.
 --! @param      D0_signal_in        Read value of the tri-stated line.   
@@ -134,6 +134,7 @@ use IEEE.NUMERIC_STD.ALL;
 --! @param      sclk                clk sent to sd card
 --!
 --! @param      restart             Restart sd card because of repeated error
+--! @param      card_serial_out     32 bit card serial taken on init.
 --!
 --! @param      ext_trigger         External trigger bit. Used to trigger an Oscope if need arise.
 --! 
@@ -188,7 +189,7 @@ entity microsd_controller_inner is
     D3_signal_in					  :in	    std_logic;
   
 
-    init_done						    :out    std_logic;                                                  
+    init_done_out				    :out    std_logic;                                                  
     hs_sdr25_mode_en			  :in     std_logic; 
 
     vc_18_on                :out    std_logic;
@@ -204,6 +205,7 @@ entity microsd_controller_inner is
     sclk							    :out	std_logic;
     
     restart               :out  std_logic;
+    card_serial_out       :out    std_logic_vector(31 downto 0);
     
 
     ext_trigger				    :out  std_logic                          
@@ -224,7 +226,7 @@ component microsd_init
   );
   port(
     clk					          :in	    std_logic;	
-    rst_n 				        :in	    std_logic;	
+    rst_n_in 				      :in	    std_logic;	
     sd_init_start_in	    :in	    std_logic;	
     cmd_out               :out    std_logic;	
     dat0_out			        :out    std_logic;	
@@ -240,7 +242,8 @@ component microsd_init
     vc_18_on_out          :out    std_logic;
     vc_33_on_out          :out    std_logic;
     state_leds_out			  :out	  std_logic_vector(3 downto 0);
-    ext_trigger_out       :out    std_logic
+    ext_trigger_out       :out    std_logic;
+    card_serial_out       :out    std_logic_vector(31 downto 0)
   );
 end component;
 	
@@ -279,11 +282,11 @@ component microsd_data is
     prev_block_write_sd_addr 			:out	std_logic_vector(31 downto 0);		
     prev_block_write_sd_addr_pulse      :out	std_logic;
   
-    cmd_write_en					    :out    std_logic;                          
-    D0_write_en					      :out    std_logic;
-    D1_write_en					      :out    std_logic;
-    D2_write_en					      :out    std_logic;
-    D3_write_en					      :out    std_logic;
+    cmd_write_en_out					    :out    std_logic;                          
+    D0_write_en_out					      :out    std_logic;
+    D1_write_en_out					      :out    std_logic;
+    D2_write_en_out					      :out    std_logic;
+    D3_write_en_out					      :out    std_logic;
   
     cmd_signal_in					    :in 	  std_logic;                          
     D0_signal_in					    :in	    std_logic;
@@ -291,10 +294,10 @@ component microsd_data is
     D2_signal_in					    :in	    std_logic;
     D3_signal_in					    :in	    std_logic;
     
-    card_rca 					        :in	    std_logic_vector(15 downto 0);      
+    card_rca_in 					        :in	    std_logic_vector(15 downto 0);      
   
 
-    init_done						      :in    std_logic;                           
+    init_done_in						      :in    std_logic;                           
                    
     hs_sdr25_mode_en				  :in   std_logic;                           
 
@@ -333,6 +336,8 @@ signal	init_cmd_signal				:std_logic;
 signal	init_sclk_signal			:std_logic;
 signal	init_dat3_signal			:std_logic;
 signal 	init_done_signal			:std_logic;
+signal  init_done_s           :std_logic;
+signal  init_done_400          :std_logic;
 signal 	init_state_leds_signal		:std_logic_vector(3 downto 0);
 signal  cmd_write_en_init			:std_logic;
 signal  D3_write_en_init			:std_logic;
@@ -354,12 +359,17 @@ signal  ext_trigger_data      :std_logic;
 signal  div_clk                :std_logic;
 signal  div_clk_count          :unsigned(7 downto 0);
 
+
+
+
+
+
 	
 begin	
 
 sd_init_start_signal <= sd_init_start;
 
-init_done <= init_done_signal;
+init_done_out <= init_done_signal;
 
 i_sd_init_0:	microsd_init
 generic map(
@@ -367,14 +377,14 @@ generic map(
   )
 port map(
     clk			                => clk_400k_signal,
-    rst_n 		              => rst_n,
+    rst_n_in 		            => rst_n,
     sd_init_start_in        => sd_init_start_signal,
     dat0_out 		    	      => init_dat0_signal,
     cmd_out 			          => init_cmd_signal,
     sclk_out 		    	      => init_sclk_signal,
     dat3_out 			          => init_dat3_signal,
     D0_signal_in  		      => D0_signal_in,
-    init_done_out	          => init_done_signal,
+    init_done_out	          => init_done_400,
     cmd_write_en_out        => cmd_write_en_init,
     D3_write_en_out		      => D3_write_en_init,
     cmd_signal_in           => cmd_signal_in,
@@ -383,7 +393,8 @@ port map(
     vc_18_on_out            => vc_18_on,      
     vc_33_on_out            => vc_33_on,   
     restart_out             => init_restart,
-    rca_out                 => card_rca_signal
+    rca_out                 => card_rca_signal,
+    card_serial_out         => card_serial_out
     );
 				
 i_sd_data_0:	microsd_data
@@ -392,7 +403,7 @@ generic map(
   )
 port map(
   clk								=>  clk, 
-  --clk               =>  div_clk,
+
   rst_n 					  =>  rst_n,	 
   dat0 							=>  data_dat0_signal,
   cmd 							=>  data_cmd_signal,
@@ -400,18 +411,18 @@ port map(
   dat3 							=>  data_dat3_signal,
   dat1							=>  dat1,
   dat2							=>  dat2,
-  cmd_write_en 		  =>  cmd_write_en_data,
+  cmd_write_en_out 		  =>  cmd_write_en_data,
   cmd_signal_in 	  =>  cmd_signal_in,
-  D0_write_en 		  =>  D0_write_en,
-  D1_write_en 		  =>  D1_write_en,
-  D2_write_en 		  =>  D2_write_en,
-  D3_write_en 		  =>  D3_write_en_data,
+  D0_write_en_out 		  =>  D0_write_en,
+  D1_write_en_out 		  =>  D1_write_en,
+  D2_write_en_out 		  =>  D2_write_en,
+  D3_write_en_out 		  =>  D3_write_en_data,
   D0_signal_in	    =>  D0_signal_in,
   D1_signal_in	    =>  D1_signal_in,
   D2_signal_in	    =>  D2_signal_in,
   D3_signal_in	    =>  D3_signal_in,
-  card_rca				  =>  card_rca_signal,
-  init_done				  =>  init_done_signal,
+  card_rca_in				  =>  card_rca_signal,
+  init_done_in				  =>  init_done_signal,
   block_read_sd_addr			    =>  block_read_sd_addr,
 
   block_byte_data		          =>	block_byte_data,				
@@ -487,8 +498,15 @@ begin
 
     clk_400k_signal <= '0';
     clk_400k_count <= 0;
+    init_done_signal <= '0';
+    init_done_s      <='0';
+  elsif falling_edge(clk) then 
+  
+  init_done_s <= init_done_400;
+  init_done_signal <= init_done_s;
 
   elsif rising_edge(clk) then
+
     --Divides by count = (count+1)*2.
     --50 Mhz --> (clk_divide_g(128)/2 - 1) + 1 * 2.
     --128/2 -1 == 63. + 1 == 64. * 2 == 128. 50Mhz/128 = .3906MHZ.

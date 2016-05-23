@@ -140,6 +140,8 @@ USE altera_mf.altera_mf_components.all;
 --!                                 Output of switch goes to level translator 
 --!                                 sd card side bank control.
 --! @param      init_start          Start the init process.
+--! @param      init_done_out       Init process is done.
+--! @param      card_serial_out     32 bit card serial taken on init.
 --! @param      user_led_n_out      Data FSM encoding used for LEDs. 
 --
 ----------------------------------------------------------------------------
@@ -198,7 +200,10 @@ entity microsd_controller_dir is
     v_3_3_on_off                    :out     std_logic;                                     
     v_1_8_on_off                    :out     std_logic;                                     
     
-    init_start                      :in     std_logic;                                  
+    init_start                      :in     std_logic; 
+    init_done_out                   :out    std_logic;  
+    card_serial_out                 :out    std_logic_vector(31 downto 0);
+    
     user_led_n_out                  :out    std_logic_vector(3 downto 0);
     ext_trigger                     :out    std_logic
 
@@ -295,9 +300,10 @@ component microsd_controller_inner
     hs_sdr25_mode_en			:in std_logic;      
     state_leds				    :out std_logic_vector(3 downto 0);  
 
-    restart               :out std_logic;    
+    restart               :out std_logic;
+    card_serial_out       :out std_logic_vector(31 downto 0);    
 
-    init_done					:out std_logic;     
+    init_done_out					:out std_logic;     
 
     ext_trigger				:out std_logic      
 	
@@ -416,8 +422,6 @@ signal  ram_read_address_top			    :	std_logic_vector(8 downto 0);
 --using multiple cmd25s.  
 signal  num_of_blocks_written 	    :   natural;    
 
---sd_init has finished init.
-signal  init_done_top					    :   std_logic;  
 
                    
 --Bit used to enable CMD6 hs_sdr25 mode transition 
@@ -460,7 +464,7 @@ signal  restart_signal                      :   std_logic;
 
 begin 
 
--- clk_signal <= clk;
+
 	
 sd_block_written_flag   <=  sd_block_written_internal;
 
@@ -468,7 +472,6 @@ user_led_n_out(3 downto 0)  <=  not state_leds_top;
 
 sd_clk  <=  sclk_top_signal	; 
 
-	
 	
 i_microsd_controller_inner_0 :  microsd_controller_inner 
 	generic map (
@@ -513,7 +516,7 @@ i_microsd_controller_inner_0 :  microsd_controller_inner
     state_leds				        =>	state_leds_top,
 
     ram_read_address	    =>  ram_read_address_top,
-    init_done					    =>  init_done_top,
+    init_done_out					    =>  init_done_out,
     hs_sdr25_mode_en 	    =>  hs_sdr25_mode_en,
     vc_18_on              =>  V_1_8_ON_OFF,
     vc_33_on              =>  V_3_3_ON_OFF,
@@ -525,7 +528,8 @@ i_microsd_controller_inner_0 :  microsd_controller_inner
     D3_signal_in				    =>	D3_top_signal_in,
     
     restart                 => restart_signal,
-
+    card_serial_out         => card_serial_out,
+    
     prev_block_write_sd_addr 		    => data_current_block_written,		
     prev_block_write_sd_addr_pulse  => sd_block_written_internal,	    
 
@@ -546,7 +550,6 @@ i_data_buffer_0: microsd_buffer
     data_out        => block_write_data_signal, 
     data_input      => data_input,  
     data_we         => data_we,
-    --data_clk        => data_clk,
     data_full		    => data_full,        
     sd_write_rdy    => sd_write_rdy_top,        
 
@@ -815,6 +818,7 @@ end process data_clk_sense;
 	-- end if;
 -- end if;
 -- end process clk_en_process;
+
 		
 
 end Behavioral;

@@ -91,6 +91,8 @@ USE GENERAL.magmem_buffer_def_pkg.all;    --Magnetic Memory Buffer Size and Loca
 --! @param      blocks_past_crit            When dw_en goes high, this is the 
 --!                                         number of blocks past the critical
 --!                                         block that have been formed.
+--! @param      sd_serial_in                sdxc serial number from sd_controller
+--!                                         Logged into magnetic memory.
 
 
 entity sd_loader is
@@ -166,7 +168,11 @@ entity sd_loader is
     buffer_level                  :in       std_logic_vector (natural(trunc(
                                             log2(real(buf_size_g/block_size_g)))) downto 0);
 
-    blocks_past_crit                   :in std_logic_vector(7 downto 0)    
+    blocks_past_crit                   :in std_logic_vector(7 downto 0);
+
+
+
+    sdxc_serial_in          :in std_logic_vector(31 downto 0)
             
 
 );
@@ -207,6 +213,8 @@ SD_STARTUP_FETCH_START_ADDRESS_SETUP,
 SD_STARTUP_FETCH_START_ADDRESS,
 SD_STARTUP_STORE_START_ADDRESS_SETUP,
 SD_STARTUP_STORE_START_ADDRESS,
+SD_STARTUP_STORE_SD_SERIAL_SETUP,
+SD_STARTUP_STORE_SD_SERIAL,
 SD_LOAD_COPY,
 SD_LOAD_BUF_FUL,
 SD_LOAD_WRITE_DONE
@@ -291,7 +299,7 @@ signal sd_magram_address_a : unsigned(natural(trunc(log2(real(
 signal sd_block_address_store : std_logic_vector(31 downto 0);
 -- signal sd_block_written_flag_internal : std_logic;
 signal sd_block_written_flag_follower : std_logic;   
-
+signal sd_serial_store : std_logic_vector(31 downto 0);
 
 --State Machine Acknowledgement.
 signal startup_done : std_logic;
@@ -443,6 +451,7 @@ begin
         elsif (save_address = '1' AND enable_magmem_g = '1') then
           cur_sdload_state <= SD_STARTUP_STORE_START_ADDRESS_SETUP;
           sd_block_address_store <= data_current_block_written;
+          sd_serial_store   <= sdxc_serial_in;
         end if;
 
 
@@ -496,19 +505,51 @@ begin
       
       when SD_STARTUP_STORE_START_ADDRESS =>
         if byte_count = byte_number then
-          --One way to wait till save_address is turned off so that
-          --we don't immediately process again.
-          if (address_saved_follower = '1') then
-            cur_sdload_state   <= SD_LOAD_WAIT ; 
-          end if;
-          address_saved <= '1';
+            cur_sdload_state   <= SD_STARTUP_STORE_SD_SERIAL_SETUP ; 
         else
         --The 4 bytes value is stored little endian.
           sd_magram_data_a_out <=  sd_block_address_store(7 downto 0); 
           sd_block_address_store <= x"00" & sd_block_address_store(31 downto 8);
           byte_count        <= byte_count + 1 ;
           sd_magram_address_a <= sd_magram_address_a + 1;
-        end if ;   
+        end if ;  
+
+
+      when SD_STARTUP_STORE_SD_SERIAL_SETUP =>
+      
+        if (mem_rec_a_in = '1') then 
+          cur_sdload_state <= SD_STARTUP_STORE_SD_SERIAL;
+            
+          sd_magram_address_a   <= TO_UNSIGNED (sdxc_serial_location_c,
+                                              sd_magram_address_a'length) ;            
+          byte_number       <= TO_UNSIGNED (sdxc_serial_length_bytes_c,
+                                            byte_number'length) ;
+                                            
+          byte_count        <= TO_UNSIGNED (1, byte_count'length) ;
+          
+          sd_magram_data_a_out <=  sd_serial_store(7 downto 0); 
+          
+          sd_serial_store <= x"00" & sd_serial_store(31 downto 8);
+
+        end if;
+          
+
+      
+      when SD_STARTUP_STORE_SD_SERIAL =>
+        if byte_count = byte_number then
+          --One way to wait till save_address is turned off so that
+          --we don't immediately process again.
+          if (address_saved_follower = '1') then
+            cur_sdload_state   <= SD_LOAD_WAIT ; 
+          end if;
+          address_saved <= '1'; 
+        else
+        --The 4 bytes value is stored little endian.
+          sd_magram_data_a_out <=  sd_serial_store(7 downto 0); 
+          sd_serial_store <= x"00" & sd_serial_store(31 downto 8);
+          byte_count        <= byte_count + 1 ;
+          sd_magram_address_a <= sd_magram_address_a + 1;
+        end if ;          
       
       
       
@@ -585,6 +626,14 @@ begin
       mem_req_a_out <= '1';
 
     when SD_STARTUP_STORE_START_ADDRESS =>
+      sd_magram_wr_en_a_out <= '1';  
+      mem_req_a_out <= '1';
+      
+      
+    when SD_STARTUP_STORE_SD_SERIAL_SETUP =>
+      mem_req_a_out <= '1';
+
+    when SD_STARTUP_STORE_SD_SERIAL =>
       sd_magram_wr_en_a_out <= '1';  
       mem_req_a_out <= '1';
 

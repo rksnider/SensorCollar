@@ -114,6 +114,7 @@ use IEEE.MATH_REAL.ALL ;
 --!
 --! @param      ext_trigger_out     External trigger bit. 
 --!                                 Used to trigger an Oscope if need arise.
+--! @param      card_serial_out     32 bit card serial taken on init.
 --!
    
 entity microsd_init is
@@ -138,7 +139,8 @@ entity microsd_init is
     vc_18_on_out          :out    std_logic;
     vc_33_on_out          :out    std_logic;
     state_leds_out			  :out	  std_logic_vector(3 downto 0);
-    ext_trigger_out       :out    std_logic
+    ext_trigger_out       :out    std_logic;
+    card_serial_out       :out    std_logic_vector(31 downto 0)
 		 
   );
 end microsd_init;
@@ -218,6 +220,17 @@ signal	r2_response_bytes			  :std_logic_vector(135 downto 0);
 signal	read_r2_response_done	  :std_logic;
 signal	read_r2_bytes				    :std_logic_vector(135 downto 0);
 signal	read_r2_response_en		  :std_logic;
+
+--Parts of the CID register
+signal  MID   :std_logic_vector(7 downto 0);
+signal  OID   :std_logic_vector(15 downto 0);
+signal  PNM   :std_logic_vector(39 downto 0);
+signal  PRV   :std_logic_vector(7 downto 0);
+signal  PSN   :std_logic_vector(31 downto 0);
+signal  MDT   :std_logic_vector(11 downto 0);
+
+
+
 
 -- CMD_READ_R3_RESPONSE0 Signals
 signal	r3_response_bytes			  :std_logic_vector(47 downto 0);   
@@ -375,7 +388,7 @@ begin
   end if;
 end process;
 
-
+card_serial_out <= PSN;
 
 	
 --
@@ -1363,11 +1376,14 @@ begin
     read_r2_response_done <= '0';
     read_r2_bytes <= x"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
     r2_response_bytes <= x"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
+    PSN <= (others => '0');
   elsif rising_edge(clk) then	
     read_r2_response_done <= '0';
     if (read_r2_response_en = '1') then
       if (read_r2_bytes(135) = '0') then
         read_r2_response_done <= '1';
+        --Pull out the PSN of the card. 
+        PSN <= read_r2_bytes (56 downto 25);
         r2_response_bytes <= read_r2_bytes;
         read_r2_bytes <= (others => '1');
       else
