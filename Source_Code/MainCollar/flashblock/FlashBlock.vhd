@@ -68,6 +68,8 @@ USE GENERAL.magmem_buffer_def_pkg.all;    --Magnetic Memory Buffer Size and Loca
 --!                                         Controller
 --!
 --! @param    audio_word_bytes_g  Size of an audio word in bytes.
+--! @param    status_update_interval_ms  Millisecond interval to store
+--!                                      status segment. 
 --!
 --! @param    clock_sys           System clock that drives the fastest ops.
 --! @param    rst_n               Reset to initial conditions.
@@ -229,6 +231,7 @@ USE GENERAL.magmem_buffer_def_pkg.all;    --Magnetic Memory Buffer Size and Loca
 entity FlashBlock is
 
   Generic (
+    sysclk_freq_g             : natural := 36e5;
     fpga_time_length_bytes_g  : natural := 9;
     time_bytes_g              : natural := 9 ;
     event_bytes_g             : natural := 2 ;
@@ -243,13 +246,16 @@ entity FlashBlock is
     gps_buffer_bytes_g            : natural := 512;
     imu_axis_word_length_bytes_g  : natural := 2;
     sdram_input_buffer_bytes_g    : natural := 4096;
-    audio_word_bytes_g            : natural := 2
+    audio_word_bytes_g            : natural := 2;
+    
+    status_update_interval_ms     : natural := 500
   ) ;
   Port (
     clock_sys             : in    std_logic ;
     rst_n                 : in    std_logic ;
     clk_enable            : in    std_logic;
-
+    startup_in            : in    std_logic;
+    startup_done_out      : out   std_logic;
     log_status            : in    std_logic ;
 
     curtime_in            : in    std_logic_vector
@@ -291,7 +297,7 @@ entity FlashBlock is
 
     audio_data_rdy          : in std_logic;
     audio_data              : in std_logic_vector(
-                              audio_word_bytes_g*8  - 1 downto 0);
+                              num_mics_active_g*audio_word_bytes_g*8  - 1 downto 0);
 
     --Input Multi Buffer Interface
     flashblock_inbuf_data       : out    std_logic_vector(7 downto 0);
@@ -680,6 +686,7 @@ type BlockState is   (
   --! Flash item writing states.
 
 type ItemState is   (
+  ITEM_STATE_STARTUP_WAIT,
   ITEM_STATE_WAIT,
   ITEM_STATE_CHECK_SPACE,
   ITEM_STATE_NEW_BLOCK,
@@ -1013,6 +1020,15 @@ signal startup_done       : std_logic;
 signal last_seqno         : std_logic_vector(31 downto 0);
 
 
+--Millisecond Counter for Status Log.
+constant ms_count_c       : natural :=
+          natural (real (sysclk_freq_g)/1.0e3) ;
+constant status_up_count       : natural := status_update_interval_ms 
+                                            * ms_count_c;
+signal status_up_counter : unsigned(natural(trunc(log2(real(
+                                status_up_count)))) downto 0);
+
+
 
 --
 --
@@ -1242,6 +1258,10 @@ flashblock_gpsbuf_clk <= not(clock_sys);
 --when one of the sources indicates it has a byte to send.
 --
 --
+
+startup_done_out <= startup_done;
+
+
 
 send_device_byte:  process (clock_sys, rst_n)
 begin
@@ -1752,19 +1772,19 @@ begin
           --Multiple states will possibly make use of rd_en.
            flashblock_circbuffer_rd_en_internal <= '0';
 
-           byte_buffer (audio_word_bytes_g*8-1 downto 0) <=
-                circbuffer_flashblock_data_internal(audio_word_bytes_g*8-1 downto 0) ;
+           byte_buffer (audio_word_bytes_g*num_mics_active_g*8-1 downto 0) <=
+                circbuffer_flashblock_data_internal(audio_word_bytes_g*num_mics_active_g*8-1 downto 0) ;
 
-            byte_number       <= TO_UNSIGNED (audio_word_bytes_g,
+            byte_number       <= TO_UNSIGNED (audio_word_bytes_g*num_mics_active_g,
                                               byte_number'length) ;
             byte_count        <= TO_UNSIGNED (1, byte_count'length) ;
             end_block_state   <= BLOCK_STATE_WAIT ;
             cur_block_state   <= BLOCK_STATE_BUFFER ;
-            audio_seg_length  <=
-                    audio_seg_length +
-                    to_unsigned(audio_word_bytes_g,
+            audio_seg_length  <= 
+                    audio_seg_length + 
+                    to_unsigned(audio_word_bytes_g*num_mics_active_g,
                     audio_seg_length'length) ;
-            --Big no no. For multibyte data you must go to BLOCK_STATE_BUFFER
+            --For multibyte data you must go to BLOCK_STATE_BUFFER
             --and have it send the block byte ready!
             --block_byte_ready  <= '1' ;
             audio_written     <= '1' ;
@@ -2185,7 +2205,7 @@ end process send_block_item ;
 send_item:  process (clock_sys, rst_n)
 begin
   if (rst_n = '0') then
-    cur_item_state        <= ITEM_STATE_WAIT ;
+    cur_item_state        <= ITEM_STATE_STARTUP_WAIT ;
     next_item_state       <= ITEM_STATE_WAIT ;
     end_item_state        <= ITEM_STATE_WAIT ;
     next_block_state      <= BLOCK_STATE_WAIT ;
@@ -2221,6 +2241,12 @@ begin
 
         when ITEM_STATE_PAUSE =>
           cur_item_state <= next_item_state;
+          
+          
+        when ITEM_STATE_STARTUP_WAIT =>
+          if (startup_in = '1') then
+            cur_item_state      <= ITEM_STATE_WAIT ;
+          end if;
 
         when ITEM_STATE_WAIT          =>
 
@@ -2290,19 +2316,19 @@ begin
             --This path will never run.
             if (audio_seg_length /= 0 and block_bytes_left  = SEG_TRAILER_SIZE) then
 
-              bytes_needed        <= TO_UNSIGNED (audio_word_bytes_g,
+              bytes_needed        <= TO_UNSIGNED (audio_word_bytes_g*num_mics_active_g,
                                       bytes_needed'length) ;
 
               cur_item_state      <= ITEM_STATE_AUDIO_END ;
 
               --If the audio block is at its max length of 255, cap it.
               --to_unsigned(,+1) to avert the overflow.
-              elsif ((to_unsigned(audio_word_bytes_g,audio_seg_length'length+1)
+              elsif ((to_unsigned(audio_word_bytes_g*num_mics_active_g,audio_seg_length'length+1)
                     + audio_seg_length) > 255) then
                 cur_item_state        <= ITEM_STATE_AUDIO_END ;
 
               else
-                bytes_needed        <= TO_UNSIGNED (audio_word_bytes_g,
+                bytes_needed        <= TO_UNSIGNED (audio_word_bytes_g*num_mics_active_g,
                                   bytes_needed'length) ;
                 cur_item_state      <= ITEM_STATE_CHECK_SPACE ;
                 end_item_state      <= ITEM_STATE_AUDIO_BYTE ;
@@ -2482,10 +2508,12 @@ begin
                                           --  that the number is too big to fit.
           end if ;
 
-        --  Write out the status segment.
+        --  Write out the status segment and store the logical block.
 
         when ITEM_STATE_STATUS        =>
-          cur_item_state          <= ITEM_STATE_WAIT ;
+          --cur_item_state          <= ITEM_STATE_WAIT ;
+          last_seqno              <= std_logic_vector(block_seqno);
+          cur_item_state          <= ITEM_STATE_LOGIC_BLOCK_STORE_SETUP ;
           next_block_state        <= BLOCK_STATE_STATUS_COMPILE ;
 
         when ITEM_STATE_GYRO        =>
@@ -2551,7 +2579,7 @@ begin
           next_block_state        <= BLOCK_STATE_STATUS_COMPILE ;
 
         -- --Below are the states to retrieve and store the logical
-        -- --block address number.
+        -- --block address number to magnetic memory buffer. 
 
         when ITEM_STATE_LOGIC_BLOCK_FETCH_SETUP =>
           mem_req_a_out     <= '1';
@@ -2563,8 +2591,8 @@ begin
                                           fb_magram_address_a'length) ;
 
           byte_number_i       <= TO_UNSIGNED (logical_block_length_bytes_c,
-                                            byte_number'length) ;
-          byte_count_i        <= TO_UNSIGNED (0, byte_count'length) ;
+                                            byte_number_i'length) ;
+          byte_count_i        <= TO_UNSIGNED (0, byte_count_i'length) ;
           startup_done      <= '1';
           fb_magram_rd_en_a_out <= '1';
 
@@ -2592,7 +2620,7 @@ begin
         mem_req_a_out     <= '1';
         if (mem_rec_a = '1') then
           cur_item_state <= ITEM_STATE_LOGIC_BLOCK_STORE;
-        end if;
+        else
         fb_magram_wr_en_a_out <= '1';
         fb_magram_address_a   <= TO_UNSIGNED (logical_block_location_c,
                                             fb_magram_address_a'length) ;
@@ -2604,8 +2632,7 @@ begin
         fb_magram_data_a_out <=  last_seqno(7 downto 0);
 
         last_seqno <= x"00" & last_seqno(31 downto 8);
-
-
+        end if;
 
       when ITEM_STATE_LOGIC_BLOCK_STORE =>
         if (byte_count_i = byte_number_i) then
@@ -2613,8 +2640,8 @@ begin
           mem_req_a_out     <= '0';
           fb_magram_wr_en_a_out <= '0';
         else
-        --The 4 bytes value is stored little endian.
           fb_magram_wr_en_a_out <= '1';
+        --The 4 bytes value is stored little endian.
           fb_magram_data_a_out <=  last_seqno(7 downto 0);
           last_seqno <= x"00" & last_seqno(31 downto 8);
           byte_count_i        <= byte_count_i + 1 ;
@@ -2649,8 +2676,14 @@ begin
     crit_event_write <= '0';
     crit_event_follower <= '0';
     crit_event_written_follower <= '0';
+    
+
+    status_up_counter  <= (others => '0');
+    
   elsif clock_sys'event and clock_sys = '1' then
     if (clk_enable) = '1' then
+    status_up_counter <= status_up_counter + 1;
+    
       if (status_written_follower /= status_written) then
         status_written_follower <= status_written;
         if(status_written = '1') then
@@ -2661,7 +2694,13 @@ begin
           if log_status = '1' then
             write_status        <= '1' ;
           end if ;
+          
+      elsif( status_up_counter = to_unsigned(status_up_count,
+                                                status_up_counter'length)) then
+        write_status        <= '1';
+        status_up_counter <= (others => '0');
       end if ;
+
       if (crit_event_written_follower /= crit_event_written) then
         crit_event_written_follower <= crit_event_written;
           if(crit_event_written = '1') then
