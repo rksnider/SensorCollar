@@ -1045,6 +1045,9 @@ architecture structural of Collar is
   signal statctl_startup_signal    :  std_logic;
   
   signal StartupShutdownActive       : std_logic ;
+  
+  signal  flashblock_startup        : std_logic;  
+  signal  flashblock_startup_done   : std_logic;
 
   
   --------------------------------------------------------------------------
@@ -1112,6 +1115,8 @@ architecture structural of Collar is
       gps_done_in               : in    std_logic ;
       txrx_start_out            : out   std_logic ;
       txrx_done_in              : in    std_logic ;
+      flashblock_start_out      : out   std_logic ;
+      flashblock_done_in        : in    std_logic ;
       shutdown_in               : in    std_logic ;
       statctl_startup_out       : out   std_logic;
       rem_cap_mah_valid_in      : in    std_logic ; 
@@ -1151,6 +1156,8 @@ begin
       gps_done_in           => '1',
       --txrx_start_out            : out   std_logic ;
       txrx_done_in              => '1',
+      flashblock_start_out       => flashblock_startup,
+      flashblock_done_in        => flashblock_startup_done,
       shutdown_in               => shutdown_master,
       statctl_startup_out       => statctl_startup_signal,
       rem_cap_mah_valid_in      => rem_cap_mah_valid_signal,
@@ -2940,7 +2947,8 @@ rtc_inquire_top_i0 : rtc_inquire_top
         sd_block_written_flag              :in       std_logic;
         buffer_level                       :in       std_logic_vector (natural(trunc(log2(real(buf_size_g/block_size_g)))) downto 0);
 
-        blocks_past_crit                   :in std_logic_vector(7 downto 0)
+        blocks_past_crit                   :in std_logic_vector(7 downto 0);
+        sdxc_serial_in                     :in std_logic_vector(31 downto 0)
 
       );
     end component;
@@ -3037,7 +3045,8 @@ rtc_inquire_top_i0 : rtc_inquire_top
           buffer_level              => sdl_sdcard_bufflevel,
           dw_en                     => '0',
           crit_block_serviced       => sdl_sdcard_critdone,
-          blocks_past_crit          => sdl_sdcard_critpast
+          blocks_past_crit          => sdl_sdcard_critpast,
+          sdxc_serial_in            => sdl_sdcard_serial
         );
 
       sdl_magmem_control    <= master_gated_inv_clk &
@@ -3425,7 +3434,7 @@ rtc_inquire_top_i0 : rtc_inquire_top
           rst_n                 : in    std_logic ;
 
           startup               : in    std_logic;
-
+          startup_complete_out  : out   std_logic;
           curtime_in            : in    std_logic_vector
                                           (gps_time_bytes_c*8-1 downto 0) ;
           curtime_latch_in      : in    std_logic ;
@@ -3495,6 +3504,7 @@ rtc_inquire_top_i0 : rtc_inquire_top
                                                  CTL_InertialOn2p5,
 
           startup             => im_startup,
+          startup_complete_out => im_startup_done,
 
           curtime_in          => reset_time_bytes,
           curtime_latch_in    => systime_latch,
@@ -3967,7 +3977,7 @@ rtc_inquire_top_i0 : rtc_inquire_top
           rst_n           => (not reset) and CTL_MicRightOn,
           clk_enable      => '1',
           pdm_bit         => mic_right,
-          filter_out      => mic_right_sample,
+          --filter_out      => mic_right_sample,
           clock_out       => mic_right_sample_clk
         ) ;
 
@@ -4019,12 +4029,14 @@ rtc_inquire_top_i0 : rtc_inquire_top
       begin
       if (reset = '1') then
         mic_left_sample   <= (others => '0');
+        mic_right_sample  <= x"000A";
         mic_left_sample_clk_f <= '0';
       elsif (mic_clock'event and mic_clock = '1') then
         if (mic_left_sample_clk_f /= mic_left_sample_clk ) then
           mic_left_sample_clk_f <= mic_left_sample_clk;
           if (mic_left_sample_clk = '1') then
             mic_left_sample <= std_logic_vector(unsigned(mic_left_sample) + 1);
+            mic_right_sample <= std_logic_vector(unsigned(mic_right_sample) + 1);
           end if;
         end if;
       end if;
@@ -4177,7 +4189,8 @@ rtc_inquire_top_i0 : rtc_inquire_top
           clock_sys             : in    std_logic ;
           rst_n                 : in    std_logic ;
           clk_enable            : in    std_logic;
-
+          startup_in            : in    std_logic;
+          startup_done_out      : out   std_logic;
           log_status            : in    std_logic ;
 
           curtime_in            : in    std_logic_vector
@@ -4219,7 +4232,7 @@ rtc_inquire_top_i0 : rtc_inquire_top
 
           audio_data_rdy          : in std_logic;
           audio_data              : in std_logic_vector(
-                                    audio_word_bytes_g*8  - 1 downto 0);
+                              num_mics_active_g*audio_word_bytes_g*8  - 1 downto 0);
 
           flashblock_inbuf_data       : out    std_logic_vector(7 downto 0);
           flashblock_inbuf_wr_en      : out    std_logic;
@@ -4320,6 +4333,7 @@ rtc_inquire_top_i0 : rtc_inquire_top
       signal audio_word       : std_logic_vector (audio_bytes_c*8-1
                                                   downto 0) :=
                                                       (others => '0') ;
+                                                     
 
     begin
 
@@ -4349,6 +4363,8 @@ rtc_inquire_top_i0 : rtc_inquire_top
           clock_sys                   => spi_clk,
           rst_n                       => (not reset),
           clk_enable                  => '1',
+          startup_in                  => flashblock_startup,
+          startup_done_out            => flashblock_startup_done,
           log_status                  => SDLogging_status,
           curtime_in                  => reset_time_bytes,
           curtime_latch_in            => systime_latch,
@@ -4370,7 +4386,7 @@ rtc_inquire_top_i0 : rtc_inquire_top
           mag_data_z                  => im_mag_data_z,
           temp_data                   => im_temp_data,
           audio_data_rdy              => mic_left_sample_clk,
-          audio_data                  => mic_left_sample,
+          audio_data                  => audio_word,
           flashblock_inbuf_data       => sdram_inwr_data,
           flashblock_inbuf_wr_en      => sdram_inwr_en,
           flashblock_inbuf_clk        => sdram_inwr_clk,
