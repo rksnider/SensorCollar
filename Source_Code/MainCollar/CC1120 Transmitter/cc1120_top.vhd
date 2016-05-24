@@ -2,7 +2,6 @@
 --
 --! @file       $File$
 --! @brief      Initialize and Control the TI CC1120 Transmitter 
---! @brief      (Adapted from code Written by Chris Casebeer)
 --! @details    CC1120 TI Transmitter.
 --! @copyright  
 --! @author     Tyler B. Davis
@@ -43,7 +42,8 @@
 
 --This piece of VHDL code is to be used with the following two matlab scripts.
 
--- Running these two scripts in the above order will generate an associated mif file
+-- Running these two scripts in the above order will generate an associated 
+-- mif file
 
 
 
@@ -98,8 +98,8 @@ USE GENERAL.GPS_Clock_pkg.ALL;          --  Use GPS Clock information.
 --! @param    miso_out             			MISO.
 --! @param    cs_n_out         					cs_n of the SPI interface. 
 --!
---! @param	rx_rdy_in 							Interrupt when recieving a packet 
---! 																(Tie to the GPIO3 pin)
+--! @param	txtxrx_rdy_in 								Interrupt when recieving/transmitting 
+--!																			a	packet (Tie to the GPIO3 pin)
 
 entity CC1120_top is
 
@@ -135,7 +135,7 @@ entity CC1120_top is
     cs_n_out            	: out 	std_logic;
     rx_time_out    				: out 	std_logic_vector (gps_time_bytes_c*8-1 
 																										downto 0);
-		rx_rdy_in 						: in 		std_logic
+		txrx_rdy_in 						: in 		std_logic
 		
   ) ;
 
@@ -147,8 +147,14 @@ architecture behavior of CC1120_top is
 	-- Define the states for the chips
   type TXRX_STATE is   (
 	
+	-- Wait for the chip to be ready
+	TXRX_STATE_CHIP_RDY_INIT,
+	TXRX_STATE_CHIP_RDY,
+	
 	-- Waiting for something to happen
   TXRX_STATE_IDLE,
+	TXRX_STATE_IDLE_NOOP,
+	TXRX_STATE_IDLE_WAIT,
 	
 	-- Initialize the registers
 	TXRX_STATE_INIT,
@@ -162,21 +168,23 @@ architecture behavior of CC1120_top is
 	-- Power down when not active (flushes BOTH FIFOS)
 	TXRX_STATE_SLEEP,
 	
-	-- Calibrate the device
-	TXRX_STATE_CALIBRATE,
-	
 	-- Settling state
-	TXRX_STATE_SETTLING,
+	--TXRX_STATE_SETTLING,
 	
 	-- Fast action TX ready
 	-- TXRX_STATE_FSTXON, 
+	
+	-- State to reload the GPIO3 setting
+	TXRX_STATE_REWRITE_GPIO,
     
 	-- Transmit states
 	TX_STATE_LOAD,
 	TX_STATE_PUSH,
 	TX_STATE_PUSH_WAIT,
+	TX_STATE_TX_CMD,
+	TX_STATE_TX_WAIT,
 	TX_STATE_DONE,
-	TX_STATE_FIFO_ERROR,
+	TX_STATE_FIFO_FLUSH,
 	
 	-- Recieve states
 	RX_STATE_LISTEN,
@@ -282,7 +290,7 @@ architecture behavior of CC1120_top is
 		:= std_logic_vector(to_unsigned(61,strobe_reg_len_c));
 		
 	-- Define the state constants for the status bit
-	constant IDLE  			: std_logic_vector(2 downto 0) := "000";
+	constant SIDLE 			: std_logic_vector(2 downto 0) := "000";
 	constant RX        	: std_logic_vector(2 downto 0) := "001";
 	constant TX        	: std_logic_vector(2 downto 0) := "010";
 	constant FSTXON    	: std_logic_vector(2 downto 0) := "011";
@@ -302,8 +310,18 @@ architecture behavior of CC1120_top is
   signal txrx_initbuffer_q : std_logic_vector(23 downto 0);
   signal txrx_initbuffer_data : std_logic_vector(23 downto 0);
   signal dprspr_clk : std_logic;
+	
+	-- Define the Chip select and miso signals for startup and operational use
+	signal cs_n_signal				: std_logic;
+	signal cs_hold 						: std_logic := '1';
+	signal miso_signal 				: std_logic;
+	
+	-- Signals for the transmit waiting
+	signal tx_started : std_logic;
+	signal rx_started : std_logic;
+	signal cmd_sent 	: std_logic := '0';
 
-  -- Signles to hold the sample data
+  -- Signals to hold the sample data
   signal tx_data : std_logic_vector(packet_length_bytes*8-1 downto 0);
   signal rx_data : std_logic_vector(packet_length_bytes*8-1 downto 0);
 	
@@ -317,7 +335,7 @@ architecture behavior of CC1120_top is
 	constant BURST     : std_logic := '1';
 	constant nBurst    : std_logic := '0';
     
-	  --These numbers are stored as 16 bit values in memory.
+	  --These numbers are stored as 8 bit values in memory.
   signal  txrx_init_number : unsigned (7 downto 0);
   signal  spi_commands_complete : unsigned( 7 downto 0);
 	
@@ -333,6 +351,7 @@ architecture behavior of CC1120_top is
   signal tx_processed_follower : std_logic;
 	
 	signal op_error 		: 	std_logic;
+	signal op_complete 	: 	std_logic;
 	
 	-- These signals delay the dpr r/w actions
 	signal dpr_action : std_logic := '0';
@@ -341,8 +360,16 @@ architecture behavior of CC1120_top is
 	-- Create a signal to track whether a packet was transmitted
 	signal loading_packet   : std_logic := '0';
 	signal loaded_packet    : std_logic := '0';
-	signal packet_byte_num  : natural   := 0;
+	signal packet_byte_num  : natural   :=  0 ;
 	signal command_sent 		: std_logic := '0';
+	signal calibrated 			: std_logic := '0';
+	
+--########################################################################--
+	-- FIXME: Debug signals
+	signal listen 					: std_logic := '0';
+	signal cycles 					: natural 	:= 512;
+	signal cycle_cntr 			: natural 	:= 0;
+--########################################################################--
 	
 	-- Create signals for the dual-port RAM
 	signal data_addr					: std_logic_vector(7 downto 0);
@@ -368,12 +395,7 @@ architecture behavior of CC1120_top is
   signal    command_done_spi_signal_follower :   std_logic;
   signal    slave_master_data_spi_signal :std_logic_vector(7 downto 0);
   signal    slave_master_data_ack_spi_signal :std_logic;
-		
-		
-	--These signals
-	signal miso_signal : std_logic;
-	signal cs_n_signal : std_logic;
-	
+			
 	-- Startup signals for the chip
 	signal startup_en : std_logic;
 	signal startup_follower : std_logic;
@@ -456,7 +478,7 @@ component CC1120_DPR is
 	(
 		address_a		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
 		address_b		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
-		clock_a		: IN STD_LOGIC  := '1';
+		clock_a		: IN STD_LOGIC ;
 		clock_b		: IN STD_LOGIC ;
 		data_a		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
 		data_b		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
@@ -568,8 +590,9 @@ begin
 --! @brief    Interact with the CC1120 transmitter. 
 --!          
 --! @details  Do the following things.
---!           Initialize the registers of the CC1120 which differ from default.
---!           Respond to TX and RX commands.
+--!           -Initialize the registers of the CC1120 which differ from 
+--! 					 default.
+--!           -Respond to TX and RX commands.
 --!  
 --! @param    clk             Take action on positive edge.
 --! @param    rst_n           rst_n to initial state.
@@ -618,23 +641,27 @@ begin
 		-- Reset command buffer
 		command_done_spi_signal_follower <= '0';
  
-		-- Strobe the FIFO flushes (first bit doesn't matter, second must be 0)
-		if (tx_fifo_flush = '0' and command_busy_spi_signal = '0') then
-			command_spi_signal <= BURST & nBURST & sftx_addr_c;
-			address_en_spi_signal <= '0';
-			tx_fifo_flush <= '1';
+		-- -- Strobe the FIFO flushes (first bit doesn't matter, second must be 0)
+		-- if (tx_fifo_flush = '0' and command_busy_spi_signal = '0') then
+			-- command_spi_signal <= nBURST & nBURST & sftx_addr_c;
+			-- address_en_spi_signal <= '0';
+			-- data_length_spi_signal <= std_logic_vector(to_unsigned(
+																		-- 0,data_length_spi_signal'length));
+			-- tx_fifo_flush <= '1';
 			
-		elsif (rx_fifo_flush = '0' and command_busy_spi_signal = '0') then
-			command_spi_signal <= BURST & nBURST & sfrx_addr_c;
-			address_en_spi_signal <= '0';
-			rx_fifo_flush <= '1';
+		-- elsif (rx_fifo_flush = '0' and command_busy_spi_signal = '0') then
+			-- command_spi_signal <= nBURST & nBURST & sfrx_addr_c;
+			-- address_en_spi_signal <= '0';
+			-- data_length_spi_signal <= std_logic_vector(to_unsigned(
+																		 -- 0,data_length_spi_signal'length));
+			-- rx_fifo_flush <= '1';
 			
-		-- Set the current state to idle when the TX/RX FIFOs are flushed
-		else
-			cur_txrx_state <= TXRX_STATE_IDLE;
-			tx_fifo_flush <= '0';
-			rx_fifo_flush <= '0';
-		end if;		
+		-- -- Set the current state to idle when the TX/RX FIFOs are flushed
+		-- else
+		cur_txrx_state <= TXRX_STATE_CHIP_RDY_INIT;
+			-- tx_fifo_flush <= '0';
+			-- rx_fifo_flush <= '0';
+		-- end if;		
 			 
  
   elsif (clk'event and clk = '1') then
@@ -657,10 +684,10 @@ begin
 	end if;
 	
 	if (slave_master_data_spi_signal(status_start_g downto status_end_g) = 
-				TXFIFOERR and tx_en = '1') then 
-		cur_txrx_state <= TX_STATE_FIFO_ERROR;
+		TXFIFOERR and loaded_packet = '1') then 
+		cur_txrx_state <= TX_STATE_FIFO_FLUSH;
 	end if;
-	
+		
   if (tx_req_in = '1') then
 		tx_req <= '1';
 	end if;
@@ -673,8 +700,31 @@ begin
 		sleep_en <= '1';
 	end if;
   
-		-- FIXME: Condition on MISO status byte as well.
     case cur_txrx_state is
+		
+			 when TXRX_STATE_CHIP_RDY_INIT =>
+				 if (command_busy_spi_signal = '0') then
+					 command_spi_signal <= nBURST & nBURST & sidle_addr_c;
+					 address_en_spi_signal <= '0';
+					 data_length_spi_signal <= 
+																	 std_logic_vector(to_unsigned(
+																		 0,data_length_spi_signal'length));
+					 master_slave_data_rdy_spi_signal <= '1';
+					 cur_txrx_state <= TXRX_STATE_CHIP_RDY;
+				 end if;
+				
+		
+			 -- Wait for the miso line to go low before sending commands
+			 when TXRX_STATE_CHIP_RDY			=>			
+				 -- if (miso_signal /= miso_follower) then 
+					 -- miso_follower <= miso_signal;
+					
+				 -- else 
+					 if (miso_in = '0' and cs_n_signal = '0') then
+						 cs_hold <= '0';
+						 cur_txrx_state <= TXRX_STATE_IDLE_WAIT;
+					 end if;
+				 --end if;
 
 			-- Wake the chip when in sleep mode
       when TXRX_STATE_SLEEP          =>
@@ -682,12 +732,11 @@ begin
 				-- If the startup_in bit is flipped, change state, send command to 
 				-- go to idle state (Calibration happens before TX or RX NOT idle)
 				if (startup_en = '1') then
-					cur_txrx_state  <=  TXRX_STATE_IDLE;
+					cur_txrx_state  <=  TXRX_STATE_IDLE_WAIT;
 				end if;
 				
 				-- Idle state.  Wait for TX or RX commands
 			when TXRX_STATE_IDLE		=>
-				tx_req <='1';
 			
 			  if (startup_en = '1' and startup_complete = '0') then
 					cur_txrx_state  <=  TXRX_STATE_INIT;
@@ -696,43 +745,62 @@ begin
 				
 				if (op_error = '1') then 
 					op_error_out <= '1';
-					op_error <= '1';
-					
-				else
 					op_error <= '0';
+				else
 					op_error_out <= '0';
 				end if;
-				
-			
-				-- If the startup_in goes low, put the chip to sleep
+				if (op_complete = '1') then 
+					op_complete_out <= '1';
+					op_complete <= '0';
+				else
+					op_complete_out <= '0';
+				end if;		
+				-- If the sleep_en goes high, put the chip to sleep
 				if (sleep_en = '1' and command_busy_spi_signal = '0') then 
-						command_spi_signal <= BURST & nBURST & spwd_addr_c;
+						command_spi_signal <= nBURST & nBURST & spwd_addr_c;
 						address_en_spi_signal <= '0';
 						data_length_spi_signal <= 
 																				std_logic_vector(to_unsigned(
 																					0,data_length_spi_signal'length));
 						master_slave_data_rdy_spi_signal <= '1';
 						cur_txrx_state <= TXRX_STATE_SLEEP;
-		
+				end if;
 				-- If the chip has started and is in idle, then check to see if 
 				-- a TX or RX is suggested
-				elsif (startup_complete = '1') then
+				if (startup_complete = '1') then
 					txrx_initbuffer_rd_en <= '0';
 					-- If the TX or RX state is requested, change state and send the 
 					-- calibrate command strobe
-					if  ((rx_req = '1' or tx_req = '1') and 
-								command_busy_spi_signal = '0') then
-							command_spi_signal <= BURST & nBURST & scal_addr_c;
+					if  (calibrated = '0') then
+						if (command_busy_spi_signal = '0') then 
+							command_spi_signal <= nBURST & nBURST & scal_addr_c;
 							address_en_spi_signal <= '0';
 							data_length_spi_signal <= 
 																			std_logic_vector(to_unsigned(
 																				0,data_length_spi_signal'length));
 							master_slave_data_rdy_spi_signal <= '1';
-							cur_txrx_state  <=  TXRX_STATE_CALIBRATE;
+							cur_txrx_state  <=  TXRX_STATE_IDLE_WAIT;
+						end if;
+					else
+						if (tx_req = '1') then 
+							cur_txrx_state  <=  TXRX_STATE_REWRITE_GPIO;
+							data_read_en <= '1';
+							loaded_packet <= '0';
+						end if;
+						
+						-- Check to see if the receive state is requested, if so strobe
+						-- the rx command and switch to the listen state.
+						if (rx_req = '1') then
+							command_spi_signal <= nBURST & nBURST & srx_addr_c;
+							address_en_spi_signal <= '0';
+							master_slave_data_rdy_spi_signal <= '1';
+							data_length_spi_signal <= std_logic_vector(to_unsigned(
+																				0,data_length_spi_signal'length));
+							cur_txrx_state  <=  RX_STATE_LISTEN;
+						end if;
 					end if;
-					
 				end if;
-				
+								
 				-- Load in the default registers
 				when TXRX_STATE_INIT =>
 					txrx_initbuffer_address <= unsigned(txrx_initbuffer_num_loc_c);
@@ -745,10 +813,6 @@ begin
     
 					byte_count <= to_unsigned(0,byte_count'length);
 					byte_number <= resize(unsigned(txrx_initbuffer_q),byte_number'length);
-					
-					--I only read 8 bits of data here from a 16 bit spot. I do this because
-					--I use this number in addressing into a 256 spot ram and I do not need
-					--bits 15 through 8. 
 					txrx_init_number <= unsigned(txrx_initbuffer_q(7 downto 0));
 					txrx_initbuffer_address <= unsigned(txrx_initbuffer_data_start_loc_c);
 					cur_txrx_state <= TXRX_STATE_INIT_FETCH;
@@ -769,98 +833,91 @@ begin
 								master_slave_data_spi_signal <= txrx_initbuffer_q(7 downto 0);
 								address_en_spi_signal <= '0';
 								cur_txrx_state <= TXRX_STATE_INIT_WAIT;
-								data_length_spi_signal <= std_logic_vector(to_unsigned(TXRX_INIT_REGISTER_SIZE-1,data_length_spi_signal'length));
+								data_length_spi_signal <= std_logic_vector(
+														to_unsigned(TXRX_INIT_REGISTER_SIZE-1,
+																						data_length_spi_signal'length));
 								txrx_initbuffer_address <= txrx_initbuffer_address + 1;
 								master_slave_data_rdy_spi_signal <= '1';
 								byte_count <= byte_count + 1;
 
 							else
 								command_spi_signal <= WR_EN_BIT & EXT_REG_ADDR_c;
-								master_slave_data_spi_signal <= txrx_initbuffer_q(15 downto 8);
 								address_en_spi_signal <= '0';
-								data_length_spi_signal <= std_logic_vector(to_unsigned(TXRX_INIT_EXTENDED_REGISTER_SIZE-1,data_length_spi_signal'length));
-								txrx_initbuffer_address <= txrx_initbuffer_address + 1;
+								--address_spi_signal 		<= txrx_initbuffer_q(15 downto 8);
+								data_length_spi_signal <= std_logic_vector(
+														to_unsigned(TXRX_INIT_EXTENDED_REGISTER_SIZE-1,
+																						data_length_spi_signal'length));
+								master_slave_data_spi_signal <= txrx_initbuffer_q(15 downto 8);
 								master_slave_data_rdy_spi_signal <= '1';
 								byte_count <= byte_count + 1;
+								cs_hold <= '1';
 								cur_txrx_state <= TXRX_STATE_INIT_EXTENDED_WRITE;
 							end if;							
 					end if;
 				
-				when TXRX_STATE_INIT_EXTENDED_WRITE =>
-					if (slave_master_data_ack_spi_signal = '1') then
-						master_slave_data_spi_signal <= txrx_initbuffer_q(7 downto 0);
-						master_slave_data_rdy_spi_signal <= '1';
-						cur_txrx_state <= TXRX_STATE_INIT_WAIT;
-
-					end if;
+				 when TXRX_STATE_INIT_EXTENDED_WRITE =>
+					 if (slave_master_data_ack_spi_signal = '1') then
+						 master_slave_data_spi_signal <= txrx_initbuffer_q(7 downto 0);
+						 master_slave_data_rdy_spi_signal <= '1';
+						 cur_txrx_state <= TXRX_STATE_INIT_WAIT;
+								txrx_initbuffer_address <= txrx_initbuffer_address + 1;
+					 end if;
 				
 				 when TXRX_STATE_INIT_WAIT =>
 				
 					--Wait for a register to complete going out before continuing. 
-					--This is necessary for cs_n multiplexing.
-					--This is necessary as no spi_command ack's come back for command only.
-					--if (command_done_spi_signal_follower /= command_done_spi_signal) then
-					--command_done_spi_signal_follower <= command_done_spi_signal;
 					if(command_done_spi_signal = '1') then
-						cur_txrx_state <= TXRX_STATE_INIT_FETCH;
+						cur_txrx_state <=  TXRX_STATE_INIT_FETCH;
+						cs_hold <= '0';
 					end if;
 					
 					
 				-- Check to see if the frequency is calibrated, and if so, change 
 				-- to the data pushing/fetching states
-				when TXRX_STATE_CALIBRATE	=> 
+				when TXRX_STATE_IDLE_NOOP	=> 
 				
 					-- Check the recieved status byte
 					-- conditional statement 
 					data_addr <= data_addr_in;
-					if (master_slave_data_spi_signal(
-								status_start_g downto status_end_g) 
-								= SETTLING) then 
-						cur_txrx_state <= TXRX_STATE_SETTLING;
-					else
-						if (tx_req = '1') then
-								cur_txrx_state  <=  TX_STATE_LOAD;
-						end if;
-						
-						-- Check to see if the receive state is requested, if so strobe
-						-- the rx command and switch to the listen state.
-						if (rx_req = '1' and command_busy_spi_signal = '0') then
-								command_spi_signal <= BURST & nBURST & srx_addr_c;
-								address_en_spi_signal <= '0';
-								cur_txrx_state  <=  RX_STATE_LISTEN;
-						end if;
-					end if;
-					
-
-				when TXRX_STATE_SETTLING =>
-				
 					-- Send noop command to get the status byte					
 					if (command_busy_spi_signal = '0') then
-								command_spi_signal <= BURST & nBURST & snop_addr_c;
-								address_en_spi_signal <= '0';
-								master_slave_data_rdy_spi_signal <= '1';
-								data_length_spi_signal <= std_logic_vector(to_unsigned(
-																					0,data_length_spi_signal'length));
-					end if;
-					
-					-- Move on to the next mode
-					if (tx_req = '1') then
-						cur_txrx_state <= TX_STATE_LOAD;
-						data_read_en <= '1';
-						--cur_txrx_state <= RX_STATE_WRITE;
-					end if;
-					
-						if (rx_req = '1') then
-						cur_txrx_state <= RX_STATE_LISTEN;
-						command_spi_signal <= BURST & nBURST & srx_addr_c;
+						command_spi_signal <= nBURST & nBURST & sidle_addr_c;
 						address_en_spi_signal <= '0';
-						data_length_spi_signal <= std_logic_vector(to_unsigned(
-																					0,data_length_spi_signal'length));
+						master_slave_data_spi_signal <= nBURST & nBURST & snop_addr_c;
 						master_slave_data_rdy_spi_signal <= '1';
+						data_length_spi_signal <= std_logic_vector(to_unsigned(
+																					1,data_length_spi_signal'length));
+						cur_txrx_state <= TXRX_STATE_IDLE_WAIT;
 					end if;
 					
-				when TX_STATE_LOAD =>
 					
+					
+				when TXRX_STATE_IDLE_WAIT 	=>
+				
+					if (slave_master_data_ack_spi_signal = '1') then 
+						if (slave_master_data_spi_signal(status_start_g downto status_end_g)
+									= SIDLE ) then 
+							cur_txrx_state <= TXRX_STATE_IDLE;
+							calibrated <= '1';
+						elsif (command_done_spi_signal = '1') then  
+								cur_txrx_state <= TXRX_STATE_IDLE_NOOP;
+						end if;
+					elsif (command_done_spi_signal = '1') then
+						cur_txrx_state <= TXRX_STATE_IDLE_NOOP;
+					end if;
+
+					when TXRX_STATE_REWRITE_GPIO 	=>
+					if (command_busy_spi_signal = '0') then
+						command_spi_signal <= "00000000";
+						address_en_spi_signal <= '0';
+						master_slave_data_spi_signal	<=	"00000110";
+						data_length_spi_signal <= std_logic_vector(to_unsigned(
+																					1,data_length_spi_signal'length));
+						master_slave_data_rdy_spi_signal <= '1';
+						cur_txrx_state <= TX_STATE_LOAD;
+					end if;
+				
+				when TX_STATE_LOAD =>
 					if (byte_read_count = packet_length_bytes) then 
 						cur_txrx_state <= TX_STATE_PUSH;
 						data_read_en <= '0';
@@ -868,7 +925,7 @@ begin
 						dpr_action <= '0';
 					elsif (dpr_action = '0') then 
 						-- Pick out the next byte to read
-						 tx_data(
+						tx_data(
 							8*packet_length_bytes-to_integer(byte_read_count)*8-1 downto
 							8*packet_length_bytes-(to_integer(byte_read_count) + 1)*8) 
 								<= data_to ;
@@ -887,15 +944,14 @@ begin
 						command_spi_signal <= WR_EN_BIT & BURST & STDFIFO;
 						address_en_spi_signal <= '0';
 						data_length_spi_signal <= 
-							std_logic_vector(to_unsigned(packet_length_bytes,
+							std_logic_vector(to_unsigned(packet_length_bytes + 1,
 																						data_length_spi_signal'length));
-						master_slave_data_spi_signal <= tx_data(packet_length_bytes*8-1-packet_byte_num*8 
-												downto (packet_length_bytes*8-(packet_byte_num + 1)*8));
+						master_slave_data_spi_signal <= std_logic_vector(
+																				to_unsigned(packet_length_bytes,8));
 						master_slave_data_rdy_spi_signal <= '1';
 						cur_txrx_state <= TX_STATE_PUSH_WAIT;
 						loading_packet <= '1';
-						packet_byte_num <= packet_byte_num + 1;
-					
+						cs_hold <= '1';
 					-- When the standard FIFO is 'active', only send data.
 					else
 										
@@ -910,51 +966,111 @@ begin
 			
 			when TX_STATE_PUSH_WAIT =>			
 					-- When the end of the data is written to RAM, switch states
-					if (packet_length_bytes = packet_byte_num) then 
+					if (packet_length_bytes = packet_byte_num and 
+							slave_master_data_ack_spi_signal = '1') then 
 						loaded_packet <= '1';
 						loading_packet <= '0';
 						packet_byte_num <= 0;
-						cur_txrx_state <= TX_STATE_DONE;
+						cs_hold <= '0';
+						cur_txrx_state <= TX_STATE_TX_CMD;
 						byte_read_count <= to_unsigned(0,byte_count'length);
 					elsif(slave_master_data_ack_spi_signal = '1') then
 						cur_txrx_state <= TX_STATE_PUSH;						
 					end if;
 				
-			when TX_STATE_DONE =>
+			when TX_STATE_TX_CMD =>
 					-- Send the transmitter back to the idle state 
 					
 				if (command_busy_spi_signal = '0' and command_sent = '0') then
-							command_spi_signal <= BURST & nBURST & stx_addr_c;
+							command_spi_signal <= nBURST & nBURST & stx_addr_c;
 							address_en_spi_signal <= '0';
 							data_length_spi_signal <= 
 																				std_logic_vector(to_unsigned(
 																					0,data_length_spi_signal'length));
 							master_slave_data_rdy_spi_signal <= '1';
 							command_sent <= '1';
-							loaded_packet <= '0';
+							cur_txrx_state <= TX_STATE_TX_WAIT;
 				end if;
-				if (tx_req = '0' and command_sent = '1') then 
-					cur_txrx_state <= TXRX_STATE_IDLE;
+				
+			when TX_STATE_TX_WAIT 	=>
+				if (txrx_rdy_in = '1') then 
+					tx_started <= '1';
+				end if;
+				if (tx_started = '1' and txrx_rdy_in = '0') then 
+					cur_txrx_state <= TX_STATE_DONE;
+					tx_started <= '0';
+				end if;
+				if (command_busy_spi_signal = '0') then
+						command_spi_signal <= nBURST & nBURST & snop_addr_c;
+						address_en_spi_signal <= '0';
+						master_slave_data_spi_signal <= nBURST & nBURST & snop_addr_c;
+						master_slave_data_rdy_spi_signal <= '1';
+						data_length_spi_signal <= std_logic_vector(to_unsigned(
+																					1,data_length_spi_signal'length));
+					end if;
+--########################################################################--
+					-- FIXME: Remove this once the GPIO bug is fixed
+					if (listen = '0') then 
+						cycle_cntr <= cycle_cntr + 1;
+					end if;
+				 if (cycle_cntr = cycles) then
+					 listen <= '1';
+					 cycle_cntr <= 0;
+				 end if;
+				 if (slave_master_data_ack_spi_signal = '1') then 
+						 if (slave_master_data_spi_signal(
+																				status_start_g downto status_end_g)
+																							= SIDLE and listen = '1') then 
+							 cur_txrx_state <= TX_STATE_DONE;
+							 listen <= '0';
+						 end if;
+					end if;
+--########################################################################--
+				
+			when TX_STATE_DONE 	=>
+				if (op_complete = '1' and command_sent = '1' 
+									and command_busy_spi_signal = '0') then 
+					command_spi_signal <= nBURST & nBURST & sidle_addr_c;
+					address_en_spi_signal <= '0';
+					data_length_spi_signal <= 
+																	std_logic_vector(to_unsigned(
+																			0,data_length_spi_signal'length));
+					master_slave_data_rdy_spi_signal <= '1';
+					cur_txrx_state <= TX_STATE_FIFO_FLUSH;
 					op_complete_out <= '0';
 					command_sent <= '0';
 				else 
-					op_complete_out <= '1';
-					tx_req <= '0';
+					op_complete <= '1';
+					--tx_req <= '0';
 				end if;
-					
+								
 				
-				when TX_STATE_FIFO_ERROR =>
+				when TX_STATE_FIFO_FLUSH =>
 					-- Flush the TX FIFO
-					if (command_busy_spi_signal = '0') then
-								command_spi_signal <= BURST & nBURST & sftx_addr_c;
-								address_en_spi_signal <= '0';
-								cur_txrx_state <= TXRX_STATE_IDLE;
-								op_error <= '1';
+					if (command_busy_spi_signal = '0' and tx_fifo_flush = '0') then
+						command_spi_signal <= nBURST & nBURST & sftx_addr_c;
+						address_en_spi_signal <= '0';
+						data_length_spi_signal <= 
+																	std_logic_vector(to_unsigned(
+																			0,data_length_spi_signal'length));
+						master_slave_data_rdy_spi_signal <= '1';
+						tx_fifo_flush <= '1';
+						cs_hold <= '0';
+						command_sent <= '0';
+					elsif (command_busy_spi_signal = '0') then
+						command_spi_signal <= nBURST & nBURST & sidle_addr_c;
+						address_en_spi_signal <= '0';
+						data_length_spi_signal <= 
+																	std_logic_vector(to_unsigned(
+																			0,data_length_spi_signal'length));
+						master_slave_data_rdy_spi_signal <= '1';
+						cur_txrx_state <= TXRX_STATE_IDLE_WAIT;
+						tx_fifo_flush <= '0';
 					end if;
 
 				when RX_STATE_LISTEN => 
-					-- wait for the rx_rdy_in signal to go high
-					if (rx_rdy_in = '1') then
+					-- wait for the txrx_rdy_in signal to go high
+					if (txrx_rdy_in = '1') then
 						--cur_txrx_state <= RX_STATE_FETCH_SETUP;			
 						cur_txrx_state <= RX_STATE_WRITE;
 					end if;
@@ -970,6 +1086,7 @@ begin
 																						data_length_spi_signal'length));
 						master_slave_data_spi_signal <= x"00";
 						master_slave_data_rdy_spi_signal <= '1';
+						cs_hold <= '1';
 						cur_txrx_state <= RX_STATE_FETCH;
 					end if;
 				
@@ -982,8 +1099,6 @@ begin
 					--Little endian.
 					 rx_data <= slave_master_data_spi_signal & rx_data(
 																					packet_length_bytes*8-1 downto 8);
-					 --Big endian.
-						--gyro_sample <= gyro_sample(3*IMU_AXIS_WORD_LENGTH_BYTES*8-1-8 downto 0) & slave_master_data_spi_signal;
 						byte_read_count <= byte_read_count + 1;
 					end if;
 					
@@ -1010,8 +1125,10 @@ begin
 						dpr_action <= '0';
 					elsif(dpr_action = '0') then 
 						-- Pick out the next byte to write
-						data_from <= rx_data(packet_length_bytes*8-to_integer(byte_read_count)*8-1 downto
-																 packet_length_bytes*8-(to_integer(byte_read_count)+1)*8);
+						data_from <= rx_data(packet_length_bytes*8-
+																		to_integer(byte_read_count)*8-1 downto
+																		packet_length_bytes*8-(to_integer(
+																										byte_read_count)+1)*8);
 						data_write_en <= '1';
 						byte_read_count <= byte_read_count + 1;
 						dpr_action <= '1';
@@ -1026,6 +1143,7 @@ begin
 					if (rx_req = '0') then 
 						cur_txrx_state <= TXRX_STATE_IDLE;
 						op_complete_out <= '0';
+						cs_hold <= '0';
 					else 
 						op_complete_out <= '1';
 						rx_req <= '0';
@@ -1034,7 +1152,7 @@ begin
 				when RX_STATE_FIFO_ERROR =>
 					-- Set the current state to idle when the TX/RX FIFOs are flushed
 					if (command_busy_spi_signal = '0') then
-								command_spi_signal <= BURST & nBURST & sfrx_addr_c;
+								command_spi_signal <= nBURST & nBURST & sfrx_addr_c;
 								address_en_spi_signal <= '0';
 								cur_txrx_state <= TXRX_STATE_IDLE;
 								op_error <= '1';
@@ -1042,7 +1160,7 @@ begin
 					end if;
 				
       end case ;
-  end if ;
+				end if ;
 end process CC1120_state_machine ;
 
 
@@ -1050,10 +1168,10 @@ end process CC1120_state_machine ;
 --!
 --! @brief      data_rdy_catch
 --!             
---! @details    Catch the data_rdy_interrupts coming from the transmitter. 
+--! @details    Catch the data_rdy_interrupts coming from the CC1120. 
 --!             Log the fpga_time immediately. 
---!             Then signal state machine to read the appropriate data from 
---!             transmitter over SPI.
+--!             Then signal state machine to read the appropriate data from  
+--!             the CC1120 over SPI.
 --!           
 --!
 --! @param    clk       Take action on positive edge.
@@ -1089,8 +1207,13 @@ begin
 			end if;   
     end if;
 		
-		cs_n_out <= cs_n_signal ;
-		
 end process data_rdy_catch ;
 
-end behavior ;
+-- Map the miso signal
+miso_signal <= miso_in;
+
+-- Map the chip select.  When starting up, it should be '0', otherwise cs_n
+with cs_hold select
+	cs_n_out <= cs_n_signal when '0',
+		'0' when others;
+end behavior ; 
