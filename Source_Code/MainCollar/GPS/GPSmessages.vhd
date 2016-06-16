@@ -594,6 +594,12 @@ architecture structural of GPSmessages is
   signal sendreq              : std_logic_vector (sendcnt_c-1 downto 0) ;
   signal sendrcv              : std_logic_vector (sendcnt_c-1 downto 0) ;
 
+  signal sendinput_tbl_start    : std_logic_2D (sendcnt_c-1      downto 0,
+                                              send_io_bits_c-1 downto 0) ;
+                                              
+  signal sendinput_tbl_init        : std_logic_2D (sendcnt_c-1      downto 0,
+                                              send_io_bits_c-1 downto 0) ;
+                                              
   signal sendinput_tbl        : std_logic_2D (sendcnt_c-1      downto 0,
                                               send_io_bits_c-1 downto 0) ;
 
@@ -927,7 +933,7 @@ begin
                                  send_nomsgstart_c  & msgid_poll          &
                                  msgclass_poll ;
 
-  set2D_element (send_poll_c, sendctl_poll, sendinput_tbl) ;
+  set2D_element (send_poll_c, sendctl_poll, sendinput_tbl_start,sendinput_tbl_init) ;
 
   --  Handle AssistNow Autonomous status messages.
 
@@ -1068,7 +1074,7 @@ begin
                                  msgstart_init      & msgid_init          &
                                  msgclass_init ;
 
-  set2D_element (send_init_c, sendctl_init, sendinput_tbl) ;
+  set2D_element (send_init_c, sendctl_init, sendinput_tbl_init, sendinput_tbl) ;
 
   --  Poll request combination signals.  Always poll for position and
   --  AssistNow status info.

@@ -112,12 +112,13 @@ entity AudioRecordingCollarCPLD_TopLevel is
     PWR_GOOD_2P5_TO_CPLD        : in    std_logic ;
     PWR_GOOD_3P3_TO_CPLD        : in    std_logic ;
     BUCK_PWM_TO_CPLD            : out   std_logic ;
+    VCC1P8_AUX_CTRL             : out   std_logic;
 
     --  Solar Controller Connections
 
     SOLAR_PGOOD_TO_CPLD         : in    std_logic ;
     SOLAR_CTRL_ON_TO_CPLD       : in    std_logic ;
-    SOLAR_CTRL_SHDN_N_TO_CPLD   : out   std_logic ;
+    SOLAR_CTRL_SHDN_N_TO_CPLD   : inout   std_logic ;
 
     --  Real Time Clock Connections
 
@@ -126,7 +127,7 @@ entity AudioRecordingCollarCPLD_TopLevel is
     --  Off Board Connections
 
     ESH_FORCE_STARTUP      : in    std_logic ;
-    ESH_FORCE_STARTUP_TO_FPGA      : inout std_logic 
+    ESH_FORCE_STARTUP_TO_FPGA      : out std_logic 
 
   ) ;
 
@@ -194,6 +195,7 @@ architecture structural of AudioRecordingCollarCPLD_TopLevel is
       pwr_sdcard_out        : out   std_logic ;
       pwr_ls_1p8_out        : out   std_logic ;
       pwr_ls_3p3_out        : out   std_logic ;
+      pwr_vcc1p8_aux_out    : out   std_logic ;
 
       solar_max_in          : in    std_logic ;
       solar_on_in           : in    std_logic ;
@@ -209,7 +211,7 @@ architecture structural of AudioRecordingCollarCPLD_TopLevel is
       gpio_8                : out   std_logic ;
 
       forced_start_in       : in    std_logic ;
-      fpga_fs_out           : inout std_logic ;
+      fpga_fs_out           : out std_logic;
       rtc_alarm_in          : in    std_logic
 
     ) ;
@@ -233,7 +235,7 @@ begin
   --  world.
 
   OBUFFER_ENABLE_OUT_TO_CPLD  <= not pwr_drive_not ;
-  SOLAR_CTRL_SHDN_N_TO_CPLD   <= not solar_run_not ;
+  --SOLAR_CTRL_SHDN_N_TO_CPLD   <= not solar_run_not ;
 
   --  Mapping between pins and power controller port signals.
   
@@ -277,10 +279,10 @@ begin
 
       bat_power_out         => MAIN_ON,
       bat_recharge_out      => RECHARGE_EN,
-      bat_int_in            => BAT_HIGH_TO_CPLD,
+      bat_int_in            => not BAT_HIGH_TO_CPLD,
       bat_int_fpga_out      => BAT_HIGH_TO_FPGA,
       bat_low_in            => BAT_LOW_TO_CPLD,
-      bat_good_in           => not BATT_GD_N_TO_CPLD,
+      bat_good_in           => BATT_GD_N_TO_CPLD,
 
       pwr_1p1_run_out       => VCC1P1_RUN_TO_CPLD,
       pwr_1p1_good_in       => PWR_GOOD_1P1_TO_CPLD,
@@ -303,10 +305,11 @@ begin
       pwr_sdcard_out        => SDCARD_CNTRL_TO_CPLD,
       --pwr_ls_1p8_out        => ls_1p8v_cntrl_to_cpld_not,
       --pwr_ls_3p3_out        => LS_3P3V_CNTRL_TO_CPLD,
+      pwr_vcc1p8_aux_out     => VCC1P8_AUX_CTRL,
 
       solar_max_in          => SOLAR_PGOOD_TO_CPLD,
       solar_on_in           => SOLAR_CTRL_ON_TO_CPLD,
-      solar_run_out         => solar_run_not,
+      solar_run_out         => SOLAR_CTRL_SHDN_N_TO_CPLD,
 
 
       --gpio_5                => '0',

@@ -136,7 +136,7 @@ set_location_assignment PIN_B3  -to BAT_LOW_TO_CPLD
 set_location_assignment PIN_A1  -to DATA_TX_CNTRL_TO_CPLD
 set_location_assignment PIN_A2  -to GPS_CNTRL_TO_CPLD
 set_location_assignment PIN_A3  -to SOLAR_CTRL_ON_TO_CPLD
-set_location_assignment PIN_A5  -to RTC_ALARM_TO_CPLD
+set_location_assignment PIN_B2  -to RTC_ALARM_TO_CPLD
 set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to RTC_ALARM_TO_CPLD
 
 
@@ -163,7 +163,7 @@ set_location_assignment PIN_A10 -to MIC_B_CNTRL
 
 set_location_assignment PIN_L1  -to MAIN_ON
 set_location_assignment PIN_L5  -to RECHARGE_EN
-set_location_assignment PIN_L4  -to SOLAR_CTRL_CHDN_N
+set_location_assignment PIN_L4  -to SOLAR_CTRL_SHDN_N_TO_CPLD
 
 
 
