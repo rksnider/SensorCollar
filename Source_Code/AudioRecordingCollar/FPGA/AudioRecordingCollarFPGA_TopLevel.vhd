@@ -262,13 +262,13 @@ architecture structural of AudioRecordingCollarFPGA_TopLevel is
 component Collar is
 
   Generic (
-    master_clk_freq_g     : natural           := 10e6 ;
+    source_clk_freq_g     : natural           := 10e6 ;
     button_cnt_g          : natural           :=  8 ;
     sdram_space_g         : SDRAM_Capacity_t  := SDRAM_16_Capacity_c ;
     sdram_times_g         : SDRAM_Timing_t    := SDRAM_75_2_Timing_c
   ) ;
   Port (
-    master_clk            : in    std_logic ;
+    source_clk            : in    std_logic ;
     buttons_in            : in    std_logic_vector (button_cnt_g-1
                                                       downto 0) ;
 
@@ -312,7 +312,7 @@ component Collar is
     gps_timepulse_io      : inout std_logic ;
 
     ms_clk                : out   std_logic ;
-    ms_cs_out             : out   std_logic ;
+    --ms_cs_out             : out   std_logic ;
     ms_mosi_out           : out   std_logic ;
     --ms_miso_in            : in    std_logic ;
     --ms_int_in             : in    std_logic ;
@@ -355,20 +355,20 @@ ESH_FPGA_USB_DPLUS <= count(7);
 
 C : Collar
     Generic Map(
-      master_clk_freq_g         => master_clk_freq_c,
+      source_clk_freq_g         => source_clk_freq_c,
       button_cnt_g              => 8,
       sdram_space_g             => SDRAM_16_Capacity_c,
       sdram_times_g             => SDRAM_75_3_Timing_c
     )
     Port Map(
-      master_clk                => CLK_50MHZ_TO_FPGA,
+      source_clk                => CLK_50MHZ_TO_FPGA,
       buttons_in                => (others => '0'),
 
       batt_int_in               => FPGA_BATT_INT,
       forced_start_in           => FORCE_STARTUP_TO_FPGA,
 
-      i2c_clk_io                => I2C_SDA,
-      i2c_data_io               => I2C_SCL,
+      i2c_clk_io                => I2C_SCL,
+      i2c_data_io               => I2C_SDA,
 
       pc_statchg_in             => PC_STATUS_CHANGED,
       pc_spi_clk                => PC_SPI_CLK,
