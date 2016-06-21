@@ -111,6 +111,7 @@ entity CC1120_top is
 		address_width_bytes_g       : natural   := 1;
 		data_length_bit_width_g     : natural   := 8;
 		packet_length_bytes					: natural 	:= 30;
+		tx_repeat_g									: natural 	:= 5;
 		status_start_g 							: natural   := 6;
 		status_end_g 								: natural   := 4
   ) ;
@@ -361,6 +362,7 @@ architecture behavior of CC1120_top is
 	signal loading_packet   : std_logic := '0';
 	signal loaded_packet    : std_logic := '0';
 	signal packet_byte_num  : natural   :=  0 ;
+	signal tx_counter 			: natural 	:= 	0	;
 	signal command_sent 		: std_logic := '0';
 	signal calibrated 			: std_logic := '0';
 	
@@ -401,7 +403,8 @@ architecture behavior of CC1120_top is
 	signal startup_follower : std_logic;
 	
 	-- Sleep signal for the chip
-	signal sleep_en : std_logic;
+	signal sleep_en 		: std_logic;
+	signal sleep_mode 	: std_logic;
 	
 	-- FIFO flushing signals
 	signal tx_fifo_flush : std_logic;
@@ -729,10 +732,22 @@ begin
 			-- Wake the chip when in sleep mode
       when TXRX_STATE_SLEEP          =>
 				sleep_en <= '0';
+				if (sleep_mode = '0') then 
+					if (command_busy_spi_signal = '0') then
+					 command_spi_signal <= nBURST & nBURST & spwd_addr_c;
+					 address_en_spi_signal <= '0';
+					 data_length_spi_signal <= 
+																	 std_logic_vector(to_unsigned(
+																		 0,data_length_spi_signal'length));
+					 master_slave_data_rdy_spi_signal <= '1';
+					 sleep_mode <= '1';
+				 end if;
+				end if;
 				-- If the startup_in bit is flipped, change state, send command to 
 				-- go to idle state (Calibration happens before TX or RX NOT idle)
-				if (startup_en = '1') then
-					cur_txrx_state  <=  TXRX_STATE_IDLE_WAIT;
+				if (startup_en = '1' or tx_req = '1' or rx_req = '1') then
+				 cur_txrx_state  <=  TXRX_STATE_CHIP_RDY_INIT;
+				 sleep_mode <= '0';
 				end if;
 				
 				-- Idle state.  Wait for TX or RX commands
@@ -741,6 +756,10 @@ begin
 			  if (startup_en = '1' and startup_complete = '0') then
 					cur_txrx_state  <=  TXRX_STATE_INIT;
 					txrx_initbuffer_rd_en <= '1';
+				end if;
+				
+				if (sleep_en = '1') then 
+					cur_txrx_state <= TXRX_STATE_SLEEP;
 				end if;
 				
 				if (op_error = '1') then 
@@ -755,16 +774,6 @@ begin
 				else
 					op_complete_out <= '0';
 				end if;		
-				-- If the sleep_en goes high, put the chip to sleep
-				if (sleep_en = '1' and command_busy_spi_signal = '0') then 
-						command_spi_signal <= nBURST & nBURST & spwd_addr_c;
-						address_en_spi_signal <= '0';
-						data_length_spi_signal <= 
-																				std_logic_vector(to_unsigned(
-																					0,data_length_spi_signal'length));
-						master_slave_data_rdy_spi_signal <= '1';
-						cur_txrx_state <= TXRX_STATE_SLEEP;
-				end if;
 				-- If the chip has started and is in idle, then check to see if 
 				-- a TX or RX is suggested
 				if (startup_complete = '1') then
@@ -782,7 +791,7 @@ begin
 							cur_txrx_state  <=  TXRX_STATE_IDLE_WAIT;
 						end if;
 					else
-						if (tx_req = '1') then 
+						if (tx_req = '1' and sleep_en = '0') then 
 							cur_txrx_state  <=  TXRX_STATE_REWRITE_GPIO;
 							data_read_en <= '1';
 							loaded_packet <= '0';
@@ -1039,9 +1048,15 @@ begin
 					cur_txrx_state <= TX_STATE_FIFO_FLUSH;
 					op_complete_out <= '0';
 					command_sent <= '0';
+					if (tx_counter = tx_repeat_g) then 
+						tx_req <= '0';
+						tx_counter <= 0;
+						--sleep_en <= '1';
+					else
+						tx_counter <= tx_counter + 1;
+					end if;
 				else 
 					op_complete <= '1';
-					--tx_req <= '0';
 				end if;
 								
 				
