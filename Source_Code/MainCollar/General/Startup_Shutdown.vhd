@@ -51,6 +51,7 @@ USE altera_mf.altera_mf_components.all;
 --! @brief      Sequence the startup of system components
 --! @details
 --!
+--! @param    busy_out            Entity Busy. Ungate Input Clock.
 --! @param    pc_control_reg_out  Control register sent to CPLD
 --! @param    pc_status_set       Status register has been set.
 --!
@@ -74,6 +75,9 @@ USE altera_mf.altera_mf_components.all;
 --!
 --! @param    txrx_start_out           Transceiver startup bit out
 --! @param    txrx_done_in             Transceiver startup done in
+--!
+--! @param    flashblock_start_out        Flashblock startup bit out
+--! @param    flashblock_done_in          Flashblock startup done in
 --!    
 --! @param    shutdown_in             Initiate shutdown of entire system
 --!    
@@ -94,6 +98,8 @@ entity Startup_Shutdown is
   Port (
     clk                 : in    std_logic ;
     rst_n               : in    std_logic ;
+    
+    busy_out            : out   std_logic;
 
     pc_control_reg_out  : out   std_logic_vector (ControlSignalsCnt_c-1
                                                   downto 0) ;
@@ -130,6 +136,12 @@ entity Startup_Shutdown is
     txrx_start_out      : out   std_logic ;
     txrx_done_in        : in    std_logic ;
     
+    
+    flashblock_start_out      : out   std_logic ;
+    flashblock_done_in        : in    std_logic ;
+    --flashblock_halt_done_in   : in    std_logic ;
+    --flashblock_halt_out       : out   std_logic ;
+    
     shutdown_in         : in    std_logic ;
     
     statctl_startup_out   : out std_logic;
@@ -146,6 +158,7 @@ architecture Behavior of Startup_Shutdown is
 
   type STARTUP_STATE is   (
     STATE_WAIT,
+    STATE_START,
     STATE_ON_WAIT,
 
     START_SDCTRL,
@@ -158,6 +171,7 @@ architecture Behavior of Startup_Shutdown is
     START_MAGRAM_WAITDONE,
 
     START_GPS,
+    START_GPS_PULSE,
     START_GPS_WAITDONE,
 
     START_MEMS,
@@ -175,12 +189,17 @@ architecture Behavior of Startup_Shutdown is
         
     START_BATMON,
     START_BATMON_WAITDONE,
+    
+    START_FLASHBLOCK,
+    START_FLASHBLOCK_WAITDONE,
 
     
     STATE_DONE,
     
     STOP_WAIT,
     STOP_WAIT_DEBUG,
+    
+    STOP_FLASHBLOCK,
     
     STOP_SDCTRL,
     --STOP_SDCTRL_WAITDONE,
@@ -205,6 +224,12 @@ architecture Behavior of Startup_Shutdown is
     STOP_FPGA
 
   );
+  
+  
+  constant DEBUG_ON : std_logic := '1';
+  
+  
+  
 
   signal cur_state        : STARTUP_STATE;
   signal next_state       : STARTUP_STATE;
@@ -222,7 +247,7 @@ architecture Behavior of Startup_Shutdown is
   signal shutdown_s       : std_logic ;
   signal rtc_done_s       : std_logic;
   signal batmon_done_s    : std_logic;
-
+  signal flashblock_done_s    : std_logic;
   signal pc_status_set    : std_logic ;
   signal sd_contr_done    : std_logic ;
   signal sdram_done       : std_logic ;
@@ -234,18 +259,21 @@ architecture Behavior of Startup_Shutdown is
   signal shutdown         : std_logic;
   signal rtc_done         : std_logic;
   signal batmon_done      : std_logic;
+  signal flashblock_done      : std_logic;
   signal pc_status_set_follower :std_logic;
   
   
   
   --Starting to talk to the IMU immediately after powering it on
   --does not work. This timeout it set for one second.
-  constant imu_delay : natural := spi_clk_freq_c * 1;
+  constant  imu_delay : natural := spi_clk_freq_c * 1;
   signal    imu_delay_count :  unsigned(natural(trunc(log2(real(
-                              imu_delay-1)))) downto 0);  
+                              imu_delay)))) downto 0);  
                               
   signal pc_control_reg : std_logic_vector (ControlSignalsCnt_c-1
                               downto 0) := (others => '0') ;
+                              
+  signal process_busy   :std_logic;
 
   --Debug
   signal sd_contr_start_out_debug : std_logic_vector(0 downto 0);
@@ -259,13 +287,14 @@ architecture Behavior of Startup_Shutdown is
   signal solar_on_debug : std_logic_vector(0 downto 0);
   
   
-  
+
   
   
 
 begin
 
   pc_control_reg_out <= pc_control_reg;
+  busy_out <= process_busy;
 
   -- in_system_probe0 : altsource_probe
     -- GENERIC MAP (
@@ -384,13 +413,20 @@ begin
       txrx_done_s             <= '0';
       shutdown                <= '0';
       shutdown_s              <= '0';
+      batmon_start_out        <= '0';      
       batmon_done             <= '0';
       batmon_done_s           <= '0';
+      rtc_start_out           <= '0';
       rtc_done                <= '0';
       rtc_done_s              <= '0';
-      
+
+      flashblock_start_out    <= '0';
+      flashblock_done         <= '0';
+      flashblock_done_s       <= '0';
       
       StatCtl_startup_out      <= '0';
+      process_busy              <= '1';
+      imu_delay_count           <= (others => '0');
 
     elsif (falling_edge (clk)) then
 
@@ -407,6 +443,7 @@ begin
       shutdown                <= shutdown_s;
       batmon_done             <= batmon_done_s;
       rtc_done                <= rtc_done_s;
+      flashblock_done         <= flashblock_done_s;
 
     elsif (rising_edge (clk)) then
 
@@ -421,7 +458,9 @@ begin
       shutdown_s              <= shutdown_in ;
       batmon_done_s           <= batmon_done_in;
       rtc_done_s              <= rtc_done_in;
-
+      flashblock_done_s       <= flashblock_done_in;
+      
+      
       case cur_state is
 
         when STATE_ON_WAIT    =>
@@ -435,9 +474,14 @@ begin
 
         when STATE_WAIT =>
           --if (start_signal(0) = '1') then
-            cur_state <=  START_MAGRAM;
-            StatCtl_startup_out <= '1';
+            cur_state <= STATE_START;
           --end if;
+
+        when STATE_START => 
+        
+        StatCtl_startup_out <= '1';
+        cur_state <=  START_MAGRAM;
+
 
 
         when START_SDCTRL =>
@@ -540,15 +584,19 @@ begin
         when START_GPS =>
           if (Collar_Control_useGPS_c = '1') then
             pc_control_reg (ControlSignals'pos (Ctl_GPS_On_e))  <= '1';
-            next_state  <=  START_GPS_WAITDONE;
+            next_state  <=  START_GPS_PULSE;
             cur_state   <=  STATE_ON_WAIT;
           else
             cur_state   <=  START_TXRX;
           end if ;
+          
+        when START_GPS_PULSE => 
+          gps_start_out    <= '1';
+          cur_state   <=  START_GPS_WAITDONE;
+        
 
         when START_GPS_WAITDONE =>
-          gps_start_out    <= '1';
-
+        gps_start_out    <= '0';
           if (gps_done = '1') then
             cur_state   <=  START_TXRX;
           end if;
@@ -575,7 +623,7 @@ begin
             pc_control_reg (ControlSignals'pos (Ctl_vcc1p8_aux_ctrl_e))  <= '1';
             cur_state   <=  START_RTC_WAITDONE;
           else
-            cur_state   <=  STATE_DONE;
+            cur_state   <=  START_FLASHBLOCK;
           end if;
 
 
@@ -591,13 +639,27 @@ begin
           if(Collar_Control_useI2C_c = '1') then 
             cur_state   <=  START_BATMON_WAITDONE;
           else
-           cur_state   <=  STATE_DONE;
+           cur_state   <=  START_FLASHBLOCK;
           end if;
           
         when START_BATMON_WAITDONE =>
           batmon_start_out    <= '1';
 
           if (batmon_done = '1') then
+            cur_state   <=  START_FLASHBLOCK;
+          end if;
+          
+        when START_FLASHBLOCK =>
+          if(Collar_Control_useFlashBlock_c = '1') then 
+            cur_state   <=  START_FLASHBLOCK_WAITDONE;
+          else
+           cur_state   <=  STATE_DONE;
+          end if;
+          
+        when START_FLASHBLOCK_WAITDONE =>
+          flashblock_start_out    <= '1';
+
+          if (flashblock_done = '1') then
             cur_state   <=  STATE_DONE;
           end if;
           
@@ -607,6 +669,7 @@ begin
 
 
         when STATE_DONE           =>
+        process_busy <= '0';
           --cur_state <= STOP_WAIT;
           
           
@@ -616,13 +679,13 @@ begin
         when STOP_WAIT  =>
 
           if (shutdown = '1') then
-            next_state  <=  STOP_SDCTRL;
+            next_state  <=  STOP_FLASHBLOCK;
             cur_state   <=  STOP_WAIT_DEBUG;
           elsif ( (unsigned(rem_cap_mah_in) < to_unsigned(50,rem_cap_mah_in'length)) AND
             rem_cap_mah_valid_in = '1') then
 
             
-            next_state  <=  STOP_SDCTRL;
+            next_state  <=  STOP_FLASHBLOCK;
             cur_state   <=  STOP_WAIT_DEBUG;
           end if;
           
@@ -643,6 +706,14 @@ begin
           else
             shutdown_delay_count <= shutdown_delay_count + 1;
           end if;
+          
+          
+        when STOP_FLASHBLOCK => 
+        
+          -- if (flashblock_halt_done) then 
+              --cur_state   <=  STOP_SDCTRL;
+            --end if;
+          
 
 
 
