@@ -1048,6 +1048,9 @@ architecture structural of Collar is
   
   signal  flashblock_startup        : std_logic;  
   signal  flashblock_startup_done   : std_logic;
+  
+  signal  gps_startup        : std_logic;  
+  signal  gps_startup_done   : std_logic;
 
   
   --------------------------------------------------------------------------
@@ -1152,8 +1155,8 @@ begin
       mems_done_in          => '1',
       mag_start_out         => mm_startup,
       mag_done_in           => mm_startup_done,
-      --gps_start_out             : out   std_logic ;
-      gps_done_in           => '1',
+      gps_start_out         => gps_startup,
+      gps_done_in           => gps_startup_done,
       --txrx_start_out            : out   std_logic ;
       txrx_done_in              => '1',
       flashblock_start_out       => flashblock_startup,
@@ -1531,7 +1534,12 @@ component rtc_inquire_top is
     alarm_in              : in   std_logic_vector(alarm_bytes*8-1 downto 0);
     alarm_set_done_out    : out    std_logic;
     
-    rtc_interrupt_enable  : out   std_logic
+    rtc_interrupt_enable  : out   std_logic;
+    
+    rtc_sec_out         : out   unsigned (tod_bytes*8-1 downto 0) ;
+    rtc_sec_load_out    : out   std_logic ;
+    rtc_sec_in          : in    unsigned (tod_bytes*8-1 downto 0) ;
+    rtc_sec_set_in      : in    std_logic 
   
   
 
@@ -1765,7 +1773,12 @@ rtc_inquire_top_i0 : rtc_inquire_top
     alarm_set_in            => alarm_set_signal,
     alarm_in                => alarm_signal,
     alarm_set_done_out      => alarm_set_done_signal,
-    rtc_interrupt_enable    => rtc_interrupt_enable_signal
+    rtc_interrupt_enable    => rtc_interrupt_enable_signal,
+    
+    rtc_sec_out             => rtc_seconds,
+    rtc_sec_load_out        => rtc_seconds_load,
+    rtc_sec_in              => rtc_running_seconds,
+    rtc_sec_set_in          => rtc_running_set
  
 
   ) ;
@@ -3352,8 +3365,8 @@ rtc_inquire_top_i0 : rtc_inquire_top
           curtime_valid_in      => systime_valid,
           curtime_vlatch_in     => systime_vlatch,
           gps_enable_in         => CTL_GPS_On,
-          gps_init_start_in     => not gps_ready,
-          gps_init_done_out     => gps_ready,
+          gps_init_start_in     => gps_startup,
+          gps_init_done_out     => gps_startup_done,
           pollinterval_in       => poll_int,
           datavalid_out         => gps_databanks,
           gpsmem_clk_out        => gpsmemsrc_clk,

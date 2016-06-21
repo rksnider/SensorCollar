@@ -91,6 +91,8 @@
 --! @param      temp_fpga_time        FPGA time associated with a temp_data_rdy and its word.
 --!
 --!
+--! @param      startup_complete_out  IMU is done starting up. 
+--!  
 --
 ---------------------------------
 
@@ -169,6 +171,7 @@ entity LSM9DS1_top is
     rst_n                 : in    std_logic ;
 
     startup               : in    std_logic;
+    startup_complete_out  : out   std_logic;
 
     curtime_in            : in    std_logic_vector
                                       (gps_time_bytes_c*8-1 downto 0) ;
@@ -467,6 +470,8 @@ begin
 
 imu_initbuffer_address_std <= std_logic_vector(imu_initbuffer_address);
 initbuffer_clk <= not clk;
+
+startup_complete_out <= startup_complete;
 
 
 spi_commands_slave_XL_G : spi_commands
