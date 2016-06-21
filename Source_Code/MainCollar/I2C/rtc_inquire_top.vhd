@@ -68,12 +68,24 @@
 --! @param    alarm_in                Alarm to write to the RTC.
 --! @param    alarm_set_done_out      Alarm setting prodedure done. 
 
---! @param    rtc_interrupt_enable    Tell CPLD to pass RTC interrupt. 
---!                                   Used to ignore unconfigued RTC on bootup. 
+--! @param     rtc_sec_out          Set SystemTime upon boot. 
+--! @param     rtc_sec_load_out     Set SystemTime flag.
+--! @param     rtc_sec_in           Update RTC time from SystemTime
+--! @param     rtc_sec_set_in       Update RTC time from SystemTime flag
 --
 ------------------------------------------------------------------------------
 
---Usage Instructions and Description.
+
+
+
+
+--RTC_INQUIRE_TOP interacts with systemtime.vhd. It presents the TOD to 
+--systemtime upon boot only if valid. RTC TOD is updated whenever systemtime
+--indicates. 
+
+--5_24_2016
+--Added SR latch to catch fast 50Mhz pulse coming from SystemTime.
+
 
 
 
@@ -95,6 +107,8 @@ use IEEE.MATH_REAL.ALL ;        --! Use Real math.
 
 library WORK ;                   --! General libraries.
 use WORK.I2C_CMDS_PKG.ALL ;
+library GENERAL ;
+USE GENERAL.compile_start_time_pkg.ALL;
 
 entity rtc_inquire_top is
 
@@ -144,7 +158,14 @@ entity rtc_inquire_top is
     alarm_in              : in   std_logic_vector(alarm_bytes*8-1 downto 0);
     alarm_set_done_out    : out    std_logic;
     
-    rtc_interrupt_enable  : out   std_logic
+    rtc_interrupt_enable  : out   std_logic;
+    rtc_sec_out           : out   unsigned (tod_bytes*8-1 downto 0) ;
+    rtc_sec_load_out      : out   std_logic ;
+    rtc_sec_in            : in    unsigned (tod_bytes*8-1 downto 0) ;
+    rtc_sec_set_in        : in    std_logic 
+    
+    
+    
   
   
 
@@ -172,6 +193,8 @@ architecture behavior of rtc_inquire_top is
     RTC_STATE_TOD_GET_READ_SETUP,
     RTC_STATE_TOD_GET_READ,
     
+    
+    RTC_STATE_TOD_STARTUP_CHECK,
     
     
     RTC_STATE_ALARM_READ_CONSTANTS_SETUP,
@@ -202,6 +225,7 @@ architecture behavior of rtc_inquire_top is
 
   signal cur_state   : RTC_INQ;
   signal next_state  : RTC_INQ; 
+  signal final_state : RTC_INQ;
   
 --Below is Emery's code.
 --I need access to the mif file stored variables.
@@ -335,6 +359,29 @@ architecture behavior of rtc_inquire_top is
   
   signal cmd_offset   : unsigned (mem_bits_g-1 downto 0);
 
+--SR Latch from Faster Domain. Use SR_FlipFlop
+
+  signal    rtc_sec_set_in_q          : std_logic; 
+  signal    rtc_sec_set_in_reset      : std_logic; 
+  signal    rtc_sec_set_in_reg        : std_logic;
+  
+  
+component SR_FlipFlop is
+
+  Generic (
+    set_edge_detect_g     : std_logic := '0' ;
+    clear_edge_detect_g   : std_logic := '0'
+  ) ;
+  Port (
+    reset_in              : in    std_logic ;
+    set_in                : in    std_logic ;
+    result_rd_out         : out   std_logic ;
+    result_sd_out         : out   std_logic
+  ) ;
+
+end component SR_FlipFlop ;
+
+
 begin
 
 mem_clk_out <= not clk;
@@ -347,6 +394,25 @@ mem_clk_out <= not clk;
 
 
 
+
+  
+  SR_rtc_sec_set_in_0:SR_FlipFlop 
+
+  Generic Map (
+    set_edge_detect_g     => '0',
+    clear_edge_detect_g   => '0'
+  ) 
+  Port Map (
+    reset_in              =>  rtc_sec_set_in_reset,
+    set_in                =>  rtc_sec_set_in,
+    result_rd_out         =>  rtc_sec_set_in_reg
+    --result_sd_out       => 
+  ) ;
+  
+  
+
+
+
 rtc_state_machine:  process (clk, rst_n)
 variable byte_address : unsigned (mem_bits_g-1 downto 0) ;
 begin
@@ -355,6 +421,8 @@ begin
     cmd_offset_out        <= (others => '0');
     cmd_count_out         <= (others => '0');
     cur_state             <= RTC_STATE_WAIT;
+    next_state            <= RTC_STATE_WAIT;
+    final_state           <= RTC_STATE_WAIT;
     cmd_start_out         <= '0';
     byte_count            <= (others => '0');
     cmd_busy_in_follower  <= '1';
@@ -375,8 +443,9 @@ begin
     mem_datato_signal_b     <= (others => '0');
     mem_read_en_signal_b    <= '0';
     mem_write_en_signal_b   <= '0';
-    
     rtc_interrupt_enable    <= '0';
+    rtc_sec_out         <= (others => '0');
+    rtc_sec_load_out    <= '0';
  
  
  
@@ -393,6 +462,10 @@ begin
       alarm_set_done_out <= '0';   
   
   
+      rtc_sec_load_out <= '0';
+      
+      rtc_sec_set_in_reset <= '0';
+  
     case cur_state is
     
 
@@ -400,7 +473,8 @@ begin
       when RTC_STATE_WAIT   =>
 
         if (startup_in = '1') then
-          cur_state <=  RTC_STATE_CONF;
+          cur_state <=  RTC_STATE_TOD_GET_SETUP;
+          final_state <= RTC_STATE_TOD_STARTUP_CHECK;
         end if;
         
 
@@ -411,9 +485,14 @@ begin
           time_of_day <= tod_in;
         elsif (tod_get_in = '1') then
           cur_state <= RTC_STATE_TOD_GET_SETUP;
+          final_state <= RTC_STATE_WAIT_START;
         elsif (alarm_set_in = '1') then
           cur_state <= RTC_STATE_ALARM_READ_CONSTANTS_SETUP;
           alarm <= alarm_in;
+        elsif (rtc_sec_set_in_reg = '1') then
+          rtc_sec_set_in_reset <= '1';
+          cur_state <= RTC_STATE_TOD_READ_CONSTANTS_SETUP;
+          time_of_day <= std_logic_vector(rtc_sec_in);
         else
           cur_state <= RTC_STATE_WAIT_START;
         end if;
@@ -527,7 +606,7 @@ begin
       
       when RTC_STATE_TOD_GET_READ    =>
         if (byte_count = I2C_RTC_GetTime_rdlen) then
-          cur_state     <= RTC_STATE_WAIT_START;
+          cur_state     <= final_state;
           tod_out       <= time_of_day;
           tod_get_valid_out   <= '1';
           mem_read_en_signal_b     <= '0' ;
@@ -538,6 +617,20 @@ begin
           time_of_day <= mem_datafrom_signal_b_in & time_of_day(I2C_RTC_GetTime_rdlen*8-1 downto 8) ;
           byte_count  <= byte_count + 1 ;
           mem_address_signal_b      <=  mem_address_signal_b + 1;
+        end if;
+        
+
+        --Check TOD against compile time. 
+      when RTC_STATE_TOD_STARTUP_CHECK    =>
+        
+        if ( time_of_day > std_logic_vector(to_unsigned(compile_timestamp_c,time_of_day'length))) then 
+        rtc_sec_out <= unsigned(time_of_day);
+        rtc_sec_load_out <= '1';
+        cur_state     <= RTC_STATE_CONF;
+        else
+        
+        cur_state     <= RTC_STATE_CONF;
+        
         end if;
         
 
@@ -708,13 +801,15 @@ begin
       end if;
       
 
+
+
+
+
+
+
       end case ;
   end if ;
 end process rtc_state_machine ;
-
-
-
-
 
 
   
