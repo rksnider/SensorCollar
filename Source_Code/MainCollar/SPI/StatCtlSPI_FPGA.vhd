@@ -170,6 +170,11 @@ architecture rtl of StatCtlSPI_FPGA is
   signal    status_chg_in_follower            : std_logic;
 
 
+  --Synchronize the async bit.
+  --The _s signal will have set_false_path -through 
+  --set on it by the very top level sdc. 
+  signal    status_chg_in_r                   : std_logic;
+  signal    status_chg_in_s                   : std_logic;
 
               
 
@@ -189,6 +194,9 @@ architecture rtl of StatCtlSPI_FPGA is
 
   signal startup_processed          : std_logic;
   signal startup_processed_follower : std_logic;
+
+  
+
 
   component spi_commands is
     generic (
@@ -477,7 +485,8 @@ begin
     if (rst_n = '0') then
       status_chg_in_follower        <= '0';
       startup_en                    <= '0';
-
+      status_chg_in_r               <= '0';
+      status_chg_in_s               <= '0';
       --This will guarantee a initial push on startup.
       --But make sure the critical control registers are on.
 
@@ -485,20 +494,22 @@ begin
       control_in_expand             <= (others => '0');
 
     elsif (clk'event and clk = '1') then
-      if (startup_in = '1') then 
+        
+        status_chg_in_s <= status_chg_in;
+        status_chg_in_r <= status_chg_in_s;
 
         control_in_expand(control_in_expand'length-1 
                         downto control_in_expand'length  - 
                                control_bits_g) <= control_in;
 
-        if (control_in_follower /= control_in_expand) then
+        if (control_in_follower /= control_in_expand and startup_in = '1') then
           control_in_follower         <= control_in_expand ;
           startup_en                  <= '1' ;
 
-        elsif (status_chg_in_follower /= status_chg_in) then
-          status_chg_in_follower      <= status_chg_in;
+        elsif (status_chg_in_follower /= status_chg_in_r and startup_in = '1') then
+          status_chg_in_follower      <= status_chg_in_r;
 
-          if (status_chg_in = '1') then
+          if (status_chg_in_r = '1') then
             startup_en                <= '1';
           end if;
 
@@ -510,7 +521,6 @@ begin
           end if ;
         end if;
       end if;
-    end if;
   end process;
 
 end architecture rtl ;
