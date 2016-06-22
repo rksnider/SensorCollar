@@ -476,6 +476,19 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to TXRX_MISO_TO_FPGA
 
 
 
+#Pullups on certain pins. 
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to IM_INT2_A_G_TO_FPGA
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to IM_INT1_A_G_TO_FPGA
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to IM_INT_M_TO_FPGA
+
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to SDCARD_DI_CMD_TO_FPGA
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to SDCARD_DI_DAT_TO_FPGA[0]
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to SDCARD_DI_DAT_TO_FPGA[1]
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to SDCARD_DI_DAT_TO_FPGA[2]
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to SDCARD_DI_DAT_TO_FPGA[3]
+
+
+
 
 
 
