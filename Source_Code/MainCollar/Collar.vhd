@@ -43,6 +43,7 @@ use GENERAL.UTILITIES_PKG.ALL ;
 
 use GENERAL.GPS_CLOCK_PKG.ALL ;
 use GENERAL.FORMATSECONDS_PKG.ALL ;
+use GENERAL.txrx_p_buffer_def_pkg.all;
 
 library WORK ;                  --! Local Library
 use WORK.COLLAR_CONTROL_PKG.ALL ;
@@ -707,6 +708,11 @@ architecture structural of Collar is
   signal sdcard_done            : std_logic ;
   signal sdcard_critdone        : std_logic ;
   signal sdcard_critpast        : std_logic_vector (7 downto 0) ;
+
+  
+  signal sdl_sdcard_serial    : std_logic_vector (31 downto 0) ;
+  signal sdl_sdcard_lastblk   : std_logic_vector (sdcard_blknobits_c-1
+                                                  downto 0) ;
 
   --------------------------------------------------------------------------
   --  GPS signals.
@@ -2993,15 +2999,14 @@ rtc_inquire_top_i0 : rtc_inquire_top
                                                       downto 0) ;
       signal sdl_sdcard_nblocks   : std_logic_vector (sdcard_blknobits_c-1
                                                       downto 0) ;
-      signal sdl_sdcard_lastblk   : std_logic_vector (sdcard_blknobits_c-1
-                                                      downto 0) ;
+
       signal sdl_sdcard_lastflag  : std_logic ;
       signal sdl_sdcard_bufflevel :
                 std_logic_vector (const_bits (outmem_buffblks_c-1)
                                   downto 0) ;
       signal sdl_sdcard_critdone  : std_logic ;
       signal sdl_sdcard_critpast  : std_logic_vector (7 downto 0) ;
-      signal sdl_sdcard_serial    : std_logic_vector (31 downto 0) ;
+
       
       --  Signals for I/O mapping.
 
@@ -4187,6 +4192,46 @@ rtc_inquire_top_i0 : rtc_inquire_top
   use_FlashBlock:
     if (Collar_Control_useFlashBlock_c = '1') generate
 
+    
+      component txrxbuffer IS
+        PORT
+        (
+          address_a		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+          address_b		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+          clock_a		: IN STD_LOGIC  := '1';
+          clock_b		: IN STD_LOGIC ;
+          data_a		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+          data_b		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+          rden_a		: IN STD_LOGIC  := '1';
+          rden_b		: IN STD_LOGIC  := '1';
+          wren_a		: IN STD_LOGIC  := '0';
+          wren_b		: IN STD_LOGIC  := '0';
+          q_a		: OUT STD_LOGIC_VECTOR (7 DOWNTO 0);
+          q_b		: OUT STD_LOGIC_VECTOR (7 DOWNTO 0)
+        );
+      END component txrxbuffer;
+    
+      component ResourceAllocator is
+
+        Generic (
+          requester_cnt_g       : natural   :=  8 ;
+          number_len_g          : natural   :=  3 ;
+          prioritized_g         : std_logic := '1' ;
+          cross_clock_domain_g  : std_logic := '0'
+        ) ;
+        Port (
+          reset                 : in    std_logic ;
+          clk                   : in    std_logic ;
+          requesters_in         : in    std_logic_vector (requester_cnt_g-1
+                                                            downto 0) ;
+          receivers_out         : out   std_logic_vector (requester_cnt_g-1
+                                                            downto 0) ;
+          receiver_no_out       : out   unsigned (number_len_g-1 downto 0)
+        ) ;
+
+      end component ResourceAllocator ;
+   
+
       component FlashBlock is
 
         Generic (
@@ -4206,7 +4251,8 @@ rtc_inquire_top_i0 : rtc_inquire_top
           imu_axis_word_length_bytes_g  : natural := 2;
           sdram_input_buffer_bytes_g    : natural := 4096;
           audio_word_bytes_g            : natural := 2;
-          status_update_interval_ms     : natural := 500
+          status_update_interval_ms     : natural := 500;
+          wireless_update_interval_ms_g   : natural := 10000
       ) ;
         Port (
           clock_sys             : in    std_logic ;
@@ -4316,7 +4362,32 @@ rtc_inquire_top_i0 : rtc_inquire_top
           sdram_empty_in          : in   std_logic;
 
           crit_event              : in   std_logic;
-          blocks_past_crit        : out  std_logic_vector(7 downto 0)
+          blocks_past_crit        : out  std_logic_vector(7 downto 0);
+          
+          txrx_req_a_out          : out std_logic;  
+          txrx_rec_a_in           : in std_logic;  
+          
+          txrx_bank_out           : out std_logic;  
+          
+          fb_txrx_clk_a_out       : out std_logic;
+          fb_txrx_wr_en_a_out     : out std_logic;  
+          fb_txrx_rd_en_a_out     : out std_logic;  
+          fb_txrx_address_a_out   : out std_logic_vector(natural(trunc(log2(real(txrx_double_buffer_size-1)))) downto 0);
+          fb_txrx_data_a_out      : out std_logic_vector(7 downto 0);
+          
+          
+          
+          sdxc_serial_in          : in   std_logic_vector(31 downto 0);
+          sdxc_block_in           : in   std_logic_vector(31 downto 0);
+          
+          pc_controlreg_in        : in   std_logic_vector (ControlSignalsCnt_c-1
+                                                          downto 0);
+
+          voltage_mv_in           : in   std_logic_vector (15 downto 0);
+          rem_cap_mah_in          : in   std_logic_vector (15 downto 0);
+          inst_cur_ma_in          : in   std_logic_vector (15 downto 0)
+
+          
       ) ;
 
       end component FlashBlock ;
@@ -4330,6 +4401,39 @@ rtc_inquire_top_i0 : rtc_inquire_top
                                                       downto 0) ;
       signal fb_gpsmem_control    : std_logic_vector (gpsmem_iobits_c-1
                                                       downto 0) ;
+
+      --  Flash Block to GPS Memory communications signals.
+
+      signal fb_txrxmem_clk         : std_logic ;
+      signal fb_txrxmem_wr_en       : std_logic ;
+      signal fb_txrxmem_rd_en       : std_logic ;
+      signal fb_txrxmem_addr        : std_logic_vector(natural(trunc(log2(real(txrx_double_buffer_size-1)))) downto 0);
+      signal fb_txrxmem_data        : std_logic_vector (7 downto 0);
+      signal fb_txrxmem_q           : std_logic_vector (7 downto 0);
+      
+      signal txrx_txrxmem_clk         : std_logic ;
+      signal txrx_txrxmem_wr_en       : std_logic ;
+      signal txrx_txrxmem_rd_en       : std_logic ;
+      signal txrx_txrxmem_addr        : std_logic_vector(natural(trunc(log2(real(txrx_double_buffer_size-1)))) downto 0);
+      signal txrx_txrxmem_data        : std_logic_vector (7 downto 0);
+      signal txrx_txrxmem_q           : std_logic_vector (7 downto 0);
+      
+      signal txrx_bank                :std_logic;
+      
+
+                                                      
+      constant  txrxmemrq_flashblk_c     : natural := 0 ;
+      constant  txrxmemrq_txrx_c         : natural := txrxmemrq_flashblk_c    + 1 ;
+
+      
+      constant  txtxmemrq_count_c       : natural := txrxmemrq_txrx_c  + 1 ;
+      signal    txrxmem_requesters      : std_logic_vector (txtxmemrq_count_c-1
+                                                        downto 0) ;
+      signal    txrxmem_receivers         : std_logic_vector (txtxmemrq_count_c-1
+                                                        downto 0) ;
+      constant  txrxmem_receivers_num_length : natural := 3;                               
+      signal    txrxmem_receivers_num       : unsigned (txrxmem_receivers_num_length*8-1
+                                                        downto 0) ;
 
       --  Flash Block to Magnetic Memory communications signals.
 
@@ -4365,6 +4469,39 @@ rtc_inquire_top_i0 : rtc_inquire_top
                   downto 0)                     <= mic_left_sample &
                                                    mic_right_sample ;
 
+                                                   
+      txrx_resalloc : ResourceAllocator
+        GENERIC MAP(
+          requester_cnt_g       => txtxmemrq_count_c,
+          number_len_g         => txrxmem_receivers_num_length,
+          cross_clock_domain_g  => '1'
+          ) 
+        PORT MAP (
+          reset                 =>  reset,
+          clk                   =>  master_clk,
+          requesters_in         =>  txrxmem_requesters,
+          receivers_out         =>  txrxmem_receivers,
+          receiver_no_out       =>  txrxmem_receivers_num
+        ) ;
+    
+    
+      txrx_db : txrxbuffer 
+        PORT MAP
+        (
+          address_a		=> fb_txrxmem_addr,
+          address_b		=> txrx_txrxmem_addr,
+          clock_a		  => fb_txrxmem_clk,
+          clock_b		  => txrx_txrxmem_clk,
+          data_a		  => fb_txrxmem_data,
+          data_b		  => txrx_txrxmem_data,
+          rden_a		  => fb_txrxmem_rd_en,
+          rden_b		  => txrx_txrxmem_rd_en,
+          wren_a		  => fb_txrxmem_wr_en,
+          wren_b	    => txrx_txrxmem_wr_en,
+          q_a			    => fb_txrxmem_q,
+          q_b			    => txrx_txrxmem_q
+        );
+
       flashblk : FlashBlock
         Generic Map (
           sysclk_freq_g                 => spi_clk_freq_c,
@@ -4380,7 +4517,8 @@ rtc_inquire_top_i0 : rtc_inquire_top
           imu_axis_word_length_bytes_g  => im_datalen_c,
           sdram_input_buffer_bytes_g    => inmem_bytecnt_c,
           audio_word_bytes_g            => 2,
-          status_update_interval_ms     => 500
+          status_update_interval_ms     => 500,
+          wireless_update_interval_ms_g  => 10000
         )
         Port Map (
           clock_sys                   => spi_clk,
@@ -4452,7 +4590,36 @@ rtc_inquire_top_i0 : rtc_inquire_top
           force_wr_en                 => sdram_forceout,
           sdram_empty_in              => sdram_empty,
           crit_event                  => SDLogging_flush,
-          blocks_past_crit            => sdcard_critpast
+          blocks_past_crit            => sdcard_critpast,
+          
+          
+          txrx_req_a_out           => txrxmem_requesters(txrxmemrq_flashblk_c),
+          txrx_rec_a_in           => txrxmem_requesters(txrxmemrq_flashblk_c),
+    
+          txrx_bank_out            => txrx_bank,
+          
+          fb_txrx_clk_a_out     => fb_txrxmem_clk,
+          fb_txrx_wr_en_a_out   => fb_txrxmem_wr_en,
+          fb_txrx_rd_en_a_out   => fb_txrxmem_rd_en,
+          fb_txrx_address_a_out   => fb_txrxmem_addr,
+          fb_txrx_data_a_out      => fb_txrxmem_data,
+          
+          
+          
+          sdxc_serial_in          => sdl_sdcard_serial,
+          sdxc_block_in           => sdl_sdcard_lastblk,
+          
+          
+          pc_controlreg_in         => PC_ControlReg,
+
+          voltage_mv_in           => voltage_mv_signal,
+          rem_cap_mah_in          => rem_cap_mah_signal,
+          inst_cur_ma_in           => inst_cur_ma_signal
+          
+          
+          
+          
+          
         ) ;
 
       fb_gpsmem_control    <= spi_gated_inv_clk   &

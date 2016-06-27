@@ -38,7 +38,7 @@ use IEEE.MATH_REAL.ALL ;        --! Use Real math.
 --A dual port ram is used.
 LIBRARY altera_mf;
 USE altera_mf.altera_mf_components.all;
-
+LIBRARY WORK ;
 LIBRARY GENERAL ;
 USE GENERAL.UTILITIES_PKG.ALL;          --  Use General Purpose Libraries
 USE GENERAL.GPS_Clock_pkg.ALL;          --  Use GPS Clock information.
@@ -47,6 +47,8 @@ USE GENERAL.msg_ubx_tim_tm2_pkg.ALL;
 USE GENERAL.msg_ubx_nav_sol_pkg.ALL;
 USE GENERAL.compile_start_time_pkg.ALL;
 USE GENERAL.magmem_buffer_def_pkg.all;    --Magnetic Memory Buffer Size and Locations.
+USE GENERAL.PC_StatusControl_pkg.All ;       
+USE GENERAL.txrx_p_buffer_def_pkg.all;
 
 
 
@@ -68,8 +70,11 @@ USE GENERAL.magmem_buffer_def_pkg.all;    --Magnetic Memory Buffer Size and Loca
 --!                                         Controller
 --!
 --! @param    audio_word_bytes_g  Size of an audio word in bytes.
---! @param    status_update_interval_ms  Millisecond interval to store
---!                                      status segment. 
+
+--! @param    status_interval_ns_g Flashblock will in addition to log_status action, 
+--!                               log a status packet so often at this inveral in seconds.
+--! @param    wireless_update_interval_ms_g Interval at which to update the 
+--!                                         wireless packet in dual port. 
 --!
 --! @param    clock_sys           System clock that drives the fastest ops.
 --! @param    rst_n               Reset to initial conditions.
@@ -173,6 +178,31 @@ USE GENERAL.magmem_buffer_def_pkg.all;    --Magnetic Memory Buffer Size and Loca
 --!                             been written.
 
 
+--! txrx_req_a_out              Request the txrx double buffer.
+--!  txrx_rec_a_in              Received the txrx double buffer.
+    
+--!  txrx_bank_out              The currently updated bank. Use this one.
+--!                             Either append or use is_set() from utilities. 
+    
+--!  fb_txrx_clk_a_out          txrx buffer clk 
+--!  fb_txrx_wr_en_a_out        txrx buffer wr_en
+--!  fb_txrx_rd_en_a_out        txrx buffer rd_en
+--!  fb_txrx_address_a_out      txrx buffer address 
+--!  fb_txrx_data_a_out         txrx buffer data to 
+    
+    
+    
+--!  sdxc_serial_in            Sdxc serial number formed into wireless packet.
+--!  sdxc_block_in             Last physical block location written to sd card. 
+--!                            Formed into wireless packet.
+    
+--!  pc_controlreg_in          Control register put into wireless packet.
+
+--!  voltage_mv_in            Battery Voltage assembled into wireless packet.
+--!  rem_cap_mah_in           Battery capcity assembled into wireless packet.
+--!  inst_cur_ma_in           Battery current usage assembled into wireless packet.
+
+
 -- What does this component do?
 
 -- This component is responsible for assembling segments from all the sensor
@@ -237,7 +267,7 @@ entity FlashBlock is
     event_bytes_g             : natural := 2 ;
 
     rtc_time_bytes_g          : natural := 4;
-    num_mics_active_g         : natural := 1;
+    num_mics_active_g         : natural := 2;
 
     counter_data_size_g       : natural     := 8 ;
     counter_address_size_g    : natural     := 9 ;
@@ -248,7 +278,8 @@ entity FlashBlock is
     sdram_input_buffer_bytes_g    : natural := 4096;
     audio_word_bytes_g            : natural := 2;
     
-    status_update_interval_ms     : natural := 500
+    status_update_interval_ms     : natural := 1000;
+    wireless_update_interval_ms_g   : natural := 10000
   ) ;
   Port (
     clock_sys             : in    std_logic ;
@@ -371,7 +402,31 @@ entity FlashBlock is
     sdram_empty_in          : in  std_logic;
 
     crit_event              : in  std_logic;
-    blocks_past_crit        : out std_logic_vector(7 downto 0)
+    blocks_past_crit : out std_logic_vector(7 downto 0);
+    
+    
+    txrx_req_a_out           : out std_logic;  
+    txrx_rec_a_in            : in std_logic;  
+    
+    txrx_bank_out            : out std_logic;  
+    
+    fb_txrx_clk_a_out     : out std_logic;
+    fb_txrx_wr_en_a_out   : out std_logic;  
+    fb_txrx_rd_en_a_out   : out std_logic;  
+    fb_txrx_address_a_out : out std_logic_vector(natural(trunc(log2(real(txrx_double_buffer_size-1)))) downto 0);
+    fb_txrx_data_a_out    : out std_logic_vector(7 downto 0);
+    
+    
+    
+    sdxc_serial_in            : in   std_logic_vector(31 downto 0);
+    sdxc_block_in             : in   std_logic_vector(31 downto 0);
+    
+    pc_controlreg_in          : in   std_logic_vector (ControlSignalsCnt_c-1
+                                                    downto 0);
+
+    voltage_mv_in            : in   std_logic_vector (15 downto 0);
+    rem_cap_mah_in           : in   std_logic_vector (15 downto 0);
+    inst_cur_ma_in           : in   std_logic_vector (15 downto 0)
 
 
 ) ;
@@ -642,6 +697,15 @@ type BlockState is   (
   BLOCK_STATE_NAV_SOL_SEG_ST,
   BLOCK_STATE_NAV_SOL_LEN_ST,
 
+  
+  BLOCK_STATE_GPS_NAV_SOL_ECEF_SETUP_W,
+  BLOCK_STATE_GPS_NAV_SOL_ECEF_FETCH_W,
+  BLOCK_STATE_GPS_NAV_SOL_ECEFACC_SETUP_W,
+  BLOCK_STATE_GPS_NAV_SOL_ECEFACC_FETCH,
+  BLOCK_STATE_GPS_NAV_SOL_POSTIME_SETUP_W,
+  BLOCK_STATE_GPS_NAV_SOL_POSTIME_FETCH_W,
+  
+  
   BLOCK_STATE_GPS_TIM_TM2_SETUP,
   BLOCK_STATE_GPS_TIM_TM2_FETCH,
   BLOCK_STATE_GPS_TIM_TM2_MARKTIME_SETUP,
@@ -710,9 +774,57 @@ type ItemState is   (
   ITEM_STATE_LOGIC_BLOCK_STORE
 ) ;
 
+
+
+
+type PacketState is   (
+  PACKETSTATE_WAIT,
+  PACKETSTATE_REQ,
+  
+  PACKETSTATE_SERIAL_SETUP,
+  PACKETSTATE_SERIAL,
+  
+  PACKETSTATE_GPSTIME_SETUP,
+  PACKETSTATE_GPSTIME,
+  
+  PACKETSTATE_FPGACONTROL_SETUP,
+  PACKETSTATE_FPGACONTROL,
+  
+  
+  PACKETSTATE_VOLTAGE,
+  PACKETSTATE_VOLTAGE_SETUP,
+  PACKETSTATE_CURRENT,
+  PACKETSTATE_CURRENT_SETUP,
+  PACKETSTATE_CAP,
+  PACKETSTATE_CAP_SETUP,
+  
+  PACKETSTATE_SDBLOCK_SETUP,
+  PACKETSTATE_SDBLOCK,
+  
+  PACKETSTATE_ECEF_SETUP,
+  PACKETSTATE_ECEF,
+  
+  PACKETSTATE_GPSACC_SETUP,
+  PACKETSTATE_GPSACC,
+  
+  PACKETSTATE_NAVSOLTIME_SETUP,
+  PACKETSTATE_NAVSOLTIME,
+  
+  PACKETSTATE_RTC_SETUP,
+  PACKETSTATE_RTC,
+  
+  PACKETSTATE_FLIPBANK
+) ;
+
+
+
 signal cur_item_state             : ItemState ;
 signal next_item_state            : ItemState ;
 signal end_item_state             : ItemState ;
+
+
+signal cur_packet_state             : PacketState ;
+
 
 --! Number of bytes needed in the current block.
 
@@ -1027,6 +1139,99 @@ constant status_up_count       : natural := status_update_interval_ms
                                             * ms_count_c;
 signal status_up_counter : unsigned(natural(trunc(log2(real(
                                 status_up_count)))) downto 0);
+                                
+--Wireless Packet Related Signals--
+--Millisecond Counter for Wireless Packet.
+constant wpacket_up_count       : natural := wireless_update_interval_ms_g 
+                                            * ms_count_c;
+signal wpacket_up_counter : unsigned(natural(trunc(log2(real(
+                                wpacket_up_count)))) downto 0);
+                                
+                                
+--Wireless Packet Signalling Lines. 
+signal wp_written : std_logic;
+signal wp_written_follower  : std_logic;
+signal write_wp      : std_logic ;
+signal write_wp_follower  : std_logic ;
+                                
+                                
+signal     sdxc_serial_reg           :    std_logic_vector(31 downto 0);
+
+signal     sdxc_block_reg            :    std_logic_vector(31 downto 0);
+signal     voltage_mv_reg            :    std_logic_vector (15 downto 0);
+signal     rem_cap_mah_reg           :    std_logic_vector (15 downto 0);
+signal     inst_cur_ma_reg           :    std_logic_vector (15 downto 0);
+signal     rtc_reg                   :    std_logic_vector (rtc_time_bytes_g*8-1 downto 0);
+
+signal     sdxc_serial_push           :    std_logic_vector(31 downto 0);  
+signal     sdxc_block_push            :    std_logic_vector(31 downto 0);
+signal     voltage_mv_push            :    std_logic_vector (15 downto 0);
+signal     rem_cap_mah_push           :    std_logic_vector (15 downto 0);
+signal     inst_cur_ma_push           :    std_logic_vector (15 downto 0);
+signal     rtc_push                   :    std_logic_vector (rtc_time_bytes_g*8-1 downto 0);
+signal     current_FPGA_time_push           :    std_logic_vector(gps_time_bytes_c*8-1 downto 0);    
+
+                                
+signal     sdxc_serial_reg_s           :    std_logic_vector(31 downto 0);
+signal     wp_gps_time_reg_s           :    std_logic_vector(gps_time_bytes_c*8-1 downto 0);    
+signal     sdxc_block_reg_s            :    std_logic_vector(31 downto 0);
+signal     voltage_mv_reg_s            :    std_logic_vector (15 downto 0);
+signal     rem_cap_mah_reg_s           :    std_logic_vector (15 downto 0);
+signal     inst_cur_ma_reg_s           :    std_logic_vector (15 downto 0);
+signal     rtc_reg_s                   :    std_logic_vector (rtc_time_bytes_g*8-1 downto 0);
+
+
+signal    control_register_s    :  std_logic_vector(ControlSignalsCnt_c-1 downto 0);
+signal    control_register      :  std_logic_vector(ControlSignalsCnt_c-1 downto 0);
+constant control_register_byte_count_c      : natural :=
+                                                      (ControlSignalsCnt_c + 7) / 8;
+signal    control_register_push :  std_logic_vector(control_register_byte_count_c*8-1 downto 0);
+    
+signal     navsol_ecefXYZ_reg    :    std_logic_vector ((MUNSol_ecefX_size_c + MUNSol_ecefY_size_c + 
+                                        MUNSol_ecefZ_size_c) * 8-1 downto 0);
+                                        
+                                        
+signal     navsol_ecefXYZ_push    :    std_logic_vector ((MUNSol_ecefX_size_c + MUNSol_ecefY_size_c + 
+                                        MUNSol_ecefZ_size_c) * 8-1 downto 0);
+                                
+signal     navsol_pAcc_reg    :    std_logic_vector ((MUNSol_pAcc_size_c) * 8-1 downto 0); 
+signal     navsol_pAcc_reg_push    :    std_logic_vector ((MUNSol_pAcc_size_c) * 8-1 downto 0);
+                                    
+
+
+signal    nav_sol_time      :  std_logic_vector(gps_time_bytes_c*8-1 downto 0);
+signal    nav_sol_time_push :  std_logic_vector(gps_time_bytes_c*8-1 downto 0);
+
+--Address into txrx bank is txrx_bank & fb_txrx_address_a;
+signal    txrx_bank         : std_logic;
+signal    fb_txrx_address_a : unsigned(natural(trunc(log2(real(
+                            (txrx_single_buffer_size)-1))))
+                            downto 0);    
+                            
+                            
+
+--  Multi-byte transfer signals.
+--  For wireless packet state machine. 
+signal byte_count_w             : unsigned (7 downto 0) ;
+signal byte_number_w            : unsigned (7 downto 0) ;
+                            
+                            
+--Wireless Packet Related Signals--  
+
+
+
+
+
+--Count the number of GPS events for debug.
+signal navsol_cnt   : unsigned(7 downto 0);
+signal tim_tm2_cnt  : unsigned(7 downto 0);
+
+attribute noprune: boolean;
+attribute noprune of navsol_cnt : signal is true;
+attribute noprune of tim_tm2_cnt : signal is true;
+
+
+
 
 
 
@@ -1252,6 +1457,11 @@ fb_magram_clk_a_out <= not(clock_sys);
 flashblock_gpsbuf_clk <= not(clock_sys);
 
 
+fb_txrx_clk_a_out <= not(clock_sys);
+txrx_bank_out <= txrx_bank;
+fb_txrx_address_a_out <= txrx_bank & std_logic_vector(fb_txrx_address_a);
+  
+
 --
 --Send a byte to the Flash device when one is ready.
 --Check all data sources and send a byte to the data bus
@@ -1372,6 +1582,12 @@ begin
     blocks_past_crit_signal <= to_unsigned(0,blocks_past_crit_signal'length);
 
 
+    navsol_ecefXYZ_reg    <= (others => '0') ;                         
+    navsol_pAcc_reg       <= (others => '0') ;
+    nav_sol_time          <= (others => '0') ;
+    
+  
+  
 
 
   elsif (clock_sys'event and clock_sys = '1') then
@@ -2015,11 +2231,113 @@ begin
 
 
         when BLOCK_STATE_NAV_SOL_LEN_ST       =>
-          cur_block_state   <= BLOCK_STATE_WAIT ;
+          --cur_block_state   <= BLOCK_STATE_WAIT ;
+          cur_block_state   <= BLOCK_STATE_GPS_NAV_SOL_ECEF_SETUP_W ;
           block_byte        <= STD_LOGIC_VECTOR (SEG_LEN_GPS_NAV_SOL) ;
           block_byte_ready  <= '1' ;
 
 
+        when BLOCK_STATE_GPS_NAV_SOL_ECEF_SETUP_W => 
+            cur_block_state   <= BLOCK_STATE_GPS_NAV_SOL_ECEF_FETCH_W;
+            flashblock_gpsbuf_rd_en <= '1';          
+            flashblock_gpsbuf_addr_internal      <= TO_UNSIGNED (msg_ram_base_c +
+                                            msg_ubx_nav_sol_ramaddr_c +
+                                            if_set (posbank,
+                                                    msg_ubx_nav_sol_ramused_c) + 
+                                                    MUNSol_ecefX_offset_c,
+                                            flashblock_gpsbuf_addr_internal'length) ;            
+          
+            byte_number       <= TO_UNSIGNED (MUNSol_ecefX_size_c + 
+                                              MUNSol_ecefY_size_c + 
+                                              MUNSol_ecefZ_size_c,
+                                              byte_number'length) ;
+            byte_count        <= TO_UNSIGNED (1, byte_count'length) ;
+          
+        when BLOCK_STATE_GPS_NAV_SOL_ECEF_FETCH_W => 
+
+          if (byte_count = byte_number) then
+            cur_block_state   <= BLOCK_STATE_GPS_NAV_SOL_ECEFACC_SETUP_W ;
+            flashblock_gpsbuf_rd_en <= '0'; 
+           
+            navsol_ecefXYZ_reg   <= gpsbuf_flashblock_data & navsol_ecefXYZ_reg(navsol_ecefXYZ_reg'length-1 downto 8);
+          else
+            byte_count        <= byte_count + 1 ;
+           
+            navsol_ecefXYZ_reg   <= gpsbuf_flashblock_data & navsol_ecefXYZ_reg(navsol_ecefXYZ_reg'length-1 downto 8);
+            flashblock_gpsbuf_addr_internal <= flashblock_gpsbuf_addr_internal + 1;
+          end if ; 
+          
+          
+        when BLOCK_STATE_GPS_NAV_SOL_ECEFACC_SETUP_W => 
+            cur_block_state   <= BLOCK_STATE_GPS_NAV_SOL_ECEFACC_FETCH;
+            flashblock_gpsbuf_rd_en <= '1';          
+            flashblock_gpsbuf_addr_internal       <= TO_UNSIGNED (msg_ram_base_c +
+                                            msg_ubx_nav_sol_ramaddr_c +
+                                            if_set (posbank,
+                                                    msg_ubx_nav_sol_ramused_c) + 
+                                                    MUNSol_pAcc_offset_c,
+                                            flashblock_gpsbuf_addr_internal'length) ;              
+          
+            byte_number       <= TO_UNSIGNED (MUNSol_pAcc_size_c,
+                                              byte_number'length) ;
+            byte_count        <= TO_UNSIGNED (1, byte_count'length) ;
+          
+        when BLOCK_STATE_GPS_NAV_SOL_ECEFACC_FETCH => 
+
+          if (byte_count = byte_number) then
+            cur_block_state   <= BLOCK_STATE_GPS_NAV_SOL_POSTIME_SETUP_W ;
+            flashblock_gpsbuf_rd_en <= '0'; 
+
+          navsol_pAcc_reg <= gpsbuf_flashblock_data & navsol_pAcc_reg(navsol_pAcc_reg'length-1 downto 8);    
+            
+          else
+          byte_count        <= byte_count + 1 ;
+          
+          navsol_pAcc_reg <= gpsbuf_flashblock_data & navsol_pAcc_reg(navsol_pAcc_reg'length-1 downto 8);
+                                                    
+          
+            
+            flashblock_gpsbuf_addr_internal <= flashblock_gpsbuf_addr_internal + 1;
+          end if ; 
+          
+          
+          
+          
+        when BLOCK_STATE_GPS_NAV_SOL_POSTIME_SETUP_W => 
+            cur_block_state   <= BLOCK_STATE_GPS_NAV_SOL_POSTIME_FETCH_W;
+            flashblock_gpsbuf_rd_en <= '1';          
+            flashblock_gpsbuf_addr_internal       <= TO_UNSIGNED (msg_ram_base_c +
+                                            msg_ram_postime_addr_c +
+                                            if_set (posbank,
+                                            msg_ram_postime_size_c),
+                                            flashblock_gpsbuf_addr_internal'length) ;           
+          
+            byte_number       <= TO_UNSIGNED (gps_time_bytes_c,
+                                              byte_number'length) ;
+            byte_count        <= TO_UNSIGNED (1, byte_count'length) ;
+          
+        when BLOCK_STATE_GPS_NAV_SOL_POSTIME_FETCH_W => 
+
+          if (byte_count = byte_number) then
+            cur_block_state   <= BLOCK_STATE_WAIT ;
+            flashblock_gpsbuf_rd_en <= '0'; 
+
+            
+            nav_sol_time <= gpsbuf_flashblock_data & nav_sol_time(nav_sol_time'length-1-8 downto 0);
+            
+            
+          else
+            byte_count        <= byte_count + 1 ;
+                       
+            nav_sol_time <= gpsbuf_flashblock_data & nav_sol_time(nav_sol_time'length-1-8 downto 0);
+
+            
+            flashblock_gpsbuf_addr_internal <= flashblock_gpsbuf_addr_internal + 1;
+          end if ; 
+          
+
+
+          
         when BLOCK_STATE_GPS_TIM_TM2_SETUP =>
 
         gps_req_out <= '1';
@@ -2420,12 +2738,12 @@ begin
           elsif (gps_time_data_write = '1') then
             if (cur_block_state = BLOCK_STATE_WAIT and next_block_state = BLOCK_STATE_WAIT) then
               if (audio_seg_length = 0) then
-
+                
                 bytes_needed        <= TO_UNSIGNED (GPS_TIM_TM2_BYTES,
                                                     bytes_needed'length) ;
                 cur_item_state      <= ITEM_STATE_CHECK_SPACE ;
                 end_item_state      <= ITEM_STATE_GPS_TIME_MARK ;
-
+                
               else
                 cur_item_state      <= ITEM_STATE_AUDIO_END ;
 
@@ -2659,8 +2977,446 @@ begin
 end process send_item ;
 
 
+--Update the wireless packet. On go, latch in all values from all domains.
+--along with the GPS time, then assemble the wireless packet. 
+
+--Synchronize all signals into this domain. 
+--_s signals are set_false_path into the TCL files of thei project. 
+--Latch all signals upon starting to build the packet. 
+--Build the packet. 
+update_wp:  process (clock_sys, rst_n)
+begin
+  if rst_n = '0' then
+
+    sdxc_serial_reg           <= (others => '0');
+    sdxc_block_reg            <= (others => '0');
+    voltage_mv_reg            <= (others => '0');
+    rem_cap_mah_reg           <= (others => '0');
+    inst_cur_ma_reg           <= (others => '0');
+    rtc_reg                   <= (others => '0');
+
+    sdxc_serial_push            <= (others => '0'); 
+    current_FPGA_time_push      <= (others => '0');
+    sdxc_block_push             <= (others => '0');
+    voltage_mv_push             <= (others => '0');
+    rem_cap_mah_push            <= (others => '0');
+    inst_cur_ma_push            <= (others => '0');
+    rtc_push                    <= (others => '0');
+
+    sdxc_serial_reg_s           <= (others => '0');
+
+    sdxc_block_reg_s            <= (others => '0');
+    voltage_mv_reg_s            <= (others => '0');
+    rem_cap_mah_reg_s           <= (others => '0');
+    inst_cur_ma_reg_s           <= (others => '0');
+    rtc_reg_s                   <= (others => '0');
 
 
+    control_register_s    <= (others => '0');
+    control_register      <= (others => '0');
+    control_register_push  <= (others => '0');
+                           
+    navsol_ecefXYZ_push      <= (others => '0');
+                                
+    navsol_pAcc_reg_push  <= (others => '0');           
+    nav_sol_time_push    <= (others => '0');           
+    
+    wp_written <= '0';
+    txrx_bank <= '0';
+    txrx_req_a_out     <= '0';
+    
+    fb_txrx_wr_en_a_out  <= '0';
+    fb_txrx_rd_en_a_out  <= '0';
+    
+  elsif (clock_sys'event and clock_sys = '0') then
+
+    sdxc_serial_reg     <=    sdxc_serial_reg_s;                
+    sdxc_block_reg      <=    sdxc_block_reg_s;           
+    voltage_mv_reg      <=    voltage_mv_reg_s;           
+    rem_cap_mah_reg     <=    rem_cap_mah_reg_s;         
+    inst_cur_ma_reg     <=    inst_cur_ma_reg_s;          
+    rtc_reg             <=    rtc_reg_s;  
+    control_register    <=    control_register_s;
+
+  elsif (clock_sys'event and clock_sys = '1') then
+  
+    sdxc_serial_reg_s           <= sdxc_serial_in ;
+    sdxc_block_reg_s            <= sdxc_block_in ;
+    voltage_mv_reg_s            <= voltage_mv_in ;
+    rem_cap_mah_reg_s           <= rem_cap_mah_in ;
+    inst_cur_ma_reg_s           <= inst_cur_ma_in ;
+    rtc_reg_s                   <= rtc_time_s ;
+    control_register_s          <= pc_controlreg_in;
+    
+    
+    if (clk_enable) = '1' then
+      case cur_packet_state is
+    
+    
+      when PACKETSTATE_WAIT =>
+      
+      if (write_wp = '1') then 
+        cur_packet_state <= PACKETSTATE_REQ;
+      end if;
+      
+      when PACKETSTATE_REQ =>
+        txrx_req_a_out     <= '1';
+        
+        sdxc_serial_push     <=    sdxc_serial_reg;                 
+        sdxc_block_push      <=    sdxc_block_reg;           
+        voltage_mv_push      <=    voltage_mv_reg;           
+        rem_cap_mah_push     <=    rem_cap_mah_reg;         
+        inst_cur_ma_push     <=    inst_cur_ma_reg;          
+        rtc_push         <=    rtc_reg;  
+        current_FPGA_time_push  <= current_FPGA_time;
+        navsol_pAcc_reg_push <= navsol_pAcc_reg;
+        navsol_ecefXYZ_push <= navsol_ecefXYZ_reg;
+        nav_sol_time_push <= nav_sol_time;
+        control_register_push(control_register'length-1 downto 0) <=  control_register;
+         
+
+        if ( txrx_rec_a_in = '1') then 
+          cur_packet_state <= PACKETSTATE_SERIAL_SETUP;
+        end if; 
+
+        
+        
+      when PACKETSTATE_SERIAL_SETUP =>
+        --Leave wr_en on till end of packet.
+        fb_txrx_wr_en_a_out <= '1';
+        
+        cur_packet_state <= PACKETSTATE_SERIAL;
+
+        fb_txrx_address_a   <= TO_UNSIGNED (microsd_serial_location_c,
+                                            fb_txrx_address_a'length) ;            
+        byte_number_w       <= TO_UNSIGNED (microsd_serial_length_bytes_c,
+                                          byte_number_w'length) ;
+                                          
+        byte_count_w        <= TO_UNSIGNED (1, byte_count'length) ;
+        
+        fb_txrx_data_a_out  <=  sdxc_serial_push(7 downto 0); 
+        
+        sdxc_serial_push <= x"00" & sdxc_serial_push(31 downto 8);
+          
+
+      
+      when PACKETSTATE_SERIAL =>
+        if (byte_count_w = byte_number_w) then
+          cur_packet_state   <= PACKETSTATE_RTC_SETUP ;
+        else
+
+          fb_txrx_data_a_out <=  sdxc_serial_push(7 downto 0); 
+          sdxc_serial_push <= x"00" & sdxc_serial_push(31 downto 8);
+          byte_count_w        <= byte_count_w + 1 ;
+          fb_txrx_address_a <= fb_txrx_address_a + 1;
+        end if ;
+
+        
+        
+        
+        
+      when PACKETSTATE_RTC_SETUP =>
+      
+          cur_packet_state <= PACKETSTATE_RTC;
+
+          fb_txrx_address_a   <= TO_UNSIGNED (rtc_time_location_c,
+                                              fb_txrx_address_a'length) ;            
+          byte_number_w       <= TO_UNSIGNED (rtc_time_length_bytes_c,
+                                            byte_number_w'length) ;
+                                            
+          byte_count_w        <= TO_UNSIGNED (1, byte_count'length) ;
+          
+          fb_txrx_data_a_out  <=  rtc_push(7 downto 0); 
+          
+          rtc_push <= x"00" & rtc_push(rtc_push'length-1 downto 8);   
+        
+        
+        when PACKETSTATE_RTC =>
+        
+        if (byte_count_w = byte_number_w) then
+          cur_packet_state   <= PACKETSTATE_GPSTIME_SETUP ;
+        else
+
+          fb_txrx_data_a_out <=  rtc_push(7 downto 0); 
+          rtc_push <= x"00" & rtc_push(rtc_push'length-1 downto 8);
+          byte_count_w        <= byte_count_w + 1 ;
+          fb_txrx_address_a <= fb_txrx_address_a + 1;
+        end if ;
+        
+        
+      when PACKETSTATE_GPSTIME_SETUP =>
+      
+       cur_packet_state <= PACKETSTATE_GPSTIME;
+
+        fb_txrx_address_a   <= TO_UNSIGNED (packet_gen_time_location_c,
+                                            fb_txrx_address_a'length) ;            
+        byte_number_w       <= TO_UNSIGNED (packet_gen_time_length_bytes_c,
+                                          byte_number_w'length) ;
+                                          
+        byte_count_w        <= TO_UNSIGNED (1, byte_count'length) ;
+        
+        fb_txrx_data_a_out  <=  current_FPGA_time_push(7 downto 0); 
+        
+        current_FPGA_time_push <= x"00" & current_FPGA_time_push(current_FPGA_time_push'length-1 downto 8);  
+        
+        
+      when PACKETSTATE_GPSTIME =>
+        if (byte_count_w = byte_number_w) then
+          cur_packet_state   <= PACKETSTATE_VOLTAGE_SETUP ;
+        else
+
+          fb_txrx_data_a_out <=  current_FPGA_time_push(7 downto 0); 
+          current_FPGA_time_push <= x"00" & current_FPGA_time_push(current_FPGA_time_push'length-1 downto 8);
+          byte_count_w        <= byte_count_w + 1 ;
+          fb_txrx_address_a <= fb_txrx_address_a + 1;
+        end if ;
+
+
+        
+        when PACKETSTATE_VOLTAGE_SETUP =>
+      
+        cur_packet_state <= PACKETSTATE_VOLTAGE;
+
+        fb_txrx_address_a   <= TO_UNSIGNED (battery_voltage_location_c,
+                                            fb_txrx_address_a'length) ;            
+        byte_number_w       <= TO_UNSIGNED (battery_voltage_length_bytes_c,
+                                          byte_number_w'length) ;
+                                          
+        byte_count_w        <= TO_UNSIGNED (1, byte_count'length) ;
+        
+        fb_txrx_data_a_out  <=  voltage_mv_push(7 downto 0); 
+        
+        voltage_mv_push <= x"00" & voltage_mv_push(voltage_mv_push'length-1 downto 8);  
+        
+
+        when PACKETSTATE_VOLTAGE =>
+
+        if (byte_count_w = byte_number_w) then
+          cur_packet_state   <= PACKETSTATE_CAP_SETUP ;
+        else
+
+          fb_txrx_data_a_out <=  voltage_mv_push(7 downto 0); 
+          voltage_mv_push <= x"00" & voltage_mv_push(voltage_mv_push'length-1 downto 8);
+          byte_count_w        <= byte_count_w + 1 ;
+          fb_txrx_address_a <= fb_txrx_address_a + 1;
+        end if ;
+        
+        
+        when PACKETSTATE_CURRENT_SETUP =>
+      
+          cur_packet_state <= PACKETSTATE_CURRENT;
+
+          fb_txrx_address_a   <= TO_UNSIGNED (battery_current_location_c,
+                                              fb_txrx_address_a'length) ;            
+          byte_number_w       <= TO_UNSIGNED (battery_current_length_bytes_c,
+                                            byte_number_w'length) ;
+                                            
+          byte_count_w        <= TO_UNSIGNED (1, byte_count'length) ;
+          
+          fb_txrx_data_a_out  <=  inst_cur_ma_push(7 downto 0); 
+          
+          inst_cur_ma_push <= x"00" & inst_cur_ma_push(inst_cur_ma_push'length-1 downto 8);   
+        
+        
+        when PACKETSTATE_CURRENT =>
+        
+        if (byte_count_w = byte_number_w) then
+          cur_packet_state   <= PACKETSTATE_SDBLOCK_SETUP ;
+        else
+
+          fb_txrx_data_a_out <=  inst_cur_ma_push(7 downto 0); 
+          inst_cur_ma_push <= x"00" & inst_cur_ma_push(inst_cur_ma_push'length-1 downto 8);
+          byte_count_w        <= byte_count_w + 1 ;
+          fb_txrx_address_a <= fb_txrx_address_a + 1;
+        end if ;
+        
+        
+        when PACKETSTATE_CAP_SETUP =>
+      
+          cur_packet_state <= PACKETSTATE_CAP;
+
+          fb_txrx_address_a   <= TO_UNSIGNED (battery_capacity_location_c,
+                                              fb_txrx_address_a'length) ;            
+          byte_number_w       <= TO_UNSIGNED (battery_capacity_length_bytes_c,
+                                            byte_number_w'length) ;
+                                            
+          byte_count_w        <= TO_UNSIGNED (1, byte_count'length) ;
+          
+          fb_txrx_data_a_out  <=  rem_cap_mah_push(7 downto 0); 
+          
+          rem_cap_mah_push <= x"00" & rem_cap_mah_push(rem_cap_mah_push'length-1 downto 8);   
+        
+        
+        when PACKETSTATE_CAP =>
+        
+        if (byte_count_w = byte_number_w) then
+          cur_packet_state   <= PACKETSTATE_CURRENT_SETUP ;
+        else
+
+          fb_txrx_data_a_out <=  rem_cap_mah_push(7 downto 0); 
+          rem_cap_mah_push <= x"00" & rem_cap_mah_push(rem_cap_mah_push'length-1 downto 8);
+          byte_count_w        <= byte_count_w + 1 ;
+          fb_txrx_address_a <= fb_txrx_address_a + 1;
+        end if ;
+        
+        when PACKETSTATE_SDBLOCK_SETUP =>
+      
+          cur_packet_state <= PACKETSTATE_SDBLOCK;
+
+          fb_txrx_address_a   <= TO_UNSIGNED (microsd_last_block_written_location_c,
+                                              fb_txrx_address_a'length) ;            
+          byte_number_w       <= TO_UNSIGNED (microsd_last_block_written_length_bytes_c,
+                                            byte_number_w'length) ;
+                                            
+          byte_count_w        <= TO_UNSIGNED (1, byte_count'length) ;
+          
+          fb_txrx_data_a_out  <=  sdxc_block_push(7 downto 0); 
+          
+          sdxc_block_push <= x"00" & sdxc_block_push(sdxc_block_push'length-1 downto 8);   
+        
+        
+        when PACKETSTATE_SDBLOCK =>
+        
+        if (byte_count_w = byte_number_w) then
+          cur_packet_state   <= PACKETSTATE_ECEF_SETUP ;
+        else
+
+          fb_txrx_data_a_out <=  sdxc_block_push(7 downto 0); 
+          sdxc_block_push <= x"00" & sdxc_block_push(sdxc_block_push'length-1 downto 8);
+          byte_count_w        <= byte_count_w + 1 ;
+          fb_txrx_address_a <= fb_txrx_address_a + 1;
+        end if ;
+        
+        
+        when PACKETSTATE_ECEF_SETUP =>
+      
+          cur_packet_state <= PACKETSTATE_ECEF;
+
+          fb_txrx_address_a   <= TO_UNSIGNED (gps_pos_ecef_location_c,
+                                              fb_txrx_address_a'length) ;            
+          byte_number_w       <= TO_UNSIGNED (gps_pos_ecef_length_bytes_c,
+                                            byte_number_w'length) ;
+                                            
+          byte_count_w        <= TO_UNSIGNED (1, byte_count'length) ;
+          
+          fb_txrx_data_a_out  <=  navsol_ecefXYZ_push(7 downto 0); 
+          
+          navsol_ecefXYZ_push <= x"00" & navsol_ecefXYZ_push(navsol_ecefXYZ_push'length-1 downto 8);   
+        
+        
+        when PACKETSTATE_ECEF =>
+        
+        if (byte_count_w = byte_number_w) then
+          cur_packet_state   <= PACKETSTATE_GPSACC_SETUP ;
+        else
+
+          fb_txrx_data_a_out <=  navsol_ecefXYZ_push(7 downto 0); 
+          navsol_ecefXYZ_push <= x"00" & navsol_ecefXYZ_push(navsol_ecefXYZ_push'length-1 downto 8);
+          byte_count_w        <= byte_count_w + 1 ;
+          fb_txrx_address_a <= fb_txrx_address_a + 1;
+        end if ;
+        
+        
+        when PACKETSTATE_GPSACC_SETUP =>
+      
+          cur_packet_state <= PACKETSTATE_GPSACC;
+
+          fb_txrx_address_a   <= TO_UNSIGNED (gps_accuracy_location_c,
+                                              fb_txrx_address_a'length) ;            
+          byte_number_w       <= TO_UNSIGNED (gps_accuracy_length_bytes_c,
+                                            byte_number_w'length) ;
+                                            
+          byte_count_w        <= TO_UNSIGNED (1, byte_count'length) ;
+          
+          fb_txrx_data_a_out  <=  navsol_pAcc_reg_push(7 downto 0); 
+          
+          navsol_pAcc_reg_push <= x"00" & navsol_pAcc_reg_push(navsol_pAcc_reg_push'length-1 downto 8);   
+        
+        
+        when PACKETSTATE_GPSACC =>
+        
+        if (byte_count_w = byte_number_w) then
+          cur_packet_state   <= PACKETSTATE_NAVSOLTIME_SETUP ;
+        else
+
+          fb_txrx_data_a_out <=  navsol_pAcc_reg_push(7 downto 0); 
+          navsol_pAcc_reg_push <= x"00" & navsol_pAcc_reg_push(navsol_pAcc_reg_push'length-1 downto 8);
+          byte_count_w        <= byte_count_w + 1 ;
+          fb_txrx_address_a <= fb_txrx_address_a + 1;
+        end if ;
+        
+        
+        when PACKETSTATE_NAVSOLTIME_SETUP =>
+      
+          cur_packet_state <= PACKETSTATE_NAVSOLTIME;
+
+          fb_txrx_address_a   <= TO_UNSIGNED (gps_pos_time_location_c,
+                                              fb_txrx_address_a'length) ;            
+          byte_number_w       <= TO_UNSIGNED (gps_pos_time_length_bytes_c,
+                                            byte_number_w'length) ;
+                                            
+          byte_count_w        <= TO_UNSIGNED (1, byte_count'length) ;
+          
+          fb_txrx_data_a_out  <=  nav_sol_time_push(7 downto 0); 
+          
+          nav_sol_time_push <= x"00" & nav_sol_time_push(nav_sol_time_push'length-1 downto 8);   
+        
+        
+        when PACKETSTATE_NAVSOLTIME =>
+        
+        if (byte_count_w = byte_number_w) then
+          cur_packet_state   <= PACKETSTATE_FPGACONTROL_SETUP ;
+        else
+
+          fb_txrx_data_a_out <=  nav_sol_time_push(7 downto 0); 
+          nav_sol_time_push <= x"00" & nav_sol_time_push(nav_sol_time_push'length-1 downto 8);
+          byte_count_w        <= byte_count_w + 1 ;
+          fb_txrx_address_a <= fb_txrx_address_a + 1;
+        end if ;
+        
+        
+        
+      when PACKETSTATE_FPGACONTROL_SETUP =>
+      
+        cur_packet_state <= PACKETSTATE_FPGACONTROL;
+
+        fb_txrx_address_a   <= TO_UNSIGNED (control_register_location_c,
+                                            fb_txrx_address_a'length) ;            
+        byte_number_w       <= TO_UNSIGNED (control_register_length_bytes_c,
+                                          byte_number_w'length) ;
+                                          
+        byte_count_w        <= TO_UNSIGNED (1, byte_count'length) ;
+        
+        fb_txrx_data_a_out  <=  control_register_push(7 downto 0); 
+        
+        control_register_push <= x"00" & control_register_push(control_register_push'length-1 downto 8);  
+        
+        
+      when PACKETSTATE_FPGACONTROL =>
+        if (byte_count_w = byte_number_w) then
+          cur_packet_state   <= PACKETSTATE_FLIPBANK ;
+        else
+
+          fb_txrx_data_a_out <=  control_register_push(7 downto 0); 
+          control_register_push <= x"00" & control_register_push(control_register_push'length-1 downto 8);
+          byte_count_w        <= byte_count_w + 1 ;
+          fb_txrx_address_a <= fb_txrx_address_a + 1;
+        end if ;
+        
+        
+      when PACKETSTATE_FLIPBANK =>
+        fb_txrx_wr_en_a_out <= '0';
+        cur_packet_state   <= PACKETSTATE_WAIT ;
+        txrx_bank <= not txrx_bank;
+        txrx_req_a_out     <= '0';
+        wp_written <= '1';
+        
+    
+    
+      end case ;
+    end if;
+    end if;
+end process update_wp ;
 --
 --Determine when a status segment should be written.
 --Initiate a status segment write when requested.
@@ -2695,6 +3451,12 @@ begin
             write_status        <= '1' ;
           end if ;
           
+          --Modelsim Test--
+      -- elsif( status_up_counter = to_unsigned(400,
+                                                -- status_up_counter'length)) then
+          -- write_status        <= '1' ;
+        -- status_up_counter <= (others => '0');
+          --Modelsim Test--
       elsif( status_up_counter = to_unsigned(status_up_count,
                                                 status_up_counter'length)) then
         write_status        <= '1';
@@ -2716,6 +3478,40 @@ begin
   end if;
 end process update_status ;
 
+
+-- Signal Wireless Packet Update at interval.
+update_wireless_p:  process (clock_sys, rst_n)
+begin
+  if (rst_n) = '0' then
+    write_wp      <= '0' ;
+    wp_written_follower <= '0';
+    wpacket_up_counter <= (others => '0');
+  elsif clock_sys'event and clock_sys = '1' then
+      if (clk_enable) = '1' then
+          wpacket_up_counter <= wpacket_up_counter + 1;
+        if (wp_written_follower /= wp_written) then
+          wp_written_follower <= wp_written;
+          if(wp_written = '1') then
+            write_wp          <= '0' ;
+          end if;
+      
+            -- --Modelsim Test--
+        -- elsif( wpacket_up_counter = to_unsigned(400,
+                                                  -- wpacket_up_counter'length)) then
+          -- write_wp        <= '1' ;
+          -- wpacket_up_counter <= (others => '0');
+            --Modelsim Test--
+        elsif( wpacket_up_counter = to_unsigned(wpacket_up_count,
+                                                  wpacket_up_counter'length)) then
+          write_wp        <= '1' ;
+          wpacket_up_counter <= (others => '0');
+        end if ;      
+      end if ;
+    end if;
+end process update_wireless_p ;
+
+
+  
 --
 --
 --Handle events trigger.
@@ -3116,6 +3912,9 @@ begin
     posbank_follower <= '0';
     tmbank_follower <= '0';
 
+    navsol_cnt    <= (others => '0') ;
+    tim_tm2_cnt   <= (others => '0') ;
+
   elsif (clock_sys'event and clock_sys = '1') then
     if (clk_enable) = '1' then
 
@@ -3128,6 +3927,7 @@ begin
       elsif tmbank_follower /= tmbank then
         tmbank_follower   <= tmbank ;
         gps_time_data_write        <= '1' ;
+        tim_tm2_cnt <= tim_tm2_cnt + 1;
       end if ;
 
       if (gps_pos_written_follower /= gps_pos_written) then
@@ -3139,6 +3939,7 @@ begin
       elsif posbank_follower /= posbank then
         posbank_follower   <= posbank ;
         gps_pos_data_write        <= '1' ;
+        navsol_cnt <= navsol_cnt + 1;
       end if ;
     end if ;
   end if;
