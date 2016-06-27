@@ -4432,7 +4432,7 @@ rtc_inquire_top_i0 : rtc_inquire_top
       signal    txrxmem_receivers         : std_logic_vector (txtxmemrq_count_c-1
                                                         downto 0) ;
       constant  txrxmem_receivers_num_length : natural := 3;                               
-      signal    txrxmem_receivers_num       : unsigned (txrxmem_receivers_num_length*8-1
+      signal    txrxmem_receivers_num       : unsigned (txrxmem_receivers_num_length-1
                                                         downto 0) ;
 
       --  Flash Block to Magnetic Memory communications signals.
