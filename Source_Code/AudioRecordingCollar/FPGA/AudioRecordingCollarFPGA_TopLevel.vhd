@@ -169,11 +169,11 @@ entity AudioRecordingCollarFPGA_TopLevel is
 
     -- Data Transmitter Connections
 
-    TXRX_MOSI_TO_FPGA : out std_logic;
-    TXRX_CS_N_TO_FPGA : out std_logic;
+    TXRX_MOSI_TO_FPGA 			: inout std_logic;
+    TXRX_CS_N_TO_FPGA 			: inout std_logic;
     TXRX_GPIO3_TO_FPGA_CPLD : inout std_logic;
-    TXRX_SCLK_TO_FPGA : out std_logic;
-    TXRX_MISO_TO_FPGA : inout std_logic;
+    TXRX_SCLK_TO_FPGA 			: inout std_logic;
+    TXRX_MISO_TO_FPGA 			: inout std_logic;
     
     --Direct SDCard Connections
     SDCARD_DI_CLK_TO_FPGA   : out std_logic;
@@ -425,8 +425,11 @@ C : Collar
       mic_right_io              => MIC_B_DATA_TO_FPGA,
       mic_left_io               => MIC_A_DATA_TO_FPGA
 
-      --radio_clk                 => TXRX_SCLK_TO_FPGA(0),
-      --radio_data_io             => (others => '0')
+      radio_clk                 => TXRX_SCLK_TO_FPGA,
+      radio_data_io(0)          => TXRX_CS_N_TO_FPGA,
+			radio_data_io(1)          => TXRX_MOSI_TO_FPGA,
+			radio_data_io(2)          => TXRX_MISO_TO_FPGA,
+			radio_data_io(3)          => TXRX_GPIO3_TO_FPGA_CPLD
     );
     
     
