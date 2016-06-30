@@ -49,7 +49,7 @@ F	:	000E2A	;	--Preamble Detection Configuration Reg. 0
 2A	:	00290F	;	--RFEND Configuration Reg. 1
 2B	:	002A00	;	--RFEND Configuration Reg. 0
 2C	:	002B7F	;	--Power Amplifier Configuration Reg. 2
-2D	:	002C56	;	--Power Amplifier Configuration Reg. 1
+2D	:	002C57	;	--Power Amplifier Configuration Reg. 1
 2E	:	002D7C	;	--Power Amplifier Configuration Reg. 0
 2F	:	002EFF	;	--Packet Length Configuration
 30	:	2F0000	;	--IF Mix Configuration

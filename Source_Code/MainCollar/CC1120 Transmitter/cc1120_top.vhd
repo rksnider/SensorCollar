@@ -3,7 +3,7 @@
 --! @file       $File$
 --! @brief      Initialize and Control the TI CC1120 Transmitter 
 --! @details    CC1120 TI Transmitter.
---! @copyright  
+--! @copyright  Copyright (C) 2014 Ross K. Snider and Tyler B. Davis
 --! @author     Tyler B. Davis
 --! @version    $Revision$
 
@@ -110,7 +110,7 @@ entity CC1120_top is
 		command_width_bytes_g       : natural   := 1;
 		address_width_bytes_g       : natural   := 1;
 		data_length_bit_width_g     : natural   := 8;
-		packet_length_bytes					: natural 	:= 30;
+		packet_length_bytes					: natural 	:= 10;
 		tx_repeat_g									: natural 	:= 5;
 		status_start_g 							: natural   := 6;
 		status_end_g 								: natural   := 4
@@ -169,9 +169,8 @@ architecture behavior of CC1120_top is
 	-- Power down when not active (flushes BOTH FIFOS)
 	TXRX_STATE_SLEEP,
 	
-	-- Settling state
-	--TXRX_STATE_SETTLING,
-	
+	-- Generic waiting state
+	-- TXRX_STATE_WAIT,
 	-- Fast action TX ready
 	-- TXRX_STATE_FSTXON, 
 	
@@ -195,6 +194,9 @@ architecture behavior of CC1120_top is
 	RX_STATE_DONE,
   RX_STATE_FIFO_ERROR
 	
+	-- DEBUG STATES
+	-- DEBUG_REG_READ
+	
   );
 	
 	-- Addresses where the number of registers to initialize is and the start 
@@ -204,6 +206,7 @@ architecture behavior of CC1120_top is
     
   -- Define the current state of the ship
   signal cur_txrx_state   : TXRX_STATE;
+	signal next_txrx_state  : TXRX_STATE;
   
   -- Define the register size
   constant TXRX_INIT_REGISTER_SIZE 					: natural := 2;
@@ -371,6 +374,7 @@ architecture behavior of CC1120_top is
 	signal listen 					: std_logic := '0';
 	signal cycles 					: natural 	:= 512;
 	signal cycle_cntr 			: natural 	:= 0;
+	signal next_state       : std_logic := '0';
 --########################################################################--
 	
 	-- Create signals for the dual-port RAM
@@ -399,8 +403,13 @@ architecture behavior of CC1120_top is
   signal    slave_master_data_ack_spi_signal :std_logic;
 			
 	-- Startup signals for the chip
-	signal startup_en : std_logic;
+	signal startup_en 			: std_logic;
 	signal startup_follower : std_logic;
+	signal startup_wait			: natural 	:= 	1024	;
+	
+	-- Signals for counters
+	signal generic_cntr 	: natural := 0;
+	signal generic_wait  	: natural := 8;
 	
 	-- Sleep signal for the chip
 	signal sleep_en 		: std_logic;
@@ -687,7 +696,7 @@ begin
 	end if;
 	
 	if (slave_master_data_spi_signal(status_start_g downto status_end_g) = 
-		TXFIFOERR and loaded_packet = '1') then 
+		TXFIFOERR and loading_packet = '0') then 
 		cur_txrx_state <= TX_STATE_FIFO_FLUSH;
 	end if;
 		
@@ -705,16 +714,19 @@ begin
   
     case cur_txrx_state is
 		
-			 when TXRX_STATE_CHIP_RDY_INIT =>
-				 if (command_busy_spi_signal = '0') then
-					 command_spi_signal <= nBURST & nBURST & sidle_addr_c;
-					 address_en_spi_signal <= '0';
-					 data_length_spi_signal <= 
-																	 std_logic_vector(to_unsigned(
-																		 0,data_length_spi_signal'length));
-					 master_slave_data_rdy_spi_signal <= '1';
-					 cur_txrx_state <= TXRX_STATE_CHIP_RDY;
-				 end if;
+			-- when TXRX_STATE_WAIT =>
+				-- if (generic_cntr = generic_wait) then 
+					-- cur_txrx_state <= next_txrx_state;
+					-- generic_cntr <= 0;
+				-- else 
+					-- generic_cntr <= generic_cntr + 1;
+				-- end if;
+		
+			when TXRX_STATE_CHIP_RDY_INIT =>
+				if (miso_signal = '1') then 
+					cur_txrx_state <= TXRX_STATE_CHIP_RDY;
+				end if;
+				 
 				
 		
 			 -- Wait for the miso line to go low before sending commands
@@ -723,9 +735,17 @@ begin
 					 -- miso_follower <= miso_signal;
 					
 				 -- else 
-					 if (miso_in = '0' and cs_n_signal = '0') then
+					 if (miso_signal = '0') then
 						 cs_hold <= '0';
-						 cur_txrx_state <= TXRX_STATE_IDLE_WAIT;
+						 if (command_busy_spi_signal = '0') then
+							command_spi_signal <= nBURST & nBURST & sidle_addr_c;
+							address_en_spi_signal <= '0';
+							master_slave_data_rdy_spi_signal <= '1';
+							data_length_spi_signal <= std_logic_vector(to_unsigned(
+																						0,data_length_spi_signal'length));
+							cur_txrx_state <= TXRX_STATE_IDLE_WAIT;
+
+						end if;
 					 end if;
 				 --end if;
 
@@ -1051,6 +1071,7 @@ begin
 					if (tx_counter = tx_repeat_g) then 
 						tx_req <= '0';
 						tx_counter <= 0;
+						cur_txrx_state <= TXRX_STATE_REWRITE_GPIO;
 						--sleep_en <= '1';
 					else
 						tx_counter <= tx_counter + 1;
