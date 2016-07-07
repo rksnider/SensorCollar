@@ -1,13 +1,32 @@
 ------------------------------------------------------------------------------
---
---! @file       $File$
---! @brief      SPI Bus Handler. Shifts and Receives data on the SPI bus.
---!             
---! @details   
---! @copyright  
---! @author     
---! @version    
---
+----
+----!@file       spi_abstract.vhd
+----!@brief      Bit Level SPI abstraction. To be used with spi_commands.vhd.
+----!@details
+----!@author     Chris Casebeer
+----!@date       1_13_2015
+----!@copyright
+----
+----This program is free software : you can redistribute it and / or modify
+----it under the terms of the GNU General Public License as published by
+----the Free Software Foundation, either version 3 of the License, or
+----(at your option) any later version.
+----
+----This program is distributed in the hope that it will be useful,
+----but WITHOUT ANY WARRANTY; without even the implied warranty of
+----MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+----GNU General Public License for more details.
+----
+----You should have received a copy of the GNU General Public License
+----along with this program.If not, see <http://www.gnu.org/licenses/>.
+----
+----Chris Casebeer
+----Electrical and Computer Engineering
+----Montana State University
+----610 Cobleigh Hall
+----Bozeman, MT 59717
+----christopher.casebee1@msu.montana.edu
+----
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
@@ -86,6 +105,7 @@ architecture Behavioral of spi_abstract is
   (SPI_WAIT,
   SPI_CS,
   SPI_SHIFT,
+  SPI_CSN_DELAY,
   SPI_CSN
 										 );
 						
@@ -115,8 +135,6 @@ architecture Behavioral of spi_abstract is
 	signal	cs_n_signal					:std_logic;	
 	signal	mosi_signal					:std_logic;	
 
-
-  
   signal  rd_en : std_logic;
   signal  wr_en : std_logic;
 
@@ -149,9 +167,6 @@ begin
 --!             reset IF more data is to be sent. The state machine doesn't do
 --!             all this single handedly, but signals some other support processes. 
 --!              
---!           
---! @param    clk             Take action on positive edge.
---! @param    rst_n           rst_n to initial state.
 --
 ----------------------------------------------------------------------------  
 
@@ -217,16 +232,20 @@ begin
           elsif (bits_sent = 7 and new_data = '0') then
             miso_data_valid_o <= '1';
             miso_data_o <= read_shift;
-            cur_spi_state <= SPI_CSN;
+            cur_spi_state <= SPI_CSN_DELAY;
             bits_sent <= to_unsigned(0,bits_sent'length);
           else
             cur_spi_state <= SPI_SHIFT;
           end if;
         
         
+        when SPI_CSN_DELAY =>
+          cur_spi_state <= SPI_CSN;
+        
+        
         when SPI_CSN =>
-        reload <= '0';
-        cur_spi_state <= SPI_WAIT;
+          reload <= '0';
+          cur_spi_state <= SPI_WAIT;
 
       
       end case;
@@ -244,16 +263,8 @@ begin
 --!             gating sclk. 
 --!           
 --
---! @param    clk             Take action on positive edge.
---! @param    rst_n           rst_n to initial state.
---
 ----------------------------------------------------------------------------
 
-  --Interesting. Developing purely in Altera, one can put
-  --changing values in output_logic, not so in Modelsim.
-  --Thus changing logic should be moved into a clocked process. 
-  
-  
   output_logic : process(rst_n,cur_spi_state,send_shift)
 
 begin
@@ -273,32 +284,39 @@ if rst_n = '0' then
     case cur_spi_state is
 
       when SPI_WAIT =>
-      cs_n_signal <= '1';
-      sclk_en <= '0'; 
-      rd_en <= '0';
-      wr_en <= '0';
-      mosi_signal <= '0';
+        cs_n_signal <= '1';
+        sclk_en <= '0'; 
+        rd_en <= '0';
+        wr_en <= '0';
+        mosi_signal <= '0';
       
       when SPI_CS =>
-      sclk_en <= '0';
-      cs_n_signal <= '0';
-      rd_en <= '0';
-      wr_en <= '0';
-      mosi_signal <= '0';
+        sclk_en <= '0';
+        cs_n_signal <= '0';
+        rd_en <= '0';
+        wr_en <= '0';
+        mosi_signal <= '0';
       when SPI_SHIFT =>
-      mosi_signal <= send_shift(7);
-      rd_en <= '1';
-      wr_en <= '1';
-      cs_n_signal <= '0';
-      sclk_en <= '1';
+        mosi_signal <= send_shift(7);
+        rd_en <= '1';
+        wr_en <= '1';
+        cs_n_signal <= '0';
+        sclk_en <= '1';
 
       
+      when SPI_CSN_DELAY =>
+        mosi_signal <= '0';
+        rd_en <= '0';
+        wr_en <= '0';
+        cs_n_signal <= '0';
+        sclk_en <= '0'; 
+      
       when SPI_CSN =>
-      mosi_signal <= '0';
-      rd_en <= '0';
-      wr_en <= '0';
-      cs_n_signal <= '1';
-      sclk_en <= '0'; 
+        mosi_signal <= '0';
+        rd_en <= '0';
+        wr_en <= '0';
+        cs_n_signal <= '1';
+        sclk_en <= '0'; 
 
       
 		end case;
@@ -306,28 +324,7 @@ if rst_n = '0' then
     
 	end process;
   
-  --
-  
-  --A scheme used whereby clk is divided to generate sclk. 
-  --This design was shelved as full clk (50Mhz) speed was needed. 
--- clk_ce_gen:	process(clk, rst_n)
--- begin
-  -- if (rst_n = '0') then
-  -- sclk_signal <= '0';
-  -- sample_ce <= '0'; 
-  -- send_ce <= '0';
-  -- elsif rising_edge(clk) then
-        -- --These enables are placed such that samples can be done on 
-        -- --rising edge of sclk_signal via sample_ce and data can be pushed
-        -- --onto mosi via send_ce.
-        -- --Use of clock enables allows everything to be rising_edge. 
-        -- sclk_signal <= not sclk_signal;
-        -- sample_ce <=  sclk_signal;
-        -- send_ce <=  not sclk_signal;
-  -- end if;
--- end process;
 
-  
 ----------------------------------------------------------------------------
 --
 --! @brief      Read bits off MISO
@@ -335,9 +332,6 @@ if rst_n = '0' then
 --! @details    Sample data off MISO into read_shift on the rising edge of sclk.
 --!             This is the only process to run off the inverted clock_off signal. 
 --!           
---
---! @param    clk             Take action on positive edge.
---! @param    rst_n           rst_n to initial state.
 --
 ----------------------------------------------------------------------------
 rcv_MISO:	process(clk_off,rst_n)
@@ -361,9 +355,6 @@ end process;
 --!             This part of the algorithm adapts to both cpolcpha of 00 and 11.
 --!             This scheme of delaying the first byte sent out 
 --!           
---
---! @param    clk             Take action on positive edge.
---! @param    rst_n           rst_n to initial state.
 --
 ----------------------------------------------------------------------------
 
@@ -392,9 +383,6 @@ end process;
 --!             The process also listens to data_read, which will then set mosi_data_ack_o
 --!             high signalling to the user that more data can be presented.
 --!           
---
---! @param    clk             Take action on positive edge.
---! @param    rst_n           rst_n to initial state.
 --
 ----------------------------------------------------------------------------
 
