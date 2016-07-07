@@ -1308,6 +1308,19 @@ begin
         ) ;
       end component SystemTime ;
 
+      component RTC_Load is
+        Port (
+          clk                   : in    std_logic ;
+          new_rtc_in            : in    unsigned (epoch70_secbits_c-1 downto 0) ;
+          new_rtc_set_in        : in    std_logic ;
+          rtc_out               : out   unsigned (epoch70_secbits_c-1 downto 0) ;
+          rtc_set_out           : out   std_logic
+        ) ;
+      end component RTC_Load ;
+      
+      signal rtc_value          : unsigned (rtc_seconds'length-1 downto 0) ;
+      signal rtc_value_set      : std_logic ;
+
       --  System Time to GPS Memory communications signals.
 
       signal st_gpsmem_clk      : std_logic ;
@@ -1352,6 +1365,15 @@ begin
 
     begin
 
+      RTC_loader : RTC_Load
+        Port Map (
+          clk                   => master_clk,
+          new_rtc_in            => rtc_seconds,
+          new_rtc_set_in        => rtc_seconds_load,
+          rtc_out               => rtc_value,
+          rtc_set_out           => rtc_value_set
+        ) ;
+      
       system_clock : SystemTime
         Generic Map (
           clk_freq_g          => master_clk_freq_c,
@@ -1375,8 +1397,8 @@ begin
           startup_bytes_out   => reset_time_bytes,
           gps_time_out        => gps_time,
           gps_bytes_out       => gps_time_bytes,
-          rtc_sec_in          => rtc_seconds,
-          rtc_sec_load_in     => rtc_seconds_load,
+          rtc_sec_in          => rtc_value,
+          rtc_sec_load_in     => rtc_value_set,
           rtc_sec_out         => rtc_running_seconds,
           rtc_sec_set_out     => rtc_running_set,
           rtc_datetime_out    => running_datetime,
