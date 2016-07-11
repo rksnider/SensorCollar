@@ -69,6 +69,13 @@
 --For every byte sent out on MOSI a MISO byte is read. These bytes are presented
 -- at miso_data_o and are marked valid with '1' on miso_data_valid_o. 
 
+
+
+
+--TODO
+--Implment "01" and "10" SPI methods. 
+--Generically/programmatically specify cs_n delays. 
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;

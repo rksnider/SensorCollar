@@ -1,14 +1,37 @@
 ------------------------------------------------------------------------------
---
---! @file       $File$
---! @brief      SPI addressed command abstraction
---!             Send a command/address/payload onto an SPI slave.
---!             
---! @details   
---! @copyright  
---! @author     Chris Casebeer
---! @version    
---
+----
+----! @file       spi_commands.vhd
+----! @brief      SPI addressed command abstraction
+----!             Send a command/address/payload onto an SPI slave. 
+----!             
+----! @details   
+----! @copyright  
+----! @author     Chris Casebeer
+----! @version    
+----!@date       1_13_2015
+----!@copyright
+----
+----This program is free software : you can redistribute it and / or modify
+----it under the terms of the GNU General Public License as published by
+----the Free Software Foundation, either version 3 of the License, or
+----(at your option) any later version.
+----
+----This program is distributed in the hope that it will be useful,
+----but WITHOUT ANY WARRANTY; without even the implied warranty of
+----MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+----GNU General Public License for more details.
+----
+----You should have received a copy of the GNU General Public License
+----along with this program.If not, see <http://www.gnu.org/licenses/>.
+----
+----Chris Casebeer
+----Electrical and Computer Engineering
+----Montana State University
+----610 Cobleigh Hall
+----Bozeman, MT 59717
+----christopher.casebee1@msu.montana.edu
+----
+------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
@@ -18,14 +41,14 @@
 --!   
 --! @param      command_used_g        Use a command with the abstraction. 
 --! @param      address_used_g        Use an address with the abstraction.  
---! @param      command_width_bytes_g       The width of the command in bytes.  
---! @param      address_width_bytes_g       The width of the address in bytes.
+--! @param      command_width_bytes_g       The width of the command in bytes. Must be >=1;  
+--! @param      address_width_bytes_g       The width of the address in bytes. Must be >=1;  
 --!                                         If no address is used, this must be set to 0.
 --! @param      data_length_bit_width_g     The bit width of the data_length_in
 --!                                         port. Allows greater payload lengths.      
 --! @param      cpol_cpha             Target a 00 or 11 implementation of SPI. Default is 00.    
 --!
---! @param      clk                   System clock which drives entity. 
+--! @param      clk                   System clock which drives entity. This is also your SPI clock speed.
 --! @param      rst_n                 Active Low reset to reset entity 
 --! @param      command_in            Command to send to spi slave.
 --! @param      address_in            Address to send after command if addressed. 
@@ -44,12 +67,12 @@
 --!                                            
 --!                                                 
 --! @param      master_slave_data_ack_out   The entity can accept another payload byte upon
---!                                         this line going high. User should then
---!                                         signal a new payload byte with rdy_in. 
+--!                                         this line going high. User should then load and
+--!                                         signal a new payload byte with master_slave_data_rdy_in. 
 --!                                         This line is map of spi_abstract's mosi_data_ack_o.
 --!                                         However, due to the command nature of spi_command, 
 --!                                         master_slave_data_ack_out only goes high (more data accepted)
---!                                         After the command/address/first data byte have been moved. 
+--!                                         after the command/address/first data byte have been moved. 
 --! @param      command_busy_out            The spi command abstraction is busy
 --!                                         servicing a command. Do not attempt
 --!                                         to send another command. If this is '0'
@@ -76,7 +99,7 @@
 
 -- SPI is a interchip device bus which is used to send data back and forth
 -- between two devices. Data is synchronous to a clock (sclk) which the 
--- master supplies to the slave. Data is send from the master to the slave
+-- master supplies to the slave. Data is sent from the master to the slave
 -- on the MOSI line. Data is sent back to the master on the MISO line. 
 -- All data is valid on the rising edge of sclk. The chip select line
 -- can be used to select specific slaves given a shared bus. In a single slave
@@ -109,18 +132,29 @@
 --In the instance of addressed commands, the first slave_master_data_ack_out
 --signal will be associated with the first data byte of payload sent out on MOSI. 
 
+
+
+--Received bytes are only signalled ready at slave_master_data_ack_out
+--that are associated with the sent data portion bytes of the master.
+--Thus bytes received back by master when the master is sending out
+--command or address sections of the payload are not relayed up. This is
+--because in most instances these bytes are not used by the host.
+
+--If the first byte sent to the slave does have an associated response byte
+--simply disable command and address portions of the payload by setting generics
+--to zero and setting address_en_in to 0 when sending the data. 
+
 --slave_master_data_ack_out is a conditional map of spi_abstract's,
 --miso_data_valid_o. 
 
---Received bytes are only signalled ready at slave_master_data_ack_out
---that are associated with the sent data bytes of the master.
---Thus bytes received back by master when the master is sending out
---command or address sections of the payload are NOT relayed up. This is
---because in most instances these bytes are not used by the host.
+--TODO:
 
---If the first byte sent to the slave DOES have an associated response byte
---simply disable command and address portions of the payload by setting generics
---to zero and setting address_en_in to 0 when sending the data. 
+--Allow command to be turned off and on without generic. 
+--Or simply just remove generics all together and rely on ports. 
+
+--Allow a pathway for address without a command. 
+
+
 
 
 
@@ -352,9 +386,6 @@ begin
         end if;
       end if;
       
-      
---A bug exists here. byte_count and byte_number not reset if
---address_used_g is set to 0.
 
     when SPI_STATE_COMMAND   =>
 
