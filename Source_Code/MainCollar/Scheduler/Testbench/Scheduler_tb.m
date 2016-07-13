@@ -207,11 +207,19 @@ req_tbl (req_count, :)  = uint32 ([1 40 1 1 1 120 0]) ;
 req_count               = req_count + 1 ;
 req_tbl (req_count, :)  = uint32 ([1 50 1 0 2 0 0]) ;
 
-
-
-
 req_count               = req_count + 1 ;
 req_tbl (req_count, :)  = uint32 ([1 98 0 0 0 0 0]) ;
+
+use_secs                = 2 ^ gps_time_millibits_c - 1 ;
+
+req_count               = req_count + 1 ;
+req_tbl (req_count, :)  = uint32 ([1 120 1 1 4 use_secs 3]) ;
+
+req_count               = req_count + 1 ;
+req_tbl (req_count, :)  = uint32 ([1 130 1 1 3 use_secs 8]) ;
+
+req_count               = req_count + 1 ;
+req_tbl (req_count, :)  = uint32 ([1 140 1 1 1 use_secs 2]) ;
 
 
 %---------------------------------------------------------------------------
