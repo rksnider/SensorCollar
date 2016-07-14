@@ -1458,7 +1458,8 @@ flashblock_gpsbuf_clk <= not(clock_sys);
 
 
 fb_txrx_clk_a_out <= not(clock_sys);
-txrx_bank_out <= txrx_bank;
+
+txrx_bank_out <= not txrx_bank;
 fb_txrx_address_a_out <= txrx_bank & std_logic_vector(fb_txrx_address_a);
   
 
