@@ -60,6 +60,7 @@ USE altera_mf.altera_mf_components.all;
 LIBRARY GENERAL ;     
 USE GENERAL.UTILITIES_PKG.ALL;          --  Use General Purpose Libraries
 USE GENERAL.GPS_Clock_pkg.ALL;          --  Use GPS Clock information.
+USE GENERAL.txrx_p_buffer_def_pkg.all;
 
  ---------------------------------------------------------------------------
 --
@@ -110,7 +111,7 @@ entity CC1120_top is
 		command_width_bytes_g       : natural   := 1;
 		address_width_bytes_g       : natural   := 1;
 		data_length_bit_width_g     : natural   := 8;
-		packet_length_bytes					: natural 	:= 10;
+		packet_length_bytes					: natural 	:= packet_total_length;
 		tx_repeat_g									: natural 	:= 5;
 		status_start_g 							: natural   := 6;
 		status_end_g 								: natural   := 4
@@ -120,11 +121,6 @@ entity CC1120_top is
     rst_n              		: in    std_logic ;
     startup_in            : in    std_logic;
     startup_complete_out  : out   std_logic;
-    current_fpga_time_in  : in    std_logic_vector(gps_time_bytes_c*8-1 
-																										downto 0);
-		data_addr_in					: in 		std_logic_vector(7 downto 0);
-		data_len_in    				: in  	std_logic_vector(data_length_bit_width_g-1 
-																										downto 0);
     tx_req_in							: in 		std_logic;
 		rx_req_in							: in 		std_logic;
 		sleep_req_in					: in 		std_logic;
@@ -136,8 +132,21 @@ entity CC1120_top is
     cs_n_out            	: out 	std_logic;
     rx_time_out    				: out 	std_logic_vector (gps_time_bytes_c*8-1 
 																										downto 0);
-		txrx_rdy_in 						: in 		std_logic
-		
+		txrx_rdy_in 				  : in 		std_logic;
+    
+		txrx_req_b_out        : out std_logic;  
+    txrx_rec_b_in         : in std_logic; 
+    
+    txrx_bank_in          : in std_logic;
+    
+    txrx_clk_b_out        : out std_logic;
+    txrx_wr_en_b_out      : out std_logic;  
+    txrx_rd_en_b_out      : out std_logic;  
+    txrx_address_b_out    : out std_logic_vector(natural(trunc(log2(real(
+                                              txrx_double_buffer_size-1)
+                                                            ))) downto 0);
+    txrx_data_b_out       : out std_logic_vector(7 downto 0);
+    txrx_data_b_in        : in  std_logic_vector(7 downto 0)
   ) ;
 
 end entity CC1120_top ;
@@ -170,9 +179,7 @@ architecture behavior of CC1120_top is
 	TXRX_STATE_SLEEP,
 	
 	-- Generic waiting state
-	-- TXRX_STATE_WAIT,
-	-- Fast action TX ready
-	-- TXRX_STATE_FSTXON, 
+	TXRX_STATE_DPR_REQ_WAIT,
 	
 	-- State to reload the GPIO3 setting
 	TXRX_STATE_REWRITE_GPIO,
@@ -313,7 +320,7 @@ architecture behavior of CC1120_top is
   signal txrx_initbuffer_wr_en : std_logic;
   signal txrx_initbuffer_q : std_logic_vector(23 downto 0);
   signal txrx_initbuffer_data : std_logic_vector(23 downto 0);
-  signal dprspr_clk : std_logic;
+  signal spr_clk : std_logic;
 	
 	-- Define the Chip select and miso signals for startup and operational use
 	signal cs_n_signal				: std_logic;
@@ -378,11 +385,14 @@ architecture behavior of CC1120_top is
 --########################################################################--
 	
 	-- Create signals for the dual-port RAM
-	signal data_addr					: std_logic_vector(7 downto 0);
+  signal txrx_bank      : std_logic;
+	signal data_addr			: unsigned(natural(trunc(log2(real(
+                                (txrx_single_buffer_size)-1)))) downto 0);
 	signal data_read_en 			: std_logic := '0';
 	signal data_write_en			: std_logic := '0';
 	signal data_to 						: std_logic_vector(7 downto 0);
 	signal data_from      		: std_logic_vector(7 downto 0);
+  
   
   --Intermediate port mapping signals of the spi_commands entity.
   signal    command_spi_signal      : std_logic_vector(
@@ -485,23 +495,23 @@ architecture behavior of CC1120_top is
 end component;
 
 -- Create a dual-port RAM component to store and retrieve the packets
-component CC1120_DPR is
-	PORT
-	(
-		address_a		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
-		address_b		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
-		clock_a		: IN STD_LOGIC ;
-		clock_b		: IN STD_LOGIC ;
-		data_a		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
-		data_b		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
-		rden_a		: IN STD_LOGIC  := '1';
-		rden_b		: IN STD_LOGIC  := '1';
-		wren_a		: IN STD_LOGIC  := '0';
-		wren_b		: IN STD_LOGIC  := '0';
-		q_a		: OUT STD_LOGIC_VECTOR (7 DOWNTO 0);
-		q_b		: OUT STD_LOGIC_VECTOR (7 DOWNTO 0)
-	);
-end component CC1120_DPR;
+-- component CC1120_DPR is
+	-- PORT
+	-- (
+		-- address_a		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+		-- address_b		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+		-- clock_a		: IN STD_LOGIC ;
+		-- clock_b		: IN STD_LOGIC ;
+		-- data_a		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+		-- data_b		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+		-- rden_a		: IN STD_LOGIC  := '1';
+		-- rden_b		: IN STD_LOGIC  := '1';
+		-- wren_a		: IN STD_LOGIC  := '0';
+		-- wren_b		: IN STD_LOGIC  := '0';
+		-- q_a		: OUT STD_LOGIC_VECTOR (7 DOWNTO 0);
+		-- q_b		: OUT STD_LOGIC_VECTOR (7 DOWNTO 0)
+	-- );
+-- end component CC1120_DPR;
 
 
 begin
@@ -510,7 +520,8 @@ begin
 	txrx_initbuffer_address_std <= std_logic_vector(txrx_initbuffer_address);
 	
 	-- Create an inverted clock to use when interacting with the DPR
-	dprspr_clk <= not clk;
+	spr_clk <= not clk;
+  txrx_clk_b_out <= not clk;
 
 	-- initialize the startup_complete_out signal
 	startup_complete_out <= startup_complete;
@@ -571,7 +582,7 @@ begin
 	)
 	PORT MAP (
 		address_a => txrx_initbuffer_address_std,
-		clock0 => dprspr_clk,
+		clock0 => spr_clk,
 		data_a => txrx_initbuffer_data,
 		wren_a => txrx_initbuffer_wr_en,
 		rden_a => txrx_initbuffer_rd_en,
@@ -579,22 +590,22 @@ begin
 	);
 	
 	-- Port mapping for the dual-port RAM
-	dpr_component : CC1120_DPR
-	port map	(
-		address_a		=> data_addr,
-		clock_a			=> dprspr_clk,
-		data_a			=> data_from,
-		rden_a			=> data_read_en,
-		wren_a			=> data_write_en,
-		q_a					=> data_to,
+	-- dpr_component : CC1120_DPR
+	-- port map	(
+		-- address_a		=> data_addr,
+		-- clock_a			=> spr_clk,
+		-- data_a			=> data_from,
+		-- rden_a			=> data_read_en,
+		-- wren_a			=> data_write_en,
+		-- q_a					=> data_to,
 		
-		address_b 	=> (others => '0'),
-		clock_b 		=> '0',
-		rden_b			=> '0',
-		wren_b			=> '0',
-		data_b 			=> (others => '0')
+		-- address_b 	=> (others => '0'),
+		-- clock_b 		=> '0',
+		-- rden_b			=> '0',
+		-- wren_b			=> '0',
+		-- data_b 			=> (others => '0')
 		
-	);
+	-- );
 
 
 ---------------------------------
@@ -652,30 +663,15 @@ begin
 
 		-- Reset command buffer
 		command_done_spi_signal_follower <= '0';
- 
-		-- -- Strobe the FIFO flushes (first bit doesn't matter, second must be 0)
-		-- if (tx_fifo_flush = '0' and command_busy_spi_signal = '0') then
-			-- command_spi_signal <= nBURST & nBURST & sftx_addr_c;
-			-- address_en_spi_signal <= '0';
-			-- data_length_spi_signal <= std_logic_vector(to_unsigned(
-																		-- 0,data_length_spi_signal'length));
-			-- tx_fifo_flush <= '1';
-			
-		-- elsif (rx_fifo_flush = '0' and command_busy_spi_signal = '0') then
-			-- command_spi_signal <= nBURST & nBURST & sfrx_addr_c;
-			-- address_en_spi_signal <= '0';
-			-- data_length_spi_signal <= std_logic_vector(to_unsigned(
-																		 -- 0,data_length_spi_signal'length));
-			-- rx_fifo_flush <= '1';
-			
-		-- -- Set the current state to idle when the TX/RX FIFOs are flushed
-		-- else
+    
+    -- Reset the DPR requests
+    txrx_req_b_out <= '0';
+    txrx_wr_en_b_out  <= '0';
+    txrx_rd_en_b_out  <= '0';
+
+    -- Move to the chip ready wait state
 		cur_txrx_state <= TXRX_STATE_CHIP_RDY_INIT;
-			-- tx_fifo_flush <= '0';
-			-- rx_fifo_flush <= '0';
-		-- end if;		
-			 
- 
+	 
   elsif (clk'event and clk = '1') then
   
 	--Default signal states.
@@ -813,7 +809,6 @@ begin
 					else
 						if (tx_req = '1' and sleep_en = '0') then 
 							cur_txrx_state  <=  TXRX_STATE_REWRITE_GPIO;
-							data_read_en <= '1';
 							loaded_packet <= '0';
 						end if;
 						
@@ -905,9 +900,6 @@ begin
 				-- to the data pushing/fetching states
 				when TXRX_STATE_IDLE_NOOP	=> 
 				
-					-- Check the recieved status byte
-					-- conditional statement 
-					data_addr <= data_addr_in;
 					-- Send noop command to get the status byte					
 					if (command_busy_spi_signal = '0') then
 						command_spi_signal <= nBURST & nBURST & sidle_addr_c;
@@ -943,26 +935,37 @@ begin
 						data_length_spi_signal <= std_logic_vector(to_unsigned(
 																					1,data_length_spi_signal'length));
 						master_slave_data_rdy_spi_signal <= '1';
-						cur_txrx_state <= TX_STATE_LOAD;
+            txrx_rd_en_b_out <= '1';
+						cur_txrx_state <= TXRX_STATE_DPR_REQ_WAIT;
 					end if;
+          
+        when TXRX_STATE_DPR_REQ_WAIT  =>
+        txrx_req_b_out     <= '1';      
+        if ( txrx_rec_b_in = '1') then 
+          cur_txrx_state <= TX_STATE_LOAD;
+        end if; 
+          
 				
 				when TX_STATE_LOAD =>
 					if (byte_read_count = packet_length_bytes) then 
 						cur_txrx_state <= TX_STATE_PUSH;
-						data_read_en <= '0';
+						txrx_rd_en_b_out <= '0';
 						byte_read_count <= to_unsigned(0,byte_count'length);
 						dpr_action <= '0';
+            txrx_req_b_out <= '0';
+            data_addr <= to_unsigned(0,data_addr'length);
 					elsif (dpr_action = '0') then 
 						-- Pick out the next byte to read
 						tx_data(
 							8*packet_length_bytes-to_integer(byte_read_count)*8-1 downto
 							8*packet_length_bytes-(to_integer(byte_read_count) + 1)*8) 
-								<= data_to ;
+								<= txrx_data_b_in ;
 						byte_read_count <= byte_read_count + 1;
 						dpr_action <= '1';
 					else 
 						dpr_action <= '0';
-						data_addr <= std_logic_vector(unsigned(data_addr) + 1);
+            txrx_address_b_out <= txrx_bank & std_logic_vector(data_addr + 1);
+            data_addr <= data_addr + 1;
 					end if;
 				  
 				-- Push all the data to the FIFO, then 
@@ -1155,21 +1158,22 @@ begin
 					-- When the end of the data is written to RAM, switch states
 					if (byte_read_count = packet_length_bytes) then 
 						cur_txrx_state <= RX_STATE_DONE;
-						--cur_txrx_state <= TX_STATE_LOAD;
 						byte_read_count <= to_unsigned(0,byte_count'length);
-						data_write_en <= '0';
+						txrx_wr_en_b_out <= '0';
 						dpr_action <= '0';
+            data_addr <= to_unsigned(0,data_addr'length);
 					elsif(dpr_action = '0') then 
 						-- Pick out the next byte to write
-						data_from <= rx_data(packet_length_bytes*8-
+						txrx_data_b_out <= rx_data(packet_length_bytes*8-
 																		to_integer(byte_read_count)*8-1 downto
 																		packet_length_bytes*8-(to_integer(
 																										byte_read_count)+1)*8);
-						data_write_en <= '1';
+						txrx_wr_en_b_out <= '1';
 						byte_read_count <= byte_read_count + 1;
 						dpr_action <= '1';
 						else 
-							data_addr <= std_logic_vector(unsigned(data_addr) + 1);
+							txrx_address_b_out <= txrx_bank & std_logic_vector(data_addr + 1);
+              data_addr <= data_addr + 1;
 							dpr_action <= '0';
 					end if;
 					
@@ -1247,6 +1251,9 @@ end process data_rdy_catch ;
 
 -- Map the miso signal
 miso_signal <= miso_in;
+
+-- Map the txrx_bank
+txrx_bank <= txrx_bank_in;
 
 -- Map the chip select.  When starting up, it should be '0', otherwise cs_n
 with cs_hold select

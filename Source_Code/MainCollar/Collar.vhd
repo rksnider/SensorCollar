@@ -836,6 +836,33 @@ architecture structural of Collar is
   signal mic_left_sample      : std_logic_vector (mic_sample_bits_c-1
                                                   downto 0) ;
   signal mic_left_sample_clk  : std_logic ;
+  
+  --------------------------------------------------------------------------
+  --  Packet DPR constants and signals
+  --------------------------------------------------------------------------
+  signal txrx_txrxmem_clk         : std_logic ;
+  signal txrx_txrxmem_wr_en       : std_logic ;
+  signal txrx_txrxmem_rd_en       : std_logic ;
+  signal txrx_txrxmem_addr        : std_logic_vector(natural(trunc(log2(real(txrx_double_buffer_size-1)))) downto 0);
+  signal txrx_txrxmem_data        : std_logic_vector (7 downto 0);
+  signal txrx_txrxmem_q           : std_logic_vector (7 downto 0);
+
+  signal txrx_bank                :std_logic;
+
+
+                                                
+  constant  txrxmemrq_flashblk_c     : natural := 0 ;
+  constant  txrxmemrq_txrx_c         : natural := txrxmemrq_flashblk_c    + 1 ;
+
+
+  constant  txtxmemrq_count_c       : natural := txrxmemrq_txrx_c  + 1 ;
+  signal    txrxmem_requesters      : std_logic_vector (txtxmemrq_count_c-1
+                                                  downto 0) ;
+  signal    txrxmem_receivers         : std_logic_vector (txtxmemrq_count_c-1
+                                                  downto 0) ;
+  constant  txrxmem_receivers_num_length : natural := 3;                               
+  signal    txrxmem_receivers_num       : unsigned (txrxmem_receivers_num_length-1
+                                                  downto 0) ;
 
   --------------------------------------------------------------------------
   --  Real-time Clock constants and signals.
@@ -4104,10 +4131,6 @@ rtc_inquire_top_i0 : rtc_inquire_top
   --  Radio control.
   --------------------------------------------------------------------------
 
-  --------------------------------------------------------------------------
-  --  Radio control.
-  --------------------------------------------------------------------------
-
   use_Radio:
     if (Collar_Control_useRadio_c = '1') generate
       component CC1120_top is
@@ -4118,7 +4141,6 @@ rtc_inquire_top_i0 : rtc_inquire_top
 					command_width_bytes_g       : natural   := 1;
 					address_width_bytes_g       : natural   := 1;
 					data_length_bit_width_g     : natural   := 8;
-					packet_length_bytes					: natural 	:= 30;
 					status_start_g 							: natural   := 6;
 					status_end_g 								: natural   := 4
 					) ;
@@ -4127,11 +4149,6 @@ rtc_inquire_top_i0 : rtc_inquire_top
 					rst_n              		: in    std_logic ;
 					startup_in            : in    std_logic;
 					startup_complete_out  : out   std_logic;
-					current_fpga_time_in  : in    std_logic_vector(gps_time_bytes_c*8-1 
-																													downto 0);
-					data_addr_in					: in 		std_logic_vector(7 downto 0);
-					data_len_in    				: in  	std_logic_vector(data_length_bit_width_g-1 
-																													downto 0);
 					tx_req_in							: in 		std_logic;
 					rx_req_in							: in 		std_logic;
 					sleep_req_in					: in 		std_logic;
@@ -4143,7 +4160,23 @@ rtc_inquire_top_i0 : rtc_inquire_top
 					cs_n_out            	: out 	std_logic;
 					rx_time_out    				: out 	std_logic_vector (gps_time_bytes_c*8-1 
 																													downto 0);
-					txrx_rdy_in 					: in 		std_logic
+					txrx_rdy_in 					: in 		std_logic;
+          
+          txrx_req_b_out        : out std_logic;  
+          txrx_rec_b_in         : in std_logic; 
+          
+          txrx_bank_in          : in std_logic;
+          
+          txrx_clk_b_out        : out std_logic;
+          txrx_wr_en_b_out      : out std_logic;  
+          txrx_rd_en_b_out      : out std_logic;  
+          txrx_address_b_out    : out std_logic_vector(natural(trunc(log2(real(
+                                                    txrx_double_buffer_size-1)
+                                                                  ))) downto 0);
+          txrx_data_b_out       : out std_logic_vector(7 downto 0);
+          txrx_data_b_in        : in  std_logic_vector(7 downto 0)
+          
+          
 					
 				) ;
 				end component CC1120_top;
@@ -4152,6 +4185,8 @@ rtc_inquire_top_i0 : rtc_inquire_top
 				signal radio_clock    	: std_logic ;
 				signal radio_data       : std_logic_vector (radio_data_io'length-1
                                                   downto 0) ;
+                                                  
+
 				begin
 				txrx: CC1120_top
 					Port Map (
@@ -4159,9 +4194,6 @@ rtc_inquire_top_i0 : rtc_inquire_top
 					rst_n              		=>	(not reset) and CTL_DataTX_On,
 					startup_in            => 	txrx_startup,
 					startup_complete_out  => 	txrx_startup_complete,
-					current_fpga_time_in  => 	txrx_fpga_time,
-					data_addr_in					=> 	txrx_data_addr,
-					data_len_in    				=> 	txrx_data_len,
 					tx_req_in							=>	'1',
 					rx_req_in							=>	rx_req,
 					sleep_req_in					=>	sleep_req,
@@ -4172,7 +4204,19 @@ rtc_inquire_top_i0 : rtc_inquire_top
 					miso_in            	  => 	radio_data(2),
 					cs_n_out		         	=>  radio_data(0),
 					rx_time_out    				=> 	txrx_rx_time,
-					txrx_rdy_in 			  	=> 	radio_data(3)
+					txrx_rdy_in 			  	=> 	radio_data(3),
+          
+          txrx_req_b_out        => txrxmem_requesters(txrxmemrq_txrx_c),
+          txrx_rec_b_in         => txrxmem_requesters(txrxmemrq_txrx_c),
+    
+          txrx_bank_in          => txrx_bank,
+          
+          txrx_clk_b_out        => txrx_txrxmem_clk,
+          txrx_wr_en_b_out      => txrx_txrxmem_wr_en,
+          txrx_rd_en_b_out      => txrx_txrxmem_rd_en,
+          txrx_address_b_out    => txrx_txrxmem_addr,
+          txrx_data_b_out       => txrx_txrxmem_data,
+          txrx_data_b_in        => txrx_txrxmem_q
 				);
 					
 				----------------------------------------------------------------------
@@ -4433,29 +4477,7 @@ rtc_inquire_top_i0 : rtc_inquire_top
       signal fb_txrxmem_data        : std_logic_vector (7 downto 0);
       signal fb_txrxmem_q           : std_logic_vector (7 downto 0);
       
-      signal txrx_txrxmem_clk         : std_logic ;
-      signal txrx_txrxmem_wr_en       : std_logic ;
-      signal txrx_txrxmem_rd_en       : std_logic ;
-      signal txrx_txrxmem_addr        : std_logic_vector(natural(trunc(log2(real(txrx_double_buffer_size-1)))) downto 0);
-      signal txrx_txrxmem_data        : std_logic_vector (7 downto 0);
-      signal txrx_txrxmem_q           : std_logic_vector (7 downto 0);
-      
-      signal txrx_bank                :std_logic;
-      
-
-                                                      
-      constant  txrxmemrq_flashblk_c     : natural := 0 ;
-      constant  txrxmemrq_txrx_c         : natural := txrxmemrq_flashblk_c    + 1 ;
-
-      
-      constant  txtxmemrq_count_c       : natural := txrxmemrq_txrx_c  + 1 ;
-      signal    txrxmem_requesters      : std_logic_vector (txtxmemrq_count_c-1
-                                                        downto 0) ;
-      signal    txrxmem_receivers         : std_logic_vector (txtxmemrq_count_c-1
-                                                        downto 0) ;
-      constant  txrxmem_receivers_num_length : natural := 3;                               
-      signal    txrxmem_receivers_num       : unsigned (txrxmem_receivers_num_length-1
-                                                        downto 0) ;
+     
 
       --  Flash Block to Magnetic Memory communications signals.
 
