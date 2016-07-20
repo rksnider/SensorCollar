@@ -3051,6 +3051,17 @@ begin
     
     
     if (clk_enable) = '1' then
+    
+    
+    
+    
+    
+    if (wp_written = '1' and wp_written_follower = '1') then
+      wp_written <= '0';
+    end if;
+    
+    
+    
       case cur_packet_state is
     
     

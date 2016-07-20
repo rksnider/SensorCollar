@@ -1,5 +1,39 @@
---Wireless Packet Layout
+-- @file       txrx_p_buffer_def_pkg.vhd
+-- @brief      Wireless Packet Definition File
+-- @details
+-- @author     Chris Casebeer
+-- @date       7_18_2016
+-- @rev        2
+-- @copyright
+--
+--  This program is free software: you can redistribute it and/or modify
+--  it under the terms of the GNU General Public License as published by
+--  the Free Software Foundation, either version 3 of the License, or
+--  (at your option) any later version.
+--
+--  This program is distributed in the hope that it will be useful,
+--  but WITHOUT ANY WARRANTY; without even the implied warranty of
+--  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+--  GNU General Public License for more details.
+--
+--  You should have received a copy of the GNU General Public License
+--  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--
+--  Chris Casebeer
+--  Electrical and Computer Engineering
+--  Montana State University
+--  610 Cobleigh Hall
+--  Bozeman, MT 59717
+--  christopher.casebee1@msu.montana.edu
+--
+--
 
+
+
+
+--Wireless Packet Layout
+--55 bytes total    (rev 2)
+--55 locations written in modelsim. 
 
 
 library IEEE ;                  --  Use standard library.
@@ -24,7 +58,7 @@ constant microsd_serial_length_bytes_c : natural := 4;
 constant microsd_serial_location_c : natural := 0;
 
 --The current time stored to the RTC.                                    
-constant rtc_time_length_bytes_c : natural := 3;
+constant rtc_time_length_bytes_c : natural := 4;
 constant rtc_time_location_c : natural := microsd_serial_location_c
                                               + microsd_serial_length_bytes_c;
 
@@ -75,6 +109,7 @@ constant gps_pos_time_location_c : natural := gps_accuracy_location_c
 --The control register of the system. 
 --This indicates all the devices which are currently turned on.
 --Reference PC_StatusControl_pkg.vhd for field definitions. 
+--3 bytes as of 7_18_2016
 constant control_register_length_bytes_c : natural :=  (ControlSignalsCnt_c + 7) / 8;
 constant control_register_location_c : natural := gps_pos_time_length_bytes_c
                                               + gps_pos_time_location_c;
