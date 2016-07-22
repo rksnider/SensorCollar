@@ -701,7 +701,7 @@ type BlockState is   (
   BLOCK_STATE_GPS_NAV_SOL_ECEF_SETUP_W,
   BLOCK_STATE_GPS_NAV_SOL_ECEF_FETCH_W,
   BLOCK_STATE_GPS_NAV_SOL_ECEFACC_SETUP_W,
-  BLOCK_STATE_GPS_NAV_SOL_ECEFACC_FETCH,
+  BLOCK_STATE_GPS_NAV_SOL_ECEFACC_FETCH_W,
   BLOCK_STATE_GPS_NAV_SOL_POSTIME_SETUP_W,
   BLOCK_STATE_GPS_NAV_SOL_POSTIME_FETCH_W,
   
@@ -2270,7 +2270,7 @@ begin
           
           
         when BLOCK_STATE_GPS_NAV_SOL_ECEFACC_SETUP_W => 
-            cur_block_state   <= BLOCK_STATE_GPS_NAV_SOL_ECEFACC_FETCH;
+            cur_block_state   <= BLOCK_STATE_GPS_NAV_SOL_ECEFACC_FETCH_W;
             flashblock_gpsbuf_rd_en <= '1';          
             flashblock_gpsbuf_addr_internal       <= TO_UNSIGNED (msg_ram_base_c +
                                             msg_ubx_nav_sol_ramaddr_c +
@@ -2283,7 +2283,7 @@ begin
                                               byte_number'length) ;
             byte_count        <= TO_UNSIGNED (1, byte_count'length) ;
           
-        when BLOCK_STATE_GPS_NAV_SOL_ECEFACC_FETCH => 
+        when BLOCK_STATE_GPS_NAV_SOL_ECEFACC_FETCH_W => 
 
           if (byte_count = byte_number) then
             cur_block_state   <= BLOCK_STATE_GPS_NAV_SOL_POSTIME_SETUP_W ;
@@ -2324,13 +2324,13 @@ begin
             flashblock_gpsbuf_rd_en <= '0'; 
 
             
-            nav_sol_time <= gpsbuf_flashblock_data & nav_sol_time(nav_sol_time'length-1-8 downto 0);
+            nav_sol_time <= gpsbuf_flashblock_data & nav_sol_time(nav_sol_time'length-1-8 downto 8);
             
             
           else
             byte_count        <= byte_count + 1 ;
                        
-            nav_sol_time <= gpsbuf_flashblock_data & nav_sol_time(nav_sol_time'length-1-8 downto 0);
+            nav_sol_time <= gpsbuf_flashblock_data & nav_sol_time(nav_sol_time'length-1-8 downto 8);
 
             
             flashblock_gpsbuf_addr_internal <= flashblock_gpsbuf_addr_internal + 1;
