@@ -3066,8 +3066,8 @@ begin
     
     
       when PACKETSTATE_WAIT =>
-      
-      if (write_wp = '1') then 
+
+      if (write_wp = '1' and startup_in = '1') then 
         cur_packet_state <= PACKETSTATE_REQ;
       end if;
       
@@ -3089,6 +3089,7 @@ begin
 
         if ( txrx_rec_a_in = '1') then 
           cur_packet_state <= PACKETSTATE_SERIAL_SETUP;
+          wp_written <= '1';
         end if; 
 
         
@@ -3421,7 +3422,6 @@ begin
         cur_packet_state   <= PACKETSTATE_WAIT ;
         txrx_bank <= not txrx_bank;
         txrx_req_a_out     <= '0';
-        wp_written <= '1';
         
     
     
