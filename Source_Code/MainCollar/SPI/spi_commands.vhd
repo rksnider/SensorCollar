@@ -56,27 +56,32 @@
 --! @param      data_length_in        The length of the payload in bytes(write/read)
 --!                                   which will come after command/address
 --!                                      
---! @param      master_slave_data_in            New payload byte to send over SPI.
+--! @param      master_slave_data_in            Initial payload byte or next payload byte to send over SPI.
 --!                                             This data is sampled by the entity on
---!                                             master_slave_data_rdy_in. A new piece of data
+--!                                             master_slave_data_rdy_in. A new piece of payload data
 --!                                             can only be accepted by the entity upon 
 --!                                             master_slave_data_ack_out going high.
---! @param      master_slave_data_rdy_in        Indicate that a new payload byte is present 
---!                                             on master_slave_data_in. That byte will 
---!                                             then be sent to the slave.
+--! @param      master_slave_data_rdy_in        Indicate that a new initial command set is ready or a new
+--!                                             data payload byte is ready. 
+--!                                             This should be a pulse of spi_commands clk width. 
+--!                                             This is easily done if spi_commands
+--!                                             from the same clk as the input clk to spi_commands.
+--!                                             Must be pulsed with input clk width. Spi_commands relies on this signal
+--!                                             going low between data payload bytes. 
 --!                                            
 --!                                                 
 --! @param      master_slave_data_ack_out   The entity can accept another payload byte upon
---!                                         this line going high. User should then load and
---!                                         signal a new payload byte with master_slave_data_rdy_in. 
+--!                                         this line going high (RISING EDGE). User should then
+--!                                         signal a new payload byte with a rdy_in pulse. 
 --!                                         This line is map of spi_abstract's mosi_data_ack_o.
 --!                                         However, due to the command nature of spi_command, 
---!                                         master_slave_data_ack_out only goes high (more data accepted)
---!                                         after the command/address/first data byte have been moved. 
+--!                                         master_slave_data_ack_out only goes high (more data accepted to be accepted)
+--!                                         after the command/address/beginning of first data byte have been moved. 
 --! @param      command_busy_out            The spi command abstraction is busy
 --!                                         servicing a command. Do not attempt
 --!                                         to send another command. If this is '0'
 --!                                         the entity is ready to send another command.
+--!                                         Cannot be checked before one clock period of input clock.
 --! @param      command_done                Command done pulse.
 --!
 --! @param      slave_master_data_out       The MISO byte is valid  
@@ -107,7 +112,7 @@
 
 -- A command is sent to the spi slave by loading 
 -- command_in,address_in,address_en_in,data_length_in,master_slave_data_in and then
--- pulsing master_slave_data_rdy_in. 
+-- pulsing master_slave_data_rdy_in for one clock period of CLK.
 -- The abstraction will process this amount of data over the SPI bus. It will
 -- then drive master_slave_data_ack_out high to signal that another 
 -- byte of the payload should be sent to the entity. This is when the
@@ -122,6 +127,12 @@
 -- valid by a pulse on slave_master_data_ack_out. 
 -- The data should be taken at this time if of interest. 
 
+
+--To read data from a device we must continually sent 00's over the MOSI line. 
+--This keeps the abstraction clocking data from the device (keeping cs_n and the 
+--clock on). This means that master_slave_data_ack_out must be responded to
+--and master_slave_data_rdy_in pulsed appropriately to keep the abstraction ON.
+
 --If a command or address are to be omitted such as in the case
 --of the SPI bus functioning as a register transfer between devices, 
 --the generics command_used_g and address_used_g can be set to 0. This
@@ -132,7 +143,8 @@
 --In the instance of addressed commands, the first slave_master_data_ack_out
 --signal will be associated with the first data byte of payload sent out on MOSI. 
 
-
+--slave_master_data_ack_out is a conditional map of spi_abstract's,
+--miso_data_valid_o. 
 
 --Received bytes are only signalled ready at slave_master_data_ack_out
 --that are associated with the sent data portion bytes of the master.
@@ -148,6 +160,13 @@
 --miso_data_valid_o. 
 
 --TODO:
+--Make the command_used and address_used into entity port signals instead of generics.
+--If this was done, the slave_master_data_ack_out_en could then be
+--dynamically moved depending on what kind of command/address/data combo
+--is needed to be sent out. Currently this is statically compiled.
+
+--Possibly allow master_slave_data_rdy_in to function without pulsing. 
+--This might be helpful in reading where static MOSI data is being sent.
 
 --Allow command to be turned off and on without generic. 
 --Or simply just remove generics all together and rely on ports. 
@@ -155,6 +174,24 @@
 --Allow a pathway for address without a command. 
 
 
+--GOTCHAS:
+--Do not strobe master_slave_data_rdy_in and then immediately strobe it
+--again with another command set a cycle later. The second command set will
+--be lost. 
+--Wait for the command_busy_out to go high and then lower before attempting
+--to load another command set. The alternative is to pause for a clock cycle
+--and then recheck command_busy_out for sending another command set.
+
+--SPI_COMMANDS is checking its input signals in clocked processes running at clk_in speed.
+--This means that excercising spi_commands from a faster clock domain will possibly fail.
+--It can be done, but the normal pulse durations must be of spi_command's clk duration. 
+
+--Make sure that the data_length_bit_width_g is large enough to hold
+--the data payload size you will load into spi_commands on the data_length_in
+--port. Bad things happen if the port size cannot handle the numeric you 
+--pass into spi_commands.
+--An example. data_length_bit_width_g set at 10 will not handle a 
+--1025 length data size. Change the generic to 11. 
 
 
 
@@ -462,13 +499,8 @@ begin
 
       end if;
       
-      --Allows to send out initial data element cleanly. 
+
     when SPI_STATE_DATA_INITIAL   =>
-      --I ran into a problem whereby the initial byte didn't have enough
-      --separation from the second byte. This allowed the entity reading
-      --the master_slave_data_ack_out of this entity to pick up the ack used for the first
-      --byte and attempt to immediately send the second byte. This
-      --extra clock cycle should alleviate that problem. 
      
      if (byte_count = byte_number) then
         cur_spi_state <= SPI_STATE_DATA;
@@ -590,8 +622,7 @@ elsif rising_edge(clk) then
     elsif ( miso_data_valid_spi = '1') then
     miso_byte_ack_count <= miso_byte_ack_count + 1;
     end if;
-  --Attempting to get around >=.
-  --Will send the next miso_data_valid_spi. 
+
 
   if(command_used_g = '1' and address_used_g = '1') then
     if ( miso_byte_ack_count = to_unsigned(command_width_bytes_g + address_width_bytes_g,miso_byte_ack_count'length)) then
