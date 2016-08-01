@@ -2324,13 +2324,13 @@ begin
             flashblock_gpsbuf_rd_en <= '0'; 
 
             
-            nav_sol_time <= gpsbuf_flashblock_data & nav_sol_time(nav_sol_time'length-1-8 downto 8);
+            nav_sol_time <= gpsbuf_flashblock_data & nav_sol_time(nav_sol_time'length-1 downto 8);
             
             
           else
             byte_count        <= byte_count + 1 ;
                        
-            nav_sol_time <= gpsbuf_flashblock_data & nav_sol_time(nav_sol_time'length-1-8 downto 8);
+            nav_sol_time <= gpsbuf_flashblock_data & nav_sol_time(nav_sol_time'length-1 downto 8);
 
             
             flashblock_gpsbuf_addr_internal <= flashblock_gpsbuf_addr_internal + 1;
