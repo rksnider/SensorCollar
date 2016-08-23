@@ -805,9 +805,18 @@ architecture structural of Collar is
 	signal txrx_data_addr 				: std_logic_vector(7 downto 0) := "00000000";
 	signal txrx_data_len 					: std_logic_vector(data_length_bit_width_c-1 
 																													downto 0);
-	signal tx_req 								: std_logic := '1';
+	signal tx_req 								: std_logic ;
 	signal rx_req 								: std_logic ;
 	signal sleep_req 							: std_logic ;
+  
+  -- Timer setting for cc120
+  signal clk_freq         : natural   := 36e5;
+  signal tmax             : natural   := 30;
+  signal cntr_max         : natural   := clk_freq*tmax;
+  signal timer_cntr       : unsigned(natural(trunc(log2(real(
+                                cntr_max)))) downto 0);
+  
+  
 	
   --------------------------------------------------------------------------
   --  Magnetic memory constants and signals.
@@ -4194,7 +4203,7 @@ rtc_inquire_top_i0 : rtc_inquire_top
 					rst_n              		=>	(not reset) and CTL_DataTX_On,
 					startup_in            => 	txrx_startup,
 					startup_complete_out  => 	txrx_startup_complete,
-					tx_req_in							=>	'1',
+					tx_req_in							=>	tx_req,
 					rx_req_in							=>	rx_req,
 					sleep_req_in					=>	sleep_req,
 					op_complete_out   		=>	op_complete,
@@ -4749,5 +4758,20 @@ rtc_inquire_top_i0 : rtc_inquire_top
     end if ;
   end process reset_pb ;
   
-
+  tx_data_p: process(master_clk)
+    begin 
+    if txrx_startup_complete = '1' then 
+      if master_clk'event and master_clk = '1' then 
+        if timer_cntr = cntr_max then 
+          timer_cntr <= (others => '0');
+          tx_req <= '1';
+        else
+          timer_cntr <= timer_cntr + 1;
+          tx_req <= '0';
+        end if;
+      end if;
+    end if;
+  end process tx_data_p;
 end architecture structural ;
+
+
