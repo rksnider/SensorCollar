@@ -80,6 +80,8 @@ out1_signal_width       = 1 ; % memreq
 out2_signal_width       = 9 ; % memaddr
 out3_signal_width       = 1 ; % memread_en
 out4_signal_width       = 1 ; % running
+out5_signal_width       = 1 ; % updated
+out6_signal_width       = 1 ; % busy
 
 
 %-----------------------------------------------------------------
@@ -136,7 +138,8 @@ for trialno=1:Trial_count
     received_cnt  = 0 ;
 
     for k = 1 : clocks_needed
-      [output_vector1, output_vector2, output_vector3, output_vector4] =  ...
+      [output_vector1, output_vector2, output_vector3, output_vector4,    ...
+       output_vector5, output_vector6] =                                  ...
           step (sim_hdl, input_vector1, input_vector2, input_vector3,     ...
                          input_vector4, input_vector5) ;
 
