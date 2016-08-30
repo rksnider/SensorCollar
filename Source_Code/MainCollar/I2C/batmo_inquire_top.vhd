@@ -64,9 +64,9 @@
 --! @param    i2c_req_out           Request i2c core and b side memory.
 --! @param    i2c_rcv_in            i2c core and b side memory granted. 
     
---! @param    voltage_mv            Voltage as read by the bq27520
---! @param    current_ma            Instant mA read by the bq27520
---! @param    capacity_mah          bq27520's estimate of the bat capacity
+--! @param    voltage_mv            Voltage as read by the bq27520. U2.
+--! @param    current_ma            Instant mA read by the bq27520. I2.
+--! @param    capacity_mah          bq27520's estimate of the bat capacity. U2.
 --
 ------------------------------------------------------------------------------
 
@@ -297,18 +297,20 @@ architecture behavior of batmon_inquire is
   signal byte_address : unsigned (mem_bits_g-1 downto 0) ;
   
 
-  --These need to be changed to allow values 1-3 ms. 
+  constant inquiry_timeout_c : natural := natural(real((clk_freq_g/1E3) * update_interval_ms_g));
   
-  signal inquiry_timeout    :   unsigned(maximum(1,natural(
-                                trunc(log2(real(
-                                update_interval_ms_g-1))))) downto 0); 
+                                
+  signal inquiry_timeout    :   unsigned(natural(trunc(log2(real((clk_freq_g/1E3) * update_interval_ms_g)))) downto 0);
+
+  
+  
                                 
   constant inner_command_wait_ms : natural := 1000;  
 
   
-  signal inner_command_timeout_ms   :  unsigned(maximum(1,natural(
-                                        trunc(log2(real(
-                                        inner_command_wait_ms-1))))) downto 0); 
+  constant inner_command_timeout_ms_c   : natural := natural(real((clk_freq_g/1E3) * inner_command_wait_ms));
+  
+  signal inner_command_timeout_ms   :  unsigned(natural(trunc(log2(real((clk_freq_g/1E3) * inner_command_wait_ms)))) downto 0);
                               
 
 
@@ -395,7 +397,7 @@ begin
       when BATMON_STATE_WAIT_START =>
         if (simulate_g = '1') then 
           cur_state <= BATMON_STATE_VOLTAGE_SETUP;
-        elsif (inquiry_timeout = to_unsigned((clk_freq_g/1E3) * update_interval_ms_g,inquiry_timeout'length)) then
+        elsif (inquiry_timeout = to_unsigned(inquiry_timeout_c,inquiry_timeout'length)) then
           cur_state <= BATMON_STATE_VOLTAGE_SETUP;
           inquiry_timeout <= to_unsigned(0,inquiry_timeout'length);
         else
@@ -501,8 +503,7 @@ begin
         
       --Wait before polling the battery monitor again.
       when BATMON_BETWEEN_COMMAND_WAIT =>
-        if (inner_command_timeout_ms = to_unsigned((clk_freq_g/1E3) * inner_command_wait_ms,
-                                        inner_command_timeout_ms'length)) then
+        if (inner_command_timeout_ms = to_unsigned(inner_command_timeout_ms_c,inner_command_timeout_ms'length)) then
           cur_state <= next_state;
           inner_command_timeout_ms <= to_unsigned(0,inner_command_timeout_ms'length);
         else

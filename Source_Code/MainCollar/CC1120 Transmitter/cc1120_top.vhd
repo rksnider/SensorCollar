@@ -1068,16 +1068,16 @@ begin
 																	std_logic_vector(to_unsigned(
 																			0,data_length_spi_signal'length));
 					master_slave_data_rdy_spi_signal <= '1';
-					cur_txrx_state <= TX_STATE_FIFO_FLUSH;
 					op_complete_out <= '0';
 					command_sent <= '0';
-					if (tx_counter = tx_repeat_g) then 
+					if (tx_counter = tx_repeat_g - 1) then 
 						tx_req <= '0';
 						tx_counter <= 0;
-						cur_txrx_state <= TXRX_STATE_REWRITE_GPIO;
+						cur_txrx_state <=  TX_STATE_FIFO_FLUSH;
 						--sleep_en <= '1';
 					else
 						tx_counter <= tx_counter + 1;
+            cur_txrx_state <= TXRX_STATE_REWRITE_GPIO;
 					end if;
 				else 
 					op_complete <= '1';
