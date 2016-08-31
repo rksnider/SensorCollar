@@ -1,0 +1,30 @@
+[2016.04.04 08:09:50] [0000m.07s.347ms] [0] WELCOME
+[2016.04.04 08:09:50] [0000m.07s.357ms] [1] iCDB Database ver.1.094, vt40T8RtWJOG2cE2Nlvc5A, build:535943 created 2013-01-08 09:09:26, sources stamp:vt40T8RtWJOG2cE2Nlvc5A
+[2016.04.04 08:09:50] [0000m.07s.357ms] [1] Copyright 2013 Mentor Graphics Corporation. All Rights Reserved.
+[2016.04.04 08:09:50] [0000m.07s.357ms] [1] Base flow version [7.9.4]
+[2016.04.04 08:09:50] [0000m.07s.357ms] [1] GBS Install Id [27413], Flow Id [PADS 9.5], Full Flow Name [PADS 9.5], Exact Access Date [Jun 1 2012]
+[2016.04.04 08:09:50] [0000m.07s.357ms] [1] UPDATE Install Info, GBS Install Id [29618], UPDATE Name [PADS 9.5 Update 1]
+[2016.04.04 08:09:50] [0000m.07s.357ms] [1] Machine [BZ-ECE-CB508-01]  User [s58p233]  PID [59364]
+[2016.04.04 08:09:50] [0000m.07s.357ms] [1] Operating system [Microsoft Windows 7 Enterprise Edition, 64-bit Service Pack 1 (build 7601)]
+[2016.04.04 08:09:50] [0000m.07s.357ms] [1] Current working dir [C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board]
+[2016.04.04 08:09:50] [0000m.07s.357ms] [1] PATH [C:\Python27\Lib\site-packages\PyQt4;C:\MentorGraphics\9.5PADS\SDD_HOME\common\win32\bin;C:\MentorGraphics\9.5PADS\SDD_HOME\common\win32\lib;C:\MentorGraphics\9.5PADS\MGC_HOME.ixn\bin;C:\MentorGraphics\9.5PADS\MGC_HOME.ixn\lib;C:\MentorGraphics\9.5PADS\MGC_HOME.ixn\bin;C:\MentorGraphics\9.5PADS\MGC_HOME.ixn\lib;C:\Program Files (x86)\AMD APP\bin\x86_64;C:\Program Files (x86)\AMD APP\bin\x86;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;C:\MATLAB\R2015a\runtime\win64;C:\MATLAB\R2015a\bin;C:\Program Files (x86)\MiKTeX 2.9\miktex\bin\;C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Bin\;C:\Program Files\IVI Foundation\VISA\Win64\Bin\;C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Bin;C:\Python27;C:\Python27\DLLs;C:\Python27\Scripts;C:\Python27\gnuplot\binary;C:\Program Files (x86)\pythonxy\SciTE-3.5.1-4;C:\Program Files (x86)\pythonxy\console;%CDSROOT%\OpenAccess\bin\win32\opt;%CDSROOT%\tools\pcb\bin;%CDSROOT%\tools\fet\bin;%CDSROOT%\tools\Capture;%CDSROOT%\tools\PSpice;%CDSROOT%\tools\specctra\bin;%CDSROOT%\tools\bin;;C:\altera\15.1\modelsim_ase\win32aloem;C:\altera_lite\15.1\modelsim_ase\win32aloem;C:\modeltech64_10.1c\win64;C:\MentorGraphics\9.5PADS\SDD_HOME\wv\win32\bin]
+[2016.04.04 08:09:50] [0000m.07s.357ms] [1] SDD_HOME [C:\MentorGraphics\9.5PADS\SDD_HOME] on file system [NTFS]
+[2016.04.04 08:09:50] [0000m.07s.357ms] [1] SDD_PLATFORM [win32]
+[2016.04.04 08:09:50] [0000m.07s.357ms] [1] WDIR [C:\PADS Projects;C:\MentorGraphics\9.5PADS\SDD_HOME\standard]
+[2016.04.04 08:09:50] [0000m.07s.357ms] [1] Local iCDB working dir [C:\PADS Projects\iCDB] on file system [NTFS]
+[2016.04.04 08:09:50] [0000m.07s.357ms] [3] WARNING: Database [C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board\database\icdb.dat] was manually copied
+[2016.04.04 08:09:50] [0000m.07s.357ms] [3] File change time:        [2016-02-11 14.48.36]
+[2016.04.04 08:09:50] [0000m.07s.357ms] [3] File modification time:  [2016-02-11 14.48.36]
+[2016.04.04 08:09:50] [0000m.07s.357ms] [3] Last change time:        [2016-02-11 13.48.36]
+[2016.04.04 08:09:50] [0000m.07s.357ms] [3] Last database open information:
+[2016.04.04 08:09:50] [0000m.07s.357ms] [3] Time:             [2016-02-11 13.45.47]
+[2016.04.04 08:09:50] [0000m.07s.357ms] [3] Location:         [C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board\database\icdb.dat]
+[2016.04.04 08:09:50] [0000m.07s.357ms] [3] Machine:          [BZ-ECE-CB508-01]
+[2016.04.04 08:09:50] [0000m.07s.357ms] [3] User:             [s58p233]
+[2016.04.04 08:09:50] [0000m.07s.357ms] [3] PID:              [6972]
+[2016.04.04 08:09:50] [0000m.07s.357ms] [3] Application:      [iCDB Server]
+[2016.04.04 08:09:50] [0000m.07s.357ms] [3] Operating system: [Microsoft Windows 7 Enterprise Edition, 64-bit Service Pack 1 (build 7601)]
+[2016.04.04 08:09:50] [0000m.07s.357ms] [3] WARNING: Regenerating database GUID
+[2016.04.04 08:09:50] [0000m.07s.357ms] [3] Previous database GUID [c189-4fd1-0a08-593d-ee2f-cb63-f2fc-b650-d776-6fa2-234f-cb2c]
+[2016.04.04 08:09:50] [0000m.07s.357ms] [3] Current database GUID  [3e61-0617-75cf-8ee3-ea57-2073-b572-0750-95e2-7fa2-234f-cb2c]
+[2016.04.04 08:09:50] [0000m.07s.357ms] [0] .

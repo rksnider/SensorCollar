@@ -1,0 +1,29 @@
+[2016.06.14 10:43:56] [0000m.09s.065ms] [0] WELCOME
+[2016.06.14 10:43:56] [0000m.09s.065ms] [1] iCDB Server ver.2.102, K2EPsfrInmXyAjPx1YgeTA, build:697648 created 2015-11-16 07:16:31, sources stamp:K2EPsfrInmXyAjPx1YgeTA
+[2016.06.14 10:43:56] [0000m.09s.065ms] [1] Copyright 2015 Mentor Graphics Corporation. All Rights Reserved.
+[2016.06.14 10:43:56] [0000m.09s.065ms] [1] Base flow version [VX.1.2]
+[2016.06.14 10:43:56] [0000m.09s.065ms] [1] GBS Install Id [45446], Flow Id [PADS VX.1.2], Full Flow Name [PADS VX.1.2], Exact Access Date [Nov 1 2015]
+[2016.06.14 10:43:56] [0000m.09s.065ms] [1] Machine [BZ-ECE-CB508-01]  User [s58p233]  PID [68848]
+[2016.06.14 10:43:56] [0000m.09s.065ms] [1] Operating system [Microsoft Windows 7 Enterprise Edition, 64-bit Service Pack 1 (build 7601)]
+[2016.06.14 10:43:56] [0000m.09s.065ms] [1] Current working dir [C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board]
+[2016.06.14 10:43:56] [0000m.09s.065ms] [1] PATH [C:\MentorGraphics\PADSVX.1.2\SDD_HOME\common\win32\bin;C:\MentorGraphics\PADSVX.1.2\SDD_HOME\common\win32\lib;C:\MentorGraphics\PADSVX.1.2\MGC_HOME.ixn\bin;C:\MentorGraphics\PADSVX.1.2\MGC_HOME.ixn\lib;C:\MentorGraphics\PADSVX.1.2\SDD_HOME\wv\win32\bin;C:\Python27\Lib\site-packages\PyQt4;C:\Program Files (x86)\AMD APP\bin\x86_64;C:\Program Files (x86)\AMD APP\bin\x86;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;C:\MATLAB\R2015a\runtime\win64;C:\MATLAB\R2015a\bin;C:\Program Files (x86)\MiKTeX 2.9\miktex\bin\;C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Bin\;C:\Program Files\IVI Foundation\VISA\Win64\Bin\;C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Bin;C:\Python27;C:\Python27\DLLs;C:\Python27\Scripts;C:\Python27\gnuplot\binary;C:\Program Files (x86)\pythonxy\SciTE-3.5.1-4;C:\Program Files (x86)\pythonxy\console;C:\Program Files\TortoiseGit\bin;C:\Program Files\Git\cmd;C:\OrCAD\OrCAD_16.6_Lite\OpenAccess\bin\win32\opt;C:\OrCAD\OrCAD_16.6_Lite\tools\pcb\bin;C:\OrCAD\OrCAD_16.6_Lite\tools\fet\bin;C:\OrCAD\OrCAD_16.6_Lite\tools\Capture;C:\OrCAD\OrCAD_16.6_Lite\tools\PSpice;C:\OrCAD\OrCAD_16.6_Lite\tools\specctra\bin;C:\OrCAD\OrCAD_16.6_Lite\tools\bin;;C:\altera\15.1\modelsim_ase\win32aloem;C:\modeltech64_10.1c\win64]
+[2016.06.14 10:43:56] [0000m.09s.065ms] [1] SDD_HOME [C:\MentorGraphics\PADSVX.1.2\SDD_HOME] on file system [NTFS]
+[2016.06.14 10:43:56] [0000m.09s.065ms] [1] SDD_PLATFORM [win32]
+[2016.06.14 10:43:56] [0000m.09s.065ms] [1] WDIR [C:\PADS Projects;C:\MentorGraphics\PADSVX.1.2\SDD_HOME\standard;]
+[2016.06.14 10:43:56] [0000m.09s.065ms] [1] Local iCDB working dir [C:\PADS Projects\iCDB] on file system [NTFS]
+[2016.06.14 10:43:56] [0000m.09s.065ms] [0] Creating database content backup before upgrade
+[2016.06.14 10:43:56] [0000m.09s.188ms] [0] Database content backed up to [C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board\database\cdbback\2016-06-14 10.43.56-68848.zip] of size [52 168 bytes (50.9 kB)] in [129ms 748us]
+[2016.06.14 10:43:56] [0000m.09s.204ms] [0] Upgrading constraint definitions from version [ce_ee.cns=7.10.24;user.cns=8a0a-ca53-eaf8-b89d-81d5-fd5d-1d5f-d550-5066-6fa2-234f-cb2c]
+[2016.06.14 10:43:56] [0000m.09s.220ms] [0] Upgrading snapshot [1:DxD] from version [2709]
+[2016.06.14 10:43:56] [0000m.09s.235ms] [1] CORE: Upgrade atlas from version 507 [C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board\database\s1\cdbblks\2000000010000050.blk\dxdatl]
+[2016.06.14 10:43:56] [0000m.09s.235ms] [1] CORE: Upgrade atlas from version 517 [C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board\database\s1\cdbblks\2000000010000050.blk\dxdatl]
+[2016.06.14 10:43:56] [0000m.09s.235ms] [1] CORE: Upgrade atlas from version 517 to 518 completed successfully [C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board\database\s1\cdbblks\2000000010000050.blk\dxdatl]
+[2016.06.14 10:43:56] [0000m.09s.235ms] [1] CORE: Upgrade snapshot DxD completed successfully.
+[2016.06.14 10:43:56] [0000m.09s.235ms] [0] Snapshot [1:DxD] upgraded to version [3000] in [11ms 494us]
+[2016.06.14 10:43:56] [0000m.09s.235ms] [0] Upgrading constraint definitions for snapshot [1:DxD]
+[2016.06.14 10:43:56] [0000m.09s.251ms] [0] Constraint definitions for snapshot [1:DxD] upgraded in [16ms 266us]
+[2016.06.14 10:43:56] [0000m.09s.251ms] [0] Saving upgraded snapshot [1:DxD]
+[2016.06.14 10:43:56] [0000m.09s.266ms] [0] Upgraded snapshot [1:DxD] saved in [10ms 280us]
+[2016.06.14 10:43:56] [0000m.09s.329ms] [0] Constraint definitions upgraded to version [ce_ee.cns=7.10.37]
+[2016.06.14 10:43:56] [0000m.09s.329ms] [0] DONE
+[2016.06.14 10:43:56] [0000m.09s.329ms] [0] .

@@ -1,0 +1,318 @@
+
+(pcb
+ "C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\GPS Board.GPS_PADS95.GPS.db"
+	(version "5.0.0")
+	(units "basic")
+	(config_properties
+		(attributes
+			(attval "PcbConfigName"
+ "C:\MentorGraphics\PADSVX.1.2\SDD_HOME/standard/pads95.cfg")
+			(attval "CnsFile"
+ "C:\MentorGraphics\PADSVX.1.2\SDD_HOME\standard\isis\pads95.cns")
+			(attval "BeAdapter" "PADS95")
+			(attval "FeAdapter" "DxDesigner")
+			(attval "SYSCONFIG" "pcbfwd")
+			(attval "LASTSYSCONFIG" "pcbfwd"))
+		(constraints
+			(cnsval "U:Velocity" "Unknown:3")
+			(cnsval "U:Time" "Unknown:3")
+			(cnsval "U:Ampere" "Unknown:3")
+			(cnsval "U:Capacitance" "Unknown:3")
+			(cnsval "U:Inductance" "Unknown:3")
+			(cnsval "U:Ohm" "Unknown:3")
+			(cnsval "U:Volt" "Unknown:3")
+			(cnsval "U:Power" "Unknown:3")
+			(cnsval "U:Unknown" "Unknown:3")
+			(cnsval "U:Angle" "Unknown:3")
+			(cnsval "U:Linear" "THOUSANDTHS:3")))
+	(project_properties
+		(attributes
+			(attval "EPLANNER_DSN" "1.0")))
+	(part_library
+		(part "MAX-7Q")
+		(logical_part_mapping "MAX-7Q"
+			(comp "U1"))
+		(logical_part "MAX-7Q"
+			(slots
+				(slot "GPS_MAX-7C__MAX-7Q_1"
+					(attributes
+						(attval "DEVICE" "MAX-7Q")
+						(attval "Part Number" "MAX-7Q")
+						(attval "PKG_TYPE" "MAX-7_GPS")
+						(attval "REFDES" "U?"))))
+			(pin 6  5 "GPS_MAX-7C__MAX-7Q_1" 0 "V_BCKP" 0)
+			(pin 14  5 "GPS_MAX-7C__MAX-7Q_1" 0 "VCC_RF" 0)
+			(pin 7  5 "GPS_MAX-7C__MAX-7Q_1" 0 "VCC_IO" 0)
+			(pin 8  5 "GPS_MAX-7C__MAX-7Q_1" 0 "VCC" 0)
+			(pin 2  5 "GPS_MAX-7C__MAX-7Q_1" 0 "TXD" 0)
+			(pin 4  5 "GPS_MAX-7C__MAX-7Q_1" 0 "TIMEPULSE" 0)
+			(pin 16  5 "GPS_MAX-7C__MAX-7Q_1" 0 "SDA" 0)
+			(pin 17  5 "GPS_MAX-7C__MAX-7Q_1" 0 "SCL" 0)
+			(pin 3  5 "GPS_MAX-7C__MAX-7Q_1" 0 "RXD" 0)
+			(pin 11  5 "GPS_MAX-7C__MAX-7Q_1" 0 "RF_IN" 0)
+			(pin 15  5 "GPS_MAX-7C__MAX-7Q_1" 0 "RESVD" 0)
+			(pin 9  5 "GPS_MAX-7C__MAX-7Q_1" 0 "RESET_N" 0)
+			(pin 18  5 "GPS_MAX-7C__MAX-7Q_1" 0 "RESERVED" 0)
+			(pin 12  5 "GPS_MAX-7C__MAX-7Q_1" 0 "GND12" 0)
+			(pin 10  5 "GPS_MAX-7C__MAX-7Q_1" 0 "GND10" 0)
+			(pin 1  5 "GPS_MAX-7C__MAX-7Q_1" 0 "GND1" 0)
+			(pin 5  5 "GPS_MAX-7C__MAX-7Q_1" 0 "EXTINT" 0)
+			(pin 13  5 "GPS_MAX-7C__MAX-7Q_1" 0 "ANT_ON" 0))
+		(part "JUMPER_5PIN_100MIL")
+		(logical_part_mapping "JUMPER_5PIN_100MIL"
+			(comp "J3" "J1"))
+		(logical_part "JUMPER_5PIN_100MIL"
+			(slots
+				(slot "JUMPER_5PIN_100MIL__JUMPER_5PIN_100MIL_1"
+					(attributes
+						(attval "DEVICE" "JUMPER_5PIN_100MIL")
+						(attval "PKG_TYPE" "JUMPER_5PIN_100MIL")
+						(attval "REFDES" "J?"))))
+			(pin 5  3 "JUMPER_5PIN_100MIL__JUMPER_5PIN_100MIL_1" 0 "PIN4" 0)
+			(pin 4  3 "JUMPER_5PIN_100MIL__JUMPER_5PIN_100MIL_1" 0 "PIN3" 0)
+			(pin 3  3 "JUMPER_5PIN_100MIL__JUMPER_5PIN_100MIL_1" 0 "PIN2" 0)
+			(pin 2  3 "JUMPER_5PIN_100MIL__JUMPER_5PIN_100MIL_1" 0 "PIN1" 0)
+			(pin 1  3 "JUMPER_5PIN_100MIL__JUMPER_5PIN_100MIL_1" 0 "PIN0" 0))
+		(part "JUMPER_2PIN_100MIL")
+		(logical_part_mapping "JUMPER_2PIN_100MIL"
+			(comp "J2"))
+		(logical_part "JUMPER_2PIN_100MIL"
+			(slots
+				(slot "JUMPER_2PIN_100MIL__JUMPER_2PIN_100MIL_1"
+					(attributes
+						(attval "DEVICE" "JUMPER_2PIN_100MIL")
+						(attval "PKG_TYPE" "JUMPER_2PIN_100MIL")
+						(attval "REFDES" "J?"))))
+			(pin 2  3 "JUMPER_2PIN_100MIL__JUMPER_2PIN_100MIL_1" 0 "PIN1" 0)
+			(pin 1  3 "JUMPER_2PIN_100MIL__JUMPER_2PIN_100MIL_1" 0 "PIN0" 0))
+		(part "FERRITE_BEAD_FILTER")
+		(logical_part_mapping "FERRITE_BEAD_FILTER"
+			(comp "FB2" "FB1"))
+		(logical_part "FERRITE_BEAD_FILTER"
+			(slots
+				(slot "FERRITE_BEAD_FILTER__FERRITE_BEAD_FILTER_1"
+					(attributes
+						(attval "DEVICE" "FERRITE_BEAD_FILTER")
+						(attval "Part Number" "BLM18PG600SN1D")
+						(attval "PKG_TYPE" "0603_MY")
+						(attval "REFDES" "FB?"))))
+			(pin 2  3 "FERRITE_BEAD_FILTER__FERRITE_BEAD_FILTER_1" 0 "PIN1" 0)
+			(pin 1  3 "FERRITE_BEAD_FILTER__FERRITE_BEAD_FILTER_1" 0 "PIN0" 0))
+		(part "ANTENNA")
+		(logical_part_mapping "ANTENNA"
+			(comp "AE1"))
+		(logical_part "ANTENNA"
+			(slots
+				(slot "ANTENNA__ANTENNA_1"
+					(attributes
+						(attval "DEVICE" "ANTENNA")
+						(attval "Part Number" "1575AT43A0040")
+						(attval "PKG_TYPE" "ANTENNA")
+						(attval "REFDES" "AE?"))))
+			(pin 2  3 "ANTENNA__ANTENNA_1" 0 "NC" 0)
+			(pin 1  3 "ANTENNA__ANTENNA_1" 0 "FEEDING_POINT" 0))
+		(part "908_22101T_MMCX")
+		(logical_part_mapping "908_22101T_MMCX"
+			(comp "J4"))
+		(logical_part "908_22101T_MMCX"
+			(slots
+				(slot "908_22101T_MMCX__908_22101T_MMCX_1"
+					(attributes
+						(attval "DEVICE" "908_22101T_MMCX")
+						(attval "PKG_TYPE" "908_22101T_MMCX")
+						(attval "REFDES" "J?"))))
+			(pin 1  3 "908_22101T_MMCX__908_22101T_MMCX_1" 0 "IN" 0)
+			(pin 4  3 "908_22101T_MMCX__908_22101T_MMCX_1" 0 "GND3" 0)
+			(pin 3  3 "908_22101T_MMCX__908_22101T_MMCX_1" 0 "GND2" 0)
+			(pin 2  3 "908_22101T_MMCX__908_22101T_MMCX_1" 0 "GND1" 0))
+		(part "0P1UF_CAP_0603")
+		(logical_part_mapping "0P1UF_CAP_0603"
+			(comp "C1"))
+		(logical_part "0P1UF_CAP_0603"
+			(slots
+				(slot "0P1UF_CAP_0603__0P1UF_CAP_0603_1"
+					(attributes
+						(attval "DEVICE" "0P1UF_CAP_0603")
+						(attval "PINSWAP" "[(1,2)]")
+						(attval "PKG_TYPE" "0603_MY")
+						(attval "REFDES" "C?")
+						(attval "Tolerance" "")
+						(attval "Value" "0.1UF"))))
+			(pin 2  5 "0P1UF_CAP_0603__0P1UF_CAP_0603_1" 0 "2" 0)
+			(pin 1  5 "0P1UF_CAP_0603__0P1UF_CAP_0603_1" 0 "1" 0)))
+	(placement
+		(component "MAX-7_GPS"
+			(place "U1" 0.0 0.0 top 0.0
+				(comp_pin "6" 0.0 0.0 "BI")
+				(comp_pin "14" 0.0 0.0 "BI")
+				(comp_pin "7" 0.0 0.0 "BI")
+				(comp_pin "8" 0.0 0.0 "BI")
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "4" 0.0 0.0 "BI")
+				(comp_pin "16" 0.0 0.0 "BI")
+				(comp_pin "17" 0.0 0.0 "BI")
+				(comp_pin "3" 0.0 0.0 "BI")
+				(comp_pin "11" 0.0 0.0 "BI")
+				(comp_pin "15" 0.0 0.0 "BI")
+				(comp_pin "9" 0.0 0.0 "BI")
+				(comp_pin "18" 0.0 0.0 "BI")
+				(comp_pin "12" 0.0 0.0 "BI")
+				(comp_pin "10" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI")
+				(comp_pin "5" 0.0 0.0 "BI")
+				(comp_pin "13" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Part Number" "MAX-7Q")
+				(attval "DEVICE" "MAX-7Q")
+				(attval "REFDES" "U1")))
+		(component "908_22101T_MMCX"
+			(place "J4" 0.0 0.0 top 0.0
+				(comp_pin "1" 0.0 0.0 "IN")
+				(comp_pin "4" 0.0 0.0 "IN")
+				(comp_pin "3" 0.0 0.0 "IN")
+				(comp_pin "2" 0.0 0.0 "IN"))
+			(attributes
+				(attval "DEVICE" "908_22101T_MMCX")
+				(attval "REFDES" "J4")))
+		(component "JUMPER_5PIN_100MIL"
+			(place "J3" 0.0 0.0 top 0.0
+				(comp_pin "5" 0.0 0.0 "IN")
+				(comp_pin "4" 0.0 0.0 "IN")
+				(comp_pin "3" 0.0 0.0 "IN")
+				(comp_pin "2" 0.0 0.0 "IN")
+				(comp_pin "1" 0.0 0.0 "IN"))
+			(attributes
+				(attval "DEVICE" "JUMPER_5PIN_100MIL")
+				(attval "REFDES" "J3")))
+		(component "JUMPER_2PIN_100MIL"
+			(place "J2" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "IN")
+				(comp_pin "1" 0.0 0.0 "IN"))
+			(attributes
+				(attval "DEVICE" "JUMPER_2PIN_100MIL")
+				(attval "REFDES" "J2")))
+		(component "JUMPER_5PIN_100MIL"
+			(place "J1" 0.0 0.0 top 0.0
+				(comp_pin "5" 0.0 0.0 "IN")
+				(comp_pin "4" 0.0 0.0 "IN")
+				(comp_pin "3" 0.0 0.0 "IN")
+				(comp_pin "2" 0.0 0.0 "IN")
+				(comp_pin "1" 0.0 0.0 "IN"))
+			(attributes
+				(attval "DEVICE" "JUMPER_5PIN_100MIL")
+				(attval "REFDES" "J1")))
+		(component "0603_MY"
+			(place "FB2" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "IN")
+				(comp_pin "1" 0.0 0.0 "IN"))
+			(attributes
+				(attval "Part Number" "BLM18PG600SN1D")
+				(attval "DEVICE" "FERRITE_BEAD_FILTER")
+				(attval "REFDES" "FB2")))
+		(component "0603_MY"
+			(place "FB1" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "IN")
+				(comp_pin "1" 0.0 0.0 "IN"))
+			(attributes
+				(attval "Part Number" "BLM18PG600SN1D")
+				(attval "DEVICE" "FERRITE_BEAD_FILTER")
+				(attval "REFDES" "FB1")))
+		(component "0603_MY"
+			(place "C1" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "BI")
+				(comp_pin "1" 0.0 0.0 "BI"))
+			(attributes
+				(attval "Tolerance" "")
+				(attval "Value" "0.1UF")
+				(attval "DEVICE" "0P1UF_CAP_0603")
+				(attval "REFDES" "C1")))
+		(component "ANTENNA"
+			(place "AE1" 0.0 0.0 top 0.0
+				(comp_pin "2" 0.0 0.0 "IN")
+				(comp_pin "1" 0.0 0.0 "IN"))
+			(attributes
+				(attval "Part Number" "1575AT43A0040")
+				(attval "DEVICE" "ANTENNA")
+				(attval "REFDES" "AE1"))))
+	(functions
+		(func "$2I11" "" "U1" 1)
+		(func "$2I206" "" "J4" 1)
+		(func "$2I184" "" "J3" 1)
+		(func "$2I139" "" "J2" 1)
+		(func "$2I152" "" "J1" 1)
+		(func "$2I217" "" "FB2" 1)
+		(func "$2I202" "" "FB1" 1)
+		(func "$2I35" "" "C1" 1)
+		(func "$2I31" "" "AE1" 1))
+	(network
+		(net "ANT_ON"
+			(pins J3-1 U1-13))
+		(net "EXTINT"
+			(pins J1-2 U1-5))
+		(net "GND"
+			(pins J4-2 J4-3 J4-4 J3-5 J2-2 C1-2 U1-1 U1-10 U1-12))
+		(net "GPS_POWER_3P3V"
+			(pins J2-1 FB1-2))
+		(net "GPS_POWER_3P3V_FILTERED"
+			(pins FB1-1 C1-1 U1-9 U1-8 U1-7))
+		(net "RF_IN"
+			(pins AE1-1 FB2-2 U1-11))
+		(net "RF_IN_TO_MMCX"
+			(pins J4-1 FB2-1))
+		(net "RXD"
+			(pins J1-4 U1-3))
+		(net "SCL"
+			(pins J3-4 U1-17))
+		(net "SDA"
+			(pins J3-3 U1-16))
+		(net "TIMEPULSE"
+			(pins J1-3 U1-4))
+		(net "TXD"
+			(pins J1-5 U1-2))
+		(net "VCC_RF"
+			(pins J3-2 U1-14))
+		(net "V_PCKP"
+			(pins J1-1 U1-6)))
+	(network_electrical
+		(net_scalar "V_PCKP"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "VCC_RF"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "TXD"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "TIMEPULSE"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SDA"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "SCL"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "RXD"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "RF_IN_TO_MMCX"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "RF_IN"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "GPS_POWER_3P3V_FILTERED"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "GPS_POWER_3P3V"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "GND"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "EXTINT"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))
+		(net_scalar "ANT_ON"
+			(constraints
+				(cnsval "SCHEDULED" "FALSE")))))

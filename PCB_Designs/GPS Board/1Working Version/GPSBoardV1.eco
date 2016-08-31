@@ -1,0 +1,21 @@
+*PADS-ECO-V10.0-MILS*
+
+*REMARK* -- MCollar_INTERFACE_currentV2.pcb -- Thu Jul 21 10:12:17 2016
+
+
+*DELPIN*
+J1.1    $2N53
+U1.6    $2N53
+J1.2    $2N52
+U1.5    $2N52
+J1.3    $2N51
+U1.4    $2N51
+U1.3    $2N50
+J1.4    $2N50
+U1.2    $2N49
+J1.5    $2N49
+J1.6    GND
+
+*DELPART*
+J1 JUMPER_6PIN_100MIL
+*END*

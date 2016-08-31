@@ -1,0 +1,3 @@
+cd C:\altera\15.0\quartus\bin64
+jtagconfig --setparam 1 JtagClock 6M
+jtagconfig --getparam 1 JtagClock

@@ -1,0 +1,97 @@
+*
+*
+G04 PADS VX.1.2 Build Number: 698008 generated Gerber (RS-274-X) file*
+G04 PC Version=2.1*
+*
+%IN "GPSBoardV1Diagonal.pcb"*%
+*
+%MOIN*%
+*
+%FSLAX35Y35*%
+*
+*
+*
+*
+G04 PC Standard Apertures*
+*
+*
+G04 Thermal Relief Aperture macro.*
+%AMTER*
+1,1,$1,0,0*
+1,0,$1-$2,0,0*
+21,0,$3,$4,0,0,45*
+21,0,$3,$4,0,0,135*
+%
+*
+*
+G04 Annular Aperture macro.*
+%AMANN*
+1,1,$1,0,0*
+1,0,$2,0,0*
+%
+*
+*
+G04 Odd Aperture macro.*
+%AMODD*
+1,1,$1,0,0*
+1,0,$1-0.005,0,0*
+%
+*
+*
+G04 PC Custom Aperture Macros*
+*
+*
+*
+*
+*
+*
+G04 PC Aperture Table*
+*
+%ADD010C,0.001*%
+%ADD013C,0.01*%
+%ADD195R,0.065X0.065*%
+%ADD198C,0.056*%
+*
+*
+*
+*
+G04 PC Circuitry*
+G04 Layer Name GPSBoardV1Diagonal.pcb - circuitry*
+%LPD*%
+*
+*
+G04 PC Custom Flashes*
+G04 Layer Name GPSBoardV1Diagonal.pcb - flashes*
+%LPD*%
+*
+*
+G04 PC Circuitry*
+G04 Layer Name GPSBoardV1Diagonal.pcb - circuitry*
+%LPD*%
+*
+G54D10*
+G54D13*
+G01X100000Y100000D02*
+X236000D01*
+Y162000*
+X100000*
+Y100000*
+G54D195*
+X230000Y146000D03*
+Y136000D03*
+Y126000D03*
+Y116000D03*
+Y106000D03*
+X152000D03*
+X142000D03*
+X172000D03*
+X182000D03*
+X192000D03*
+X202000D03*
+X212000D03*
+G54D198*
+X118000Y121200D03*
+X105200Y134000D03*
+X118000Y146800D03*
+X0Y0D02*
+M02*

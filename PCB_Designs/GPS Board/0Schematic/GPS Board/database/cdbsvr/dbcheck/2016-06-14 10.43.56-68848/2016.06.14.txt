@@ -1,0 +1,81 @@
+[2016.06.14 10:43:56] [0000m.09s.188ms] [0] WELCOME
+[2016.06.14 10:43:56] [0000m.09s.188ms] [1] iCDB Diagnostic ver.2.102, K2EPsfrInmXyAjPx1YgeTA, build:697648 created 2015-11-16 07:16:31, sources stamp:K2EPsfrInmXyAjPx1YgeTA
+[2016.06.14 10:43:56] [0000m.09s.188ms] [1] Copyright 2015 Mentor Graphics Corporation. All Rights Reserved.
+[2016.06.14 10:43:56] [0000m.09s.188ms] [1] Base flow version [VX.1.2]
+[2016.06.14 10:43:56] [0000m.09s.188ms] [1] GBS Install Id [45446], Flow Id [PADS VX.1.2], Full Flow Name [PADS VX.1.2], Exact Access Date [Nov 1 2015]
+[2016.06.14 10:43:56] [0000m.09s.188ms] [1] Machine [BZ-ECE-CB508-01]  User [s58p233]  PID [68848]
+[2016.06.14 10:43:56] [0000m.09s.188ms] [1] Operating system [Microsoft Windows 7 Enterprise Edition, 64-bit Service Pack 1 (build 7601)]
+[2016.06.14 10:43:56] [0000m.09s.188ms] [1] Current working dir [C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board]
+[2016.06.14 10:43:56] [0000m.09s.188ms] [1] PATH [C:\MentorGraphics\PADSVX.1.2\SDD_HOME\common\win32\bin;C:\MentorGraphics\PADSVX.1.2\SDD_HOME\common\win32\lib;C:\MentorGraphics\PADSVX.1.2\MGC_HOME.ixn\bin;C:\MentorGraphics\PADSVX.1.2\MGC_HOME.ixn\lib;C:\MentorGraphics\PADSVX.1.2\SDD_HOME\wv\win32\bin;C:\Python27\Lib\site-packages\PyQt4;C:\Program Files (x86)\AMD APP\bin\x86_64;C:\Program Files (x86)\AMD APP\bin\x86;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;C:\MATLAB\R2015a\runtime\win64;C:\MATLAB\R2015a\bin;C:\Program Files (x86)\MiKTeX 2.9\miktex\bin\;C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Bin\;C:\Program Files\IVI Foundation\VISA\Win64\Bin\;C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Bin;C:\Python27;C:\Python27\DLLs;C:\Python27\Scripts;C:\Python27\gnuplot\binary;C:\Program Files (x86)\pythonxy\SciTE-3.5.1-4;C:\Program Files (x86)\pythonxy\console;C:\Program Files\TortoiseGit\bin;C:\Program Files\Git\cmd;C:\OrCAD\OrCAD_16.6_Lite\OpenAccess\bin\win32\opt;C:\OrCAD\OrCAD_16.6_Lite\tools\pcb\bin;C:\OrCAD\OrCAD_16.6_Lite\tools\fet\bin;C:\OrCAD\OrCAD_16.6_Lite\tools\Capture;C:\OrCAD\OrCAD_16.6_Lite\tools\PSpice;C:\OrCAD\OrCAD_16.6_Lite\tools\specctra\bin;C:\OrCAD\OrCAD_16.6_Lite\tools\bin;;C:\altera\15.1\modelsim_ase\win32aloem;C:\modeltech64_10.1c\win64]
+[2016.06.14 10:43:56] [0000m.09s.188ms] [1] SDD_HOME [C:\MentorGraphics\PADSVX.1.2\SDD_HOME] on file system [NTFS]
+[2016.06.14 10:43:56] [0000m.09s.188ms] [1] SDD_PLATFORM [win32]
+[2016.06.14 10:43:56] [0000m.09s.188ms] [1] WDIR [C:\PADS Projects;C:\MentorGraphics\PADSVX.1.2\SDD_HOME\standard;]
+[2016.06.14 10:43:56] [0000m.09s.188ms] [1] Local iCDB working dir [C:\PADS Projects\iCDB] on file system [NTFS]
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: Checking snapshot [1:DxD] integrity
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: SnapshotCheck: CDBImplBlock
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: SnapshotCheck: CDBImplComp
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: SnapshotCheck: DxDCompView (cached)
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: DxDCheck: LineDxD
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: DxDCheck: CircleDxD
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: DxDCheck: ArcDxD
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: DxDCheck: RectDxD
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: DxDCheck: TextDxD
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: SnapshotCheck: CDBImplGroup
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: SnapshotCheck: CDBImplPin (regular)
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: SnapshotCheck: AttributesUtility (regular)
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: SnapshotCheck: CDBImplPin (cached)
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: SnapshotCheck: AttributesUtility (cached)
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: Block: Schematic1
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: BlockCheck: CDBImplNet
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: BlockCheck: CDBImplBus
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: BlockCheck: CDBImplPin
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: BlockCheck: CDBImplPort
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: BlockCheck: CDBImplComp
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: BlockCheck: AttributesUtility
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: BlockCheck: CDBImplBlockViewDxD
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: BlockViewDxDCheck: CDBImplNetDxD
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: BlockViewDxDCheck: CDBImplRipperDxD
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesConstraint
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesPin
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesFromTo
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesPhysicalNet
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesPinPair
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesElectricalNet
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesDiffPair
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesComponent
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesPartPin
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesPartPinPair
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesPart
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesDesign
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesLayerClearRule
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesSchemeClearRule
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesViaAssign
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesLayerRule
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesSchemeNetClassRule
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesScheme
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesLayer
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesNetClass
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesClearRule
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesConstraintClass
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesViaSpan
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesGenClear
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesPartTech
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesConstVar
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesC2CClearRule
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesPkgTypeClearRule
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesP2PClearRule
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesParRuleSection
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesParRuleDef
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesNoiseRule
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesGenObj
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesGenCompObj
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesGenObjType
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesVia
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesZAxisLayerRule
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: CesConfigCheck: CesZAxisClearRule
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: ConfigCheck: CDBImplComp
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: ConfigCheck: CDBImplNet
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: ConfigCheck: CDBImplPin
+[2016.06.14 10:43:56] [0000m.09s.266ms] [2] Diagnostic: Snapshot [1:DxD] integrity check PASSED in [5ms 655us]
+[2016.06.14 10:43:56] [0000m.09s.329ms] [0] Diagnostic: FINISH
+[2016.06.14 10:43:56] [0000m.09s.329ms] [0] .

@@ -1,0 +1,44 @@
+[2016.07.29 10:28:54] [1441m.42s.051ms] [1] SC[549]: UnRegistered sub-client [SystemDesignDll] with ID [7] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:54] [1441m.42s.109ms] [1] SC[549]: UnRegistered sub-client [GlobalNetAliasUpdater_367769760] with ID [23] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:54] [1441m.42s.110ms] [1] SC[549]: UnRegistered sub-client [BlockCacheDxD:370785600] with ID [22] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:54] [1441m.42s.110ms] [1] SC[549]: UnRegistered sub-client [ObjectHolder_367769584] with ID [21] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:54] [1441m.42s.110ms] [1] SC[549]: UnRegistered sub-client [IcdbNetProcessorSubClientDxD:368415120] with ID [24] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:54] [1441m.42s.111ms] [1] SC[549]: UnRegistered sub-client [Navigator] with ID [9] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:54] [1441m.42s.367ms] [1] SC[549]: UnRegistered sub-client [MyParts] with ID [16] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:54] [1441m.42s.367ms] [1] SC[549]: UnRegistered sub-client [toolboxes] with ID [18] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:55] [1441m.43s.193ms] [1] SC[549]: UnRegistered sub-client [SelectionHolder] with ID [4] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:55] [1441m.43s.194ms] [1] SC[549]: UnRegistered sub-client [SheetConnectorsCacheDxD:1469723235] with ID [19] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:55] [1441m.43s.194ms] [1] SC[549]: UnRegistered sub-client [NetsNamesCollectorDxD:1469723235] with ID [20] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:55] [1441m.43s.194ms] [1] SC[549]: UnRegistered sub-client [TransactionRollbackSubClient] with ID [2] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:55] [1441m.43s.195ms] [1] SC[549]: UnRegistered sub-client [DxD] with ID [1] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:55] [1441m.43s.233ms] [1] SC[549]: UnRegistered sub-client [xprob] with ID [3] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:55] [1441m.43s.233ms] [1] SC[549]: UnRegistered sub-client [SymbolEditor] with ID [5] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:55] [1441m.43s.240ms] [1] SC[549]: UnRegistered sub-client [OutputWindow] with ID [10] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:55] [1441m.43s.244ms] [1] SC[549]: UnRegistered sub-client [DxDbSearch] with ID [25] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:55] [1441m.43s.248ms] [1] SC[549]: UnRegistered sub-client [SAE] with ID [12] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:55] [1441m.43s.266ms] [1] SC[549]: UnRegistered sub-client [CCZAddin] with ID [14] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:55] [1441m.43s.270ms] [1] SC[549]: UnRegistered sub-client [DxThumbnails] with ID [15] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:57] [1441m.44s.941ms] [1] SC[549]: UnRegistered sub-client [DxConstraints] with ID [13] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:57] [1441m.44s.949ms] [1] SC[549]: UnRegistered sub-client [PinsList] with ID [17] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:57] [1441m.44s.976ms] [1] SC[549]: UnRegistered sub-client [PlaceDevice] with ID [11] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:57] [1441m.44s.983ms] [1] SC[549]: UnRegistered sub-client [HdlProject] with ID [8] for session ID [549] host [BZ-ECE-CB508-03] user [s58p233] process ID [14056]
+[2016.07.29 10:28:57] [1441m.45s.061ms] [1] CMT: Removed client [549]
+[2016.07.29 10:28:57] [1441m.45s.061ms] [1] CMT: There are no clients left - waiting [1 seconds]
+[2016.07.29 10:28:57] [1441m.45s.373ms] [1] SDL: The last connected iCDB Server Monitor [1] is waiting for server close
+[2016.07.29 10:28:59] [1441m.46s.861ms] [0] CMT: Starting server auto-close
+[2016.07.29 10:28:59] [1441m.46s.890ms] [0] S: Closing server
+[2016.07.29 10:28:59] [1441m.46s.974ms] [0] iCDB Server PI: Closing plugins
+[2016.07.29 10:28:59] [1441m.46s.974ms] [0] iCDB Server PI: Plugins closed
+[2016.07.29 10:28:59] [1441m.46s.974ms] [0] iCDB Server PI: Unloading database
+[2016.07.29 10:28:59] [1441m.46s.974ms] [0] iCDB Server PI: Saving storage
+[2016.07.29 10:28:59] [1441m.46s.974ms] [0] iCDB Server PI: Closing database
+[2016.07.29 10:28:59] [1441m.47s.029ms] [1] iCDB Server PI: Stats: Database defragmentation: max[1] avg[1] holes[0%] data[85%]
+[2016.07.29 10:28:59] [1441m.47s.029ms] [1] iCDB Server PI: Stats: Database file size [84344 (82.4 kB)]
+[2016.07.29 10:28:59] [1441m.47s.045ms] [0] iCDB Server PI: Database closed
+[2016.07.29 10:28:59] [1441m.47s.046ms] [1] iCDB Server PI: Stats: Total iCDB execution time: [10545] ticks
+[2016.07.29 10:28:59] [1441m.47s.046ms] [1] iCDB Server PI: Stats: Total iCDB execution time: [3183] microseconds
+[2016.07.29 10:28:59] [1441m.47s.046ms] [1] iCDB Server PI: Stats: Total iCDB commands count: [14]
+[2016.07.29 10:28:59] [1441m.47s.046ms] [1] iCDB Server PI: Stats: Average iCDB speed:        [4398] commands per second
+[2016.07.29 10:28:59] [1441m.47s.057ms] [0] Single file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\database\icdb.dat] closed with size [84344 (82.4 kB)]
+[2016.07.29 10:28:59] [1441m.47s.095ms] [1] SD[1]: Removing the last connected iCDB Server Monitor [1]
+[2016.07.29 10:28:59] [1441m.47s.213ms] [0] S: STOP

@@ -1,0 +1,58 @@
+[2015-06-03 10.58.52] -------------------- CREATE --------------------
+[2015-06-03 10.58.52] Creating Project Backup infrastructure for project [C:\Users\tyler.davis5\Documents\Sumer Work 2015\Interface Board\0Schematic\Interface Board\Interface Board.prj].
+[2015-06-03 10.58.55] Successfully created [AutoSave] backup [2015-06-03 10.58.55 - auto.zip] requested by [ECECB50801:s58p233].
+[2015-06-03 14.58.55] Successfully created [AutoSave] backup [2015-06-03 14.58.55 - auto.zip] requested by [ECECB50801:s58p233].
+[2015-06-03 18.58.56] Successfully created [AutoSave] backup [2015-06-03 18.58.55 - auto.zip] requested by [ECECB50801:s58p233].
+[2015-06-04 12.04.02] Successfully created [AutoSave] backup [2015-06-04 12.04.00 - auto.zip] requested by [ECECB50801:s58p233].
+[2015-06-04 12.04.02] Removing excessive [AutoSave] backup file [C:\Users\tyler.davis5\Documents\Sumer Work 2015\Interface Board\0Schematic\Interface Board\ProjectBackup\backups\2015-06-03 10.58.55 - auto.zip].
+[2015-06-04 12.04.02] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-06-03 10.58.55 - auto.zip] removed.
+[2015-06-09 10.42.35] Successfully created [AutoSave] backup [2015-06-09 10.42.33 - auto.zip] requested by [ECECB50801:s58p233].
+[2015-06-09 10.42.35] Removing excessive [AutoSave] backup file [C:\Users\tyler.davis5\Documents\Sumer Work 2015\Interface Board\0Schematic\Interface Board\ProjectBackup\backups\2015-06-03 14.58.55 - auto.zip].
+[2015-06-09 10.42.35] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-06-03 14.58.55 - auto.zip] removed.
+[2015-06-10 10.33.59] Successfully created [AutoSave] backup [2015-06-10 10.33.58 - auto.zip] requested by [ECECB50801:s58p233].
+[2015-06-10 10.33.59] Removing excessive [AutoSave] backup file [C:\Users\tyler.davis5\Documents\Sumer Work 2015\Interface Board\0Schematic\Interface Board\ProjectBackup\backups\2015-06-03 18.58.55 - auto.zip].
+[2015-06-10 10.33.59] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-06-03 18.58.55 - auto.zip] removed.
+[2015-06-12 13.59.51] Successfully created [AutoSave] backup [2015-06-12 13.59.49 - auto.zip] requested by [ECECB50801:s58p233].
+[2015-06-12 13.59.51] Removing excessive [AutoSave] backup file [C:\Users\tyler.davis5\Documents\Sumer Work 2015\Interface Board\0Schematic\Interface Board\ProjectBackup\backups\2015-06-04 12.04.00 - auto.zip].
+[2015-06-12 13.59.51] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-06-04 12.04.00 - auto.zip] removed.
+[2015-06-15 09.34.34] Successfully created [AutoSave] backup [2015-06-15 09.34.32 - auto.zip] requested by [ECECB50801:s58p233].
+[2015-06-15 09.34.34] Removing excessive [AutoSave] backup file [C:\Users\tyler.davis5\Documents\Summer Work 2015\Interface Board\0Schematic\Interface Board\ProjectBackup\backups\2015-06-09 10.42.33 - auto.zip].
+[2015-06-15 09.34.34] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-06-09 10.42.33 - auto.zip] removed.
+[2015-06-17 11.47.20] Successfully created [AutoSave] backup [2015-06-17 11.47.19 - auto.zip] requested by [ECECB50801:s58p233].
+[2015-06-17 11.47.20] Removing excessive [AutoSave] backup file [C:\Users\tyler.davis5\Documents\Sumer Work 2015\Interface Board\0Schematic\Interface Board\ProjectBackup\backups\2015-06-10 10.33.58 - auto.zip].
+[2015-06-17 11.47.20] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-06-10 10.33.58 - auto.zip] removed.
+[2015-06-19 14.25.59] Successfully created [AutoSave] backup [2015-06-19 14.25.58 - auto.zip] requested by [ECECB50801:s58p233].
+[2015-06-19 14.25.59] Removing excessive [AutoSave] backup file [C:\Users\tyler.davis5\Documents\Sumer Work 2015\Interface Board\0Schematic\Interface Board\ProjectBackup\backups\2015-06-12 13.59.49 - auto.zip].
+[2015-06-19 14.25.59] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-06-12 13.59.49 - auto.zip] removed.
+[2015-06-22 09.42.40] Successfully created [AutoSave] backup [2015-06-22 09.42.40 - auto.zip] requested by [ECECB50801:s58p233].
+[2015-06-22 09.42.40] Removing excessive [AutoSave] backup file [C:\Users\tyler.davis5\Documents\Sumer Work 2015\Interface Board\0Schematic\Interface Board\ProjectBackup\backups\2015-06-15 09.34.32 - auto.zip].
+[2015-06-22 09.42.40] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-06-15 09.34.32 - auto.zip] removed.
+[2015-06-22 13.42.41] Successfully created [AutoSave] backup [2015-06-22 13.42.40 - auto.zip] requested by [ECECB50801:s58p233].
+[2015-06-22 13.42.41] Removing excessive [AutoSave] backup file [C:\Users\tyler.davis5\Documents\Sumer Work 2015\Interface Board\0Schematic\Interface Board\ProjectBackup\backups\2015-06-17 11.47.19 - auto.zip].
+[2015-06-22 13.42.41] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-06-17 11.47.19 - auto.zip] removed.
+[2015-06-22 17.42.41] Successfully created [AutoSave] backup [2015-06-22 17.42.40 - auto.zip] requested by [ECECB50801:s58p233].
+[2015-06-22 17.42.41] Removing excessive [AutoSave] backup file [C:\Users\tyler.davis5\Documents\Sumer Work 2015\Interface Board\0Schematic\Interface Board\ProjectBackup\backups\2015-06-19 14.25.58 - auto.zip].
+[2015-06-22 17.42.41] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-06-19 14.25.58 - auto.zip] removed.
+[2015-07-02 09.13.03] Successfully created [AutoSave] backup [2015-07-02 09.13.02 - auto.zip] requested by [ECECB50801:s58p233].
+[2015-07-02 09.13.03] Removing excessive [AutoSave] backup file [C:\Users\tyler.davis5\Documents\Sumer Work 2015\Interface Board\0Schematic\Interface Board\ProjectBackup\backups\2015-06-22 09.42.40 - auto.zip].
+[2015-07-02 09.13.03] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-06-22 09.42.40 - auto.zip] removed.
+[2015-09-15 11.25.43] Successfully created [Constraints Definition Upgrade] backup [2015-09-15 11.25.43 - consDefUpgr.zip] requested by [BZ-ECE-CB508-01:s58p233].
+[2015-09-15 11.25.43] Migrated iCDB content backup file [cdbback\2015-09-15 11.25.42-4860.zip] removed.
+[2015-09-18 14.16.56] Successfully created [AutoSave] backup [2015-09-18 14.16.53 - auto.zip] requested by [BZ-ECE-CB508-01:s58p233].
+[2015-09-18 14.16.56] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board\ProjectBackup\backups\2015-06-22 13.42.40 - auto.zip].
+[2015-09-18 14.16.56] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-06-22 13.42.40 - auto.zip] removed.
+[2015-09-28 08.11.28] Successfully created [AutoSave] backup [2015-09-28 08.11.22 - auto.zip] requested by [BZ-ECE-CB508-01:s58p233].
+[2015-09-28 08.11.28] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board\ProjectBackup\backups\2015-06-22 17.42.40 - auto.zip].
+[2015-09-28 08.11.28] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-06-22 17.42.40 - auto.zip] removed.
+[2015-09-29 11.56.01] Successfully created [AutoSave] backup [2015-09-29 11.55.56 - auto.zip] requested by [BZ-ECE-CB508-01:s58p233].
+[2015-09-29 11.56.01] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board\ProjectBackup\backups\2015-07-02 09.13.02 - auto.zip].
+[2015-09-29 11.56.01] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-07-02 09.13.02 - auto.zip] removed.
+[2015-09-29 15.56.01] Successfully created [AutoSave] backup [2015-09-29 15.55.56 - auto.zip] requested by [BZ-ECE-CB508-01:s58p233].
+[2015-09-29 15.56.01] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board\ProjectBackup\backups\2015-09-18 14.16.53 - auto.zip].
+[2015-09-29 15.56.01] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-09-18 14.16.53 - auto.zip] removed.
+[2015-10-02 12.49.18] Successfully created [AutoSave] backup [2015-10-02 12.49.09 - auto.zip] requested by [BZ-ECE-CB508-01:s58p233].
+[2015-10-02 12.49.18] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board\ProjectBackup\backups\2015-09-28 08.11.22 - auto.zip].
+[2015-10-02 12.49.18] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-09-28 08.11.22 - auto.zip] removed.
+[2015-10-02 16.49.18] Successfully created [AutoSave] backup [2015-10-02 16.49.09 - auto.zip] requested by [BZ-ECE-CB508-01:s58p233].
+[2015-10-02 16.49.18] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board\ProjectBackup\backups\2015-09-29 11.55.56 - auto.zip].
+[2015-10-02 16.49.18] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-09-29 11.55.56 - auto.zip] removed.

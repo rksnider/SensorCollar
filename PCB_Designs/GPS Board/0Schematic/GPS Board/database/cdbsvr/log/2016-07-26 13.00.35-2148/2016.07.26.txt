@@ -1,0 +1,145 @@
+[2016.07.26 13:00:35] [0000m.00s.030ms] [0] WELCOME
+[2016.07.26 13:00:35] [0000m.00s.031ms] [1] iCDB Server ver.2.102, K2EPsfrInmXyAjPx1YgeTA, build:697648 created 2015-11-16 07:16:31, sources stamp:K2EPsfrInmXyAjPx1YgeTA
+[2016.07.26 13:00:35] [0000m.00s.031ms] [1] Copyright 2015 Mentor Graphics Corporation. All Rights Reserved.
+[2016.07.26 13:00:35] [0000m.00s.031ms] [1] Base flow version [VX.1.2]
+[2016.07.26 13:00:35] [0000m.00s.031ms] [1] GBS Install Id [45446], Flow Id [PADS VX.1.2], Full Flow Name [PADS VX.1.2], Exact Access Date [Nov 1 2015]
+[2016.07.26 13:00:35] [0000m.00s.031ms] [1] Machine [BZ-ECE-CB508-03]  User [s58p233]  PID [2148]
+[2016.07.26 13:00:35] [0000m.00s.031ms] [1] Operating system [Microsoft Windows 7 Enterprise Edition, 64-bit Service Pack 1 (build 7601)]
+[2016.07.26 13:00:35] [0000m.00s.031ms] [1] Current working dir [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board]
+[2016.07.26 13:00:35] [0000m.00s.031ms] [1] PATH [C:\MentorGraphics\PADSVX.1.2\SDD_HOME\common\win32\bin;C:\MentorGraphics\PADSVX.1.2\SDD_HOME\common\win32\lib;C:\MentorGraphics\PADSVX.1.2\MGC_HOME.ixn\bin;C:\MentorGraphics\PADSVX.1.2\MGC_HOME.ixn\lib;C:\MentorGraphics\PADSVX.1.2\SDD_HOME\wv\win32\bin;C:\Program Files (x86)\AMD APP\bin\x86_64;C:\Program Files (x86)\AMD APP\bin\x86;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\MATLAB\R2016a\runtime\win64;C:\Program Files\MATLAB\R2016a\bin;C:\Program Files\TortoiseGit\bin;C:\Program Files\Git\cmd;C:\Program Files\TortoiseHg\;C:\OrCAD\OrCAD_16.6_Lite\OpenAccess\bin\win32\opt;C:\OrCAD\OrCAD_16.6_Lite\tools\pcb\bin;C:\OrCAD\OrCAD_16.6_Lite\tools\fet\bin;C:\OrCAD\OrCAD_16.6_Lite\tools\Capture;C:\OrCAD\OrCAD_16.6_Lite\tools\PSpice;C:\OrCAD\OrCAD_16.6_Lite\tools\specctra\bin;C:\OrCAD\OrCAD_16.6_Lite\tools\bin;C:\modeltech64_10.1c\win64;C:\altera\15.0\modelsim_ase\win32aloem]
+[2016.07.26 13:00:35] [0000m.00s.031ms] [1] SDD_HOME [C:\MentorGraphics\PADSVX.1.2\SDD_HOME] on file system [NTFS]
+[2016.07.26 13:00:35] [0000m.00s.031ms] [1] SDD_PLATFORM [win32]
+[2016.07.26 13:00:35] [0000m.00s.031ms] [1] WDIR [C:\PADS Projects;C:\MentorGraphics\PADSVX.1.2\SDD_HOME\standard;]
+[2016.07.26 13:00:35] [0000m.00s.031ms] [1] Local iCDB working dir [C:\PADS Projects\iCDB] on file system [NTFS]
+[2016.07.26 13:00:35] [0000m.00s.031ms] [2] S: Loading config files
+[2016.07.26 13:00:35] [0000m.00s.036ms] [1] Config file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\database\cdbsvr\Server.cfg] not found
+[2016.07.26 13:00:35] [0000m.00s.040ms] [3] S: Config loaded
+[2016.07.26 13:00:35] [0000m.00s.045ms] [0] S: Project path [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\database] on file system [NTFS]
+[2016.07.26 13:00:35] [0000m.00s.045ms] [0] S: Project file (.prj) path [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\GPS Board.prj] on file system [NTFS]
+[2016.07.26 13:00:35] [0000m.00s.045ms] [1] S: WARNING: Database auto-repair support DISABLED
+[2016.07.26 13:00:35] [0000m.00s.045ms] [0] S: Single-user mode (auto)
+[2016.07.26 13:00:35] [0000m.00s.045ms] [0] S: Event polling mode autodetection
+[2016.07.26 13:00:35] [0000m.00s.049ms] [0] S: Started up automatically by iCDB Client: BZ-ECE-CB508-03:s58p233:7808
+[2016.07.26 13:00:35] [0000m.00s.049ms] [0] S: Auto close mode
+[2016.07.26 13:00:35] [0000m.00s.049ms] [0] S: Database ID [a1a8-53ba-8095-48b8-eea8-f873-fa8f-8750-9503-6fa0-b04d-eb2a]
+[2016.07.26 13:00:35] [0000m.00s.049ms] [0] PathTranslator: BEGIN dumping
+[2016.07.26 13:00:35] [0000m.00s.049ms] [0] PathTranslator: Local -> global path prefix list
+[2016.07.26 13:00:35] [0000m.00s.049ms] [0] PathTranslator: [Z:\] -> [\\opal.msu.montana.edu\s\s58p233\]
+[2016.07.26 13:00:35] [0000m.00s.049ms] [0] PathTranslator: Global -> local path prefix list
+[2016.07.26 13:00:35] [0000m.00s.049ms] [0] PathTranslator: [\\opal.msu.montana.edu\s\s58p233\] -> [Z:\]
+[2016.07.26 13:00:35] [0000m.00s.049ms] [0] PathTranslator: END dumping
+[2016.07.26 13:00:35] [0000m.00s.049ms] [0] S: START
+[2016.07.26 13:00:35] [0000m.00s.049ms] [0] S: Server startup lock file created
+[2016.07.26 13:00:35] [0000m.00s.050ms] [0] S: Listening for client connections on port [10001]
+[2016.07.26 13:00:35] [0000m.00s.050ms] [0] S: Server network ID [BZ-ECE-CB508-03:153.90.121.11,BZ-ECE-CB508-03,BZ-ECE-CB508-03.msu.montana.edu:10001]
+[2016.07.26 13:00:35] [0000m.00s.050ms] [0] S: Server GUID [1771-8ad3-065b-d9c7-353b-7978-53b7-9750-9305-6fa0-b04d-eb2a]
+[2016.07.26 13:00:35] [0000m.00s.050ms] [0] S: Project GUID [a1a8-53ba-8095-48b8-eea8-f873-fa8f-8750-9503-6fa0-b04d-eb2a]
+[2016.07.26 13:00:35] [0000m.00s.052ms] [0] S: Wrote data to server address file
+[2016.07.26 13:00:35] [0000m.00s.052ms] [0] S: Server startup lock file removed
+[2016.07.26 13:00:35] [0000m.00s.052ms] [1] ProjectBackupManager: Setting project file (.prj) path: [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\GPS Board.prj]
+[2016.07.26 13:00:35] [0000m.00s.101ms] [0] S: Plugins loaded: [PIM] [ENetGen70] 
+[2016.07.26 13:00:35] [0000m.00s.101ms] [0] S: Local disc access time: 30 us
+[2016.07.26 13:00:35] [0000m.00s.101ms] [0] S: File server access time: 30 us
+[2016.07.26 13:00:35] [0000m.00s.102ms] [0] Single file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\database\icdb.dat] size [78000 (76.2 kB)]
+[2016.07.26 13:00:35] [0000m.00s.102ms] [1] Single file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\database\icdb.dat] opened in read-write mode
+[2016.07.26 13:00:35] [0000m.00s.102ms] [0] SingleFile: [0000-0000-0000-0000] SFI header version check [1009] [1009]
+[2016.07.26 13:00:35] [0000m.00s.102ms] [0] Database GUARD OK: [78000]
+[2016.07.26 13:00:35] [0000m.00s.103ms] [0] SingleFile: [0000-0000-0000-0000] SFI header version check [1009] [1009]
+[2016.07.26 13:00:35] [0000m.00s.103ms] [0] Database GUARD OK: [78000]
+[2016.07.26 13:00:35] [0000m.00s.103ms] [0] SingleFile: [1654-bbde-2c52-cb33] SFI version check [1009] [1009]
+[2016.07.26 13:00:35] [0000m.00s.104ms] [0] SingleFile: [1654-bbde-2c52-cb33] Database SFI header has been read in [767us]
+[2016.07.26 13:00:35] [0000m.00s.105ms] [0] iCDB Server PI: Server & plugin session [541]
+[2016.07.26 13:00:35] [0000m.00s.105ms] [0] iCDB Server PI: Opening database [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\database]
+[2016.07.26 13:00:35] [0000m.00s.105ms] [0] iCDB Server PI: Database [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\database] opened
+[2016.07.26 13:00:35] [0000m.00s.119ms] [0] iCDB Database: Checking existence of constraint definitions
+[2016.07.26 13:00:35] [0000m.00s.119ms] [0] iCDB Database: Checking constraint definitions version
+[2016.07.26 13:00:35] [0000m.00s.148ms] [1] iCDB Database: Constraint definitions version [ce_ee.cns=7.10.37] up to date
+[2016.07.26 13:00:35] [0000m.00s.262ms] [0] iCDB Server PI: Initializing plugins
+[2016.07.26 13:00:35] [0000m.00s.263ms] [0] iCDB Server PI: Plugins initialized
+[2016.07.26 13:00:35] [0000m.00s.263ms] [0] S: iCDB database loaded
+[2016.07.26 13:00:35] [0000m.00s.265ms] [0] S: Starting threads
+[2016.07.26 13:00:35] [0000m.00s.266ms] [0] BT: Listening for broadcast messages on port [10000]
+[2016.07.26 13:00:35] [0000m.00s.267ms] [1] CMT: There are no clients - waiting [10 seconds]
+[2016.07.26 13:00:35] [0000m.00s.269ms] [0] IT: Session [542] for host [BZ-ECE-CB508-03] user [s58p233] with process ID [7808] created
+[2016.07.26 13:00:35] [0000m.00s.270ms] [1] SC[542]: Registered sub-client [DxD] with ID [1] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:35] [0000m.00s.270ms] [0] IT: iCDB Server Monitor session [1] for host [BZ-ECE-CB508-03] user [s58p233] with process ID [8932] created
+[2016.07.26 13:00:35] [0000m.00s.270ms] [1] DMT: There are [1] iCDB Server Monitor connected now
+[2016.07.26 13:00:35] [0000m.00s.281ms] [1] SC[542]: Registered sub-client [TransactionRollbackSubClient] with ID [2] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:35] [0000m.00s.284ms] [1] SC[542]: Registered sub-client [xprob] with ID [3] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:36] [0000m.00s.367ms] [1] CMT: There are [1] clients now: 542
+[2016.07.26 13:00:36] [0000m.00s.368ms] [1] SC[542]: Registered sub-client [SelectionHolder] with ID [4] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:36] [0000m.00s.401ms] [1] SC[542]: Registered sub-client [SymbolEditor] with ID [5] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:36] [0000m.00s.411ms] [1] SC[542]: Registered sub-client [SystemDesignDll] with ID [6] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:36] [0000m.00s.412ms] [1] SC[542]: UnRegistered sub-client [SystemDesignDll] with ID [6] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:36] [0000m.00s.415ms] [1] SC[542]: Registered sub-client [SystemDesignDll] with ID [7] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:36] [0000m.00s.757ms] [1] SC[542]: Registered sub-client [HdlProject] with ID [8] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:36] [0000m.00s.761ms] [1] SC[542]: Registered sub-client [Navigator] with ID [9] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:36] [0000m.00s.768ms] [1] SC[542]: Registered sub-client [OutputWindow] with ID [10] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:36] [0000m.00s.770ms] [1] SC[542]: Registered sub-client [PlaceDevice] with ID [11] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:36] [0000m.00s.778ms] [1] SC[542]: Registered sub-client [SAE] with ID [12] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:36] [0000m.00s.790ms] [1] SC[542]: Registered sub-client [DxConstraints] with ID [13] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:36] [0000m.00s.793ms] [1] SC[542]: Registered sub-client [CCZAddin] with ID [14] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:36] [0000m.00s.795ms] [1] SC[542]: Registered sub-client [DxThumbnails] with ID [15] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:36] [0000m.00s.797ms] [1] SC[542]: Registered sub-client [MyParts] with ID [16] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:36] [0000m.00s.804ms] [1] SC[542]: Registered sub-client [PinsList] with ID [17] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:36] [0000m.00s.843ms] [1] SC[542]: Registered sub-client [toolboxes] with ID [18] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:36] [0000m.00s.862ms] [1] SC[542]: Registered sub-client [SheetConnectorsCacheDxD:1469559636] with ID [19] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:36] [0000m.00s.865ms] [1] SC[542]: Registered sub-client [NetsNamesCollectorDxD:1469559636] with ID [20] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:36] [0000m.00s.882ms] [1] SC[542]: Registered sub-client [DxDbSearch] with ID [21] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:38] [0000m.03s.216ms] [1] SC[542]: Registered sub-client [ObjectHolder_399833960] with ID [22] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:38] [0000m.03s.218ms] [1] SC[542]: Registered sub-client [BlockCacheDxD:375248064] with ID [23] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:38] [0000m.03s.220ms] [1] SC[542]: Registered sub-client [GlobalNetAliasUpdater_399834136] with ID [24] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:00:38] [0000m.03s.223ms] [1] SC[542]: Registered sub-client [IcdbNetProcessorSubClientDxD:396386752] with ID [25] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:01:02] [0000m.27s.271ms] [0] DFAMT: File server access time: 98 us
+[2016.07.26 13:02:14] [0001m.38s.952ms] [0] IT: Session [543] for host [BZ-ECE-CB508-03] user [s58p233] with process ID [6316] created
+[2016.07.26 13:02:14] [0001m.38s.952ms] [1] SC[543]: Registered sub-client [ViewDrawLink] with ID [1] for session ID [543] host [BZ-ECE-CB508-03] user [s58p233] process ID [6316]
+[2016.07.26 13:02:14] [0001m.38s.978ms] [1] CMT: There are [2] clients now: 542, 543
+[2016.07.26 13:02:14] [0001m.39s.157ms] [0] IT: Session [544] for host [BZ-ECE-CB508-03] user [s58p233] with process ID [2788] created
+[2016.07.26 13:02:14] [0001m.39s.157ms] [1] SC[544]: Registered sub-client [icdb2wir] with ID [1] for session ID [544] host [BZ-ECE-CB508-03] user [s58p233] process ID [2788]
+[2016.07.26 13:02:14] [0001m.39s.178ms] [1] CMT: There are [3] clients now: 542, 543, 544
+[2016.07.26 13:02:14] [0001m.39s.182ms] [1] SC[544]: UnRegistered sub-client [icdb2wir] with ID [1] for session ID [544] host [BZ-ECE-CB508-03] user [s58p233] process ID [2788]
+[2016.07.26 13:02:14] [0001m.39s.278ms] [1] CMT: Removed client [544]
+[2016.07.26 13:02:14] [0001m.39s.278ms] [1] CMT: There are [2] clients now: 542, 543
+[2016.07.26 13:02:15] [0001m.40s.216ms] [0] IT: Session [545] for host [BZ-ECE-CB508-03] user [s58p233] with process ID [3152] created
+[2016.07.26 13:02:15] [0001m.40s.216ms] [1] SC[545]: Registered sub-client [PCBfwd/PCBbck] with ID [1] for session ID [545] host [BZ-ECE-CB508-03] user [s58p233] process ID [3152]
+[2016.07.26 13:02:15] [0001m.40s.281ms] [1] CMT: There are [3] clients now: 542, 543, 545
+[2016.07.26 13:02:16] [0001m.41s.273ms] [1] SC[545]: Registered sub-client [LSUDX_PCB] with ID [2] for session ID [545] host [BZ-ECE-CB508-03] user [s58p233] process ID [3152]
+[2016.07.26 13:02:16] [0001m.41s.284ms] [1] SC[545]: Registered sub-client [ObjectHolder_79239232] with ID [3] for session ID [545] host [BZ-ECE-CB508-03] user [s58p233] process ID [3152]
+[2016.07.26 13:02:16] [0001m.41s.286ms] [1] SC[545]: Registered sub-client [BlockCacheDxD:150343600] with ID [4] for session ID [545] host [BZ-ECE-CB508-03] user [s58p233] process ID [3152]
+[2016.07.26 13:02:16] [0001m.41s.288ms] [1] SC[545]: Registered sub-client [GlobalNetAliasUpdater_145687456] with ID [5] for session ID [545] host [BZ-ECE-CB508-03] user [s58p233] process ID [3152]
+[2016.07.26 13:02:16] [0001m.41s.290ms] [1] SC[545]: Registered sub-client [IcdbNetProcessorSubClientDxD:148813296] with ID [6] for session ID [545] host [BZ-ECE-CB508-03] user [s58p233] process ID [3152]
+[2016.07.26 13:02:16] [0001m.41s.296ms] [1] SC[545]: UnRegistered sub-client [GlobalNetAliasUpdater_145687456] with ID [5] for session ID [545] host [BZ-ECE-CB508-03] user [s58p233] process ID [3152]
+[2016.07.26 13:02:16] [0001m.41s.296ms] [1] SC[545]: UnRegistered sub-client [BlockCacheDxD:150343600] with ID [4] for session ID [545] host [BZ-ECE-CB508-03] user [s58p233] process ID [3152]
+[2016.07.26 13:02:16] [0001m.41s.296ms] [1] SC[545]: UnRegistered sub-client [ObjectHolder_79239232] with ID [3] for session ID [545] host [BZ-ECE-CB508-03] user [s58p233] process ID [3152]
+[2016.07.26 13:02:16] [0001m.41s.297ms] [1] SC[545]: UnRegistered sub-client [IcdbNetProcessorSubClientDxD:148813296] with ID [6] for session ID [545] host [BZ-ECE-CB508-03] user [s58p233] process ID [3152]
+[2016.07.26 13:02:16] [0001m.41s.297ms] [1] SC[545]: UnRegistered sub-client [PCBfwd/PCBbck] with ID [1] for session ID [545] host [BZ-ECE-CB508-03] user [s58p233] process ID [3152]
+[2016.07.26 13:02:16] [0001m.41s.298ms] [1] SC[545]: UnRegistered sub-client [LSUDX_PCB] with ID [2] for session ID [545] host [BZ-ECE-CB508-03] user [s58p233] process ID [3152]
+[2016.07.26 13:02:17] [0001m.41s.381ms] [1] CMT: Removed client [545]
+[2016.07.26 13:02:17] [0001m.41s.381ms] [1] CMT: There are [2] clients now: 542, 543
+[2016.07.26 13:02:17] [0001m.41s.750ms] [1] SC[542]: UnRegistered sub-client [GlobalNetAliasUpdater_399834136] with ID [24] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:02:17] [0001m.41s.751ms] [1] SC[542]: UnRegistered sub-client [BlockCacheDxD:375248064] with ID [23] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:02:17] [0001m.41s.752ms] [1] SC[542]: UnRegistered sub-client [ObjectHolder_399833960] with ID [22] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:02:17] [0001m.41s.752ms] [1] SC[542]: UnRegistered sub-client [IcdbNetProcessorSubClientDxD:396386752] with ID [25] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:02:17] [0001m.41s.769ms] [1] SC[542]: Registered sub-client [ObjectHolder_399841000] with ID [26] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:02:17] [0001m.41s.773ms] [1] SC[542]: Registered sub-client [BlockCacheDxD:372128144] with ID [27] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:02:17] [0001m.41s.776ms] [1] SC[542]: Registered sub-client [GlobalNetAliasUpdater_399841176] with ID [28] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:02:17] [0001m.41s.779ms] [1] SC[542]: Registered sub-client [IcdbNetProcessorSubClientDxD:396391680] with ID [29] for session ID [542] host [BZ-ECE-CB508-03] user [s58p233] process ID [7808]
+[2016.07.26 13:02:17] [0001m.41s.862ms] [1] SC[543]: UnRegistered sub-client [ViewDrawLink] with ID [1] for session ID [543] host [BZ-ECE-CB508-03] user [s58p233] process ID [6316]
+[2016.07.26 13:02:17] [0001m.41s.881ms] [1] CMT: Removed client [543]
+[2016.07.26 13:02:17] [0001m.41s.881ms] [1] CMT: There are [1] clients now: 542
+[2016.07.26 13:02:17] [0001m.42s.034ms] [0] IT: Session [546] for host [BZ-ECE-CB508-03] user [s58p233] with process ID [6316] created
+[2016.07.26 13:02:17] [0001m.42s.035ms] [1] SC[546]: Registered sub-client [ViewDrawLink] with ID [1] for session ID [546] host [BZ-ECE-CB508-03] user [s58p233] process ID [6316]
+[2016.07.26 13:02:17] [0001m.42s.046ms] [1] SC[546]: UnRegistered sub-client [ViewDrawLink] with ID [1] for session ID [546] host [BZ-ECE-CB508-03] user [s58p233] process ID [6316]
+[2016.07.26 13:02:17] [0001m.42s.081ms] [1] CMT: There are [2] clients now: 542, 546
+[2016.07.26 13:02:17] [0001m.42s.081ms] [1] CMT: Removed client [546]
+[2016.07.26 13:02:17] [0001m.42s.081ms] [1] CMT: There are [1] clients now: 542
+[2016.07.26 13:02:18] [0001m.43s.076ms] [0] IT: Session [547] for host [BZ-ECE-CB508-03] user [s58p233] with process ID [6316] created
+[2016.07.26 13:02:18] [0001m.43s.076ms] [1] SC[547]: Registered sub-client [ViewDrawLink] with ID [1] for session ID [547] host [BZ-ECE-CB508-03] user [s58p233] process ID [6316]
+[2016.07.26 13:02:18] [0001m.43s.081ms] [1] CMT: There are [2] clients now: 542, 547
+[2016.07.26 13:02:18] [0001m.43s.084ms] [1] SC[547]: UnRegistered sub-client [ViewDrawLink] with ID [1] for session ID [547] host [BZ-ECE-CB508-03] user [s58p233] process ID [6316]
+[2016.07.26 13:02:18] [0001m.43s.181ms] [1] CMT: Removed client [547]
+[2016.07.26 13:02:18] [0001m.43s.181ms] [1] CMT: There are [1] clients now: 542
+[2016.07.26 16:26:02] [0205m.27s.037ms] [1] PrjBackupMgr: Successfully created Project Backup [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2016-07-26 16.26.00 - auto.zip] with GUID [e791-0efe-7acd-bee2-873e-797d-73e7-9750-d774-6fa0-b04d-eb2a]
+[2016.07.26 16:26:02] [0205m.27s.038ms] [0] PrjBackupMgr: Removing excessive backup:  BackupGUID[fd6a-32e4-c166-d4fe-12e3-6976-2e36-9750-9ea4-6fa0-b04d-eb2a] CreationTime[Monday, July 25, 2016 16:28:17] Type[Autosave] Creator[iCDB Server (2016-07-25 10.27.46-5332)] ApplicationName[iCDB Server (2016-07-25 10.27.46-5332)] UserName[s58p233] MachineName[BZ-ECE-CB508-03] Description[Autosave] FullFlowName[PADS VX.1.2] FlowId[PADS VX.1.2] GBSInstallId[45446] GBSBuildId[697648] IcdbVersion[3000] ReferenceLogFilePath[] BackupFilePath[C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2016-07-25 10.28.17 - auto.zip] BackupFileSize[8831859] Persistent[FALSE]
+[2016.07.26 16:26:02] [0205m.27s.041ms] [0] PrjBackupMgr: Project Backup file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2016-07-25 10.28.17 - auto.zip] with GUID [fd6a-32e4-c166-d4fe-12e3-6976-2e36-9750-9ea4-6fa0-b04d-eb2a] removed
+[2016.07.26 16:26:02] [0205m.27s.056ms] [0] PrjBackupEngine: Successfully created backup:  BackupGUID[e791-0efe-7acd-bee2-873e-797d-73e7-9750-d774-6fa0-b04d-eb2a] CreationTime[Tuesday, July 26, 2016 22:26:00] Type[Autosave] Creator[iCDB Server (2016-07-26 13.00.35-2148)] ApplicationName[iCDB Server (2016-07-26 13.00.35-2148)] UserName[s58p233] MachineName[BZ-ECE-CB508-03] Description[Autosave] FullFlowName[PADS VX.1.2] FlowId[PADS VX.1.2] GBSInstallId[45446] GBSBuildId[697648] IcdbVersion[3000] ReferenceLogFilePath[] BackupFilePath[C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2016-07-26 16.26.00 - auto.zip] BackupFileSize[8869605] Persistent[FALSE]

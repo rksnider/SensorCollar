@@ -1,0 +1,69 @@
+[2016-06-14 10.43.56] Successfully created [Database Upgrade] backup [2016-06-14 10.43.56 - upgrade.zip] requested by [BZ-ECE-CB508-01:s58p233].
+[2016-06-14 10.43.56] Migrated iCDB content backup file [cdbback\2016-06-14 10.43.56-68848.zip] removed.
+[2016-06-14 10.44.09] Successfully created [AutoSave] backup [2016-06-14 10.44.01 - auto.zip] requested by [BZ-ECE-CB508-01:s58p233].
+[2016-06-14 10.44.09] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board\ProjectBackup\backups\2015-09-29 15.55.56 - auto.zip].
+[2016-06-14 10.44.09] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-09-29 15.55.56 - auto.zip] removed.
+[2016-06-14 17.40.06] Successfully created [AutoSave] backup [2016-06-14 17.40.01 - auto.zip] requested by [BZ-ECE-CB508-01:s58p233].
+[2016-06-14 17.40.06] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\Marmoset PCB\PCB_Designs\Interface_Board\0Schematic\Interface Board\ProjectBackup\backups\2015-10-02 12.49.09 - auto.zip].
+[2016-06-14 17.40.06] [AutoSave] backup file [Interface Board\ProjectBackup\backups\2015-10-02 12.49.09 - auto.zip] removed.
+[2016-07-20 08.43.09] Successfully created [AutoSave] backup [2016-07-20 08.43.07 - auto.zip] requested by [BZ-ECE-CB508-03:s58p233].
+[2016-07-20 08.43.09] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2015-10-02 16.49.09 - auto.zip].
+[2016-07-20 08.43.09] [AutoSave] backup file [GPS Board\ProjectBackup\backups\2015-10-02 16.49.09 - auto.zip] removed.
+[2016-07-20 08.57.11] Successfully created [Symbol Update] backup [2016-07-20 08.57.09 - symUpd.zip] requested by [BZ-ECE-CB508-03:s58p233].
+[2016-07-20 08.59.32] Successfully created [Symbol Update] backup [2016-07-20 08.59.30 - symUpd.zip] requested by [BZ-ECE-CB508-03:s58p233].
+[2016-07-20 08.59.32] Removing excessive [Symbol Update] backup file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2016-07-20 08.57.09 - symUpd.zip].
+[2016-07-20 08.59.32] [Symbol Update] backup file [GPS Board\ProjectBackup\backups\2016-07-20 08.57.09 - symUpd.zip] removed.
+[2016-07-20 09.03.22] Successfully created [Symbol Update] backup [2016-07-20 09.03.19 - symUpd.zip] requested by [BZ-ECE-CB508-03:s58p233].
+[2016-07-20 09.03.22] Removing excessive [Symbol Update] backup file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2016-07-20 08.59.30 - symUpd.zip].
+[2016-07-20 09.03.22] [Symbol Update] backup file [GPS Board\ProjectBackup\backups\2016-07-20 08.59.30 - symUpd.zip] removed.
+[2016-07-20 09.05.52] Successfully created [Symbol Update] backup [2016-07-20 09.05.50 - symUpd.zip] requested by [BZ-ECE-CB508-03:s58p233].
+[2016-07-20 09.05.52] Removing excessive [Symbol Update] backup file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2016-07-20 09.03.19 - symUpd.zip].
+[2016-07-20 09.05.52] [Symbol Update] backup file [GPS Board\ProjectBackup\backups\2016-07-20 09.03.19 - symUpd.zip] removed.
+[2016-07-20 09.13.29] Successfully created [Symbol Update] backup [2016-07-20 09.13.26 - symUpd.zip] requested by [BZ-ECE-CB508-03:s58p233].
+[2016-07-20 09.13.29] Removing excessive [Symbol Update] backup file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2016-07-20 09.05.50 - symUpd.zip].
+[2016-07-20 09.13.29] [Symbol Update] backup file [GPS Board\ProjectBackup\backups\2016-07-20 09.05.50 - symUpd.zip] removed.
+[2016-07-20 09.28.24] Successfully created [Symbol Update] backup [2016-07-20 09.28.22 - symUpd.zip] requested by [BZ-ECE-CB508-03:s58p233].
+[2016-07-20 09.28.24] Removing excessive [Symbol Update] backup file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2016-07-20 09.13.26 - symUpd.zip].
+[2016-07-20 09.28.24] [Symbol Update] backup file [GPS Board\ProjectBackup\backups\2016-07-20 09.13.26 - symUpd.zip] removed.
+[2016-07-20 12.43.09] Successfully created [AutoSave] backup [2016-07-20 12.43.07 - auto.zip] requested by [BZ-ECE-CB508-03:s58p233].
+[2016-07-20 12.43.09] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2016-06-14 10.44.01 - auto.zip].
+[2016-07-20 12.43.09] [AutoSave] backup file [GPS Board\ProjectBackup\backups\2016-06-14 10.44.01 - auto.zip] removed.
+[2016-07-21 09.44.05] Successfully created [Symbol Update] backup [2016-07-21 09.44.03 - symUpd.zip] requested by [BZ-ECE-CB508-03:s58p233].
+[2016-07-21 09.44.05] Removing excessive [Symbol Update] backup file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2016-07-20 09.28.22 - symUpd.zip].
+[2016-07-21 09.44.05] [Symbol Update] backup file [GPS Board\ProjectBackup\backups\2016-07-20 09.28.22 - symUpd.zip] removed.
+[2016-07-21 10.04.05] Successfully created [Symbol Update] backup [2016-07-21 10.04.03 - symUpd.zip] requested by [BZ-ECE-CB508-03:s58p233].
+[2016-07-21 10.04.05] Removing excessive [Symbol Update] backup file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2016-07-21 09.44.03 - symUpd.zip].
+[2016-07-21 10.04.05] [Symbol Update] backup file [GPS Board\ProjectBackup\backups\2016-07-21 09.44.03 - symUpd.zip] removed.
+[2016-07-25 10.28.21] Successfully created [AutoSave] backup [2016-07-25 10.28.17 - auto.zip] requested by [BZ-ECE-CB508-03:s58p233].
+[2016-07-25 10.28.21] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2016-06-14 17.40.01 - auto.zip].
+[2016-07-25 10.28.21] [AutoSave] backup file [GPS Board\ProjectBackup\backups\2016-06-14 17.40.01 - auto.zip] removed.
+[2016-07-25 14.28.19] Successfully created [AutoSave] backup [2016-07-25 14.28.17 - auto.zip] requested by [BZ-ECE-CB508-03:s58p233].
+[2016-07-25 14.28.19] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2016-07-20 08.43.07 - auto.zip].
+[2016-07-25 14.28.19] [AutoSave] backup file [GPS Board\ProjectBackup\backups\2016-07-20 08.43.07 - auto.zip] removed.
+[2016-07-26 12.26.03] Successfully created [AutoSave] backup [2016-07-26 12.26.00 - auto.zip] requested by [BZ-ECE-CB508-03:s58p233].
+[2016-07-26 12.26.03] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2016-07-20 12.43.07 - auto.zip].
+[2016-07-26 12.26.03] [AutoSave] backup file [GPS Board\ProjectBackup\backups\2016-07-20 12.43.07 - auto.zip] removed.
+[2016-07-26 16.26.02] Successfully created [AutoSave] backup [2016-07-26 16.26.00 - auto.zip] requested by [BZ-ECE-CB508-03:s58p233].
+[2016-07-26 16.26.02] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2016-07-25 10.28.17 - auto.zip].
+[2016-07-26 16.26.02] [AutoSave] backup file [GPS Board\ProjectBackup\backups\2016-07-25 10.28.17 - auto.zip] removed.
+[2016-08-02 11.01.30] Successfully created [AutoSave] backup [2016-08-02 11.01.28 - auto.zip] requested by [BZ-ECE-CB508-03:s58p233].
+[2016-08-02 11.01.30] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2016-07-25 14.28.17 - auto.zip].
+[2016-08-02 11.01.30] [AutoSave] backup file [GPS Board\ProjectBackup\backups\2016-07-25 14.28.17 - auto.zip] removed.
+[2016-08-02 15.01.29] Successfully created [AutoSave] backup [2016-08-02 15.01.28 - auto.zip] requested by [BZ-ECE-CB508-03:s58p233].
+[2016-08-02 15.01.29] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2016-07-26 12.26.00 - auto.zip].
+[2016-08-02 15.01.29] [AutoSave] backup file [GPS Board\ProjectBackup\backups\2016-07-26 12.26.00 - auto.zip] removed.
+[2016-08-02 19.01.30] Successfully created [AutoSave] backup [2016-08-02 19.01.28 - auto.zip] requested by [BZ-ECE-CB508-03:s58p233].
+[2016-08-02 19.01.30] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2016-07-26 16.26.00 - auto.zip].
+[2016-08-02 19.01.30] [AutoSave] backup file [GPS Board\ProjectBackup\backups\2016-07-26 16.26.00 - auto.zip] removed.
+[2016-08-03 12.29.31] Successfully created [AutoSave] backup [2016-08-03 12.29.31 - auto.zip] requested by [BZ-ECE-CB508-03:s58p233].
+[2016-08-03 12.29.31] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2016-08-02 11.01.28 - auto.zip].
+[2016-08-03 12.29.31] [AutoSave] backup file [GPS Board\ProjectBackup\backups\2016-08-02 11.01.28 - auto.zip] removed.
+[2016-08-08 10.21.48] Successfully created [AutoSave] backup [2016-08-08 10.21.48 - auto.zip] requested by [BZ-ECE-CB508-03:s58p233].
+[2016-08-08 10.21.48] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2016-08-02 15.01.28 - auto.zip].
+[2016-08-08 10.21.48] [AutoSave] backup file [GPS Board\ProjectBackup\backups\2016-08-02 15.01.28 - auto.zip] removed.
+[2016-08-08 11.43.49] Successfully created [Symbol Update] backup [2016-08-08 11.43.49 - symUpd.zip] requested by [BZ-ECE-CB508-03:s58p233].
+[2016-08-08 11.43.49] Removing excessive [Symbol Update] backup file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2016-07-21 10.04.03 - symUpd.zip].
+[2016-08-08 11.43.49] [Symbol Update] backup file [GPS Board\ProjectBackup\backups\2016-07-21 10.04.03 - symUpd.zip] removed.
+[2016-08-08 14.21.48] Successfully created [AutoSave] backup [2016-08-08 14.21.48 - auto.zip] requested by [BZ-ECE-CB508-03:s58p233].
+[2016-08-08 14.21.48] Removing excessive [AutoSave] backup file [C:\Users\s58p233\Documents\PCB Designs\GPS Board\0Schematic\GPS Board\ProjectBackup\backups\2016-08-02 19.01.28 - auto.zip].
+[2016-08-08 14.21.48] [AutoSave] backup file [GPS Board\ProjectBackup\backups\2016-08-02 19.01.28 - auto.zip] removed.

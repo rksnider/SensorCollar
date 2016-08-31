@@ -1,0 +1,14 @@
+Assembly Variant Service has detected improper attribute values
+
+Mon Aug 08 13:08:02 2016
+
+Current Job : GPSBoardV1Diagonal.pcb
+
+
+Format:
+OBJ_NAME
+OLD_VALUE{EMPTY;TOO_LONG}
+NEW_VALUE{DELETED;TOO_LONG}
+RESUME
+
+
