@@ -800,8 +800,7 @@ architecture structural of Collar is
 	signal op_error 							: std_logic ;
 	signal txrx_fpga_time 				: std_logic_vector (gps_time_bytes_c*8-1
                                                 downto 0) ;
-	signal txrx_rx_time 				: std_logic_vector (gps_time_bytes_c*8-1
-                                                downto 0) ;
+
 	signal txrx_data_addr 				: std_logic_vector(7 downto 0) := "00000000";
 	signal txrx_data_len 					: std_logic_vector(data_length_bit_width_c-1 
 																													downto 0);
@@ -811,7 +810,7 @@ architecture structural of Collar is
   
   -- Timer setting for cc120
   signal clk_freq         : natural   := 36e5;
-  signal tmax             : natural   := 30;
+  signal tmax             : natural   := 5;
   signal cntr_max         : natural   := clk_freq*tmax;
   signal timer_cntr       : unsigned(natural(trunc(log2(real(
                                 cntr_max)))) downto 0);
@@ -4167,8 +4166,7 @@ rtc_inquire_top_i0 : rtc_inquire_top
 					mosi_out            	: out 	std_logic;
 					miso_in            	  : in  	std_logic;
 					cs_n_out            	: out 	std_logic;
-					rx_time_out    				: out 	std_logic_vector (gps_time_bytes_c*8-1 
-																													downto 0);
+
 					txrx_rdy_in 					: in 		std_logic;
           
           txrx_req_b_out        : out std_logic;  
@@ -4212,7 +4210,6 @@ rtc_inquire_top_i0 : rtc_inquire_top
 					mosi_out            	=>	radio_data(1),
 					miso_in            	  => 	radio_data(2),
 					cs_n_out		         	=>  radio_data(0),
-					rx_time_out    				=> 	txrx_rx_time,
 					txrx_rdy_in 			  	=> 	radio_data(3),
           
           txrx_req_b_out        => txrxmem_requesters(txrxmemrq_txrx_c),
