@@ -92,6 +92,41 @@ package FormatSeconds_pkg is
                                                   downto 0))
   return DateTime_t ;
 
+  --  Type definitions for ranges of times.
+
+  type HourMinuteRange_t is record
+    str_hour      : unsigned (dt_hourbits_c-1 downto 0) ;
+    str_minute    : unsigned (dt_minbits_c-1  downto 0) ;
+    end_hour      : unsigned (dt_hourbits_c-1 downto 0) ;
+    end_minute    : unsigned (dt_minbits_c-1  downto 0) ;
+  end record ;
+
+  type HM_range_vector_t is array (integer range <>) of HourMinuteRange_t ;
+  
+  constant school_day_HMR_c     : HM_range_vector_t (0 to 9) :=
+  (
+    ( TO_UNSIGNED ( 8, dt_hourbits_c), TO_UNSIGNED (0,  dt_minbits_c),
+      TO_UNSIGNED ( 8, dt_hourbits_c), TO_UNSIGNED (50, dt_minbits_c)),
+    ( TO_UNSIGNED ( 9, dt_hourbits_c), TO_UNSIGNED (0,  dt_minbits_c),
+      TO_UNSIGNED ( 9, dt_hourbits_c), TO_UNSIGNED (50, dt_minbits_c)),
+    ( TO_UNSIGNED (10, dt_hourbits_c), TO_UNSIGNED (0,  dt_minbits_c),
+      TO_UNSIGNED (10, dt_hourbits_c), TO_UNSIGNED (50, dt_minbits_c)),
+    ( TO_UNSIGNED (11, dt_hourbits_c), TO_UNSIGNED (0,  dt_minbits_c),
+      TO_UNSIGNED (11, dt_hourbits_c), TO_UNSIGNED (50, dt_minbits_c)),
+    ( TO_UNSIGNED (12, dt_hourbits_c), TO_UNSIGNED (0,  dt_minbits_c),
+      TO_UNSIGNED (12, dt_hourbits_c), TO_UNSIGNED (50, dt_minbits_c)),
+    ( TO_UNSIGNED (13, dt_hourbits_c), TO_UNSIGNED (10, dt_minbits_c),
+      TO_UNSIGNED (14, dt_hourbits_c), TO_UNSIGNED (0,  dt_minbits_c)),
+    ( TO_UNSIGNED (14, dt_hourbits_c), TO_UNSIGNED (10, dt_minbits_c),
+      TO_UNSIGNED (15, dt_hourbits_c), TO_UNSIGNED (0,  dt_minbits_c)),
+    ( TO_UNSIGNED (15, dt_hourbits_c), TO_UNSIGNED (10, dt_minbits_c),
+      TO_UNSIGNED (16, dt_hourbits_c), TO_UNSIGNED (0,  dt_minbits_c)),
+    ( TO_UNSIGNED (16, dt_hourbits_c), TO_UNSIGNED (10, dt_minbits_c),
+      TO_UNSIGNED (17, dt_hourbits_c), TO_UNSIGNED (0,  dt_minbits_c)),
+    ( TO_UNSIGNED (17, dt_hourbits_c), TO_UNSIGNED (10, dt_minbits_c),
+      TO_UNSIGNED (18, dt_hourbits_c), TO_UNSIGNED (0,  dt_minbits_c))
+  ) ;
+
 end package FormatSeconds_pkg ;
 
 package body FormatSeconds_pkg is
