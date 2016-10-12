@@ -430,6 +430,7 @@ begin
 
           when MARK_STATE_RCVMEM        =>
             if (target_time = unsigned (curtime.week_millisecond)) then
+              memreq_out            <= '0' ;
               delay                 <= TO_UNSIGNED (time_mark_wait_g,
                                                     delay'length) ;
               cur_state             <= MARK_STATE_SCHEDULE ;
