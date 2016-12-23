@@ -20,14 +20,14 @@ constant msg_ram_banks_c                : natural := 2 ;
 
 --  Memory block information.
 
-constant msg_count_c                    : natural := 3 ;
+constant msg_count_c                    : natural := 4 ;
 constant msg_count_bits_c               : natural :=
       natural (trunc (log2 (real (msg_count_c)))) + 1 ;
 
-constant msg_id_tbl_c                   : natural := 53 ;
+constant msg_id_tbl_c                   : natural := 63 ;
 
 constant msg_rom_base_c                 : natural := 0 ;
-constant msg_ram_base_c                 : natural := 312 ;
+constant msg_ram_base_c                 : natural := 336 ;
 constant msg_ram_blocks_c               : natural := 2 ;
 constant msg_ram_temp_addr_c            : natural := 45 * msg_ram_banks_c ;
 constant msg_ram_temp_size_c            : natural := 30 ;
@@ -40,8 +40,13 @@ constant msg_ram_marktime_addr_c        : natural :=
       msg_ram_postime_addr_c + msg_ram_postime_size_c * msg_ram_banks_c ;
 constant msg_ram_marktime_size_c        : natural := gps_time_bytes_c ;
 
-constant msg_ram_msgbuff_addr_c         : natural :=
+constant msg_ram_pulsetime_addr_c       : natural :=
       msg_ram_marktime_addr_c + msg_ram_marktime_size_c * msg_ram_banks_c ;
+constant msg_ram_pulsetime_size_c       : natural :=
+      2 * gps_time_bytes_c ;
+
+constant msg_ram_msgbuff_addr_c         : natural :=
+      msg_ram_pulsetime_addr_c + msg_ram_pulsetime_size_c * msg_ram_banks_c ;
 constant msg_ram_msgbuff_size_c         : natural := 44 ;
 
 constant msg_ram_end_c                  : natural :=
@@ -49,12 +54,12 @@ constant msg_ram_end_c                  : natural :=
 
 --  Field extraction information.
 
-constant msg_extract_tree_c             : natural := 38 ;
+constant msg_extract_tree_c             : natural := 45 ;
 constant msg_tree_offset_bits_c         : natural := 2 ;
-constant msg_extract_lookup_c           : natural := 50 ;
+constant msg_extract_lookup_c           : natural := 59 ;
 constant msg_extract_lookup_bytes_c     : natural := 1 ;
 constant msg_extract_overhead_c         : natural := 1 ;
-constant msg_field_count_c              : natural := 35 ;
+constant msg_field_count_c              : natural := 41 ;
 constant msg_field_bits_c               : natural :=
       natural (trunc (log2 (real (msg_field_count_c - 1)))) + 1 ;
 
@@ -62,9 +67,9 @@ constant msg_field_bits_c               : natural :=
 
 constant msg_init_table_c               : integer_vector :=
 (
-    59,
-    237,
-    277
+    71,
+    261,
+    301
 ) ;
 
 constant msg_init_bits_c                : natural :=
