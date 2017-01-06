@@ -63,6 +63,7 @@ USE WORK.COLLAR_PARAMETERS_PKG.ALL ;
 --! @param      dst_offset_g          Number of seconds added to time when
 --!                                   in Daylight Savings Time.
 --! @param      reset                 Reset the module.
+--! @param      clk                   Clock used for memory access.
 --! @param      rtc_sec_in            Running time in RTC seconds.
 --! @param      rtc_datetime_in       Running Local time in year-month-day
 --!                                   hour-minute-second from RTC current
@@ -70,11 +71,15 @@ USE WORK.COLLAR_PARAMETERS_PKG.ALL ;
 --! @param      alarm_time_out        Time to determine local noon of the
 --!                                   current day in local time.
 --! @param      alarm_time_in         Time of local noon in RTC seconds.
+--! @param      dawn_today_out        Today's dawn time in RTC seconds.
 --! @param      sunrise_today_out     Today's sunrise time in RTC seconds.
 --! @param      sunset_today_out      Today's sunset time in RTC seconds.
+--! @param      dusk_today_out        Today's dusk time in RTC seconds.
+--! @param      dawn_tomorrow_out     Tomorrow's dawn time in RTC seconds.
 --! @param      sunrise_tomorrow_out  Tomorrow's sunrise time in RTC
 --!                                   seconds.
 --! @param      sunset_tomorrow_out   Tomorrow's sunset time in RTC seconds.
+--! @param      dusk_tomorrow_out     Tomorrow's dusk time in RTC seconds.
 --
 ----------------------------------------------------------------------------
 
@@ -88,16 +93,21 @@ entity SunriseSunset is
   ) ;
   Port (
     reset                 : in    std_logic ;
+    clk                   : in    std_logic ;
     rtc_sec_in            : in    unsigned (epoch70_secbits_c-1 downto 0) ;
     rtc_datetime_in       : in    std_logic_vector (dt_totalbits_c-1
                                                     downto 0) ;
     alarm_time_out        : out   std_logic_vector (dt_totalbits_c-1
                                                     downto 0) ;
     alarm_time_in         : in    unsigned (epoch70_secbits_c-1 downto 0) ;
+    dawn_today_out        : out   unsigned (epoch70_secbits_c-1 downto 0) ;
     sunrise_today_out     : out   unsigned (epoch70_secbits_c-1 downto 0) ;
     sunset_today_out      : out   unsigned (epoch70_secbits_c-1 downto 0) ;
+    dusk_today_out        : out   unsigned (epoch70_secbits_c-1 downto 0) ;
+    dawn_tomorrow_out     : out   unsigned (epoch70_secbits_c-1 downto 0) ;
     sunrise_tomorrow_out  : out   unsigned (epoch70_secbits_c-1 downto 0) ;
-    sunset_tomorrow_out   : out   unsigned (epoch70_secbits_c-1 downto 0)
+    sunset_tomorrow_out   : out   unsigned (epoch70_secbits_c-1 downto 0) ;
+    dusk_tomorrow_out     : out   unsigned (epoch70_secbits_c-1 downto 0)
   ) ;
 
 end entity SunriseSunset ;
@@ -109,14 +119,27 @@ architecture rtl of SunriseSunset is
       integer (real (timezone_g) -
                (longitude_g / 360.0) * 24.0 * 60.0 * 60.0) ;
 
+  constant dawn_bits_c    : natural := 10 ;
+  constant sunrise_bits_c : natural := 13 ;
+  constant noon_bits_c    : natural :=  7 ;
+
+  constant noon_end_c     : natural := 0 ;
+  constant noon_str_c     : natural := noon_end_c + noon_bits_c - 1 ;
+  constant sunrise_end_c  : natural := noon_str_c + 1 ;
+  constant sunrise_str_c  : natural := sunrise_end_c + sunrise_bits_c - 1 ;
+  constant dawn_end_c     : natural := sunrise_str_c + 1 ;
+  constant dawn_str_c     : natural := dawn_end_c + dawn_bits_c - 1 ;
+
+  constant day_bits_c     : natural := dawn_str_c + 1 ;
+
   COMPONENT sun_8Sx36W IS
     PORT
     (
       address_a           : IN STD_LOGIC_VECTOR (8 DOWNTO 0);
       address_b           : IN STD_LOGIC_VECTOR (8 DOWNTO 0);
       clock               : IN STD_LOGIC  := '1';
-      q_a                 : OUT STD_LOGIC_VECTOR (19 DOWNTO 0);
-      q_b                 : OUT STD_LOGIC_VECTOR (19 DOWNTO 0)
+      q_a                 : OUT STD_LOGIC_VECTOR (day_bits_c-1 DOWNTO 0);
+      q_b                 : OUT STD_LOGIC_VECTOR (day_bits_c-1 DOWNTO 0)
     );
   END COMPONENT sun_8Sx36W ;
 
@@ -126,39 +149,38 @@ architecture rtl of SunriseSunset is
       address_a           : IN STD_LOGIC_VECTOR (8 DOWNTO 0);
       address_b           : IN STD_LOGIC_VECTOR (8 DOWNTO 0);
       clock               : IN STD_LOGIC  := '1';
-      q_a                 : OUT STD_LOGIC_VECTOR (19 DOWNTO 0);
-      q_b                 : OUT STD_LOGIC_VECTOR (19 DOWNTO 0)
+      q_a                 : OUT STD_LOGIC_VECTOR (day_bits_c-1 DOWNTO 0);
+      q_b                 : OUT STD_LOGIC_VECTOR (day_bits_c-1 DOWNTO 0)
     );
   END COMPONENT sun_46Nx111W ;
 
   signal datetime         : DateTime_t ;
   signal alarmtime        : DateTime_t ;
 
-  --  Offsets for day of year for today and tomorrow.  The calculated noon
-  --  and sunrise/sunset offsets derived from these values.
+  --  Offsets for day of year for today and tomorrow.  The calculated noon,
+  --  sunrise/sunset, and dawn/dusk offsets derived from these values.
 
-  signal today            : std_logic_vector (19 downto 0) ;
-  signal sunrise_today    : unsigned (12 downto 0) ;
-  signal noon_today       : unsigned ( 6 downto 0) ;
+  signal today              : std_logic_vector (day_bits_c-1 downto 0) ;
+  signal dawn_today         : unsigned (dawn_bits_c-1    downto 0) ;
+  signal sunrise_today      : unsigned (sunrise_bits_c-1 downto 0) ;
+  signal noon_today         : unsigned (noon_bits_c-1    downto 0) ;
 
-  signal today_noon       : unsigned (epoch70_secbits_c-1 downto 0) ;
-  signal sun_today        : unsigned (sunrise_today'length +
-                                      const_bits (15) - 1 downto 0) ;
+  signal today_noon         : unsigned (epoch70_secbits_c-1 downto 0) ;
+  signal sun_today          : unsigned (sunrise_today'length +
+                                        const_bits (15) - 1 downto 0) ;
+  signal twilight_today     : unsigned (sunrise_today'length +
+                                        const_bits (15) downto 0) ;
 
-  signal tomorrow         : std_logic_vector (19 downto 0) ;
-  signal sunrise_tomorrow : unsigned (12 downto 0) ;
-  signal noon_tomorrow    : unsigned ( 6 downto 0) ;
+  signal tomorrow           : std_logic_vector (day_bits_c-1 downto 0) ;
+  signal dawn_tomorrow      : unsigned (dawn_bits_c-1    downto 0) ;
+  signal sunrise_tomorrow   : unsigned (sunrise_bits_c-1 downto 0) ;
+  signal noon_tomorrow      : unsigned (noon_bits_c-1    downto 0) ;
 
-  signal tomorrow_noon    : unsigned (epoch70_secbits_c-1 downto 0) ;
-  signal sun_tomorrow     : unsigned (sunrise_tomorrow'length +
-                                      const_bits (15) - 1 downto 0) ;
-
-  --  The most recent sunrise and sunset is used.
-
-  signal sunrise_time_today     : unsigned (epoch70_secbits_c-1 downto 0) ;
-  signal sunset_time_today      : unsigned (epoch70_secbits_c-1 downto 0) ;
-  signal sunrise_time_tomorrow  : unsigned (epoch70_secbits_c-1 downto 0) ;
-  signal sunset_time_tomorrow   : unsigned (epoch70_secbits_c-1 downto 0) ;
+  signal tomorrow_noon      : unsigned (epoch70_secbits_c-1 downto 0) ;
+  signal sun_tomorrow       : unsigned (sunrise_tomorrow'length +
+                                        const_bits (15) - 1 downto 0) ;
+  signal twilight_tomorrow  : unsigned (sunrise_tomorrow'length +
+                                        const_bits (15) downto 0) ;
 
 begin
 
@@ -187,7 +209,7 @@ begin
         (
           address_a   => std_logic_vector (datetime.yday),
           address_b   => std_logic_vector (datetime.yday + 1),
-          clock       => datetime.second (0),
+          clock       => clk,
           q_a         => today,
           q_b         => tomorrow
         ) ;
@@ -200,16 +222,24 @@ begin
         (
           address_a   => std_logic_vector (datetime.yday),
           address_b   => std_logic_vector (datetime.yday + 1),
-          clock       => datetime.second (0),
+          clock       => clk,
           q_a         => today,
           q_b         => tomorrow
         ) ;
     end generate at_46Nx111W ;
 
-  sunrise_today         <= unsigned (today    (19 downto 7)) ;
-  noon_today            <= unsigned (today    (6  downto 0)) ;
-  sunrise_tomorrow      <= unsigned (tomorrow (19 downto 7)) ;
-  noon_tomorrow         <= unsigned (tomorrow (6  downto 0)) ;
+  dawn_today        <= unsigned (today    (dawn_str_c    downto
+                                           dawn_end_c)) ;
+  sunrise_today     <= unsigned (today    (sunrise_str_c downto
+                                           sunrise_end_c)) ;
+  noon_today        <= unsigned (today    (noon_str_c    downto
+                                           noon_end_c)) ;
+  dawn_tomorrow     <= unsigned (tomorrow (dawn_str_c    downto
+                                           dawn_end_c)) ;
+  sunrise_tomorrow  <= unsigned (tomorrow (sunrise_str_c downto
+                                           sunrise_end_c)) ;
+  noon_tomorrow     <= unsigned (tomorrow (noon_str_c    downto
+                                           noon_end_c)) ;
 
   --  Determine local noon today.  This is timezone noon today, plus the
   --  noon offset for this day of the year, plus the noon offset for
@@ -227,27 +257,48 @@ begin
                            noon_tomorrow * const_unsigned (15) - 18 * 60 +
                            longitude_offset_c + 24 * 60 * 60 ;
 
-  --  Determine the offset, from noon, for sunrise and sunset.  The
-  --  offset is in quarters of a minute and must be converted to seconds.
+  --  Determine the offset, from noon, for sunrise, sunset, dawn, and dusk.
+  --  The offsets are in quarters of a minute and must be converted to
+  --  seconds.
 
-  sun_today             <= sunrise_today    * const_unsigned (15) ;
-  sun_tomorrow          <= sunrise_tomorrow * const_unsigned (15) ;
+  twilight_today        <= RESIZE ((dawn_today + sunrise_today) *
+                                   const_unsigned (15),
+                                   twilight_today'length) ;
+  sun_today             <= RESIZE (sunrise_today    * const_unsigned (15),
+                                   sun_today'length) ;
+  twilight_tomorrow     <= RESIZE ((dawn_tomorrow + sunrise_tomorrow) *
+                                   const_unsigned (15),
+                                   twilight_tomorrow'length) ;
+  sun_tomorrow          <= RESIZE (sunrise_tomorrow * const_unsigned (15),
+                                   sun_tomorrow'length) ;
 
-  --  Produce the sunrise and sunset times in Standard Time, subtracting
-  --  off the Daylight Savings Time offset if needed.
+  --  Produce the sunrise, sunset, dawn, and dusk times in Standard Time,
+  --  subtracting off the Daylight Savings Time offset if needed.
 
+  dawn_today_out        <= today_noon - twilight_today - dst_offset_g
+                              when (datetime.indst = '1') else
+                           today_noon - twilight_today ;
   sunrise_today_out     <= today_noon - sun_today - dst_offset_g
                               when (datetime.indst = '1') else
                            today_noon - sun_today ;
   sunset_today_out      <= today_noon + sun_today - dst_offset_g
                               when (datetime.indst = '1') else
                            today_noon + sun_today ;
+  dusk_today_out        <= today_noon + twilight_today - dst_offset_g
+                              when (datetime.indst = '1') else
+                           today_noon + twilight_today ;
 
+  dawn_tomorrow_out     <= tomorrow_noon - twilight_tomorrow - dst_offset_g
+                              when (datetime.indst = '1') else
+                           tomorrow_noon - twilight_tomorrow ;
   sunrise_tomorrow_out  <= tomorrow_noon - sun_tomorrow - dst_offset_g
                               when (datetime.indst = '1') else
                            tomorrow_noon - sun_tomorrow ;
   sunset_tomorrow_out   <= tomorrow_noon + sun_tomorrow - dst_offset_g
                               when (datetime.indst = '1') else
                            tomorrow_noon + sun_tomorrow ;
+  dusk_tomorrow_out     <= tomorrow_noon + twilight_tomorrow - dst_offset_g
+                              when (datetime.indst = '1') else
+                           tomorrow_noon + twilight_tomorrow ;
 
 end rtl ;
