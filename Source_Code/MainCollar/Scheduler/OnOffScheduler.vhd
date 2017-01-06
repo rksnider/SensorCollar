@@ -37,7 +37,7 @@ use IEEE.NUMERIC_STD.ALL ;      --  Use numeric standard.
 use IEEE.MATH_REAL.ALL ;        --  Real number functions.
 
 library GENERAL ;
-use GENERAL.Utilities_pkg.all ;     --  General purpose definitons.
+use GENERAL.Utilities_pkg.all ;     --  General purpose definitions.
 use GENERAL.GPS_Clock_pkg.all ;     --  GPS clock definitions.
 use GENERAL.FormatSeconds_pkg.all ; --  Local time definitions.
 
@@ -52,18 +52,22 @@ use GENERAL.FormatSeconds_pkg.all ; --  Local time definitions.
 --! @param      sched_count_g     Number of scheduler IDs there are.
 --! @param      turnoff_id_g      ID of the turnoff request.
 --! @param      alarm_bytes_g     Number of bytes of alarm seconds.
---! @param      on_off_times_g    Array of on/off time ranges.
+--! @param      on_off_count_g    Number of on/off time ranges used.
 --! @param      reset             Reset the entity to an initial state.
 --! @param      clk               Clock used to move through states in the
 --!                               entity and its components.
---! @param      localtime_in      Local time in hrs/min/sec format.
---! @param      clockchg_in       The local time has jumped to a new value.
+--! @param      rtctime_in        Current time in Epoch 70 time in seconds.
+--! @param      timingchg_in      Changes when the local time has jumped to
+--!                               a new value or the on/off times have
+--!                               changed.  This is a toggle not a level
+--!                               based signal.
 --! @param      startup_in        System startup for the Trx.
 --! @param      startup_out       The Trx has been started.
 --! @param      shutdown_in       System shutdown for the Trx.
 --! @param      shutdown_out      The Trx has shut down.
 --! @param      off_in            Signal to turn the system off.
 --! @param      off_out           Turn the system off now.
+--! @param      on_off_times_in   Array of on/off time ranges.
 --! @param      alarm_set_in      The alarm has been set.
 --! @param      alarm_set_out     Set the alarm to the new alarm value.
 --! @param      alarm_out         New alarm value in seconds from now.
@@ -84,19 +88,21 @@ entity OnOffScheduler is
     sched_count_g     : natural := 8 ;
     turnoff_id_g      : natural := 0 ;
     alarm_bytes_g     : natural := 3 ;
-    on_off_times_g    : HM_range_vector_t := school_day_HMR_c
+    on_off_count_g    : natural := 4
   ) ;
   Port (
     reset             : in    std_logic ;
     clk               : in    std_logic ;
-    localtime_in      : in    std_logic_vector (dt_totalbits_c-1 downto 0) ;
-    clockchg_in       : in    std_logic ;
+    rtctime_in        : in    unsigned (Epoch70_secbits_c-1 downto 0) ;
+    timingchg_in      : in    std_logic ;
     startup_in        : in    std_logic ;
     startup_out       : out   std_logic ;
     shutdown_in       : in    std_logic ;
     shutdown_out      : out   std_logic ;
     off_in            : in    std_logic ;
     off_out           : out   std_logic ;
+    on_off_times_in   : in    std_logic_vector (E70_rangebits_c *
+                                                on_off_count_g-1 downto 0) ;
     alarm_set_in      : in    std_logic ;
     alarm_set_out     : out   std_logic ;
     alarm_out         : out   std_logic_vector (alarm_bytes_g*8-1 downto 0) ;
@@ -121,20 +127,35 @@ architecture rtl of OnOffScheduler is
   --  used for this entity.  An asynchronous SR flip flop will still be
   --  able to catch the signal.
 
-  signal clock_changed      : std_logic ;
-  signal clock_changed_set  : std_logic ;
-  signal clockchg_started   : std_logic ;
+  signal timingchg          : std_logic ;
+  signal timingchg_started  : std_logic ;
+  signal timingchg_ff       : std_logic ;
+  signal timingchg_s        : std_logic ;
   signal startup            : std_logic ;
   signal startup_started    : std_logic ;
+  signal startup_ff         : std_logic ;
+  signal startup_s          : std_logic ;
   signal shutdown           : std_logic ;
   signal shutdown_started   : std_logic ;
+  signal shutdown_ff        : std_logic ;
+  signal shutdown_s         : std_logic ;
   signal running            : std_logic ;
   signal turnoff            : std_logic ;
   signal turnoff_started    : std_logic ;
+  signal turnoff_ff         : std_logic ;
+  signal turnoff_s          : std_logic ;
+  signal sched_rcv          : std_logic ;
+  signal sched_rcv_s        : std_logic ;
+  signal sched_start        : std_logic ;
+  signal sched_start_s      : std_logic ;
+  signal sched_start_ff     : std_logic ;
+  signal sched_start_clear  : std_logic ;
   signal alarm_set_started  : std_logic ;
   signal alarm_set_clear    : std_logic ;
   signal alarm_set_finished : std_logic ;
   signal alarm_set_done     : std_logic ;
+  signal alarm_set_ff       : std_logic ;
+  signal alarm_set_s        : std_logic ;
 
   component SR_FlipFlop is
     Generic (
@@ -151,30 +172,20 @@ architecture rtl of OnOffScheduler is
 
   --  Timing signals.
 
-  constant day_hours_c      : natural := 24 ;
-  constant day_minutes_c    : natural := 24 * 60 ;
-  constant day_seconds_c    : natural := 24 * 60 * 60 ;
-  constant hour_minutes_c   : natural := 60 ;
-  constant hour_seconds_c   : natural := 60 * 60 ;
-  constant min_seconds_c    : natural := 60 ;
-
-  signal local_time         : DateTime_t ;
-  signal cur_year           : unsigned (dt_yearbits_c-1 downto 0) ;
-  signal cur_yday           : unsigned (dt_ydaybits_c-1 downto 0) ;
-  signal cur_hour           : unsigned (dt_hourbits_c-1 downto 0) ;
-  signal cur_minute         : unsigned (dt_minbits_c-1 downto 0) ;
-  signal cur_second         : unsigned (dt_secbits_c-1 downto 0) ;
-  signal last_dst           : std_logic := '0' ;
-
-  signal last_year          : unsigned (dt_yearbits_c-1 downto 0) ;
-  signal last_yday          : unsigned (dt_ydaybits_c-1 downto 0) ;
+  signal timingchg_fwl      : std_logic ;
+  signal timingchg_set      : std_logic ;
 
   signal update_timing      : std_logic ;
   signal timing_changed     : std_logic ;
 
-  signal cur_range          : HourMinuteRange_t ;
+  signal cur_time           : unsigned (rtctime_in'length-1 downto 0) ;
+
+  signal on_off_times       : E70_range_vector_t (0 to on_off_count_g-1) ;
+  signal cur_range          : Epoch70Range_t ;
   signal next_range         :
-            unsigned (const_bits (on_off_times_g'length)-1 downto 0) ;
+            unsigned (const_bits (on_off_count_g)-1 downto 0) ;
+
+  signal turnon_time        : unsigned (alarm_out'length-1 downto 0) ;
 
   --  Scheduling States.
 
@@ -195,25 +206,24 @@ architecture rtl of OnOffScheduler is
 
 begin
 
-  --  Convert the local time from a vector into a record.
+  --  Convert the on/off times from a vector into a range array.
 
-  local_time                <= TO_DATE_TIME (localtime_in) ;
+  on_off_times              <= TO_E70_RANGE (on_off_times_in) ;
 
   --  Catch the clock change, startup, shutdown, and turnoff signals.
   --  The signals may be shorter than the clock period used for this entity.
   --  An asynchronous SR flip flop will still be able to catch the signal.
 
-  clock_changed_set         <= clockchg_in or
-                               (last_dst   xor local_time.indst) ;
+  timingchg_set             <= timingchg_in xor timingchg_fwl ;
 
   clock_sig : SR_FlipFlop
     Generic Map (
       set_edge_detect_g     => '1'
     )
     Port Map (
-      reset_in              => clockchg_started,
-      set_in                => clock_changed_set,
-      result_rd_out         => clock_changed
+      reset_in              => timingchg_started,
+      set_in                => timingchg_set,
+      result_rd_out         => timingchg_ff
     ) ;
 
   turnoff_sig : SR_FlipFlop
@@ -223,7 +233,7 @@ begin
     Port Map (
       reset_in              => turnoff_started,
       set_in                => off_in,
-      result_rd_out         => turnoff
+      result_rd_out         => turnoff_ff
     ) ;
 
   startup_sig : SR_FlipFlop
@@ -233,7 +243,7 @@ begin
     Port Map (
       reset_in              => startup_started,
       set_in                => startup_in,
-      result_rd_out         => startup
+      result_rd_out         => startup_ff
     ) ;
 
   shutdown_sig : SR_FlipFlop
@@ -243,7 +253,17 @@ begin
     Port Map (
       reset_in              => shutdown_started,
       set_in                => shutdown_in,
-      result_rd_out         => shutdown
+      result_rd_out         => shutdown_ff
+    ) ;
+
+  sched_stat_sig : SR_FlipFlop
+    Generic Map (
+      set_edge_detect_g     => '1'
+    )
+    Port Map (
+      reset_in              => sched_start_clear,
+      set_in                => sched_start_in,
+      result_rd_out         => sched_start_ff
     ) ;
 
   --  RTC Alarm setting flip-flops.  The RTC Alarm set may run at a much
@@ -271,7 +291,7 @@ begin
     Port Map (
       reset_in              => alarm_set_finished,
       set_in                => alarm_set_in,
-      result_rd_out         => alarm_set_done
+      result_rd_out         => alarm_set_ff
     ) ;
 
   --  Entity busy.
@@ -281,7 +301,7 @@ begin
 
   --  Timing has changed.
 
-  timing_changed    <= clock_changed or update_timing ;
+  timing_changed    <= timingchg or update_timing ;
 
 
   --------------------------------------------------------------------------
@@ -291,19 +311,31 @@ begin
   scheduler :  process (reset, clk)
   begin
     if (reset = '1') then
-      clockchg_started      <= '1' ;
+      timingchg_fwl         <= '0' ;
+      timingchg_started     <= '1' ;
+      timingchg_s           <= '0' ;
+      timingchg             <= '0' ;
       update_timing         <= '1' ;
       turnoff_started       <= '1' ;
+      turnoff_s             <= '0' ;
+      turnoff               <= '0' ;
       alarm_set_started     <= '0' ;
+      alarm_set_s           <= '0' ;
       startup_started       <= '1' ;
+      startup_s             <= '0' ;
+      startup               <= '0' ;
       running               <= '0' ;
       shutdown_started      <= '1' ;
+      shutdown_s            <= '0' ;
+      shutdown              <= '0' ;
+      sched_rcv_s           <= '0' ;
+      sched_rcv             <= '0' ;
+      sched_start_s         <= '0' ;
+      sched_start           <= '0' ;
+      sched_start_clear     <= '1' ;
       off_out               <= '0' ;
       startup_out           <= '0' ;
       shutdown_out          <= '0' ;
-      last_year             <= (others => '0') ;
-      last_yday             <= (others => '0') ;
-      cur_range             <= on_off_times_g (0) ;
       next_range            <= TO_UNSIGNED (1, next_range'length) ;
       sched_req_out         <= '0' ;
       sched_type_out        <= '0' ;
@@ -313,7 +345,23 @@ begin
       process_busy          <= '1' ;
       cur_state             <= SCHED_STATE_WAIT ;
 
+    elsif (falling_edge (clk)) then
+      turnoff               <= turnoff_s ;
+      startup               <= startup_s ;
+      shutdown              <= shutdown_s ;
+      timingchg             <= timingchg_s ;
+      alarm_set_done        <= alarm_set_s ;
+      sched_rcv             <= sched_rcv_s ;
+      sched_start           <= sched_start_s ;
+
     elsif (rising_edge (clk)) then
+      turnoff_s             <= turnoff_ff ;
+      startup_s             <= startup_ff ;
+      shutdown_s            <= shutdown_ff ;
+      timingchg_s           <= timingchg_ff ;
+      alarm_set_s           <= alarm_set_ff ;
+      sched_rcv_s           <= sched_rcv_in ;
+      sched_start_s         <= sched_start_ff ;
 
       --  Initialization states.
 
@@ -325,7 +373,8 @@ begin
           turnoff_started       <= '0' ;
           startup_started       <= '0' ;
           shutdown_started      <= '0' ;
-          clockchg_started      <= '0' ;
+          timingchg_started     <= '0' ;
+          sched_start_clear     <= '0' ;
           shutdown_out          <= '0' ;
 
           --  Shutdown requests do nothing.  Startup causes a timing change
@@ -337,12 +386,14 @@ begin
             startup_out         <= '0' ;
             off_out             <= '0' ;
             shutdown_started    <= '1' ;
+            shutdown_s          <= '0' ;
             running             <= '0' ;
             process_busy        <= '1' ;
 
           elsif (startup = '1') then
             startup_out         <= '1' ;
             startup_started     <= '1' ;
+            startup_s           <= '0' ;
             running             <= '1' ;
             update_timing       <= '1' ;
             process_busy        <= '1' ;
@@ -351,32 +402,34 @@ begin
             process_busy        <= '0' ;
 
           --  Reset the scheduled events after clock changes and when
-          --  comming out of reset.
+          --  comming out of reset.  The range values can change dynamically
+          --  requiring a recheck every time an event occurs.
 
           elsif (timing_changed = '1') then
-            clockchg_started    <= '1' ;
+            timingchg_fwl       <= update_timing xor not timingchg_fwl ;
+            timingchg_started   <= '1' ;
+            timingchg_s         <= '0' ;
             update_timing       <= '0' ;
             turnoff_started     <= '1' ;
-            cur_range           <= on_off_times_g (0) ;
+            turnoff_s           <= '0' ;
+            cur_range           <= on_off_times (0) ;
             next_range          <= TO_UNSIGNED (1, next_range'length) ;
-            last_dst            <= local_time.indst ;
-            cur_year            <= local_time.year ;
-            cur_yday            <= local_time.yday ;
-            cur_hour            <= local_time.hour ;
-            cur_minute          <= local_time.minute ;
-            cur_second          <= local_time.second ;
+            cur_time            <= rtctime_in ;
+            turnon_time         <= (others => '1') ;
             cur_state           <= SCHED_STATE_UPDTURNOFF ;
             process_busy        <= '1' ;
 
           --  Turn off the system.
 
           elsif (turnoff = '1') then
-            cur_hour            <= local_time.hour ;
-            cur_minute          <= local_time.minute ;
-            cur_second          <= local_time.second ;
-            process_busy        <= '1' ;
             turnoff_started     <= '1' ;
-            cur_state           <= SCHED_STATE_TURNOFF ;
+            turnoff_s           <= '0' ;
+            cur_range           <= on_off_times (0) ;
+            next_range          <= TO_UNSIGNED (1, next_range'length) ;
+            turnon_time         <= (others => '1') ;
+            cur_time            <= rtctime_in ;
+            cur_state           <= SCHED_STATE_UPDTURNOFF ;
+            process_busy        <= '1' ;
 
           --  Go back to sleep.
 
@@ -389,65 +442,51 @@ begin
 
         when SCHED_STATE_UPDTURNOFF =>
 
-          --  Progressively check range entries until current time
-          --  is reached.  When the end of the current day is reached
-          --  turn off the system.
+          --  Progressively check range entries until a range containing the
+          --  current time is reached.  When the last range is passed, wait
+          --  for the ranges to be updated.
 
-          if (cur_year /= last_year or cur_yday /= last_yday) then
-            last_year               <= cur_year ;
-            last_yday               <= cur_yday ;
-            cur_range               <= on_off_times_g (0) ;
-            next_range              <= TO_UNSIGNED (1, next_range'length) ;
+          if (cur_time >= cur_range.end_time) then
 
-          elsif (cur_hour    >  cur_range.end_hour   or
-                 (cur_hour   =  cur_range.end_hour  and
-                  cur_minute >= cur_range.end_minute)) then
-
-            if (next_range = on_off_times_g'length) then
-              cur_state             <= SCHED_STATE_TURNOFF ;
+            if (next_range = on_off_count_g) then
+              if ((not turnon_time) = 0) then
+                cur_state           <= SCHED_STATE_WAIT ;
+              else
+                cur_state           <= SCHED_STATE_TURNOFF ;
+              end if ;
             else
               cur_range             <=
-                    on_off_times_g (TO_INTEGER (next_range)) ;
+                    on_off_times (TO_INTEGER (next_range)) ;
               next_range            <= next_range + 1 ;
             end if ;
 
           --  Not yet in the next range.  Shutdown the system until then.
 
-          elsif (cur_hour      < cur_range.str_hour    or
-                 (cur_hour     = cur_range.str_hour   and
-                  cur_minute   < cur_range.str_minute)) then
-            cur_state               <= SCHED_STATE_TURNOFF ;
-
-          --  In the current range.  Schedule turn off when this range ends.
-
-          elsif (sched_rcv_in = '0') then
-            sched_req_out           <= '1' ;
-
-          else
-            if (cur_minute > cur_range.end_minute) then
-              sched_delay_out     <=
-                RESIZE ((cur_range.end_hour - 1 - cur_hour) *
-                        const_unsigned (hour_seconds_c, 1) +
-                        (cur_range.end_minute +
-                         (hour_minutes_c - cur_minute)) *
-                        const_unsigned (min_seconds_c, 1) - cur_second,
-                        sched_delay_out'length) ;
-            else
-              sched_delay_out     <=
-                RESIZE ((cur_range.end_hour - cur_hour) *
-                        const_unsigned (hour_seconds_c, 1) +
-                        (cur_range.end_minute - cur_minute) *
-                        const_unsigned (min_seconds_c, 1) - cur_second,
-                        sched_delay_out'length) ;
+          elsif (cur_time < cur_range.str_time) then
+            if (cur_range.str_time - cur_time < turnon_time) then
+              turnon_time           <= RESIZE (cur_range.str_time -
+                                               cur_time,
+                                               turnon_time'length) ;
             end if ;
 
-            if (next_range /= on_off_times_g'length) then
+            if (next_range = on_off_count_g) then
+              cur_state             <= SCHED_STATE_TURNOFF ;
+            else
               cur_range             <=
-                    on_off_times_g (TO_INTEGER (next_range)) ;
+                    on_off_times (TO_INTEGER (next_range)) ;
               next_range            <= next_range + 1 ;
             end if ;
 
-            --  Schedule the event.
+          --  In the current range.  Schedule turn off when this range ends.
+
+          elsif (sched_rcv = '0') then
+            sched_req_out           <= '1' ;
+
+          --  Schedule the event.
+
+          else
+            sched_delay_out         <= RESIZE (cur_range.end_time - cur_time,
+                                               sched_delay_out'length) ;
 
             sched_type_out          <= '1' ;
             sched_id_out            <= TO_UNSIGNED (turnoff_id_g,
@@ -459,60 +498,33 @@ begin
         --  Wait for the scheduling operation to complete.
 
         when SCHED_STATE_DELAY      =>
-          if (sched_start_in = '1') then
+          if (sched_start = '1') then
+            sched_start_clear <= '1' ;
+            sched_start_s     <= '0' ;
             sched_start_out   <= '0' ;
             cur_state         <= SCHED_STATE_DONE ;
           end if ;
 
         when SCHED_STATE_DONE       =>
-          if (sched_rcv_in = '0') then
+          if (sched_rcv = '0') then
             cur_state         <= SCHED_STATE_WAIT ;
-          elsif (sched_start_in = '0') then
+          elsif (sched_start = '0') then
+            sched_start_clear <= '0' ;
             sched_req_out     <= '0' ;
           end if ;
 
-        --  Turn off the system.  Until the next start time even if it is
-        --  the next day.
+        --  Turn off the system.  If the last range has passed wait until
+        --  the ranges have been updated before taking any action.
 
         when SCHED_STATE_TURNOFF    =>
-          if (cur_hour    >  cur_range.end_hour or
-              (cur_hour   =  cur_range.end_hour and
-               cur_minute >= cur_range.end_minute)) then
-
-            alarm_out         <= std_logic_vector (
-                RESIZE ((on_off_times_g (0).str_hour +
-                         (day_hours_c - 1 - cur_hour)) *
-                        const_unsigned (hour_seconds_c, 1) +
-                        (on_off_times_g (0).str_minute +
-                         (hour_minutes_c - 1 - cur_minute)) *
-                        const_unsigned (min_seconds_c, 1) +
-                        (min_seconds_c - cur_second),
-                        alarm_out'length)) ;
-
-          elsif (cur_minute > cur_range.str_minute) then
-            alarm_out         <= std_logic_vector (
-                RESIZE ((cur_range.str_hour - 1 - cur_hour) *
-                        const_unsigned (hour_seconds_c, 1) +
-                        (cur_range.str_minute +
-                         (hour_minutes_c - cur_minute)) *
-                        const_unsigned (min_seconds_c, 1) - cur_second,
-                        alarm_out'length)) ;
-
-          else
-            alarm_out         <= std_logic_vector (
-                RESIZE ((cur_range.str_hour - cur_hour) *
-                        const_unsigned (hour_seconds_c, 1) +
-                        (cur_range.str_minute - cur_minute) *
-                        const_unsigned (min_seconds_c, 1) - cur_second,
-                        alarm_out'length)) ;
-          end if ;
-
+          alarm_out           <= std_logic_vector (turnon_time) ;
           alarm_set_started   <= '1' ;
           cur_state           <= SCHED_STATE_ALARM ;
 
         when SCHED_STATE_ALARM    =>
           if (alarm_set_done = '1') then
             alarm_set_started <= '0' ;
+            alarm_set_s       <= '0' ;
             off_out           <= '1' ;
             cur_state         <= SCHED_STATE_WAIT ;
           end if ;
