@@ -22,11 +22,11 @@ package UTILITIES_PKG is
 
   --  New type defined for 2008.
   type integer_vector is array (natural range <>) of integer ;
-  
+
   --  New functions defined for 2008.
   function minimum (a, b : in integer)
   return integer ;
-  
+
   function maximum (a, b : in integer)
   return integer ;
 
@@ -41,10 +41,17 @@ package UTILITIES_PKG is
   function bit_to_number (a : in std_logic_vector ; len : natural)
   return unsigned ;
 
+  --  A zero filled 2D vector.
+  signal zero2D         : std_logic_2D (0 downto 0, 0 downto 0) :=
+                                (others => (others => '0')) ;
+
   --  Map the bits of a vector into an element of a 2D vector.
+  --  The source is copied to the destination except for the row specified
+  --  by the element number.  Any bits in the destination that are not
+  --  in the source are set to zero.
   procedure set2D_element (constant elem_no : in    natural ;
                            signal   value   : in    std_logic_vector ;
-                           signal   source  : in    std_logic_2D;
+                           signal   source  : in    std_logic_2D ;
                            signal   dest    : out   std_logic_2D) ;
 
   --  Determine the maximum value from a (constant) array of integers.
@@ -117,7 +124,7 @@ package body UTILITIES_PKG is
       return b ;
     end if ;
   end ;
-  
+
   function maximum (a, b : in integer)
   return integer is
   begin
@@ -202,22 +209,38 @@ package body UTILITIES_PKG is
 
 
   --  Map the bits of a vector into an element of a 2D vector.
+  --  The source is copied to the destination except for the row specified
+  --  by the element number.  Any bits in the destination that are not
+  --  in the source are set to zero.
 
   procedure set2D_element (constant elem_no : in    natural ;
                            signal   value   : in    std_logic_vector ;
-                           signal   source  : in    std_logic_2D;
+                           signal   source  : in    std_logic_2D ;
                            signal   dest    : out   std_logic_2D) is
-                           
   begin
-    for i in value'range loop
-      dest (elem_no,i)  <=  value(i) ;
+    for col in dest'range (2) loop
+      if (col < value'low or col > value'high) then
+        dest (elem_no, col)   <= '0' ;
+      else
+        dest (elem_no, col)   <=  value (col) ;
+      end if ;
     end loop ;
-    for src in source'length(1)-1 downto 0 loop
-      if (src /= elem_no) then
-        for i in value'range loop
-          dest (src,i)  <=  source(src,i) ;
-        end loop ;
-      end if;
+    for row in dest'range (1) loop
+      if (row /= elem_no) then
+        if (row < source'low (1) or row > source'high (1)) then
+          for col in dest'range (2) loop
+            dest (row, col)   <= '0' ;
+          end loop ;
+        else
+          for col in dest'range (2) loop
+            if (col < source'low (2) or col > source'high (2)) then
+              dest (row, col) <= '0' ;
+            else
+              dest (row, col) <= source (row, col) ;
+            end if ;
+          end loop ;
+        end if ;
+      end if ;
     end loop ;
   end set2D_element ;
 
