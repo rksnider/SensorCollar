@@ -224,7 +224,7 @@ SD_LOAD_WRITE_DONE
 signal cur_sdload_state   : SD_LOAD_STATE;
 
 
-signal data_nblocks_signal : std_logic_vector(31 downto 0);
+signal data_nblocks_signal : std_logic_vector(31 downto 0) := (others => '0');
 
 
 
