@@ -40,7 +40,7 @@ foreach clock_data $clk_list {
                                        "'$sysclk_clock' on "              \
                                        "'$clock_target' from '$clk_info'"]
 
-      create_generated_clock -source "$sysclk_source"                     \
+      create_generated_clock -source "$sysclk_source" -invert             \
                              -name   "$clk_name" "$clock_target"
 
       lappend latch_clocks        "$clk_name"
