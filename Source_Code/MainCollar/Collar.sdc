@@ -21,6 +21,43 @@ set_false_path -from    $reset_pin_data  -setup
 
 set_keyvalue reset          "$reset_path|outclk"
 
+#   Remove all other resets from timing checks.
+
+set reset_list              [list @use_SDRAM:sdram_reset]
+
+foreach cell $reset_list {
+
+  set reset_cell            "$Collar_inst|$cell"
+
+  regsub -all {^[A-Za-z0-9_]+:|(\|)[A-Za-z0-9_]+:}                        \
+              "$reset_cell" {\1}    temp_path
+  regsub -all "@" "$temp_path" "\\" reset_path
+
+  set reset_pin_data          [get_pins "$reset_path|combout"]
+
+  puts $sdc_log "Linking broken through $reset_path\n"
+
+  set_false_path -from        $reset_pin_data
+}
+
+#   Remove the on/off control lines from timing checks.
+
+set onoff_cell                "$Collar_inst|PC_ControlSent"
+
+regsub -all {^[A-Za-z0-9_]+:|(\|)[A-Za-z0-9_]+:}                        \
+            "$onoff_cell" {\1}    temp_path
+regsub -all "@" "$temp_path" "\\" cell_path
+
+set cell_pin_data             [get_pins "$cell_path\[*]|combout"]
+
+foreach_in_collection pin $cell_pin_data {
+  set pin_name                [get_pin_info -name $pin]
+  puts $sdc_log "Pin $pin: $pin_name\n"
+}
+
+set_false_path -through       $cell_pin_data
+set_false_path -from          $cell_pin_data
+
 #   Find source clock frequency.
 
 set source_clock            [get_instvalue source_clk]
@@ -136,6 +173,39 @@ if { [file exists "$sdc_file"] > 0 } {
   pop_instance
 }
 
+#   Process SDC file for Logging Counter Array.
+
+set sdc_file              "LoggingCounterArray.sdc"
+
+if { [file exists "$sdc_file"] > 0} {
+
+  push_instance           "LoggingCounterArray:@use_EventLogging:eventcnt"
+  
+  set_instvalue           clk [list "$collar_gated_clk_name" "eventcnt"]
+  
+  source $sdc_file
+  
+  pop_instance
+}
+
+#   The I2C bus.
+
+set sdc_file              "i2c_master.sdc"
+
+if { [file exists "$sdc_file"] > 0 } {
+
+  set i2c_freq            400.0e3
+  set i2c_clk             [get_instvalue i2c_clk_io]
+
+  push_instance           "i2c_master:@use_I2C:i2c_master_i0"
+  set_instvalue           clk           [list $collar_spi_clk_name]
+  set_instvalue           iclk          [list $i2c_clk I2C_clock $i2c_freq]
+
+  source $sdc_file
+
+  pop_instance
+}
+
 #   The IMU Controller.
 
 set sdc_file              "LSM9DS1_top.sdc"
@@ -168,10 +238,37 @@ if { [file exists "$sdc_file"] > 0 } {
   pop_instance
 }
 
+#   The Data Tansmitter
+
+set sdc_file              "cc1120_top.sdc"
+
+if { [file exists "$sdc_file"] > 0 } {
+
+  push_instance           "CC1120_top:@use_Radio:txrx"
+  set_instvalue           clk               [list $collar_spi_clk_name]
+
+  copy_instvalues         [list "radio_clk,sclk"]
+
+  source $sdc_file
+
+  pop_instance
+}
+
 #   The Mems Microphone
 
 set mic_clk_port          [get_instvalue mic_clk]
-set mic_clk_clock         "$collar_spi_clk_name"
+
+set sysclk_data           [get_clocks $collar_spi_clk_name]
+set sysclk_source         [get_clock_info -targets $sysclk_data]
+
+set mic_clk_clock         "mic_clock"
+
+# Assign a generated clock to the port.
+
+puts $sdc_log "Creating clock '$mic_clk_clock' on port '$mic_clk_port'\n"
+
+create_generated_clock -source $sysclk_source -name "$mic_clk_clock" \
+                       -invert "$mic_clk_port"
 
 set_keyvalue              "$mic_clk_port" "$mic_clk_clock"
 
@@ -300,8 +397,8 @@ set sdc_file              "GPSmessages.sdc"
 if { [file exists "$sdc_file"] > 0 } {
 
   push_instance           "GPSmessages:@use_GPS:gps_ctl"
-  set_instvalue           clk_freq_g        $shared_constants(spi_clk_freq_c)
-  set_instvalue           clk               [list $collar_spi_clk_name]
+  set_instvalue           clk_freq_g        $master_clk_freq_c
+  set_instvalue           clk               [list $collar_master_clk_name]
 
   copy_instvalues         { "gps_rx_io,gps_rx_in" "gps_tx_out,gps_tx_out" }
 
