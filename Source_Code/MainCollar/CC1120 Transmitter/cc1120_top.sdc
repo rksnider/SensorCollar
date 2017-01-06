@@ -5,13 +5,13 @@
 #   
 
 
-set txrx_spi_port             [get_instvalue spi_clk_out]
+set txrx_spi_port           [get_instvalue sclk]
 
-set txrx_spi_clock            "TXRX_SPI_clk"
+set txrx_spi_clock          "TXRX_SPI_clk"
 
-push_instance               "spi_commands:spi_commands_cc1120"
+push_instance               "spi_commands:spi_commands_slave"
 
-set_instvalue               spi_clk_out [list $txrx_spi_port $txrx_spi_clock]
+set_instvalue               sclk [list $txrx_spi_port $txrx_spi_clock]
 
 copy_instvalues             { "clk,clk" }
 
