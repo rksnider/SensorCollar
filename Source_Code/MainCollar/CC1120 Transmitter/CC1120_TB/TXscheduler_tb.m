@@ -185,6 +185,10 @@ out_count               = out_count + 1 ;
 out_sig (out_count)     = 1 ;
 rcv_out                 = out_count ;
 
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [1 0 0 0] ;
+listen_in               = in_count ;
+
 %   Scheduler request signals.
 
 out_count               = out_count + 1 ;
@@ -229,13 +233,15 @@ busy_out                = out_count ;
 %   extended operations when the event occurs.
 %---------------------------------------------------------------------------
 
-bit_ids       = [send_in receive_in clockchg_in startup_in shutdown_in] ;
+bit_ids       = [send_in receive_in clockchg_in listen_in startup_in  ...
+                 shutdown_in] ;
 
 send_id_c     = 0 ;
 recv_id_c     = 1 ;
 clockchg_id_c = 2 ;
-startup_id_c  = 3 ;
-shutdown_id_c = 4 ;
+listen_id_c   = 3 ;
+startup_id_c  = 4 ;
+shutdown_id_c = 5 ;
 
 mem           = zeros (1, 3) ;
 
@@ -243,7 +249,11 @@ mem (1, :)    = [startup_id_c       10+base_seconds        0] ;
 mem (2, :)    = [clockchg_id_c     130+base_seconds    -3610] ;
 mem (3, :)    = [clockchg_id_c    3700+base_seconds   172800] ;
 mem (4, :)    = [clockchg_id_c  180000+base_seconds  -129600] ;
-mem (5, :)    = [shutdown_id_c  200000+base_seconds        0] ;
+mem (5, :)    = [listen_id_c    183600+base_seconds        1] ;
+mem (6, :)    = [listen_id_c    187200+base_seconds        0] ;
+mem (7, :)    = [listen_id_c    190000+base_seconds        1] ;
+mem (8, :)    = [listen_id_c    197200+base_seconds        0] ;
+mem (9, :)    = [shutdown_id_c  200000+base_seconds        0] ;
 
 mem_size      = size (mem) ;
 mem_cnt       = mem_size (1) ;
@@ -379,15 +389,17 @@ for trialno=1:Trial_count
 
         end
 
-        %   Deactivate all signals currently activated.
+        %   Deactivate most signals currently activated.
 
         for i = 1 : length (bit_ids)
-          in_index            = bit_ids (i) ;
+          if (i - 1 ~= listen_id_c)
+            in_index            = bit_ids (i) ;
 
-          in_vect {in_index}  = fi (0,                                  ...
-                                    in_sig (in_index, 3),               ...
-                                    in_sig (in_index, 1),               ...
-                                    in_sig (in_index, 2)) ;
+            in_vect {in_index}  = fi (0,                                ...
+                                      in_sig (in_index, 3),             ...
+                                      in_sig (in_index, 1),             ...
+                                      in_sig (in_index, 2)) ;
+          end
         end
 
         %   Activate and remove all events that have reached their
@@ -409,8 +421,14 @@ for trialno=1:Trial_count
                                         in_sig (in_index, 1),           ...
                                         in_sig (in_index, 2)) ;
 
-              if (mem (i, 1)  == clockchg_id_c)
+              if (mem (i, 1)     == clockchg_id_c)
                 new_seconds       = uint64 (double (seconds) + mem (i, 3)) ;
+
+              elseif (mem (i, 1) == listen_id_c)
+                in_vect {in_index}  = fi (mem (i, 3),                   ...
+                                          in_sig (in_index, 3),         ...
+                                          in_sig (in_index, 1),         ...
+                                          in_sig (in_index, 2)) ;
               end
             end
           end
@@ -524,7 +542,7 @@ for trialno=1:Trial_count
 
       if (rem (clock, clocks_per_sec) == 0)
         seconds                   = seconds + uint64 (1) ;
-        
+
         if (rem (seconds, 60) == 0)
           fprintf (1, '%d\n', int64 (double (seconds) - base_seconds)) ;
         end
