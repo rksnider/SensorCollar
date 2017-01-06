@@ -242,6 +242,11 @@ architecture rtl of PowerController is
   signal spi_cs                   : std_logic ;
   signal fpga_fs                  : std_logic ;
 
+  --  Interrupt controlled signals.
+
+  signal int_rtc_alarm_en         : std_logic := '0' ;
+  signal rtc_alarm_int            : std_logic ;
+
   --  Parallel Flash Loader signals.
 
   signal pfl_data                 : std_logic_vector (0 downto 0) ;
@@ -261,8 +266,8 @@ architecture rtl of PowerController is
                                     pfl_flash_data_io (3 downto 3) ;
 
   --  Parallel Flash Loader.
-  
-  
+
+
   --PFL clock divide signals.
   signal pfl_clk_div                : unsigned(3 downto 0);
   signal pfl_clk                    : std_logic;
@@ -334,8 +339,8 @@ begin
                            '0' when (fpga_powered = '0') else 'Z';
   pfl_flash_cs_io       <= pfl_flash_cs (0) when (flash_access_granted = '1') else
                            '0' when (fpga_powered = '0') else 'Z';
-                                             
-                            
+
+
   ext_flash_data_io     <= "0000" when (fpga_powered = '0') else
                            "ZZZZ" ;
   ext_flash_clk_io      <= '0' when (fpga_powered = '0') else 'Z' ;
@@ -380,14 +385,17 @@ begin
 
   pwr_drive_out         <= '1' ;
 
+  --  Enable interrupts that start the FPGA.
+
+  rtc_alarm_int         <= rtc_alarm_in and int_rtc_alarm_en ;
+
   --  Start the FPGA when a battery monitor interrupt occurs and the
   --  FPGA is not running.
 
   fpga_turnon           <= (not fpga_running) and
-                           --(bat_int_in        or
-                            --forced_start_in   or
-                            --rtc_alarm_in
-                            forced_start_in ;
+                           (bat_int_in        or
+                            rtc_alarm_int     or
+                            forced_start_in) ;
 
   --  Devices powered as FPGA is starting.
 
@@ -428,13 +436,13 @@ begin
   --  Control Register Bit Mappings and default values.
 
 
-  
-  bat_recharge_out   <=    
+
+  bat_recharge_out   <=
         '0' when (bat_good_in = '0') else
         PC_ControlReg (ControlSignals'pos(Ctl_RechargeSwitch_e))
             when (PC_ControlUse = '1') else '1' ;
 
-  bat_power_out        <= 
+  bat_power_out        <=
         PC_ControlReg (ControlSignals'pos(Ctl_MainPowerSwitch_e))
         when (PC_ControlUse = '1') else '1' ;
   solar_run_out         <=
@@ -474,15 +482,29 @@ begin
         PC_ControlReg (ControlSignals'pos(Ctl_FPGA_Shutdown_e))
         when (PC_ControlUse = '1') else '0' ;
   flash_access_granted  <=
-        '0' when (fpga_activated = '0') else 
-		  PC_ControlReg (ControlSignals'pos(Ctl_FLASH_Granted_e))
+        '0' when (fpga_activated = '0') else
+      PC_ControlReg (ControlSignals'pos(Ctl_FLASH_Granted_e))
         when (PC_ControlUse = '1') else '1';
-        
-        
-  pwr_vcc1p8_aux_out <= 
-      '0' when (fpga_activated = '0') else 
+
+
+  pwr_vcc1p8_aux_out <=
+      '0' when (fpga_activated = '0') else
       PC_ControlReg (ControlSignals'pos(Ctl_vcc1p8_aux_ctrl_e))
       when (PC_ControlUse = '1') else '0';
+
+  --------------------------------------------------------------------------
+  --  Capture all control register signals that maintain their values when
+  --  the FPGA is shut down.
+  --------------------------------------------------------------------------
+
+  ctl_hold : process (PC_ControlSet)
+  begin
+    if (rising_edge (PC_ControlSet)) then
+      int_rtc_alarm_en      <=
+              PC_ControlReg (ControlSignals'pos (Ctl_RTC_int_e)) ;
+    end if ;
+  end process ctl_hold ;
+
 
   --  Parallel Flash Loader.
   --  When pfl_flash_access_granted is low all flash_* lines are
@@ -530,24 +552,25 @@ begin
       data_in                 => spi_mosi_in,
       data_out                => spi_miso
     ) ;
-    
-    
-    
-  -- --------------------------------------------------------------------------
-  -- --  Create a divide by two clock for PFL use. 
-  -- --  Only when the FPGA has powered but has not started running.
-  -- --  This is when the PFL is running.
-  -- --------------------------------------------------------------------------
-  pfl_clk <= pfl_clk_div(0);
-  
-  div_pfl_clock : process (fpga_activated,fpga_running,master_clk)
+
+
+
+  --------------------------------------------------------------------------
+  --  Create a divide by two clock for PFL use.
+  --  Only when the FPGA has powered but has not started running.
+  --  This is when the PFL is running.
+  --------------------------------------------------------------------------
+
+  pfl_clk <= pfl_clk_div (0);
+
+  div_pfl_clock : process (fpga_activated, fpga_running, master_clk)
   begin
     if (fpga_activated = '1' and fpga_running = '0') then
-      if (master_clk'event and master_clk = '1') then 
-        pfl_clk_div <= pfl_clk_div + 1;
+      if (master_clk'event and master_clk = '1') then
+        pfl_clk_div   <= pfl_clk_div + 1;
       end if;
     else
-      pfl_clk_div <= (others => '0');
+      pfl_clk_div     <= (others => '0');
     end if;
 
   end process div_pfl_clock ;
