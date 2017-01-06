@@ -61,7 +61,8 @@ use WORK.PC_STATUSCONTROL_PKG.All ;
 --!                             since it was last tranferred by SPI.
 --!                             Start a transfer on the FPGA master.
 --! @param      status_set_out  The status register has been updated.
---! @param      control_in      The FPGAs  control register.
+--! @param      control_in      The FPGAs control register.
+--! @param      control_out     The last transmitted control register.
 --! @param      busy_out        The component is busy communicating.
 --! @param      startup_in      Start the machine. Do not transact if not on.
 --! @param      sclk            SCLK of SPI
@@ -91,8 +92,10 @@ entity StatCtlSPI_FPGA is
     status_set_out          : out   std_logic ;
     control_in              : in    std_logic_vector (control_bits_g-1
                                                       downto 0) ;
+    control_out             : out   std_logic_vector (control_bits_g-1
+                                                      downto 0) ;
     busy_out                : out   std_logic ;
-    
+
     startup_in              : in    std_logic;
 
     sclk                    : out   std_logic ;
@@ -151,13 +154,17 @@ architecture rtl of StatCtlSPI_FPGA is
               (control_bits_g + 7) / 8;
   constant status_register_byte_count_c       : natural :=
               (status_bits_g + 7) / 8;
-  
-  
-  constant max_of_ctl_status_bytes : natural 
+
+
+  constant max_of_ctl_status_bytes : natural
                                   := maximum(control_register_byte_count_c,
                                       status_register_byte_count_c);
-  
-  
+
+  signal    control_reg           : std_logic_vector (control_bits_g-1
+                                                      downto 0) ;
+  signal    control_reg_s         : std_logic_vector (control_bits_g-1
+                                                      downto 0) ;
+
   signal    control_in_follower               :
                 std_logic_vector (max_of_ctl_status_bytes*8-1 downto 0);
 
@@ -167,20 +174,23 @@ architecture rtl of StatCtlSPI_FPGA is
   signal    control_shift                     :
                 std_logic_vector (max_of_ctl_status_bytes*8-1 downto 0);
 
+  signal    control_sent                      :
+                std_logic_vector (control_out'length-1 downto 0) ;
+
   signal    status_chg_in_follower            : std_logic;
 
 
   --Synchronize the async bit.
-  --The _s signal will have set_false_path -through 
-  --set on it by the very top level sdc. 
+  --The _s signal will have set_false_path -through
+  --set on it by the very top level sdc.
   signal    status_chg_in_r                   : std_logic;
   signal    status_chg_in_s                   : std_logic;
 
-              
 
-                                      
-                                      
-  signal control_in_expand : std_logic_vector(max_of_ctl_status_bytes*8-1 downto 0) := 
+
+
+
+  signal control_in_expand : std_logic_vector(max_of_ctl_status_bytes*8-1 downto 0) :=
                                 (others => '0');
 
   --  Counts used to keep track of read bytes off MISO.
@@ -195,7 +205,7 @@ architecture rtl of StatCtlSPI_FPGA is
   signal startup_processed          : std_logic;
   signal startup_processed_follower : std_logic;
 
-  
+
 
 
   component spi_commands is
@@ -208,8 +218,8 @@ architecture rtl of StatCtlSPI_FPGA is
       cpol_cpha                 : std_logic_vector (1 downto 0) := "11"
     );
     port(
-      clk	                      : in	  std_logic;
-      rst_n 	                  : in	  std_logic;
+      clk                        : in    std_logic;
+      rst_n                     : in    std_logic;
 
       command_in                : in    std_logic_vector
                                           (command_width_bytes_g*8-1
@@ -228,11 +238,11 @@ architecture rtl of StatCtlSPI_FPGA is
       slave_master_data_out     : out   std_logic_vector (7 downto 0);
       slave_master_data_ack_out : out   std_logic;
 
-      miso 				              : in	  std_logic;
-      mosi 				              : out  std_logic;
-      sclk 				              : out  std_logic;
-      cs_n 				              : out  std_logic
-		);
+      miso                       : in    std_logic;
+      mosi                       : out  std_logic;
+      sclk                       : out  std_logic;
+      cs_n                       : out  std_logic
+    );
   end component spi_commands;
 
 
@@ -240,13 +250,13 @@ begin
 
 
 
-                             
+
   --  Determine if the entity is busy.
 
-  
-  
-  busy_out      <= '1'; 
-  
+
+
+  busy_out      <= '1';
+
   -- when ((process_busy   = '1')                   or
                              -- (control_in    /= control_in_follower)   or
                              -- (status_chg_in /= status_chg_in_follower))
@@ -298,6 +308,7 @@ begin
       status_out                        <= (others => '0');
       status_shift                      <= (others => '0');
       status_set_out                    <= '0';
+      control_out                       <= (others => '0') ;
 
       control_shift                     <= (others => '0');
 
@@ -322,6 +333,10 @@ begin
             cur_statctrl_state    <= STATCRL_SETUP;
             startup_processed     <= '1';
             control_shift         <= control_in_expand;
+            control_sent          <=
+                  control_in_expand (control_in_expand'length-1 downto
+                                     control_in_expand'length -
+                                     control_sent'length) ;
             process_busy          <= '1' ;
           else
             process_busy          <= '0' ;
@@ -400,8 +415,9 @@ begin
 
       when STATCRL_TRANSFER_DONE =>
         cur_statctrl_state      <= STATCRL_WAIT;
-        status_out              <= status_shift(status_shift'length-1 downto 
+        status_out              <= status_shift(status_shift'length-1 downto
                             status_shift'length-status_bits_g);
+        control_out             <= control_sent ;
         status_set_out          <= '1' ;
 
       end case ;
@@ -420,8 +436,8 @@ begin
       cpol_cpha                 => "11"
     )
     port map (
-      clk	                      => clk,
-      rst_n 	                  => rst_n,
+      clk                        => clk,
+      rst_n                     => rst_n,
 
       command_in                => command_spi_signal,
       address_in                => address_spi_signal,
@@ -435,11 +451,11 @@ begin
       slave_master_data_out     =>  slave_master_data_spi_signal,
       slave_master_data_ack_out =>  slave_master_data_ack_spi_signal,
 
-      miso 				              => miso,
-      mosi 					            => mosi,
-      sclk 					            => sclk,
-      cs_n 					            => cs_n
-		);
+      miso                       => miso,
+      mosi                       => mosi,
+      sclk                       => sclk,
+      cs_n                       => cs_n
+    );
 
 
   --------------------------------------------------------------------------
@@ -490,17 +506,24 @@ begin
       --This will guarantee a initial push on startup.
       --But make sure the critical control registers are on.
 
+      control_reg                   <= (others => '0');
+      control_reg_s                 <= (others => '0');
       control_in_follower           <= (others => '0');
       control_in_expand             <= (others => '0');
 
-    elsif (clk'event and clk = '1') then
-        
-        status_chg_in_s <= status_chg_in;
-        status_chg_in_r <= status_chg_in_s;
+    elsif (falling_edge (clk)) then
+      status_chg_in_r               <= status_chg_in_s ;
+      control_reg                   <= control_reg_s ;
 
-        control_in_expand(control_in_expand'length-1 
-                        downto control_in_expand'length  - 
-                               control_bits_g) <= control_in;
+    elsif (clk'event and clk = '1') then
+        status_chg_in_s             <= status_chg_in;
+        control_reg_s               <= control_in ;
+
+        control_in_expand (control_in_expand'length-1
+                           downto control_in_expand'length -
+                                  control_bits_g)   <= control_reg;
+        control_in_expand (control_in_expand'length-control_bits_g-1
+                           downto 0)                <= (others => '0');
 
         if (control_in_follower /= control_in_expand and startup_in = '1') then
           control_in_follower         <= control_in_expand ;
