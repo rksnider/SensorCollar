@@ -46,26 +46,26 @@ ENTITY sun_46Nx111W IS
 		address_a		: IN STD_LOGIC_VECTOR (8 DOWNTO 0);
 		address_b		: IN STD_LOGIC_VECTOR (8 DOWNTO 0);
 		clock		: IN STD_LOGIC  := '1';
-		q_a		: OUT STD_LOGIC_VECTOR (19 DOWNTO 0);
-		q_b		: OUT STD_LOGIC_VECTOR (19 DOWNTO 0)
+		q_a		: OUT STD_LOGIC_VECTOR (29 DOWNTO 0);
+		q_b		: OUT STD_LOGIC_VECTOR (29 DOWNTO 0)
 	);
 END sun_46Nx111W;
 
 
 ARCHITECTURE SYN OF sun_46nx111w IS
 
-	SIGNAL sub_wire0_bv	: BIT_VECTOR (19 DOWNTO 0);
-	SIGNAL sub_wire0	: STD_LOGIC_VECTOR (19 DOWNTO 0);
+	SIGNAL sub_wire0_bv	: BIT_VECTOR (29 DOWNTO 0);
+	SIGNAL sub_wire0	: STD_LOGIC_VECTOR (29 DOWNTO 0);
 	SIGNAL sub_wire1	: STD_LOGIC ;
-	SIGNAL sub_wire2	: STD_LOGIC_VECTOR (19 DOWNTO 0);
-	SIGNAL sub_wire3	: STD_LOGIC_VECTOR (19 DOWNTO 0);
+	SIGNAL sub_wire2	: STD_LOGIC_VECTOR (29 DOWNTO 0);
+	SIGNAL sub_wire3	: STD_LOGIC_VECTOR (29 DOWNTO 0);
 
 BEGIN
-	sub_wire0_bv(19 DOWNTO 0) <= "00000000000000000000";
+	sub_wire0_bv(29 DOWNTO 0) <= "000000000000000000000000000000";
 	sub_wire0    <= To_stdlogicvector(sub_wire0_bv);
 	sub_wire1    <= '0';
-	q_a    <= sub_wire2(19 DOWNTO 0);
-	q_b    <= sub_wire3(19 DOWNTO 0);
+	q_a    <= sub_wire2(29 DOWNTO 0);
+	q_b    <= sub_wire3(29 DOWNTO 0);
 
 	altsyncram_component : altsyncram
 	GENERIC MAP (
@@ -89,8 +89,8 @@ BEGIN
 		ram_block_type => "M10K",
 		widthad_a => 9,
 		widthad_b => 9,
-		width_a => 20,
-		width_b => 20,
+		width_a => 30,
+		width_b => 30,
 		width_byteena_a => 1,
 		width_byteena_b => 1,
 		wrcontrol_wraddress_reg_b => "CLOCK0"
@@ -144,7 +144,7 @@ END SYN;
 -- Retrieval info: PRIVATE: JTAG_ENABLED NUMERIC "0"
 -- Retrieval info: PRIVATE: JTAG_ID STRING "NONE"
 -- Retrieval info: PRIVATE: MAXIMUM_DEPTH NUMERIC "0"
--- Retrieval info: PRIVATE: MEMSIZE NUMERIC "7340"
+-- Retrieval info: PRIVATE: MEMSIZE NUMERIC "11010"
 -- Retrieval info: PRIVATE: MEM_IN_BITS NUMERIC "0"
 -- Retrieval info: PRIVATE: MIFfilename STRING "sun_46Nx111W.mif"
 -- Retrieval info: PRIVATE: OPERATION_MODE NUMERIC "3"
@@ -162,10 +162,10 @@ END SYN;
 -- Retrieval info: PRIVATE: USE_DIFF_CLKEN NUMERIC "0"
 -- Retrieval info: PRIVATE: UseDPRAM NUMERIC "1"
 -- Retrieval info: PRIVATE: VarWidth NUMERIC "0"
--- Retrieval info: PRIVATE: WIDTH_READ_A NUMERIC "20"
--- Retrieval info: PRIVATE: WIDTH_READ_B NUMERIC "20"
--- Retrieval info: PRIVATE: WIDTH_WRITE_A NUMERIC "20"
--- Retrieval info: PRIVATE: WIDTH_WRITE_B NUMERIC "20"
+-- Retrieval info: PRIVATE: WIDTH_READ_A NUMERIC "30"
+-- Retrieval info: PRIVATE: WIDTH_READ_B NUMERIC "30"
+-- Retrieval info: PRIVATE: WIDTH_WRITE_A NUMERIC "30"
+-- Retrieval info: PRIVATE: WIDTH_WRITE_B NUMERIC "30"
 -- Retrieval info: PRIVATE: WRADDR_ACLR_B NUMERIC "0"
 -- Retrieval info: PRIVATE: WRADDR_REG_B NUMERIC "1"
 -- Retrieval info: PRIVATE: WRCTRL_ACLR_B NUMERIC "0"
@@ -192,25 +192,25 @@ END SYN;
 -- Retrieval info: CONSTANT: RAM_BLOCK_TYPE STRING "M10K"
 -- Retrieval info: CONSTANT: WIDTHAD_A NUMERIC "9"
 -- Retrieval info: CONSTANT: WIDTHAD_B NUMERIC "9"
--- Retrieval info: CONSTANT: WIDTH_A NUMERIC "20"
--- Retrieval info: CONSTANT: WIDTH_B NUMERIC "20"
+-- Retrieval info: CONSTANT: WIDTH_A NUMERIC "30"
+-- Retrieval info: CONSTANT: WIDTH_B NUMERIC "30"
 -- Retrieval info: CONSTANT: WIDTH_BYTEENA_A NUMERIC "1"
 -- Retrieval info: CONSTANT: WIDTH_BYTEENA_B NUMERIC "1"
 -- Retrieval info: CONSTANT: WRCONTROL_WRADDRESS_REG_B STRING "CLOCK0"
 -- Retrieval info: USED_PORT: address_a 0 0 9 0 INPUT NODEFVAL "address_a[8..0]"
 -- Retrieval info: USED_PORT: address_b 0 0 9 0 INPUT NODEFVAL "address_b[8..0]"
 -- Retrieval info: USED_PORT: clock 0 0 0 0 INPUT VCC "clock"
--- Retrieval info: USED_PORT: q_a 0 0 20 0 OUTPUT NODEFVAL "q_a[19..0]"
--- Retrieval info: USED_PORT: q_b 0 0 20 0 OUTPUT NODEFVAL "q_b[19..0]"
+-- Retrieval info: USED_PORT: q_a 0 0 30 0 OUTPUT NODEFVAL "q_a[29..0]"
+-- Retrieval info: USED_PORT: q_b 0 0 30 0 OUTPUT NODEFVAL "q_b[29..0]"
 -- Retrieval info: CONNECT: @address_a 0 0 9 0 address_a 0 0 9 0
 -- Retrieval info: CONNECT: @address_b 0 0 9 0 address_b 0 0 9 0
 -- Retrieval info: CONNECT: @clock0 0 0 0 0 clock 0 0 0 0
--- Retrieval info: CONNECT: @data_a 0 0 20 0 GND 0 0 20 0
--- Retrieval info: CONNECT: @data_b 0 0 20 0 GND 0 0 20 0
+-- Retrieval info: CONNECT: @data_a 0 0 30 0 GND 0 0 30 0
+-- Retrieval info: CONNECT: @data_b 0 0 30 0 GND 0 0 30 0
 -- Retrieval info: CONNECT: @wren_a 0 0 0 0 GND 0 0 0 0
 -- Retrieval info: CONNECT: @wren_b 0 0 0 0 GND 0 0 0 0
--- Retrieval info: CONNECT: q_a 0 0 20 0 @q_a 0 0 20 0
--- Retrieval info: CONNECT: q_b 0 0 20 0 @q_b 0 0 20 0
+-- Retrieval info: CONNECT: q_a 0 0 30 0 @q_a 0 0 30 0
+-- Retrieval info: CONNECT: q_b 0 0 30 0 @q_b 0 0 30 0
 -- Retrieval info: GEN_FILE: TYPE_NORMAL sun_46Nx111W.vhd TRUE
 -- Retrieval info: GEN_FILE: TYPE_NORMAL sun_46Nx111W.inc FALSE
 -- Retrieval info: GEN_FILE: TYPE_NORMAL sun_46Nx111W.cmp FALSE
