@@ -86,13 +86,42 @@ package FormatSeconds_pkg is
   function TO_STD_LOGIC_VECTOR (a : in DateTime_t)
   return std_logic_vector ;
 
+  constant dt_yearstart_c     : natural := dt_totalbits_c - dt_yearbits_c ;
+  constant dt_ydaystart_c     : natural := dt_yearstart_c - dt_ydaybits_c ;
+  constant dt_monthstart_c    : natural := dt_ydaystart_c - dt_monthbits_c ;
+  constant dt_mdaystart_c     : natural := dt_monthstart_c - dt_mdaybits_c ;
+  constant dt_hourstart_c     : natural := dt_mdaystart_c - dt_hourbits_c ;
+  constant dt_minstart_c      : natural := dt_hourstart_c - dt_minbits_c ;
+  constant dt_secstart_c      : natural := dt_minstart_c - dt_secbits_c ;
+  constant dt_lyearstart_c    : natural := dt_secstart_c - dt_lyearbits_c ;
+  constant dt_indststart_c    : natural := dt_lyearstart_c - dt_indstbits_c ;
+
   --  Separate a bit vector into Date/Time fields.
 
   function TO_DATE_TIME (a : in std_logic_vector (dt_totalbits_c-1
                                                   downto 0))
   return DateTime_t ;
 
-  --  Type definitions for ranges of times.
+  --  Type definitions for ranges of epoch70 times.
+
+  type Epoch70Range_t is record
+    str_time      : unsigned (Epoch70_secbits_c-1 downto 0) ;
+    end_time      : unsigned (Epoch70_secbits_c-1 downto 0) ;
+  end record ;
+
+  constant E70_rangebits_c    : natural := Epoch70_secbits_c * 2 ;
+
+  type E70_range_vector_t is array (integer range <>) of Epoch70Range_t ;
+
+  --  Convert E70 range vectors to and from standard logic vectors.
+
+  function TO_STD_LOGIC_VECTOR (a : E70_range_vector_t)
+  return std_logic_vector ;
+
+  function TO_E70_RANGE (a : in std_logic_vector)
+  return E70_range_vector_t ;
+
+  --  Type definitions for ranges of hour/minute times.
 
   type HourMinuteRange_t is record
     str_hour      : unsigned (dt_hourbits_c-1 downto 0) ;
@@ -101,8 +130,21 @@ package FormatSeconds_pkg is
     end_minute    : unsigned (dt_minbits_c-1  downto 0) ;
   end record ;
 
+  constant HM_rangebits_c     : natural := dt_hourbits_c * 2 +
+                                           dt_minbits_c  * 2 ;
+
   type HM_range_vector_t is array (integer range <>) of HourMinuteRange_t ;
-  
+
+  --  Convert HM range vectors to and from standard logic vectors.
+
+  function TO_STD_LOGIC_VECTOR (a : HM_range_vector_t)
+  return std_logic_vector ;
+
+  function TO_HM_RANGE (a : in std_logic_vector)
+  return HM_range_vector_t ;
+
+  --  Example time range vector.
+
   constant school_day_HMR_c     : HM_range_vector_t (0 to 9) :=
   (
     ( TO_UNSIGNED ( 8, dt_hourbits_c), TO_UNSIGNED (0,  dt_minbits_c),
@@ -186,5 +228,119 @@ package body FormatSeconds_pkg is
     return result_v ;
   end ;
 
+  --  Convert an E70 range vector to a standard logic vector.
+
+  function TO_STD_LOGIC_VECTOR (a : E70_range_vector_t)
+  return std_logic_vector is
+    variable slv        : std_logic_vector (a'length*E70_rangebits_c-1
+                                            downto 0) ;
+  begin
+    for i in a'RANGE loop
+      slv ((i+1)*E70_rangebits_c-1 downto
+           (i+1)*E70_rangebits_c-Epoch70_secbits_c)     :=
+                      std_logic_vector (a(i).str_time) ;
+      slv ((i+1)*E70_rangebits_c-Epoch70_secbits_c-1
+           downto
+           (i+1)*E70_rangebits_c-Epoch70_secbits_c*2)   :=
+                      std_logic_vector (a(i).end_time) ;
+    end loop ;
+
+    return slv ;
+  end ;
+
+  --  Convert a standard logic vector into an E70 range vector.
+
+  function TO_E70_RANGE (a : in std_logic_vector)
+  return E70_range_vector_t is
+    variable E70_vector   :
+                E70_range_vector_t (0 to (a'length/E70_rangebits_c)-1) ;
+  begin
+    for i in E70_vector'RANGE loop
+      E70_vector (i).str_time   :=
+                  unsigned (a ((i+1)*E70_rangebits_c-1 downto
+                               (i+1)*E70_rangebits_c-Epoch70_secbits_c)) ;
+      E70_vector (i).end_time   :=
+                  unsigned (a ((i+1)*E70_rangebits_c-Epoch70_secbits_c-1
+                               downto
+                               (i+1)*E70_rangebits_c-Epoch70_secbits_c*2)) ;
+    end loop ;
+
+    return E70_vector ;
+  end ;
+
+  --  Convert an HM range vector to a standard logic vector.
+
+  function TO_STD_LOGIC_VECTOR (a : HM_range_vector_t)
+  return std_logic_vector is
+    variable slv        : std_logic_vector (a'length*HM_rangebits_c-1
+                                            downto 0) ;
+  begin
+    for i in a'RANGE loop
+      slv ((i+1)*HM_rangebits_c-1 downto
+           (i+1)*HM_rangebits_c-dt_hourbits_c)    :=
+                      std_logic_vector (a(i).str_hour) ;
+      slv ((i+1)*HM_rangebits_c-dt_hourbits_c-1
+           downto
+           (i+1)*HM_rangebits_c-dt_hourbits_c-
+                                dt_minbits_c)     :=
+                      std_logic_vector (a(i).str_minute) ;
+      slv ((i+1)*HM_rangebits_c-dt_hourbits_c-
+                                dt_minbits_c-1
+           downto
+           (i+1)*HM_rangebits_c-dt_hourbits_c-
+                                dt_minbits_c-
+                                dt_hourbits_c)    :=
+                      std_logic_vector (a(i).end_hour) ;
+      slv ((i+1)*HM_rangebits_c-dt_hourbits_c-
+                                dt_minbits_c-
+                                dt_hourbits_c-1
+           downto
+           (i+1)*HM_rangebits_c-dt_hourbits_c-
+                                dt_minbits_c-
+                                dt_hourbits_c-
+                                dt_minbits_c)     :=
+                      std_logic_vector (a(i).end_minute) ;
+    end loop ;
+
+    return slv ;
+  end ;
+
+
+  --  Convert a standard logic vector into an HM range vector.
+
+  function TO_HM_RANGE (a : in std_logic_vector)
+  return HM_range_vector_t is
+    variable HM_vector  : HM_range_vector_t (0 to
+                                             (a'length/HM_rangebits_c)-1) ;
+  begin
+    for i in HM_vector'RANGE loop
+      HM_vector (i).str_hour    :=
+                      unsigned (a ((i+1)*HM_rangebits_c-1 downto
+                                   (i+1)*HM_rangebits_c-dt_hourbits_c)) ;
+      HM_vector (i).str_minute  :=
+                      unsigned (a ((i+1)*HM_rangebits_c-dt_hourbits_c-1
+                                   downto
+                                   (i+1)*HM_rangebits_c-dt_hourbits_c-
+                                                        dt_minbits_c)) ;
+      HM_vector (i).end_hour    :=
+                      unsigned (a ((i+1)*HM_rangebits_c-dt_hourbits_c-
+                                                        dt_minbits_c-1
+                                   downto
+                                   (i+1)*HM_rangebits_c-dt_hourbits_c-
+                                                        dt_minbits_c-
+                                                        dt_hourbits_c)) ;
+      HM_vector (i).end_minute  :=
+                      unsigned (a ((i+1)*HM_rangebits_c-dt_hourbits_c-
+                                                        dt_minbits_c-
+                                                        dt_hourbits_c-1
+                                   downto
+                                   (i+1)*HM_rangebits_c-dt_hourbits_c-
+                                                        dt_minbits_c-
+                                                        dt_hourbits_c-
+                                                        dt_minbits_c)) ;
+    end loop ;
+
+    return HM_vector ;
+  end ;
 
 end package body FormatSeconds_pkg ;
