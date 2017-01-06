@@ -49,6 +49,7 @@ package Collar_Control_pkg is
   constant Collar_Control_useMagMemBuffer_c : std_logic := '1' ;
   constant Collar_Control_usePDMmic_c       : std_logic := '1' ;
   constant Collar_Control_useRadio_c        : std_logic := '1' ;
+  constant Collar_Control_useScheduler_c    : std_logic := '0' ;
   constant Collar_Control_useFlashBlock_c   : std_logic := '1' ;
 
 end package Collar_Control_pkg ;
