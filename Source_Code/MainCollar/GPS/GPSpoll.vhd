@@ -53,6 +53,7 @@ use WORK.gps_message_ctl_pkg.all ;  --  GPS message control definitions.
 --! @param      reset           Reset the entity to an initial state.
 --! @param      clk             Clock used to move throuth states in the
 --!                             entity and its components.
+--! @param      milli8_clk      8 millisecond clock used to count seconds.
 --! @param      curtime_in      Current time since reset, continually
 --!                             updated.
 --! @param      dlatch_in       Latch the current time.
@@ -87,6 +88,7 @@ entity GPSpoll is
   Port (
     reset           : in    std_logic ;
     clk             : in    std_logic ;
+    milli8_clk      : in    std_logic ;
     curtime_in      : in    std_logic_vector (gps_time_bits_c-1 downto 0) ;
     dlatch_in       : in    std_logic ;
     vlatch_in       : in    std_logic ;
@@ -221,9 +223,10 @@ architecture rtl of GPSpoll is
   --  Timing information.
 
   signal process_busy     : std_logic ;
+  signal pollinterval     : unsigned (pollinterval_in'length-1 downto 0) ;
+  signal pollinterval_s   : unsigned (pollinterval_in'length-1 downto 0) ;
   signal pollcounter      : unsigned (pollinterval_in'length-1 downto 0) ;
   signal milli8counter    : unsigned (9 downto 0) ;
-  signal milli8clock      : std_logic ;
 
 begin
 
@@ -231,7 +234,7 @@ begin
 
   busy_out          <= '1'  when (newpoll = '1' or clr_newpoll = '1' or
                                   process_busy = '1' or
-                                  (pollinterval_in /= 0 and
+                                  (pollinterval /= 0 and
                                    unsigned (message_bit) /= 0)) else
                        '0' ;
 
@@ -242,10 +245,6 @@ begin
   --  Conversion of current time as a standard logic vector to GPS_Time.
 
   curtime           <= TO_GPS_TIME (curtime_in) ;
-
-  --  The 8 millisecond clock is derived from the startup clock.
-
-  milli8clock       <= curtime.week_millisecond (2) ;
 
   --  Poll input is set to initial signals first.
 
@@ -305,14 +304,20 @@ begin
   --  started.
   --------------------------------------------------------------------------
 
-  poll_period:  process (reset, milli8clock)
+  poll_period:  process (reset, milli8_clk)
   begin
     if (reset = '1') then
+      pollinterval      <= (others => '0') ;
+      pollinterval_s    <= (others => '0') ;
       milli8counter     <= TO_UNSIGNED (1, milli8counter'length) ;
       pollcounter       <= TO_UNSIGNED (1, pollcounter'length) ;
       set_newpoll       <= '0' ;
 
-    elsif (rising_edge (milli8clock)) then
+    elsif (falling_edge (milli8_clk)) then
+      pollinterval      <= pollinterval_s ;
+
+    elsif (rising_edge (milli8_clk)) then
+      pollinterval_s    <= pollinterval_in ;
       set_newpoll       <= '0' ;
 
       if (milli8counter /= 1) then
@@ -323,7 +328,7 @@ begin
         if (pollcounter /= 1) then
           pollcounter   <= pollcounter - 1 ;
         else
-          pollcounter   <= pollinterval_in ;
+          pollcounter   <= pollinterval ;
           set_newpoll   <= '1' ;
         end if ;
       end if ;
@@ -381,7 +386,7 @@ begin
         --  Wait until there is a request for a poll.
 
         when POLL_STATE_WAIT        =>
-          if (pollinterval_in /= 0 and unsigned (message_bit) /= 0) then
+          if (pollinterval /= 0 and unsigned (message_bit) /= 0) then
             sendreq_out     <= '1' ;
             process_busy    <= '1' ;
             cur_state       <= POLL_STATE_BEGIN ;
