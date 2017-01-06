@@ -31,21 +31,26 @@ week_seconds_c          = 7 * 24 * 60 * 60 ;
 gps_epoch70_offset_c    = (365 * 10 + 2 + 5) * 86400 ;
 
 dt_yearbits_c           = 5 ;
+dt_ydaybits_c           = 9 ;
 dt_monthbits_c          = 4 ;
 dt_mdaybits_c           = 5 ;
 dt_hourbits_c           = 5 ;
 dt_minbits_c            = 6 ;
 dt_secbits_c            = 6 ;
+dt_lyearbits_c          = 1 ;
+dt_indstbits_c          = 1 ;
 
-dt_totalbits_c          = dt_yearbits_c + dt_monthbits_c +              ...
-                          dt_mdaybits_c + dt_hourbits_c  +              ...
-                          dt_minbits_c  + dt_secbits_c     ;
+dt_totalbits_c          = dt_yearbits_c  + dt_ydaybits_c  +             ...
+                          dt_monthbits_c + dt_mdaybits_c  +             ...
+                          dt_hourbits_c  + dt_minbits_c   +             ...
+                          dt_secbits_c   + dt_lyearbits_c +             ...
+                          dt_indstbits_c ;
 
 %---------------------------------------------------------------------------
 %   Simulation Definitions.
 %---------------------------------------------------------------------------
 
-StepsPerClock           = 2 ;
+StepsPerClock           = 4 ;
 
 sim_steprate            = clk_freq_g * StepsPerClock ;
 
@@ -70,6 +75,10 @@ sample_week             = uint32 (0) ;
 sample_milli            = uint32 (2 * 60 * 1000 + 17 * 1000 + 857) ;
 sample_nano             = uint32 (784911) ;
 
+%   Time Pulse values.
+
+tp_delay                = 5 ;
+
 %---------------------------------------------------------------------------
 %   GPS Memory Definitions
 %---------------------------------------------------------------------------
@@ -78,7 +87,7 @@ gpsmem_size                   = 1024 ;
 gpsmem                        = zeros (1, gpsmem_size, 'uint8') ;
 
 msg_ram_banks_c               = 2 ;
-msg_ram_base_c                = 59 ;
+msg_ram_base_c                = 336 ;
 
 msg_ram_temp_addr_c           = 45 * msg_ram_banks_c ;
 msg_ram_temp_size_c           = 30 ;
@@ -90,6 +99,10 @@ msg_ram_postime_size_c        = gps_time_bytes_c ;
 msg_ram_marktime_addr_c       =                                         ...
       msg_ram_postime_addr_c + msg_ram_postime_size_c * msg_ram_banks_c ;
 msg_ram_marktime_size_c       = gps_time_bytes_c ;
+
+msg_ram_pulsetime_addr_c      =                                         ...
+      msg_ram_marktime_addr_c + msg_ram_marktime_size_c * msg_ram_banks_c ;
+msg_ram_pulsetime_size_c      = gps_time_bytes_c * 2 ;
 
 msg_ubx_tim_tm2_ramaddr_c     = 30 * msg_ram_banks_c ;
 msg_ubx_tim_tm2_ramused_c     = 15 ;
@@ -137,10 +150,34 @@ sample = bitshift (fi (sample_week,  0, bits, 0),                       ...
 
 memsize = msg_ram_marktime_size_c ;
 memaddr = msg_ram_base_c + msg_ram_marktime_addr_c +                    ...
-          msg_ram_marktime_size_c + 1 ;
+          msg_ram_marktime_size_c + 1
+memend  = memaddr + memsize - 1
+
+gpsmem (memaddr : memend) = uint8 (byte_store (sample, memsize)) ;
+
+%   Timepulse GPS and sample times.
+
+tp_gps  = bitshift (fi (gps_week, 0, bits, 0),                          ...
+                    gps_time_millibits_c + gps_time_nanobits_c) +       ...
+          bitshift (fi (gps_milli + tp_delay * 1000, 0, bits, 0),       ...
+                    gps_time_nanobits_c) + fi (gps_nano, 0, bits, 0) ;
+
+sample = bitshift (fi (sample_week,  0, bits, 0),                       ...
+                   gps_time_millibits_c + gps_time_nanobits_c) +        ...
+         bitshift (fi (sample_milli + tp_delay * 1000, 0, bits, 0),     ...
+                   gps_time_nanobits_c) + fi (sample_nano,  0, bits, 0) ;
+
+memsize = gps_time_bytes_c ;
+memaddr = msg_ram_base_c + msg_ram_pulsetime_addr_c +                   ...
+          msg_ram_pulsetime_size_c + 1 ;
 memend  = memaddr + memsize - 1 ;
 
 gpsmem (memaddr : memend) = uint8 (byte_store (sample, memsize)) ;
+
+memaddr = memaddr + memsize ;
+memend  = memaddr + memsize - 1 ;
+
+gpsmem (memaddr : memend) = uint8 (byte_store (tp_gps, memsize)) ;
 
 %---------------------------------------------------------------------------
 %   Define the input signals and other needed signal information.
@@ -160,6 +197,16 @@ out_count               = 0 ;
 in_sig                  = zeros (1, 4) ;
 out_sig                 = zeros (1, 1) ;
 
+%   Output clocks.
+
+out_count               = out_count + 1 ;
+out_sig (out_count)     = 1 ;
+milli_clk               = out_count ;
+
+out_count               = out_count + 1 ;
+out_sig (out_count)     = 1 ;
+milli8_clk              = out_count ;
+
 %   Output Times.
 
 out_count               = out_count + 1 ;
@@ -167,8 +214,16 @@ out_sig (out_count)     = gps_time_bits_c ;
 startup_time_out        = out_count ;
 
 out_count               = out_count + 1 ;
+out_sig (out_count)     = gps_time_bytes_c * 8 ;
+startup_bytes_out       = out_count ;
+
+out_count               = out_count + 1 ;
 out_sig (out_count)     = gps_time_bits_c ;
 gps_time_out            = out_count ;
+
+out_count               = out_count + 1 ;
+out_sig (out_count)     = gps_time_bytes_c * 8 ;
+gps_bytes_out           = out_count ;
 
 %   Real Time Clock interface signals.
 
@@ -210,7 +265,11 @@ valid_latch_out         = out_count ;
 
 in_count                = in_count + 1 ;
 in_sig (in_count, :)    = [1 0 0 0] ;
-gpsmem_syncbank_in      = in_count ;
+gpsmem_tmbank_in        = in_count ;
+
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [1 0 0 0] ;
+gpsmem_tpbank_in        = in_count ;
 
 out_count               = out_count + 1 ;
 out_sig (out_count)     = 1 ;
@@ -306,13 +365,25 @@ for trialno=1:Trial_count
       %   Set the current time from the GPS Timemark.
 
       if (clk_count == uint32 (4.2 * sim_steprate))
-        in_sig (gpsmem_syncbank_in, 4) = 1 ;
+        in_sig (gpsmem_tmbank_in, 4) = 1 ;
 
-        in_vect {gpsmem_syncbank_in}   =                                ...
-                      fi (in_sig (gpsmem_syncbank_in, 4),               ...
-                          in_sig (gpsmem_syncbank_in, 3),               ...
-                          in_sig (gpsmem_syncbank_in, 1),               ...
-                          in_sig (gpsmem_syncbank_in, 2)) ;
+        in_vect {gpsmem_tmbank_in}   =                                  ...
+                      fi (in_sig (gpsmem_tmbank_in, 4),                 ...
+                          in_sig (gpsmem_tmbank_in, 3),                 ...
+                          in_sig (gpsmem_tmbank_in, 1),                 ...
+                          in_sig (gpsmem_tmbank_in, 2)) ;
+      end
+
+      %   Set the current time from the GPS time pulse.
+
+      if (clk_count == uint32 ((4.2 + tp_delay) * sim_steprate))
+        in_sig (gpsmem_tpbank_in, 4) = 1 ;
+
+        in_vect {gpsmem_tpbank_in}   =                                  ...
+                      fi (in_sig (gpsmem_tpbank_in, 4),                 ...
+                          in_sig (gpsmem_tpbank_in, 3),                 ...
+                          in_sig (gpsmem_tpbank_in, 1),                 ...
+                          in_sig (gpsmem_tpbank_in, 2)) ;
       end
 
       %   Set the alarm time from the local time.
@@ -326,6 +397,10 @@ for trialno=1:Trial_count
         mask              = fi (2 ^ dt_yearbits_c - 1, 0, bits, 0) ;
         local_year        = bitand (bitshift (local_time, - shift), mask) ;
 
+        shift             = shift - dt_ydaybits_c ;
+        mask              = fi (2 ^ dt_ydaybits_c - 1, 0, bits, 0) ;
+        local_yday        = bitand (bitshift (local_time, - shift), mask) ;
+
         shift             = shift - dt_monthbits_c ;
         mask              = fi (2 ^ dt_monthbits_c - 1, 0, bits, 0) ;
         local_month       = bitand (bitshift (local_time, - shift), mask) ;
@@ -333,6 +408,15 @@ for trialno=1:Trial_count
         shift             = shift - dt_mdaybits_c ;
         mask              = fi (2 ^ dt_mdaybits_c - 1, 0, bits, 0) ;
         local_mday        = bitand (bitshift (local_time, - shift), mask) ;
+
+        shift             = shift - dt_hourbits_c - dt_minbits_c -      ...
+                                    dt_secbits_c  - dt_lyearbits_c ;
+        mask              = fi (2 ^ dt_lyearbits_c - 1, 0, bits, 0) ;
+        local_lyear       = bitand (bitshift (local_time, - shift), mask) ;
+
+        shift             = shift - dt_indstbits_c ;
+        mask              = fi (2 ^ dt_indstbits_c - 1, 0, bits, 0) ;
+        local_indst       = bitand (bitshift (local_time, - shift), mask) ;
 
         local_hour        = fi (6,  0, bits, 0) ;
         local_min         = fi (15, 0, bits, 0) ;
@@ -343,6 +427,9 @@ for trialno=1:Trial_count
         shift             = dt_totalbits_c - dt_yearbits_c ;
         local_time        = bitor (local_time,                          ...
                                    bitshift (local_year, shift)) ;
+        shift             = shift - dt_ydaybits_c ;
+        local_time        = bitor (local_time,                          ...
+                                   bitshift (local_yday, shift)) ;
         shift             = shift - dt_monthbits_c ;
         local_time        = bitor (local_time,                          ...
                                    bitshift (local_month, shift)) ;
@@ -358,6 +445,12 @@ for trialno=1:Trial_count
         shift             = shift - dt_secbits_c ;
         local_time        = bitor (local_time,                          ...
                                    bitshift (local_sec, shift)) ;
+        shift             = shift - dt_lyearbits_c ;
+        local_time        = bitor (local_time,                          ...
+                                   bitshift (local_lyear, shift)) ;
+        shift             = shift - dt_indstbits_c ;
+        local_time        = bitor (local_time,                          ...
+                                   bitshift (local_indst, shift)) ;
 
         in_vect {alarm_time_in}     =  local_time ;
 
