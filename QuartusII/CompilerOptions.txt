@@ -1,0 +1,11 @@
+Quartus II Compiler Options
+
+  Advanced Fitter Settings
+    ALM Register Packing Effort                         Low
+    Advanced Physical Optimization                      On
+    Final Placement Optimizations                       Automatically
+    Fitter Effort                                       Standard Fit
+    Optimize IOC Register Placement Timing              Pack All IO Registers
+    Optimize Timing for ECOs                            On
+    Perform Clocking Topology Analysis During Routing   On
+    Physical Synthesis Effort Level                     Extra
