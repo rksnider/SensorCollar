@@ -7,7 +7,28 @@ function OnOffScheduler_tb
 %------------------------------------------------------------
 
 % HdlCosimulation System Object creation
-sim_hdl = hdlcosim_onoffscheduler;
+sim_hdl = hdlcosim_onoffschedulerwrapper;
+
+
+%---------------------------------------------------------------------------
+%   Package and Generic definitions.
+%---------------------------------------------------------------------------
+
+alarm_bytes_g           = 3 ;
+
+sched_count_g           = 8 ;
+millisec_week_c         = 7 * 24 * 60 * 60 * 1000 ;
+
+sched_id_bits_c         = fix (log2 (sched_count_g-1)) + 1 ;
+sched_delay_bits_c      = fix (log2 (millisec_week_c / 1000 - 1)) + 1 ;
+
+Epoch70_secbits_c       = 32 ;
+
+er_end_shift            = 0 ;
+er_str_shift            = er_end_shift  + Epoch70_secbits_c ;
+er_range_shift          = er_str_shift  + Epoch70_secbits_c ;
+
+E70_rangebits_c         = er_range_shift ;
 
 
 %---------------------------------------------------------------------------
@@ -22,66 +43,75 @@ sim_steprate            = sysclk_freq_g * StepsPerClock ;
 
 clocks_per_sec          = uint32 (StepsPerClock * sysclk_freq_g) ;
 
-min_secs                = uint64 (60) ;
-hr_mins                 = uint64 (60) ;
-day_hrs                 = uint64 (24) ;
-yr_days                 = uint64 (365) ;
+min_secs                = uint32 (60) ;
+hr_mins                 = uint32 (60) ;
+day_hrs                 = uint32 (24) ;
+yr_days                 = uint32 (365) ;
 
-local_year              = uint64 (16) ;
-local_month             = uint64 (9) ;
-local_mday              = uint64 (15) ;
-local_hour              = uint64 (15) ;
-local_minute            = uint64 (20) ;
-local_second            = uint64 (42) ;
-local_leapyr            = uint64 (1) ;
-local_in_dst            = uint64 (1) ;
+hr_secs                 = hr_mins * min_secs ;
+day_secs                = day_hrs * hr_secs ;
 
-local_ydays             = uint64 (31+28+local_leapyr+31+30+31+30+31+31+ ...
+local_year              = uint32 (16) ;
+local_month             = uint32 (9) ;
+local_mday              = uint32 (15) ;
+local_hour              = uint32 (2) ;
+local_minute            = uint32 (20) ;
+local_second            = uint32 (42) ;
+local_leapyr            = uint32 (1) ;
+local_in_dst            = uint32 (1) ;
+
+leapdays                = [0 1 1 1 1 2 2 2 2 3 3 3 3 4 4 4 4 5 5 5 5    ...
+                           6 6 6 6 7 7 7 7 8 8 8 8 9 9 9 9] ;
+
+local_leapdays          = leapdays (local_year + 1) ;
+
+local_ydays             = uint32 (31+28+local_leapyr+31+30+31+30+31+31+ ...
                                   15) ;
 
-base_seconds            = double ((((local_year    * yr_days  +         ...
-                                     local_ydays)  * day_hrs  +         ...
-                                     local_hour)   * hr_mins  +         ...
-                                     local_minute) * min_secs +         ...
-                                     local_second) ;
+epoch70_base            = (30 * yr_days + 7) * day_secs ;
 
-% local_ydays             = uint64 (31+28+31+30+31+30+31+31+30+31+30+30) ;
+day_start               = double ((local_year     * yr_days  +          ...
+                                   local_leapdays +                     ...
+                                   local_ydays)   * day_secs +          ...
+                                   epoch70_base) ;
 
+base_daystart           = local_hour * hr_secs +                        ...
+                          local_minute * min_secs + local_second ;
+base_seconds            = day_start + base_daystart ;
+
+listen                  = 0 ;
+listen_last             = 1 - listen ;
+timingchg               = 0 ;
+timingchg_last          = 0 ;
+
+% Noon, dawn, and dusk information is based on timings taken from the
+% sunrise/sunset MIF file.  Twilight starts or ends when the sun is 18
+% degrees below the horizon.
+
+today_noon                = uint32 (11 * hr_secs + 54 * min_secs + 58) ;
+today_day_offset          = uint32 ( 6 * hr_secs + 15 * min_secs + 35) ;
+today_twilight_offset     = uint32 (today_day_offset * 18.0 / 90.0) ;
+
+today_dawn                = today_noon - today_day_offset -             ...
+                            today_twilight_offset ;
+today_dusk                = today_noon + today_day_offset +             ...
+                            today_twilight_offset ;
+
+tomorrow_noon             = uint32 (11 * hr_secs + 54 * min_secs + 37) ;
+tomorrow_day_offset       = uint32 ( 6 * hr_secs + 14 * min_secs +  0) ;
+tomorrow_twilight_offset  = uint32 (tomorrow_day_offset * 18.0 / 90.0) ;
+
+tomorrow_dawn             = tomorrow_noon - tomorrow_day_offset -       ...
+                            tomorrow_twilight_offset + day_secs ;
+tomorrow_dusk             = tomorrow_noon + tomorrow_day_offset +       ...
+                            tomorrow_twilight_offset + day_secs ;
+
+% local_ydays             = uint32 (31+28+31+30+31+30+31+31+30+31+30+30) ;
 
 % Simulate for trials (this will be the length of the simulation)
 
 Trial_count   =   1 ;
 clocks_needed =   1 ;   % Clock cycles needed per trial.
-
-%---------------------------------------------------------------------------
-%   Package and Generic definitions.
-%---------------------------------------------------------------------------
-
-alarm_bytes_g           = 3 ;
-
-sched_count_g           = 8 ;
-millisec_week_c         = 7 * 24 * 60 * 60 * 1000 ;
-
-sched_id_bits_c         = fix (log2 (sched_count_g-1)) + 1 ;
-sched_delay_bits_c      = fix (log2 (millisec_week_c / 1000 - 1)) + 1 ;
-
-dt_yearbits_c           = 5 ;
-dt_ydaybits_c           = 9 ;
-dt_monthbits_c          = 4 ;
-dt_mdaybits_c           = 5 ;
-dt_hourbits_c           = 5 ;
-dt_minbits_c            = 6 ;
-dt_secbits_c            = 6 ;
-dt_lyearbits_c          = 1 ;
-dt_indstbits_c          = 1 ;
-
-
-dt_totalbits_c          = dt_yearbits_c  + dt_ydaybits_c  +             ...
-                          dt_monthbits_c + dt_mdaybits_c  +             ...
-                          dt_hourbits_c  + dt_minbits_c   +             ...
-                          dt_secbits_c   + dt_lyearbits_c +             ...
-                          dt_indstbits_c ;
-
 
 %---------------------------------------------------------------------------
 %   Define the input signals and other needed signal information.
@@ -104,12 +134,12 @@ out_sig                 = zeros (1, 1) ;
 %   Action signals.
 
 in_count                = in_count + 1 ;
-in_sig (in_count, :)    = [dt_totalbits_c 0 0 0] ;
-localtime_in            = in_count ;
+in_sig (in_count, :)    = [Epoch70_secbits_c 0 0 0] ;
+rtctime_in              = in_count ;
 
 in_count                = in_count + 1 ;
-in_sig (in_count, :)    = [1 0 0 0] ;
-clockchg_in             = in_count ;
+in_sig (in_count, :)    = [1 0 0 timingchg] ;
+timingchg_in            = in_count ;
 
 %   Startup/Shutdown signals.
 
@@ -138,6 +168,86 @@ off_in                  = in_count ;
 out_count               = out_count + 1 ;
 out_sig (out_count)     = 1 ;
 off_out                 = out_count ;
+
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [E70_rangebits_c 0 0 0] ;
+on_off_times01_in       = in_count ;
+
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [E70_rangebits_c 0 0 0] ;
+on_off_times02_in       = in_count ;
+
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [E70_rangebits_c 0 0 0] ;
+on_off_times03_in       = in_count ;
+
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [E70_rangebits_c 0 0 0] ;
+on_off_times04_in       = in_count ;
+
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [E70_rangebits_c 0 0 0] ;
+on_off_times05_in       = in_count ;
+
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [E70_rangebits_c 0 0 0] ;
+on_off_times06_in       = in_count ;
+
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [E70_rangebits_c 0 0 0] ;
+on_off_times07_in       = in_count ;
+
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [E70_rangebits_c 0 0 0] ;
+on_off_times08_in       = in_count ;
+
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [E70_rangebits_c 0 0 0] ;
+on_off_times09_in       = in_count ;
+
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [E70_rangebits_c 0 0 0] ;
+on_off_times10_in       = in_count ;
+
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [E70_rangebits_c 0 0 0] ;
+on_off_times11_in       = in_count ;
+
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [E70_rangebits_c 0 0 0] ;
+on_off_times12_in       = in_count ;
+
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [E70_rangebits_c 0 0 0] ;
+on_off_times13_in       = in_count ;
+
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [E70_rangebits_c 0 0 0] ;
+on_off_times14_in       = in_count ;
+
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [E70_rangebits_c 0 0 0] ;
+on_off_times15_in       = in_count ;
+
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [E70_rangebits_c 0 0 0] ;
+on_off_times16_in       = in_count ;
+
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [E70_rangebits_c 0 0 0] ;
+on_off_times17_in       = in_count ;
+
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [E70_rangebits_c 0 0 0] ;
+on_off_times18_in       = in_count ;
+
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [E70_rangebits_c 0 0 0] ;
+on_off_times19_in       = in_count ;
+
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [E70_rangebits_c 0 0 0] ;
+on_off_times20_in       = in_count ;
 
 %   Alarm signals.
 
@@ -192,28 +302,72 @@ out_sig (out_count)     = 1 ;
 busy_out                = out_count ;
 
 
+% Create a vector of time ranges.
+
+on_off_range            = zeros (1, 2, 'uint32') ;
+
+on_off_range ( 1, :)    = [today_dawn             today_dawn+2*hr_secs  ] ;
+on_off_range ( 2, :)    = [ 6*hr_secs-2*min_secs   6*hr_secs+min_secs   ] ;
+on_off_range ( 3, :)    = [ 8*hr_secs-2*min_secs   8*hr_secs+min_secs   ] ;
+on_off_range ( 4, :)    = [10*hr_secs-2*min_secs  10*hr_secs+min_secs   ] ;
+on_off_range ( 5, :)    = [12*hr_secs-2*min_secs  12*hr_secs+min_secs   ] ;
+on_off_range ( 6, :)    = [14*hr_secs-2*min_secs  14*hr_secs+min_secs   ] ;
+on_off_range ( 7, :)    = [16*hr_secs-2*min_secs  16*hr_secs+min_secs   ] ;
+on_off_range ( 8, :)    = [18*hr_secs-2*min_secs  18*hr_secs+min_secs   ] ;
+on_off_range ( 9, :)    = [today_dusk-2*hr_secs   today_dusk            ] ;
+on_off_range (10, :)    = [tomorrow_dawn                                ...
+                           tomorrow_dawn+2*hr_secs                      ] ;
+on_off_range (11, :)    = [30*hr_secs-2*min_secs  30*hr_secs+min_secs   ] ;
+on_off_range (12, :)    = [32*hr_secs-2*min_secs  32*hr_secs+min_secs   ] ;
+on_off_range (13, :)    = [34*hr_secs-2*min_secs  34*hr_secs+min_secs   ] ;
+on_off_range (14, :)    = [36*hr_secs-2*min_secs  36*hr_secs+min_secs   ] ;
+on_off_range (15, :)    = [38*hr_secs-2*min_secs  38*hr_secs+min_secs   ] ;
+on_off_range (16, :)    = [40*hr_secs-2*min_secs  40*hr_secs+min_secs   ] ;
+on_off_range (17, :)    = [42*hr_secs-2*min_secs  42*hr_secs+min_secs   ] ;
+on_off_range (18, :)    = [tomorrow_dusk-2*hr_secs                      ...
+                           tomorrow_dusk                                ] ;
+on_off_range (19, :)    = [ 6*hr_secs              6*hr_secs            ] ;
+on_off_range (20, :)    = [30*hr_secs             30*hr_secs            ] ;
+
+on_off_range            = on_off_range + day_start ;
+
+on_off_range_size       = size (on_off_range) ;
+on_off_range_length     = on_off_range_size (1) ;
+
+end_range               = uint32 (max (max (on_off_range))) ;
+
 %---------------------------------------------------------------------------
 %   Schedule Memory contents.  It includes an extra value available for
 %   extended operations when the event occurs.
 %---------------------------------------------------------------------------
 
-bit_ids       = [off_in clockchg_in startup_in shutdown_in] ;
+bit_ids         = [off_in timingchg_in startup_in shutdown_in timingchg_in] ;
 
-turnoff_id_c  = 0 ;
-clockchg_id_c = 1 ;
-startup_id_c  = 2 ;
-shutdown_id_c = 3 ;
+turnoff_id_c    = 0 ;
+timingchg_id_c  = 1 ;
+startup_id_c    = 2 ;
+shutdown_id_c   = 3 ;
+listen_id_c     = 4 ;
 
-mem           = zeros (1, 3) ;
+base_dawn       = double (day_start + today_dawn) ;
+base_dusk       = double (day_start + today_dusk) ;
+base_dawn2      = double (day_start + tomorrow_dawn) ;
+base_dusk2      = double (day_start + tomorrow_dusk) ;
 
-mem (1, :)    = [startup_id_c       10+base_seconds        0] ;
-mem (2, :)    = [clockchg_id_c     130+base_seconds    -3610] ;
-mem (3, :)    = [clockchg_id_c    3700+base_seconds   172800] ;
+mem             = zeros (1, 3, 'double') ;
 
-end_time      = 260000 + base_seconds ;
+mem (1, :)      = [startup_id_c               10+base_dawn           0] ;
+mem (2, :)      = [timingchg_id_c            130+base_dawn       -3610] ;
+mem (3, :)      = [listen_id_c      10*3600-1*60+day_start           1] ;
+mem (4, :)      = [listen_id_c     10*3600+15*60+day_start           0] ;
+mem (5, :)      = [timingchg_id_c     14*3600+12+day_start      172800] ;
+mem (6, :)      = [listen_id_c            172000+base_dusk           1] ;
+mem (7, :)      = [listen_id_c            172400+base_dawn2          0] ;
 
-mem_size      = size (mem) ;
-mem_cnt       = mem_size (1) ;
+end_time        = 345600 + base_seconds ;
+
+mem_size        = size (mem) ;
+mem_cnt         = mem_size (1) ;
 
 
 %---------------------------------------------------------------------------
@@ -250,14 +404,64 @@ for trialno=1:Trial_count
     sched_rcv                   = 0 ;
 
     clock                       = uint32 (0) ;
-    seconds                     = uint64 (base_seconds) ;
-    last_seconds                = uint64 (0) ;
+    seconds                     = uint32 (base_seconds) ;
+    last_seconds                = uint32 (0) ;
 
     while (shutdown == 0 || busy == 1)
 
-      clock                     = clock + uint32 (1) ;
+      if (seconds > end_range || listen_last ~= listen)
+
+        %   Advance the ranges by days if they have already all passed.
+
+        while (seconds > end_range)
+          on_off_range          = on_off_range + day_secs ;
+          end_range             = uint32 (max (max (on_off_range))) ;
+        end ;
+
+        %   Update the listen ranges when the listen mode changes.
+        %   They are empty when listen mode is zero and 12 hours when it
+        %   is one.
+
+        listen_last             = listen ;
+
+        if (listen == 0)
+          on_off_range (19, 2)  = on_off_range (19, 1) ;
+          on_off_range (20, 2)  = on_off_range (20, 1) ;
+        else
+          on_off_range (19, 2)  = on_off_range (19, 1) + 12 * hr_secs ;
+          on_off_range (20, 2)  = on_off_range (20, 1) + 12 * hr_secs ;
+        end
+
+        %   Update the ranges in the argment list.
+
+        for i = 1 : on_off_range_length
+          on_off                = uint64 (on_off_range (i, :)) ;
+          on_off_value          = bitshift (on_off (1), er_str_shift) + ...
+                                  bitshift (on_off (2), er_end_shift) ;
+          in_vect {on_off_times01_in+i-1} =                             ...
+                                  fi (on_off_value,                     ...
+                                      in_sig (on_off_times01_in, 3),    ...
+                                      in_sig (on_off_times01_in, 1),    ...
+                                      in_sig (on_off_times01_in, 2)) ;
+        end ;
+
+        %   Indicate that a timing change has occured.
+
+        timingchg               = 1 - timingchg_last ;
+
+        in_vect {timingchg_in}  = fi (timingchg,                        ...
+                                      in_sig (timingchg_in, 3),         ...
+                                      in_sig (timingchg_in, 1),         ...
+                                      in_sig (timingchg_in, 2)) ;
+      end ;
+
+      %   Take a simulation step.
 
       [out_vect{:}] = step (sim_hdl, in_vect {:}) ;
+
+      timingchg_last            = timingchg ;
+
+      clock                     = clock + uint32 (1) ;
 
       if (rem (clock, StepsPerClock) == 1)
 
@@ -346,15 +550,17 @@ for trialno=1:Trial_count
 
         end
 
-        %   Deactivate all signals currently activated.
+        %   Deactivate some signals currently activated.
 
         for i = 1 : length (bit_ids)
-          in_index            = bit_ids (i) ;
+          if (i - 1 ~= listen_id_c && i - 1 ~= timingchg_id_c)
+            in_index            = bit_ids (i) ;
 
-          in_vect {in_index}  = fi (0,                                  ...
-                                    in_sig (in_index, 3),               ...
-                                    in_sig (in_index, 1),               ...
-                                    in_sig (in_index, 2)) ;
+            in_vect {in_index}  = fi (0,                                ...
+                                      in_sig (in_index, 3),             ...
+                                      in_sig (in_index, 1),             ...
+                                      in_sig (in_index, 2)) ;
+          end
         end
 
         %   Activate and remove all events that have reached their
@@ -371,13 +577,23 @@ for trialno=1:Trial_count
 
               in_index            = bit_ids (mem (i, 1) + 1) ;
 
-              in_vect {in_index}  = fi (1,                              ...
-                                        in_sig (in_index, 3),           ...
-                                        in_sig (in_index, 1),           ...
-                                        in_sig (in_index, 2)) ;
+              if (mem (i, 1) == timingchg_id_c)
+                new_seconds       = uint32 (double (seconds) + mem (i, 3)) ;
+                timingchg         = 1 - timingchg_last ;
 
-              if (mem (i, 1)  == clockchg_id_c)
-                new_seconds       = uint64 (double (seconds) + mem (i, 3)) ;
+                in_vect {in_index}  = fi (timingchg,                    ...
+                                          in_sig (in_index, 3),         ...
+                                          in_sig (in_index, 1),         ...
+                                          in_sig (in_index, 2)) ;
+
+              elseif (mem (i, 1) == listen_id_c)
+                listen            = mem (i, 3) ;
+
+              else
+                in_vect {in_index}  = fi (1,                            ...
+                                          in_sig (in_index, 3),         ...
+                                          in_sig (in_index, 1),         ...
+                                          in_sig (in_index, 2)) ;
               end
             end
           end
@@ -412,7 +628,7 @@ for trialno=1:Trial_count
         %   signal a restart.
 
         if (uint32 (out_vect {shutdown_out}) == 1)
-          seconds                 = seconds + uint64 (out_vect {alarm_out}) ;
+          seconds                 = seconds + uint32 (out_vect {alarm_out}) ;
           in_vect {startup_in}    = fi (1,                              ...
                                         in_sig (startup_in, 3),         ...
                                         in_sig (startup_in, 1),         ...
@@ -425,57 +641,15 @@ for trialno=1:Trial_count
           shutdown                = uint32 (1) ;
         end
 
-        %   Update the local time.  The month and day-of-month are not used
-        %   the leap year and in daylight savings time states are hard
-        %   coded.
+        %   Update the time.
 
         if (seconds ~= last_seconds)
           last_seconds            = seconds ;
 
-          temp_seconds            = seconds ;
-
-          local_second            = rem (temp_seconds, min_secs) ;
-          temp_minutes            = (temp_seconds - local_second ) /    ...
-                                    min_secs ;
-          local_minute            = rem (temp_minutes, hr_mins) ;
-          temp_hours              = (temp_minutes - local_minute) /     ...
-                                    hr_mins ;
-          local_hour              = rem (temp_hours, day_hrs) ;
-          temp_days               = (temp_hours - local_hour) / day_hrs ;
-          local_yday              = rem (temp_days, yr_days) ;
-          temp_years              = (temp_days - local_yday) / yr_days ;
-          local_year              = temp_years ;
-
-          loc_time                = local_year ;
-          loc_time                = bitshift (loc_time,                 ...
-                                              dt_ydaybits_c)    +       ...
-                                    local_yday ;
-          loc_time                = bitshift (loc_time,                 ...
-                                              dt_monthbits_c)   +       ...
-                                    local_month ;
-          loc_time                = bitshift (loc_time,                 ...
-                                              dt_mdaybits_c)    +       ...
-                                    local_mday ;
-          loc_time                = bitshift (loc_time,                 ...
-                                              dt_hourbits_c)    +       ...
-                                    local_hour ;
-          loc_time                = bitshift (loc_time,                 ...
-                                              dt_minbits_c) +           ...
-                                    local_minute ;
-          loc_time                = bitshift (loc_time,                 ...
-                                              dt_secbits_c)    +        ...
-                                    local_second ;
-          loc_time                = bitshift (loc_time,                 ...
-                                              dt_lyearbits_c)  +        ...
-                                    local_leapyr ;
-          loc_time                = bitshift (loc_time,                 ...
-                                              dt_indstbits_c)  +        ...
-                                    local_in_dst ;
-
-          in_vect {localtime_in}  = fi (loc_time,                       ...
-                                        in_sig (localtime_in, 3),       ...
-                                        in_sig (localtime_in, 1),       ...
-                                        in_sig (localtime_in, 2)) ;
+          in_vect {rtctime_in}  = fi (seconds,                          ...
+                                        in_sig (rtctime_in, 3),         ...
+                                        in_sig (rtctime_in, 1),         ...
+                                        in_sig (rtctime_in, 2)) ;
         end
 
         %   Capture the busy state of the component.
@@ -486,10 +660,18 @@ for trialno=1:Trial_count
       %   Update the second counter.
 
       if (rem (clock, clocks_per_sec) == 0)
-        seconds                   = seconds + uint64 (1) ;
+        seconds                   = seconds + uint32 (1) ;
 
         if (rem (seconds, 60) == 0)
-          fprintf (1, '%d\n', int64 (double (seconds) - base_seconds)) ;
+          offset                  = double (seconds) - day_start ;
+          days                    = int32 (fix (offset / double (day_secs))) ;
+          offset                  =        rem (offset,  double (day_secs)) ;
+          hours                   = int32 (fix (offset / double (hr_secs))) ;
+          offset                  =        rem (offset,  double (hr_secs)) ;
+          minutes                 = int32 (fix (offset / double (min_secs))) ;
+          fprintf (1, '%d %d_%02d:%02d\n',                              ...
+                   int32 (double (seconds) - base_seconds),             ...
+                   days, hours, minutes) ;
         end
       end
     end
