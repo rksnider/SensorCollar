@@ -67,6 +67,7 @@ USE WORK.MSG_UBX_NAV_AOPSTATUS_PKG.ALL ;  --  Navagation Solution message.
 --! @param      memdata_in            Data byte of memory that is addressed.
 --! @param      memread_en_out        Enable the memory for reading.
 --! @param      running_out           Set when AssistNow is running.
+--! @param      updated_out           Toggled when a new message received.
 --! @param      busy_out              The component is busy processing.
 --
 ----------------------------------------------------------------------------
@@ -91,6 +92,7 @@ entity AOPstatus is
     memdata_in            : in    std_logic_vector (7 downto 0) ;
     memread_en_out        : out   std_logic ;
     running_out           : out   std_logic ;
+    updated_out           : out   std_logic ;
     busy_out              : out   std_logic
   ) ;
 
@@ -116,6 +118,10 @@ architecture rtl of AOPstatus is
 
   signal msgreceived_fwl      : std_logic ;
 
+  --  Toggle the updated status whenever a new message is received.
+
+  signal updated              : std_logic ;
+
   --  Count of the number of messages where AssistNow Autonomous was not
   --  running.
 
@@ -134,6 +140,9 @@ begin
 
   memaddr_out               <= std_logic_vector (mem_address) ;
 
+  updated_out               <= updated ;
+
+
   --------------------------------------------------------------------------
   --  Handle recevied AssistNow Autonomous status messages.
   --------------------------------------------------------------------------
@@ -146,6 +155,7 @@ begin
       memread_en_out          <= '0' ;
       msgreceived_fwl         <= '0' ;
       running_out             <= '0' ;
+      updated                 <= '0' ;
       quiet_counter           <= (others => '0') ;
       busy_out                <= '0' ;
       cur_state               <= AOP_STATE_WAIT ;
@@ -216,6 +226,7 @@ begin
           else
             quiet_counter   <= (others => '0') ;
             running_out     <= '1' ;
+            updated         <= not updated ;
             cur_state       <= AOP_STATE_WAIT ;
           end if ;
 
@@ -228,6 +239,7 @@ begin
             quiet_counter   <= quiet_counter + 1 ;
           end if ;
 
+          updated           <= not updated ;
           cur_state         <= AOP_STATE_WAIT ;
 
       end case ;
