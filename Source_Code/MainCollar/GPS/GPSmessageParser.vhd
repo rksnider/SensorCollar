@@ -273,28 +273,63 @@ architecture rtl of GPSmessageParser is
 
   constant byte_buffer_size_c : natural := max_integer (byte_length_tbl_c) ;
 
-  signal byte_buffer          : std_logic_vector (byte_buffer_size_c*8-1
+  signal in_buffer            : std_logic_vector (byte_buffer_size_c*8-1
                                                   downto 0) ;
+  signal out_buffer           : std_logic_vector (byte_buffer_size_c*8-1
+                                                  downto 0) :=
+                                            (others => '0') ;
 
   signal byte_count           : unsigned (const_bits (byte_buffer_size_c)-1
                                           downto 0) ;
 
+  signal buffer_load          : std_logic ;
+  signal buffer_shift         : std_logic ;
+  signal in_bits              : std_logic_vector (7 downto 0) ;
+  signal last_bits            : std_logic_vector (in_bits'length-1
+                                                  downto 0) ;
+
   alias  m_extract            :
             std_logic_vector (msg_extract_lookup_bytes_c*8-1 downto 0) is
-                              byte_buffer (byte_buffer_size_c*8-1 downto
-                                           byte_buffer_size_c*8 -
-                                           msg_extract_lookup_bytes_c*8) ;
+                              in_buffer (byte_buffer_size_c*8-1 downto
+                                         byte_buffer_size_c*8 -
+                                         msg_extract_lookup_bytes_c*8) ;
 
   alias  log_time             :
             std_logic_vector (gps_time_bits_c-1 downto 0) is
-                              byte_buffer (gps_time_bits_c-1 downto 0) ;
+                              out_buffer (gps_time_bits_c-1 downto 0) ;
 
+  component Shifter is
+    Generic (
+      bits_wide_g           : natural   := 32 ;
+      shift_bits_g          : natural   :=  8 ;
+      shift_right_g         : std_logic := '1'
+    ) ;
+    Port (
+      clk                   : in    std_logic ;
+      load_buffer_in        : in    std_logic_vector (bits_wide_g-1
+                                                      downto 0) ;
+      load_in               : in    std_logic ;
+      shift_enable_in       : in    std_logic ;
+      buffer_out            : out   std_logic_vector (bits_wide_g-1
+                                                      downto 0) ;
+      early_lastbits_out    : out   std_logic_vector (shift_bits_g-1
+                                                      downto 0) ;
+      lastbits_out          : out   std_logic_vector (shift_bits_g-1
+                                                      downto 0) ;
+      shift_inbits_in       : in    std_logic_vector (shift_bits_g-1
+                                                      downto 0)
+    ) ;
+  end component Shifter ;
 
 begin
 
+  --  The byte received state is saved in the follower signal.
+
+  inreceived_out  <= inready_fwl ;
+
   --  System time from across clock domains.
 
-  get_curtime : CrossChipReceive
+  get_curtime : component CrossChipReceive
     Generic Map (
       data_bits_g             => curtime_in'length
     )
@@ -307,9 +342,23 @@ begin
       data_out                => curtime
     ) ;
 
-  --  The byte received state is saved in the follower signal.
+  --  Byte buffer shifter.
 
-  inreceived_out  <= inready_fwl ;
+  byte_shift : component Shifter
+    Generic Map (
+      bits_wide_g           => in_buffer'length,
+      shift_bits_g          => in_bits'length,
+      shift_right_g         => '1'
+    )
+    Port Map (
+      clk                   => clk,
+      load_buffer_in        => out_buffer,
+      load_in               => buffer_load,
+      shift_enable_in       => buffer_shift,
+      buffer_out            => in_buffer,
+      lastbits_out          => last_bits,
+      shift_inbits_in       => in_bits
+    ) ;
 
   --  Request memory when someone wants it and release it when everyone
   --  is done with it.
@@ -381,6 +430,8 @@ begin
       msg_memread_en  <= '0' ;
       memwrite_en_out <= '0' ;
       memaddr_select  <= memaddr_select_msg_c ;
+      buffer_load     <= '0' ;
+      buffer_shift    <= '0' ;
       cur_state       <= PARSE_STATE_WAIT_BYTE ;
       next_state      <= PARSE_STATE_WAIT ;
       msgnumber_out   <= (others => '0') ;
@@ -398,9 +449,12 @@ begin
 
       inready_s       <= inready_in ;
 
-      --  Always allow the write enable to be high for just one clock cycle.
+      --  Always allow the write enable and shift control signals to be high
+      --  for just one clock cycle.
 
       memwrite_en_out <= '0' ;
+      buffer_load     <= '0' ;
+      buffer_shift    <= '0' ;
 
       --  Always wait for a new character unless changed within a state.
       --  In most cases a new byte is needed before a state can proceed.
@@ -423,10 +477,8 @@ begin
 
         when PARSE_STATE_LOAD_BYTE    =>
           if (byte_count > 0) then
-            byte_buffer (byte_buffer'length-8-1 downto 0)   <=
-                  byte_buffer (byte_buffer'length-1 downto 8) ;
-            byte_buffer (byte_buffer'length-1 downto
-                         byte_buffer'length-8)              <= meminput_in ;
+            in_bits                   <= meminput_in ;
+            buffer_shift              <= '1' ;
 
             byte_count                <= byte_count - 1 ;
             msg_memaddr               <= msg_memaddr + 1 ;
@@ -441,13 +493,13 @@ begin
 
         when PARSE_STATE_SAVE_BYTE    =>
           if (byte_count > 0) then
-            memoutput_out                 <= byte_buffer (7 downto 0) ;
-            byte_buffer (byte_buffer'length-8-1 downto 0)   <=
-                    byte_buffer (byte_buffer'length-1 downto 8) ;
+            memoutput_out             <= last_bits ;
+            in_bits                   <= (others => '0') ;
+            buffer_shift              <= '1' ;
 
             byte_count                <= byte_count - 1 ;
             msg_memaddr               <= msg_memaddr + 1 ;
-            memwrite_en_out               <= '1' ;
+            memwrite_en_out           <= '1' ;
             cur_state                 <= PARSE_STATE_SAVE_BYTE ;
           else
             cur_state                 <= return_state ;
@@ -546,7 +598,8 @@ begin
 
           --  Keep searching until a message is found.
 
-          elsif (text_result = msg_count_c) then
+          elsif (text_result = msg_count_c or
+                 text_result = not TO_UNSIGNED (0, text_result'length)) then
             if (inready_fwl /= inready) then
               inready_fwl     <= inready ;
 
@@ -806,6 +859,7 @@ begin
                                                       gps_time_bytes_c) - 1,
                                                     msg_memaddr'length) ;
 
+            buffer_load             <= '1' ;
             cur_state               <= PARSE_STATE_SAVE_BYTE ;
             return_state            <= PARSE_STATE_SUCCESS ;
 
@@ -821,6 +875,7 @@ begin
                              if_set (not db_tim_tm2, gps_time_bytes_c) - 1,
                              msg_memaddr'length) ;
 
+            buffer_load             <= '1' ;
             cur_state               <= PARSE_STATE_SAVE_BYTE ;
             return_state            <= PARSE_STATE_SUCCESS ;
 

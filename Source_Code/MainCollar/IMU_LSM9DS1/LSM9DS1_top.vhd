@@ -51,7 +51,7 @@
 --!
 --! @param      clk                   System clock which drives entity.
 --! @param      rst_n                 Active Low reset to reset entity
---! @param      startup               '1' causes state machine to once off push all
+--! @param      startup_in            '1' causes state machine to once off push all
 --!                                   non-default registers to the IMU over the SPI bus.
 --! @param      curtime_in            FPGA time from the FPGA time component
 --! @param      curtime_latch_in      Latch curtime across clock domains.
@@ -91,8 +91,8 @@
 --! @param      temp_fpga_time        FPGA time associated with a temp_data_rdy and its word.
 --!
 --!
---! @param      startup_complete_out  IMU is done starting up. 
---!  
+--! @param      startup_complete_out  IMU is done starting up.
+--!
 --
 ---------------------------------
 
@@ -170,7 +170,7 @@ entity LSM9DS1_top is
     clk                   : in    std_logic ;
     rst_n                 : in    std_logic ;
 
-    startup               : in    std_logic;
+    startup_in            : in    std_logic;
     startup_complete_out  : out   std_logic;
 
     curtime_in            : in    std_logic_vector
@@ -315,7 +315,7 @@ architecture behavior of LSM9DS1_top is
   signal imu_initbuffer_rd_en : std_logic;
   signal imu_initbuffer_wr_en : std_logic;
   signal imu_initbuffer_q : std_logic_vector(15 downto 0);
-  signal imu_initbuffer_data : std_logic_vector(15 downto 0);
+  signal imu_initbuffer_data : std_logic_vector(15 downto 0) := (others => '0');
   signal initbuffer_clk : std_logic;
 
 
@@ -349,7 +349,8 @@ architecture behavior of LSM9DS1_top is
 --Intermediate port mapping signals of the spi_commands entity. These are
 --how I interact with that entity.
   signal    command_spi_signal      : std_logic_vector(command_width_bytes_g*8-1 downto 0);
-  signal    address_spi_signal      : std_logic_vector(address_width_bytes_g*8-1 downto 0);
+  signal    address_spi_signal      : std_logic_vector(address_width_bytes_g*8-1 downto 0) :=
+                                                  (others => '0');
   signal    address_en_spi_signal   : std_logic;
   signal    data_length_spi_signal  : std_logic_vector(data_length_bit_width_g - 1 downto 0);
   signal    master_slave_data_spi_signal : std_logic_vector(7 downto 0);
@@ -405,9 +406,9 @@ architecture behavior of LSM9DS1_top is
     data_length_bit_width_g : natural := 10;
     cpol_cpha             : std_logic_vector(1 downto 0) := "00"
   );
-	port(
-    clk	            :in	std_logic;
-    rst_n 	        :in	std_logic;
+  port(
+    clk             :in std_logic;
+    rst_n           :in std_logic;
     command_in            : in  std_logic_vector(command_width_bytes_g*8-1 downto 0);
     address_in            : in  std_logic_vector(address_width_bytes_g*8-1 downto 0);
     address_en_in         : in  std_logic;
@@ -419,12 +420,17 @@ architecture behavior of LSM9DS1_top is
     command_done          : out std_logic;
     slave_master_data_out : out std_logic_vector(7 downto 0);
     slave_master_data_ack_out : out std_logic;
-    miso 				:in	  std_logic;
-    mosi 				:out  std_logic;
-    sclk 				:out  std_logic;
-    cs_n 				:out  std_logic
-		);
+    miso        :in   std_logic;
+    mosi        :out  std_logic;
+    sclk        :out  std_logic;
+    cs_n        :out  std_logic
+    );
   end component;
+
+  --  Synchronizer signals.
+
+  signal startup            : std_logic ;
+  signal startup_s          : std_logic ;
 
   --  System time from across clock domains.
 
@@ -451,6 +457,11 @@ architecture behavior of LSM9DS1_top is
 
 begin
 
+  --  Unused parameters.
+
+  temp_data_rdy             <= '0';
+  temp_data                 <= (others => '0');
+  temp_fpga_time            <= (others => '0');
 
   --  System time from across clock domains.
 
@@ -484,9 +495,9 @@ spi_commands_slave_XL_G : spi_commands
   data_length_bit_width_g => data_length_bit_width_g,
   cpol_cpha            => "00"
   )
-	port map(
-    clk	            => clk,
-    rst_n 	        => rst_n,
+  port map(
+    clk             => clk,
+    rst_n           => rst_n,
 
     command_in      => command_spi_signal,
     address_in      => address_spi_signal,
@@ -501,41 +512,41 @@ spi_commands_slave_XL_G : spi_commands
     slave_master_data_out     =>  slave_master_data_spi_signal,
     slave_master_data_ack_out =>  slave_master_data_ack_spi_signal,
 
-    miso 				  => miso_signal,
-    mosi 					=> mosi,
-    sclk 					=> sclk,
-    cs_n 					=> cs_n_signal
+    miso          => miso_signal,
+    mosi          => mosi,
+    sclk          => sclk,
+    cs_n          => cs_n_signal
 
-		);
+    );
 
 --This memory holds the non-default registers for the IMU. These
 --are set on startup. This memory is initialized with a mif file.
-	altsyncram_component : altsyncram
-	GENERIC MAP (
-		clock_enable_input_a => "BYPASS",
-		clock_enable_output_a => "BYPASS",
-		init_file => "LSM9DS1_Register_Settings_Startup_Memory.mif",
-		intended_device_family => "Cyclone V",
-		lpm_hint => "ENABLE_RUNTIME_MOD=NO",
-		lpm_type => "altsyncram",
-		numwords_a => 256,
-		operation_mode => "SINGLE_PORT",
-		outdata_aclr_a => "NONE",
-		outdata_reg_a => "UNREGISTERED",
-		power_up_uninitialized => "FALSE",
-		read_during_write_mode_port_a => "NEW_DATA_NO_NBE_READ",
-		widthad_a => 8,
-		width_a => 16,
-		width_byteena_a => 1
-	)
-	PORT MAP (
-		address_a => imu_initbuffer_address_std,
-		clock0 => initbuffer_clk,
-		data_a => imu_initbuffer_data,
-		wren_a => imu_initbuffer_wr_en,
-		rden_a => imu_initbuffer_rd_en,
-		q_a => imu_initbuffer_q
-	);
+  altsyncram_component : altsyncram
+  GENERIC MAP (
+    clock_enable_input_a => "BYPASS",
+    clock_enable_output_a => "BYPASS",
+    init_file => "LSM9DS1_Register_Settings_Startup_Memory.mif",
+    intended_device_family => "Cyclone V",
+    lpm_hint => "ENABLE_RUNTIME_MOD=NO",
+    lpm_type => "altsyncram",
+    numwords_a => 256,
+    operation_mode => "SINGLE_PORT",
+    outdata_aclr_a => "NONE",
+    outdata_reg_a => "UNREGISTERED",
+    power_up_uninitialized => "FALSE",
+    read_during_write_mode_port_a => "NEW_DATA_NO_NBE_READ",
+    widthad_a => 8,
+    width_a => 16,
+    width_byteena_a => 1
+  )
+  PORT MAP (
+    address_a => imu_initbuffer_address_std,
+    clock0 => initbuffer_clk,
+    data_a => imu_initbuffer_data,
+    wren_a => imu_initbuffer_wr_en,
+    rden_a => imu_initbuffer_rd_en,
+    q_a => imu_initbuffer_q
+  );
 
 
 ---------------------------------
@@ -557,62 +568,62 @@ spi_commands_slave_XL_G : spi_commands
 LSM9DS1_state_machine:  process (clk, rst_n)
 begin
   if (rst_n = '0') then
+    byte_count              <= to_unsigned(0,byte_count'length);
+    byte_number             <= to_unsigned(0,byte_number'length);
+    cur_imu_state           <= IMU_STATE_WAIT;
+
+    command_spi_signal      <= (others => '0');
+    master_slave_data_spi_signal  <= (others => '0');
+    address_en_spi_signal   <= '0';
+    data_length_spi_signal  <= (others => '0');
+    master_slave_data_rdy_spi_signal <= '0';
 
 
-  byte_count <= to_unsigned(0,byte_count'length);
-  byte_number <= to_unsigned(0,byte_number'length);
-  cur_imu_state <= IMU_STATE_WAIT;
+    xl_g_init_number        <= (others => '0');
+    m_init_number           <= (others => '0');
 
-  command_spi_signal  <= (others => '0');
-  master_slave_data_spi_signal  <= (others => '0');
-  address_en_spi_signal <= '0';
-  data_length_spi_signal  <= (others => '0');
+    accel_sample            <= (others => '0');
+    accel_data_x            <= (others => '0');
+    accel_data_y            <= (others => '0');
+    accel_data_z            <= (others => '0');
+
+    gyro_sample             <= (others => '0');
+    gyro_data_x             <= (others => '0');
+    gyro_data_y             <= (others => '0');
+    gyro_data_z             <= (others => '0');
+
+    mag_sample              <= (others => '0');
+    mag_data_x              <= (others => '0');
+    mag_data_y              <= (others => '0');
+    mag_data_z              <= (others => '0');
+
+    byte_count              <= to_unsigned (0, byte_count'length);
+    byte_number             <= to_unsigned (0, byte_number'length);
+
+    byte_read_count         <= to_unsigned (0, byte_count'length);
+    byte_read_number        <= to_unsigned (0, byte_number'length);
+
+    DRDY_M_processed        <= '0';
+    accel_processed         <= '0';
+    gyro_processed          <= '0';
+    startup_processed       <= '0';
+
+    imu_initbuffer_address  <= (others => '0');
+    startup_complete        <= '0';
+
+    command_done_spi_signal_follower <= '0';
+
+    startup                 <= '0' ;
+    startup_s               <= '0' ;
+
+  elsif (falling_edge (clk)) then
+    startup                 <= startup_s ;
+
+  elsif (rising_edge (clk)) then
+    startup_s               <= startup_in ;
+
+  --Default signal states.
   master_slave_data_rdy_spi_signal <= '0';
-
-
-  xl_g_init_number  <= (others => '0');
-  m_init_number  <= (others => '0');
-
-  accel_sample  <= (others => '0');
-  accel_data_x  <= (others => '0');
-  accel_data_y  <= (others => '0');
-  accel_data_z  <= (others => '0');
-
-  gyro_sample  <= (others => '0');
-  gyro_data_x  <= (others => '0');
-  gyro_data_y  <= (others => '0');
-  gyro_data_z  <= (others => '0');
-
-  mag_sample  <= (others => '0');
-  mag_data_x  <= (others => '0');
-  mag_data_y  <= (others => '0');
-  mag_data_z  <= (others => '0');
-
-byte_count <= to_unsigned(0,byte_count'length);
-byte_number <= to_unsigned(0,byte_number'length);
-
-byte_read_count <= to_unsigned(0,byte_count'length);
-byte_read_number <= to_unsigned(0,byte_number'length);
-
-
-
-DRDY_M_processed    <= '0';
-accel_processed <= '0';
-gyro_processed <= '0';
-startup_processed <= '0';
-
-imu_initbuffer_address  <= (others => '0');
-startup_complete <= '0';
-
-
-command_done_spi_signal_follower <= '0';
-
-
-
-  elsif (clk'event and clk = '1') then
-
---Default signal states.
-master_slave_data_rdy_spi_signal <= '0';
 
   if (startup_processed = '1' and startup_processed_follower = '1') then
     startup_processed <= '0';
@@ -1164,17 +1175,17 @@ end process data_rdy_catch ;
 --When SPI_SELECT_XL_G_M is '1', set up SPI bus to M device.
 
 with SPI_SELECT_XL_G_M select
-			cs_M  <=	cs_n_signal when '1',
+      cs_M  <=  cs_n_signal when '1',
                 '1' when others;
 
 with SPI_SELECT_XL_G_M select
-			cs_XL_G  <=	cs_n_signal when '0',
+      cs_XL_G  <= cs_n_signal when '0',
                 '1' when others;
 
 
 with SPI_SELECT_XL_G_M select
-			miso_signal  <=	miso_M when '1',
-						miso_XL_G when others;
+      miso_signal  <= miso_M when '1',
+            miso_XL_G when others;
 
 
 

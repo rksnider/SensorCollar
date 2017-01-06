@@ -397,9 +397,11 @@ signal  block_write_data_signal		      	: std_logic_vector(7 downto 0);
 --Number of blocks to be sent in any multiblock write.       
 signal  num_blocks_to_write_signal		    :	integer range 0 to 2**16 - 1;       
 --Start address for an erase.  
-signal  erase_start_signal					:	std_logic_vector(31 downto 0);
+signal  erase_start_signal					:	std_logic_vector(31 downto 0) :=
+                                            (others => '0');
 --End   address for an erase. 	      
-signal  erase_end_signal				    : std_logic_vector(31 downto 0); 
+signal  erase_end_signal				    : std_logic_vector(31 downto 0) :=
+                                            (others => '0');
      
 --Once off control signal for data_buffer_to_sd_data_handler process
 signal  stop_write 							  :	std_logic;                          

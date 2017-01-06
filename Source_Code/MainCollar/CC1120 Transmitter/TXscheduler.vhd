@@ -94,6 +94,8 @@ use GENERAL.FormatSeconds_pkg.all ; --  Local time definitions.
 --! @param      trx_out           Send a packet.
 --! @param      rcv_in            A packet has been received.
 --! @param      rcv_out           Receive a packet.
+--! @param      listen_in         Listen mode ignores scheduler and always
+--!                               listens (receives).
 --! @param      sched_req_out     Request access to the scheduler.
 --! @param      sched_rcv_in      Access to the scheduler granted.
 --! @param      sched_type_out    Scheduler request is add/change or delete.
@@ -148,6 +150,7 @@ entity TXscheduler is
     trx_out           : out   std_logic ;
     rcv_in            : in    std_logic ;
     rcv_out           : out   std_logic ;
+    listen_in         : in    std_logic ;
     sched_req_out     : out   std_logic ;
     sched_rcv_in      : in    std_logic ;
     sched_type_out    : out   std_logic ;
@@ -165,23 +168,50 @@ end entity TXscheduler ;
 
 architecture rtl of TXscheduler is
 
-  --  Signal catchers.  The signal may be shorter than the clock period
-  --  used for this entity.  An asynchronous SR flip flop will still be
-  --  able to catch the signal.
+  --  Signal catchers and synchronizers.  The signal may be shorter than the
+  --  clock period used for this entity.  An asynchronous SR flip flop will
+  --  still be able to catch the signal.  Synchronizers are used to handle
+  --  cross clock-domain signals.
 
   signal clock_changed      : std_logic ;
+  signal clock_changed_s    : std_logic ;
+  signal clock_changed_ff   : std_logic ;
   signal clock_changed_set  : std_logic ;
   signal clockchg_started   : std_logic ;
   signal send_packets       : std_logic ;
+  signal send_packets_s     : std_logic ;
+  signal send_packets_ff    : std_logic ;
   signal send_started       : std_logic ;
   signal receive_packets    : std_logic ;
+  signal receive_packets_s  : std_logic ;
+  signal receive_packets_ff : std_logic ;
   signal receive_started    : std_logic ;
   signal receiving          : std_logic ;
   signal startup            : std_logic ;
+  signal startup_s          : std_logic ;
+  signal startup_ff         : std_logic ;
   signal startup_started    : std_logic ;
+  signal init               : std_logic ;
+  signal init_s             : std_logic ;
+  signal init_ff            : std_logic ;
+  signal init_clear         : std_logic ;
   signal shutdown           : std_logic ;
+  signal shutdown_s         : std_logic ;
+  signal shutdown_ff        : std_logic ;
   signal shutdown_started   : std_logic ;
+  signal sched_rcv          : std_logic ;
+  signal sched_rcv_s        : std_logic ;
+  signal sched_start        : std_logic ;
+  signal sched_start_s      : std_logic ;
+  signal sched_start_ff     : std_logic ;
+  signal sched_start_clear  : std_logic ;
   signal running            : std_logic ;
+  signal system_id          : unsigned (system_id_in'length-1 downto 0) ;
+  signal system_id_s        : unsigned (system_id_in'length-1 downto 0) ;
+  signal trx                : std_logic ;
+  signal trx_s              : std_logic ;
+  signal rcv                : std_logic ;
+  signal rcv_s              : std_logic ;
 
   component SR_FlipFlop is
     Generic (
@@ -276,7 +306,7 @@ begin
     Port Map (
       reset_in              => clockchg_started,
       set_in                => clock_changed_set,
-      result_rd_out         => clock_changed
+      result_rd_out         => clock_changed_ff
     ) ;
 
   send_sig : SR_FlipFlop
@@ -286,7 +316,7 @@ begin
     Port Map (
       reset_in              => send_started,
       set_in                => send_in,
-      result_rd_out         => send_packets
+      result_rd_out         => send_packets_ff
     ) ;
 
   receive_sig : SR_FlipFlop
@@ -296,7 +326,7 @@ begin
     Port Map (
       reset_in              => receive_started,
       set_in                => receive_in,
-      result_rd_out         => receive_packets
+      result_rd_out         => receive_packets_ff
     ) ;
 
   startup_sig : SR_FlipFlop
@@ -306,7 +336,17 @@ begin
     Port Map (
       reset_in              => startup_started,
       set_in                => startup_in,
-      result_rd_out         => startup
+      result_rd_out         => startup_ff
+    ) ;
+
+  init_sig : SR_FlipFlop
+    Generic Map (
+      set_edge_detect_g     => '1'
+    )
+    Port Map (
+      reset_in              => init_clear,
+      set_in                => init_in,
+      result_rd_out         => init_ff
     ) ;
 
   shutdown_sig : SR_FlipFlop
@@ -316,7 +356,17 @@ begin
     Port Map (
       reset_in              => shutdown_started,
       set_in                => shutdown_in,
-      result_rd_out         => shutdown
+      result_rd_out         => shutdown_ff
+    ) ;
+
+  sched_start_sig : SR_FlipFlop
+    Generic Map (
+      set_edge_detect_g     => '1'
+    )
+    Port Map (
+      reset_in              => sched_start_clear,
+      set_in                => sched_start_in,
+      result_rd_out         => sched_start_ff
     ) ;
 
   --  Entity busy.
@@ -331,7 +381,7 @@ begin
 
   --  Transmition offset set from the system's ID.
 
-  trx_offset        <= RESIZE (system_id_in rem send_window_g,
+  trx_offset        <= RESIZE (system_id rem send_window_g,
                                trx_offset'length) ;
 
 
@@ -344,12 +394,34 @@ begin
     if (reset = '1') then
       clockchg_started      <= '1' ;
       clockchg_reset        <= '1' ;
+      clock_changed         <= '0' ;
+      clock_changed_s       <= '0' ;
+      send_packets          <= '0' ;
+      send_packets_s        <= '0' ;
       send_started          <= '1' ;
+      receive_packets       <= '0' ;
+      receive_packets_s     <= '0' ;
       receive_started       <= '1' ;
       receiving             <= '0' ;
+      startup               <= '0' ;
+      startup_s             <= '0' ;
       startup_started       <= '1' ;
+      init                  <= '0' ;
+      init_s                <= '0' ;
+      init_clear            <= '1' ;
       running               <= '0' ;
+      shutdown              <= '0' ;
+      shutdown_s            <= '0' ;
       shutdown_started      <= '1' ;
+      system_id             <= (others => '0') ;
+      system_id_s           <= (others => '0') ;
+      trx                   <= '0' ;
+      trx_s                 <= '0' ;
+      rcv                   <= '0' ;
+      rcv_s                 <= '0' ;
+      sched_start           <= '0' ;
+      sched_start_s         <= '0' ;
+      sched_start_clear     <= '1' ;
       power_out             <= '0' ;
       startup_out           <= '0' ;
       shutdown_out          <= '0' ;
@@ -373,10 +445,36 @@ begin
       sched_id_out          <= (others => '0') ;
       sched_delay_out       <= (others => '0') ;
       sched_start_out       <= '0' ;
+      sched_rcv             <= '0' ;
+      sched_rcv_s           <= '0' ;
       process_busy          <= '1' ;
       cur_state             <= SCHED_STATE_WAIT ;
 
+    elsif (falling_edge (clk)) then
+      clock_changed         <= clock_changed_s ;
+      send_packets          <= send_packets_s ;
+      receive_packets       <= receive_packets_s ;
+      startup               <= startup_s ;
+      init                  <= init_s ;
+      shutdown              <= shutdown_s ;
+      system_id             <= system_id_s ;
+      trx                   <= trx_s ;
+      rcv                   <= rcv_s ;
+      sched_rcv             <= sched_rcv_s ;
+      sched_start           <= sched_start_s ;
+
     elsif (rising_edge (clk)) then
+      clock_changed_s       <= clock_changed_ff ;
+      send_packets_s        <= send_packets_ff ;
+      receive_packets_s     <= receive_packets_ff ;
+      startup_s             <= startup_ff ;
+      init_s                <= init_ff ;
+      shutdown_s            <= shutdown_ff ;
+      system_id_s           <= system_id_in ;
+      trx_s                 <= trx_in ;
+      rcv_s                 <= rcv_in ;
+      sched_rcv_s           <= sched_rcv_in ;
+      sched_start_s         <= sched_start_ff ;
 
       --  Initialization states.
 
@@ -388,9 +486,11 @@ begin
           send_started          <= '0' ;
           receive_started       <= '0' ;
           startup_started       <= '0' ;
+          init_clear            <= '0' ;
           shutdown_started      <= '0' ;
           clockchg_started      <= '0' ;
           shutdown_out          <= '0' ;
+          sched_start_clear     <= '0' ;
 
           --  Startup and shutdown requests do nothing.  No other actions
           --  are taken until the device is started.
@@ -461,6 +561,7 @@ begin
               cur_state         <= SCHED_STATE_TURNON ;
             else
               send_started      <= '1' ;
+              rcv_out           <= '0' ;
               trx_out           <= '1' ;
               send_count        <= TO_UNSIGNED (send_copies_g,
                                                 send_count'length) ;
@@ -474,9 +575,18 @@ begin
               cur_state         <= SCHED_STATE_TURNON ;
             else
               receive_started   <= '1' ;
-              rcv_out           <= '1' ;
               delay             <= TO_UNSIGNED (recv_delay_g / 2 + 1,
                                                 delay'length) ;
+              cur_state         <= SCHED_STATE_RECEIVE ;
+            end if ;
+
+          elsif (listen_in = '1') then
+            process_busy        <= '1' ;
+
+            if (power_in = '0') then
+              cur_state         <= SCHED_STATE_TURNON ;
+            else
+              delay             <= TO_UNSIGNED (1, delay'length) ;
               cur_state         <= SCHED_STATE_RECEIVE ;
             end if ;
 
@@ -486,6 +596,7 @@ begin
           --  Go back to sleep.
 
           else
+            power_out           <= '0' ;
             process_busy        <= '0' ;
             cur_state           <= SCHED_STATE_WAIT ;
           end if ;
@@ -501,7 +612,9 @@ begin
           end if ;
 
         when SCHED_STATE_INIT       =>
-          if (init_in = '1') then
+          if (init = '1') then
+            init_clear              <= '1' ;
+            init_s                  <= '0' ;
             init_out                <= '0' ;
             cur_state               <= SCHED_STATE_WAIT ;
           end if ;
@@ -509,7 +622,7 @@ begin
         --  Send a set of packets to the device.
 
         when SCHED_STATE_SEND       =>
-          if (trx_in = '1') then
+          if (trx = '1') then
             trx_out                 <= '0' ;
 
             if (send_count /= 1) then
@@ -518,7 +631,6 @@ begin
                                                     delay'length) ;
               cur_state             <= SCHED_STATE_SEND_DLY ;
             else
-              power_out             <= '0' ;
               cur_year              <= local_time.year ;
               cur_yday              <= local_time.yday ;
               cur_hour              <= local_time.hour ;
@@ -531,7 +643,7 @@ begin
         when SCHED_STATE_SEND_DLY   =>
           if (delay /= 1) then
             delay                   <= delay - 1 ;
-          elsif (trx_in = '0') then
+          elsif (trx = '0') then
             trx_out                 <= '1' ;
             cur_state               <= SCHED_STATE_SEND ;
           end if ;
@@ -570,7 +682,7 @@ begin
           --  next event.  If the end of the day has been reached start
           --  it at the beginning of the next day.
 
-          elsif (sched_rcv_in = '0') then
+          elsif (sched_rcv = '0') then
             sched_req_out           <= '1' ;
 
           else
@@ -627,19 +739,21 @@ begin
         --  Receive packets from the device.
 
         when SCHED_STATE_RECEIVE    =>
-          if (rcv_in = '1') then
+          if (rcv = '1') then
             rcv_out                 <= '0' ;
           else
             rcv_out                 <= '1' ;
           end if ;
 
-          if (delay /= 1) then
+          if (listen_in = '1') then
+            receiving               <= '1' ;
+            cur_state               <= SCHED_STATE_WAIT ;
+          elsif (delay /= 1) then
             delay                   <= delay - 1 ;
             receiving               <= '1' ;
             cur_state               <= SCHED_STATE_WAIT ;
           else
             rcv_out                 <= '0' ;
-            power_out               <= '0' ;
             receiving               <= '0' ;
             cur_year                <= local_time.year ;
             cur_yday                <= local_time.yday ;
@@ -681,7 +795,7 @@ begin
           --  The current time has been passed.  Set the delay for the
           --  next event.
 
-          elsif (sched_rcv_in = '0') then
+          elsif (sched_rcv = '0') then
             sched_req_out           <= '1' ;
 
           else
@@ -734,15 +848,18 @@ begin
         --  Wait for the scheduling operation to complete.
 
         when SCHED_STATE_DELAY      =>
-          if (sched_start_in = '1') then
+          if (sched_start = '1') then
+            sched_start_clear <= '1' ;
+            sched_start_s     <= '0' ;
             sched_start_out   <= '0' ;
             cur_state         <= SCHED_STATE_DONE ;
           end if ;
 
         when SCHED_STATE_DONE       =>
-          if (sched_rcv_in = '0') then
+          if (sched_rcv = '0') then
             cur_state         <= SCHED_STATE_WAIT ;
-          elsif (sched_start_in = '0') then
+          elsif (sched_start = '0') then
+            sched_start_clear <= '0' ;
             sched_req_out     <= '0' ;
           end if ;
 

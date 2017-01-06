@@ -78,6 +78,18 @@ in_count                = in_count + 1 ;
 in_sig (in_count, :)    = [gps_time_bits_c 0 0 0] ;
 curtime_in              = in_count ;
 
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [1 0 0 0] ;
+curtime_latch_in        = in_count ;
+
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [1 0 0 0] ;
+curtime_valid_in        = in_count ;
+
+in_count                = in_count + 1 ;
+in_sig (in_count, :)    = [1 0 0 0] ;
+curtime_vlatch_in       = in_count ;
+
 %   Request information.
 
 in_count                = in_count + 1 ;

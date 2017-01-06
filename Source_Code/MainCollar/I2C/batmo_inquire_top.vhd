@@ -6,7 +6,7 @@
 --!             battery monitor using I2C subsystems.
 --! @author     Chris Casebeer
 --! @date       1_15_2016
---! @copyright  
+--! @copyright
 --
 --  This program is free software: you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
@@ -33,13 +33,13 @@
 ------------------------------------------------------------------------------
 --
 --! @brief      Battery Monitor G4 Information Retrieve.
---! @details    
---!   
+--! @details
+--!
 
-  
---! @param   clk_freq_g               Clk Frequency. 
+
+--! @param   clk_freq_g               Clk Frequency.
 --! @param   update_interval_ms_g     Interval to poll the batmon.
-  
+
 --! @param   mem_bits_g           I2C Memory Address Bit Count
 --! @param   simulate_g           Skip poll wait when simulation.
 --! @param   cmd_offset_g         Location of the commands in the I2C memory
@@ -49,7 +49,7 @@
 --! @param    startup              The machine will begin polling the batmon.
 
 --! @param    cmd_offset_out        Offset of the command structure in I2C_CMDS.mif
---!                                 as defined in I2C_cmd_pkg.vhd  
+--!                                 as defined in I2C_cmd_pkg.vhd
 --! @param    cmd_count_out         Sequential commands to execute at I2C_IO
 --! @param    cmd_start_out         Start the I2C_IO machine.
 --! @param    cmd_busy_in           I2C_IO is busy.
@@ -60,10 +60,10 @@
 --! @param    mem_datato_signal_b_out           b side I2C memory data in
 --! @param    mem_read_en_signal_b_out          b side I2C memory read enable
 --! @param    mem_write_en_signal_b_out         b side I2C memory write enable
-     
+
 --! @param    i2c_req_out           Request i2c core and b side memory.
---! @param    i2c_rcv_in            i2c core and b side memory granted. 
-    
+--! @param    i2c_rcv_in            i2c core and b side memory granted.
+
 --! @param    voltage_mv            Voltage as read by the bq27520. U2.
 --! @param    current_ma            Instant mA read by the bq27520. I2.
 --! @param    capacity_mah          bq27520's estimate of the bat capacity. U2.
@@ -71,22 +71,22 @@
 ------------------------------------------------------------------------------
 
 
---This machine uses the I2C_IO which uses the I2C_master machine to 
+--This machine uses the I2C_IO which uses the I2C_master machine to
 --interact with the TI bQ27520G4 Battery Monitor chip.
 
---This machine polls the following information off the G4. 
+--This machine polls the following information off the G4.
 --Voltage
 --Instant Current
---Remaining capacity in mAh. 
+--Remaining capacity in mAh.
 
---The bq27520 can only handle 2 read commands per second. 
+--The bq27520 can only handle 2 read commands per second.
 --Pushing more than this will cause the device to reset!
---There is a wait state in the code for waiting time between commands. 
+--There is a wait state in the code for waiting time between commands.
 
 
 --TODO:
---I2C Repeated Starts at this level and the I2C_IO level 
---haven't been considered yet. 
+--I2C Repeated Starts at this level and the I2C_IO level
+--haven't been considered yet.
 
 
 
@@ -109,10 +109,10 @@ use GENERAL.UTILITIES_PKG.ALL ;
 entity batmon_inquire is
 
   Generic (
-  
+
   clk_freq_g               : natural  := 50E6;
   update_interval_ms_g     : natural  := 5000;
-  
+
   mem_bits_g               : natural  := 10;
   simulate_g               : std_logic := '0';
   cmd_offset_g          : natural   := 0 ;
@@ -123,31 +123,31 @@ entity batmon_inquire is
   Port (
     clk                   : in  std_logic ;
     rst_n                 : in  std_logic ;
-    
-    startup               : in std_logic;
-    
+
+    startup_in            : in std_logic;
+
     cmd_offset_out        : out   unsigned (mem_bits_g-1 downto 0) ;
     cmd_count_out         : out   unsigned (7 downto 0) ;
     cmd_start_out         : out   std_logic ;
     cmd_busy_in           : in    std_logic ;
-    
+
     mem_clk                           :  out std_logic;
     mem_address_signal_b_out          : out unsigned (mem_bits_g-1 downto 0) ;
     mem_datafrom_signal_b_in          : in std_logic_vector (7 downto 0) ;
     mem_datato_signal_b_out           : out std_logic_vector (7 downto 0) ;
     mem_read_en_signal_b_out          : out std_logic ;
     mem_write_en_signal_b_out         : out std_logic ;
-    
+
     i2c_req_out           : out   std_logic ;
     i2c_rcv_in            : in    std_logic ;
-    
+
     voltage_mv_valid_out      : out   std_logic ;
     rem_cap_mah_valid_out     : out   std_logic ;
     inst_cur_ma_valid_out     : out   std_logic ;
     voltage_mv_out            : out   std_logic_vector (15 downto 0);
     rem_cap_mah_out           : out   std_logic_vector (15 downto 0);
     inst_cur_ma_out           : out   std_logic_vector (15 downto 0)
-  
+
 
   ) ;
 
@@ -179,20 +179,20 @@ architecture behavior of batmon_inquire is
     BATMON_STATE_CAPACITY_READ,
     state_init_cmd_e,
     state_read_cmd_e
-    
+
 
     );
-    
+
 
 
   signal cur_state   : BATMON_INQ;
-  signal next_state  : BATMON_INQ; 
-  
+  signal next_state  : BATMON_INQ;
+
 --Below is Emery's code.
 --I need access to the mif file stored dual port variables.
---Most notably where to read the written values from. 
------------------------------------------------  
-  
+--Most notably where to read the written values from.
+-----------------------------------------------
+
   --  Command structure and mapping.  The field length, start, and end
   --  constants are defined in the order they are stored in memory
   --  (lowest to highest byte).  The bytes are loaded into the top byte of
@@ -274,7 +274,7 @@ architecture behavior of batmon_inquire is
 
   alias read_max              : unsigned (read_max_len_c-1 downto 0) is
               cmd_struct (read_max_str_c      downto read_max_end_c) ;
-              
+
   --  Command processing signals.
 
   signal cmd_number           : unsigned (7 downto 0) ;
@@ -290,51 +290,45 @@ architecture behavior of batmon_inquire is
   signal save_count           : unsigned (byte_count'length-1 downto 0) ;
   signal save_address         : unsigned (next_data_address'length-1
                                           downto 0) ;
-                                          
+
 --------------------------
 --------------------------
 
   signal byte_address : unsigned (mem_bits_g-1 downto 0) ;
-  
 
   constant inquiry_timeout_c : natural := natural(real((clk_freq_g/1E3) * update_interval_ms_g));
-  
-                                
+
   signal inquiry_timeout    :   unsigned(natural(trunc(log2(real((clk_freq_g/1E3) * update_interval_ms_g)))) downto 0);
 
-  
-  
-                                
-  constant inner_command_wait_ms : natural := 1000;  
+  constant inner_command_wait_ms : natural := 1000;
 
-  
   constant inner_command_timeout_ms_c   : natural := natural(real((clk_freq_g/1E3) * inner_command_wait_ms));
-  
+
   signal inner_command_timeout_ms   :  unsigned(natural(trunc(log2(real((clk_freq_g/1E3) * inner_command_wait_ms)))) downto 0);
-                              
-
-
-  
 
   --Fields of interset right now.
   signal voltage_mv : std_logic_vector (I2C_BM_Voltage_rdlen*8-1 downto 0);
   signal rem_cap_mah : std_logic_vector (I2C_BM_Voltage_rdlen*8-1 downto 0);
   signal inst_cur_ma : std_logic_vector (I2C_BM_Voltage_rdlen*8-1 downto 0);
-  
+
   signal mem_address_signal_b     : unsigned (mem_bits_g-1 downto 0) ;
   signal mem_datato_signal_b      : std_logic_vector (7 downto 0) ;
   signal mem_read_en_signal_b     : std_logic ;
   signal mem_write_en_signal_b    : std_logic ;
-  
+
 
   signal cmd_busy_in_follower : std_logic;
-  
+
   signal cmd_offset   : unsigned (mem_bits_g-1 downto 0);
+
+  --  Synchronizers.
+
+  signal startup                  : std_logic ;
+  signal startup_s                : std_logic ;
 
 begin
 
-mem_clk <= not clk;
-
+  mem_clk <= not clk;
 
   mem_address_signal_b_out <= mem_address_signal_b;
   mem_datato_signal_b_out <= mem_datato_signal_b;
@@ -344,46 +338,49 @@ mem_clk <= not clk;
 
 
 batmon_state_machine:  process (clk, rst_n)
-variable byte_address : unsigned (mem_bits_g-1 downto 0) ;
+  variable byte_address : unsigned (mem_bits_g-1 downto 0) ;
 begin
   if (rst_n = '0') then
-  
     cmd_offset_out        <= (others => '0');
     cmd_count_out         <= (others => '0');
     cur_state             <= BATMON_STATE_WAIT;
     cmd_start_out         <= '0';
     byte_count            <= (others => '0');
     cmd_busy_in_follower  <= '1';
-    inquiry_timeout <= to_unsigned(0,inquiry_timeout'length);
+    inquiry_timeout       <= to_unsigned(0,inquiry_timeout'length);
     inner_command_timeout_ms  <= to_unsigned(0,inner_command_timeout_ms'length);
-    
-    
+
     cmd_offset_out        <= (others => '0');
     cmd_count_out         <= (others => '0');
     cmd_start_out         <= '0';
-    
-    
-    mem_address_signal_b    <= (others => '0');
-    mem_datato_signal_b     <= (others => '0');
-    mem_read_en_signal_b    <= '0';
-    mem_write_en_signal_b   <= '0';
-    
+
+    mem_address_signal_b  <= (others => '0');
+    mem_datato_signal_b   <= (others => '0');
+    mem_read_en_signal_b  <= '0';
+    mem_write_en_signal_b <= '0';
 
     i2c_req_out           <= '0' ;
-    
-    
-    voltage_mv_valid_out      <= '0' ;
-    rem_cap_mah_valid_out     <= '0' ;
-    inst_cur_ma_valid_out     <= '0' ;
- 
-  elsif (clk'event and clk = '1') then
 
-  
-  
-      voltage_mv_valid_out      <= '0' ;
-      rem_cap_mah_valid_out     <= '0' ;
-      inst_cur_ma_valid_out     <= '0' ;
-  
+    voltage_mv_valid_out  <= '0' ;
+    rem_cap_mah_valid_out <= '0' ;
+    inst_cur_ma_valid_out <= '0' ;
+
+    startup               <= '0' ;
+    startup_s             <= '0' ;
+
+  elsif (falling_edge (clk)) then
+    startup               <= startup_s ;
+
+  elsif (rising_edge (clk)) then
+    startup_s             <= startup_in ;
+
+    mem_datato_signal_b   <= (others => '0');
+    mem_write_en_signal_b <= '0';
+
+    voltage_mv_valid_out  <= '0' ;
+    rem_cap_mah_valid_out <= '0' ;
+    inst_cur_ma_valid_out <= '0' ;
+
     case cur_state is
 
 
@@ -392,10 +389,10 @@ begin
         if (startup = '1') then
           cur_state <=  BATMON_STATE_WAIT_START;
         end if;
-        
+
 
       when BATMON_STATE_WAIT_START =>
-        if (simulate_g = '1') then 
+        if (simulate_g = '1') then
           cur_state <= BATMON_STATE_VOLTAGE_SETUP;
         elsif (inquiry_timeout = to_unsigned(inquiry_timeout_c,inquiry_timeout'length)) then
           cur_state <= BATMON_STATE_VOLTAGE_SETUP;
@@ -403,34 +400,34 @@ begin
         else
           inquiry_timeout <= inquiry_timeout + 1;
         end if;
-      
+
       when BATMON_STATE_VOLTAGE_SETUP   =>
       i2c_req_out           <= '1' ;
-      if (i2c_rcv_in = '1') then 
+      if (i2c_rcv_in = '1') then
         if (cmd_busy_in = '0') then
           cmd_offset_out        <= to_unsigned(I2C_BM_Voltage_cmd,cmd_offset_out'length);
           cmd_offset            <= to_unsigned(I2C_BM_Voltage_cmd,cmd_offset_out'length);
           cmd_count_out         <= to_unsigned(1,cmd_count_out'length);
-          cur_state            <= BATMON_STATE_VOLTAGE;      
+          cur_state            <= BATMON_STATE_VOLTAGE;
         end if;
       end if;
 
 
       when BATMON_STATE_VOLTAGE    =>
-      
+
       cmd_start_out         <= '1';
       cur_state            <= BATMON_STATE_VOLTAGE_WAIT;
 
       when BATMON_STATE_VOLTAGE_WAIT =>
       cmd_start_out         <= '0';
-      if (cmd_busy_in = '1') then 
+      if (cmd_busy_in = '1') then
         cur_state            <= state_init_cmd_e;
         next_state            <= BATMON_STATE_VOLTAGE_READ_SETUP;
       end if;
-      
+
       --Initialize the command sequence to execute.
       --Grab the data out of the mif file.
-      --The write/read location in the dual port memory is needed. 
+      --The write/read location in the dual port memory is needed.
       --These states taken out of I2C_cmds.mif.
       when state_init_cmd_e   =>
 
@@ -457,7 +454,7 @@ begin
                             cmd_struct (cmd_struct_len_c-1 downto 8) ;
           cmd_struct (cmd_struct_len_c-1 downto cmd_struct_len_c-8) <=
                             unsigned(mem_datafrom_signal_b_in) ;
-                            
+
           mem_address_signal_b     <= nextcmd_address ;
           nextcmd_address     <= nextcmd_address + 1 ;
 
@@ -466,41 +463,41 @@ begin
           cur_state           <= next_state ;
           mem_read_en_signal_b     <= '0' ;
         end if ;
-     
-      
+
+
       when BATMON_STATE_VOLTAGE_READ_SETUP    =>
         mem_read_en_signal_b      <= '1';
 
         mem_address_signal_b      <=  RESIZE (read_offset,
                                              next_data_address'length) +
                                      read_offset_g ;
-                                     
-        byte_count                <= TO_UNSIGNED (0, byte_count'length) ; 
-          if ( cmd_busy_in = '0') then 
+
+        byte_count                <= TO_UNSIGNED (0, byte_count'length) ;
+          if ( cmd_busy_in = '0') then
             --mem_req_out               <= '1';
-            --if (mem_rcv_in = '1') then 
+            --if (mem_rcv_in = '1') then
               cur_state            <= BATMON_STATE_VOLTAGE_READ;
           --end if;
         end if;
-      
+
       when BATMON_STATE_VOLTAGE_READ    =>
         if (byte_count = I2C_BM_Voltage_rdlen) then
           next_state            <= BATMON_STATE_CURRENT_SETUP;
           cur_state           <= BATMON_BETWEEN_COMMAND_WAIT;
-                        
+
           voltage_mv_valid_out      <= '1' ;
-    
+
           voltage_mv_out        <= voltage_mv;
-          
+
           mem_read_en_signal_b     <= '0' ;
         else
         --Low order bit shows up first on the I2C bus.
-        --They are stored little endian in the ram as well. 
+        --They are stored little endian in the ram as well.
           voltage_mv <= mem_datafrom_signal_b_in & voltage_mv(I2C_BM_Voltage_rdlen*8-1 downto 8) ;
           byte_count  <= byte_count + 1 ;
           mem_address_signal_b      <=  mem_address_signal_b + 1;
         end if;
-        
+
       --Wait before polling the battery monitor again.
       when BATMON_BETWEEN_COMMAND_WAIT =>
         if (inner_command_timeout_ms = to_unsigned(inner_command_timeout_ms_c,inner_command_timeout_ms'length)) then
@@ -509,9 +506,9 @@ begin
         else
           inner_command_timeout_ms <= inner_command_timeout_ms + 1;
         end if;
-      
-        
-        
+
+
+
         ----Current
       when BATMON_STATE_CURRENT_SETUP   =>
 
@@ -519,19 +516,19 @@ begin
         cmd_offset_out        <= to_unsigned(I2C_BM_InstCur_cmd,cmd_offset_out'length);
         cmd_offset            <= to_unsigned(I2C_BM_InstCur_cmd,cmd_offset_out'length);
         cmd_count_out         <= to_unsigned(1,cmd_count_out'length);
-        cur_state            <= BATMON_STATE_CURRENT;      
+        cur_state            <= BATMON_STATE_CURRENT;
       end if;
 
 
       when BATMON_STATE_CURRENT    =>
-      
+
       cmd_start_out         <= '1';
       cur_state            <= BATMON_STATE_CURRENT_WAIT;
 
       when BATMON_STATE_CURRENT_WAIT =>
       cmd_start_out         <= '0';
       --mem_req_out           <= '1' ;
-      if (cmd_busy_in = '1') then 
+      if (cmd_busy_in = '1') then
         cur_state            <= state_init_cmd_e;
         next_state            <= BATMON_STATE_CURRENT_READ_SETUP;
       end if;
@@ -542,23 +539,23 @@ begin
         mem_address_signal_b      <=  RESIZE (read_offset,
                                              next_data_address'length) +
                                      read_offset_g ;
-                                     
-        byte_count                <= TO_UNSIGNED (0, byte_count'length) ; 
-          if ( cmd_busy_in = '0') then 
+
+        byte_count                <= TO_UNSIGNED (0, byte_count'length) ;
+          if ( cmd_busy_in = '0') then
             --mem_req_out               <= '1';
-            --if (mem_rcv_in = '1') then 
+            --if (mem_rcv_in = '1') then
               cur_state            <= BATMON_STATE_CURRENT_READ;
           --end if;
         end if;
-      
-      
-      
+
+
+
       when BATMON_STATE_CURRENT_READ    =>
         if (byte_count = I2C_BM_InstCur_rdlen) then
           next_state            <= BATMON_STATE_CAPACITY_SETUP;
           cur_state             <= BATMON_BETWEEN_COMMAND_WAIT;
-                        
-    
+
+
           inst_cur_ma_valid_out     <= '1' ;
           inst_cur_ma_out        <= inst_cur_ma;
           mem_read_en_signal_b     <= '0' ;
@@ -567,30 +564,30 @@ begin
           byte_count  <= byte_count + 1 ;
           mem_address_signal_b      <=  mem_address_signal_b + 1;
         end if;
-        
-        
+
+
       ---Capacity
-        
-        
+
+
       when BATMON_STATE_CAPACITY_SETUP   =>
 
         if (cmd_busy_in = '0') then
           cmd_offset_out        <= to_unsigned(I2C_BM_RemCap_cmd,cmd_offset_out'length);
           cmd_offset            <= to_unsigned(I2C_BM_RemCap_cmd,cmd_offset_out'length);
           cmd_count_out         <= to_unsigned(1,cmd_count_out'length);
-          cur_state            <= BATMON_STATE_CAPACITY;      
+          cur_state            <= BATMON_STATE_CAPACITY;
         end if;
 
 
       when BATMON_STATE_CAPACITY    =>
-      
+
         cmd_start_out         <= '1';
         cur_state            <= BATMON_STATE_CAPACITY_WAIT;
 
       when BATMON_STATE_CAPACITY_WAIT =>
         cmd_start_out         <= '0';
         --mem_req_out           <= '1' ;
-        if (cmd_busy_in = '1') then 
+        if (cmd_busy_in = '1') then
           cur_state            <= state_init_cmd_e;
           next_state            <= BATMON_STATE_CAPACITY_READ_SETUP;
         end if;
@@ -601,22 +598,22 @@ begin
         mem_address_signal_b      <=  RESIZE (read_offset,
                                              next_data_address'length) +
                                      read_offset_g ;
-                                     
-        byte_count                <= TO_UNSIGNED (0, byte_count'length) ; 
-          if ( cmd_busy_in = '0') then 
+
+        byte_count                <= TO_UNSIGNED (0, byte_count'length) ;
+          if ( cmd_busy_in = '0') then
             --mem_req_out               <= '1';
-            --if (mem_rcv_in = '1') then 
+            --if (mem_rcv_in = '1') then
               cur_state            <= BATMON_STATE_CAPACITY_READ;
           --end if;
         end if;
-      
-      
-      
+
+
+
       when BATMON_STATE_CAPACITY_READ    =>
         if (byte_count = I2C_BM_RemCap_rdlen) then
           next_state            <= BATMON_STATE_WAIT_START;
           cur_state            <= BATMON_BETWEEN_COMMAND_WAIT;
-                        
+
 
           rem_cap_mah_valid_out     <= '1' ;
 

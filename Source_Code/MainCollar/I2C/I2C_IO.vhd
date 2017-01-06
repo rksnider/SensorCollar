@@ -244,6 +244,31 @@ architecture rtl of I2C_IO is
   alias read_max              : unsigned (read_max_len_c-1 downto 0) is
               cmd_struct (read_max_str_c      downto read_max_end_c) ;
 
+  signal enable_shift         : std_logic ;
+
+  component Shifter is
+    Generic (
+      bits_wide_g           : natural   := 32 ;
+      shift_bits_g          : natural   :=  8 ;
+      shift_right_g         : std_logic := '1'
+    ) ;
+    Port (
+      clk                   : in    std_logic ;
+      load_buffer_in        : in    std_logic_vector (bits_wide_g-1
+                                                      downto 0) ;
+      load_in               : in    std_logic ;
+      shift_enable_in       : in    std_logic ;
+      buffer_out            : out   std_logic_vector (bits_wide_g-1
+                                                      downto 0) ;
+      early_lastbits_out    : out   std_logic_vector (shift_bits_g-1
+                                                      downto 0) ;
+      lastbits_out          : out   std_logic_vector (shift_bits_g-1
+                                                      downto 0) ;
+      shift_inbits_in       : in    std_logic_vector (shift_bits_g-1
+                                                      downto 0)
+    ) ;
+  end component Shifter ;
+
   --  I2C control signals.
 
   signal i2c_latch            : std_logic ;
@@ -264,12 +289,12 @@ architecture rtl of I2C_IO is
   signal save_count           : unsigned (byte_count'length-1 downto 0) ;
   signal save_address         : unsigned (next_data_address'length-1
                                           downto 0) ;
---Variable used to pump two bytes into I2C_master on start of a new 
---command.                              
+--Variable used to pump two bytes into I2C_master on start of a new
+--command.
   signal i2c_started           :std_logic;
   signal i2c_busy_in_follower           :   std_logic ;
-                                          
-                                          
+
+
 
   --  Command processing states.
 
@@ -296,7 +321,24 @@ begin
 
   --  Output locally readable signals.
 
-  i2c_ena_out             <= i2c_latch ;
+  i2c_ena_out               <= i2c_latch ;
+
+  --  Shift the command structure.
+
+  cmd_shift : Shifter
+    Generic Map (
+      bits_wide_g           => cmd_struct'length,
+      shift_bits_g          => 8,
+      shift_right_g         => '1'
+    )
+    Port Map (
+      clk                   => clk,
+      load_buffer_in        => (others => '0'),
+      load_in               => '0',
+      shift_enable_in       => enable_shift,
+      unsigned (buffer_out) => cmd_struct,
+      shift_inbits_in       => mem_datafrom_in
+    ) ;
 
   --  Continuously calculate delays in cycles to handle calculations that
   --  are much longer than single clock cycles.
@@ -323,19 +365,20 @@ begin
   begin
 
     if (reset = '1') then
-      cur_state         <= state_wait_e ;
-      mem_req_out       <= '0' ;
-      i2c_req_out       <= '0' ;
-      i2c_latch         <= '0' ;
-      cmd_busy_out      <= '0' ;
-      save_count        <= (others => '0') ;
-      save_address      <= (others => '0') ;
-      
-      i2c_started         <= '0' ;
-      i2c_busy_in_follower <= '1';
+      cur_state             <= state_wait_e ;
+      mem_req_out           <= '0' ;
+      i2c_req_out           <= '0' ;
+      i2c_latch             <= '0' ;
+      cmd_busy_out          <= '0' ;
+      save_count            <= (others => '0') ;
+      save_address          <= (others => '0') ;
+      enable_shift          <= '0' ;
+
+      i2c_started           <= '0' ;
+      i2c_busy_in_follower  <= '1';
 
     elsif (rising_edge (clk)) then
-    
+      enable_shift          <= '0' ;
 
       --  Limit memory writes to a single clock cycle.
 
@@ -390,12 +433,7 @@ begin
         when state_read_cmd_e   =>
           if (byte_count /= cmd_struct_bytes_c) then
             byte_count          <= byte_count + 1 ;
-
-            cmd_struct (cmd_struct_len_c-9 downto 0)                  <=
-                              cmd_struct (cmd_struct_len_c-1 downto 8) ;
-            cmd_struct (cmd_struct_len_c-1 downto cmd_struct_len_c-8) <=
-                              unsigned(mem_datafrom_in) ;
-
+            enable_shift        <= '1' ;
             mem_address_out     <= nextcmd_address ;
             nextcmd_address     <= nextcmd_address + 1 ;
           else
@@ -478,7 +516,7 @@ begin
                 save_address      <= next_data_address ;
               end if ;
 
-              
+
               cur_state           <= state_waitlatch_write_e;
               i2c_data_wr_out     <= mem_datafrom_in ;
               i2c_latch           <= '1' ;
@@ -493,15 +531,15 @@ begin
         when state_write_busy_e =>
           mem_req_out           <= '0' ;
           mem_read_en_out       <= '0' ;
-          
+
           if (i2c_ack_error_in = '1') then
             cur_state           <= state_do_writes_e ;
             i2c_latch           <= '1' ;
             mem_req_out         <= '1' ;
 
-          --For me this needs to be once off. 
-          --Jump into delay state after I see two transitions on the busy line. 
-          --This accomodates both cmd_delays and no cmd_delay. 
+          --For me this needs to be once off.
+          --Jump into delay state after I see two transitions on the busy line.
+          --This accomodates both cmd_delays and no cmd_delay.
           elsif (i2c_busy_in_follower /= i2c_busy_in) then
             i2c_busy_in_follower  <= i2c_busy_in;
               --  Wait for subcommand delay when this was the last write.
@@ -519,8 +557,8 @@ begin
               end if ;
             end if;
           end if ;
-          
-          
+
+
         when state_write_subcmd_wait_e =>
 
               if (delay_count /= subcmd_delay_cycles) then
@@ -529,12 +567,12 @@ begin
                 delay_count       <= (others => '0') ;
 
                 cur_state         <= state_do_writes_e ;
-                
+
                 mem_req_out       <= '1' ;
                 mem_read_en_out   <= '1' ;
               end if ;
 
-          
+
 
         --  Start reading data from the I2C bus.  Checks to determine if
         --  this is the last read of a subcommand are made before waiting
@@ -578,7 +616,7 @@ begin
             byte_count          <= byte_count + 1 ;
           end if ;
         end if ;
-         
+
 
         --  Wait until the bus is not busy.
 
@@ -617,7 +655,7 @@ begin
             mem_address_out       <= next_data_address ;
             next_data_address     <= next_data_address + 1 ;
           end if ;
-          
+
         --I2C Master Latches in Command at slower
         --clock.
         when state_waitlatch_write_e  =>
@@ -629,9 +667,9 @@ begin
               cur_state               <= state_write_busy_e ;
             end if ;
           end if;
-          
+
         --I2C Master Latches in Command at slower
-        --Data clock. Wait for it to do that. 
+        --Data clock. Wait for it to do that.
         when state_waitlatch_read_e  =>
           if (i2c_busy_in = '1') then
             cur_state             <= state_do_reads_e ;

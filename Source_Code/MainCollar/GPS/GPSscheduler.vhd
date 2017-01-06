@@ -129,15 +129,35 @@ architecture rtl of GPSscheduler is
   --  still be able to catch the signal.
 
   signal turnon             : std_logic ;
+  signal turnon_s           : std_logic ;
+  signal turnon_ff          : std_logic ;
   signal turnon_set         : std_logic ;
   signal turnon_clear       : std_logic ;
   signal turnon_started     : std_logic := '0' ;
   signal turnoff            : std_logic ;
+  signal turnoff_s          : std_logic ;
+  signal turnoff_ff         : std_logic ;
   signal turnoff_clear      : std_logic ;
   signal turnoff_started    : std_logic := '0' ;
   signal shutdown           : std_logic ;
+  signal shutdown_s         : std_logic ;
+  signal shutdown_ff        : std_logic ;
   signal shutdown_clear     : std_logic ;
   signal shutdown_started   : std_logic := '0' ;
+  signal power              : std_logic ;
+  signal power_s            : std_logic ;
+  signal init               : std_logic ;
+  signal init_s             : std_logic ;
+  signal timemark           : std_logic ;
+  signal timemark_s         : std_logic ;
+  signal aop_updated        : std_logic ;
+  signal aop_updated_s      : std_logic ;
+  signal aop_running        : std_logic ;
+  signal aop_running_s      : std_logic ;
+  signal sched_rcv          : std_logic ;
+  signal sched_rcv_s        : std_logic ;
+  signal sched_start        : std_logic ;
+  signal sched_start_s      : std_logic ;
   signal last_timemark      : std_logic ;
   signal last_aop_updated   : std_logic ;
 
@@ -179,7 +199,8 @@ architecture rtl of GPSscheduler is
 
 begin
 
-  --  Catch the startup, shutdown, turnon, and turnoff signals.
+  --  Catch the startup, shutdown, turnon, turnoff, and scheduler receive
+  --  signals.
   --  The signals may be shorter than the clock period used for this entity.
   --  An asynchronous SR flip flop will still be able to catch the signal.
   --  The result will be set if the initialize start signal is set or the
@@ -197,7 +218,7 @@ begin
     Port Map (
       reset_in              => turnon_clear,
       set_in                => turnon_set,
-      result_rd_out         => turnon
+      result_rd_out         => turnon_ff
     ) ;
 
   turnoff_sig : SR_FlipFlop
@@ -207,7 +228,7 @@ begin
     Port Map (
       reset_in              => turnoff_clear,
       set_in                => turnoff_in,
-      result_rd_out         => turnoff
+      result_rd_out         => turnoff_ff
     ) ;
 
   shutdown_sig : SR_FlipFlop
@@ -217,13 +238,13 @@ begin
     Port Map (
       reset_in              => shutdown_clear,
       set_in                => shutdown_in,
-      result_rd_out         => shutdown
+      result_rd_out         => shutdown_ff
     ) ;
 
   --  Entity busy.
 
-  busy_out          <= turnon or turnoff or shutdown or process_busy or
-                       (last_timemark xor timemark_in) ;
+  busy_out          <= turnon_ff or turnoff_ff or shutdown_ff or
+                       process_busy or (last_timemark xor timemark_in) ;
 
 
   --------------------------------------------------------------------------
@@ -234,9 +255,27 @@ begin
   begin
     if (reset = '1') then
       startup_out           <= '0' ;
+      turnon                <= '0' ;
+      turnon_s              <= '0' ;
       turnon_started        <= '0' ;
+      turnoff               <= '0' ;
+      turnoff_s             <= '0' ;
       turnoff_started       <= '0' ;
+      shutdown              <= '0' ;
+      shutdown_s            <= '0' ;
       shutdown_started      <= '0' ;
+      power                 <= '0' ;
+      power_s               <= '0' ;
+      init                  <= '0' ;
+      init_s                <= '0' ;
+      timemark              <= '0' ;
+      timemark_s            <= '0' ;
+      aop_updated           <= '0' ;
+      aop_updated_s         <= '0' ;
+      sched_rcv             <= '0' ;
+      sched_rcv_s           <= '0' ;
+      sched_start           <= '0' ;
+      sched_start_s         <= '0' ;
       power_out             <= '0' ;
       shutdown_out          <= '0' ;
       init_out              <= '0' ;
@@ -251,7 +290,29 @@ begin
       process_busy          <= '1' ;
       cur_state             <= SCHED_STATE_WAIT ;
 
+    elsif (falling_edge (clk)) then
+      turnon                <= turnon_s ;
+      turnoff               <= turnoff_s ;
+      shutdown              <= shutdown_s ;
+      power                 <= power_s ;
+      init                  <= init_s ;
+      timemark              <= timemark_s ;
+      aop_updated           <= aop_updated_s ;
+      aop_running           <= aop_running_s ;
+      sched_rcv             <= sched_rcv_s ;
+      sched_start           <= sched_start_s ;
+
     elsif (rising_edge (clk)) then
+      turnon_s              <= turnon_ff ;
+      turnoff_s             <= turnoff_ff ;
+      shutdown_s            <= shutdown_ff ;
+      power_s               <= power_in ;
+      init_s                <= init_in ;
+      timemark_s            <= timemark_in ;
+      aop_updated_s         <= aop_updated_in ;
+      aop_running_s         <= aop_running_in ;
+      sched_rcv_s           <= sched_rcv_in ;
+      sched_start_s         <= sched_start_in ;
 
       --  Initialization states.
 
@@ -266,39 +327,42 @@ begin
 
           if (turnon = '1') then
             turnon_started      <= '1' ;
+            turnon_s            <= '0' ;
             power_out           <= '1' ;
             process_busy        <= '1' ;
             cur_state           <= SCHED_STATE_POWERON ;
 
           elsif (turnoff = '1') then
             turnoff_started     <= '1' ;
+            turnoff_s           <= '0' ;
             pollint_out         <= (others => '0') ;
             power_out           <= '0' ;
             process_busy        <= '1' ;
             cur_state           <= SCHED_STATE_POWEROFF ;
 
           elsif (shutdown = '1') then
-            if (power_in = '0') then
+            if (power = '0') then
               power_out         <= '0' ;
               shutdown_out      <= '1' ;
               shutdown_started  <= '1' ;
+              shutdown_s        <= '0' ;
             else
               pollint_out       <= TO_UNSIGNED (poll_fast_g,
                                                 pollint_out'length) ;
-              last_aop_updated  <= aop_updated_in ;
+              last_aop_updated  <= aop_updated ;
               process_busy      <= '1' ;
               cur_state         <= SCHED_STATE_AOP ;
             end if ;
 
           --  Turn off the GPS after it has received a new timemark.
 
-          elsif (last_timemark /= timemark_in) then
-            if (power_in = '0') then
+          elsif (last_timemark /= timemark) then
+            if (power = '0') then
               last_timemark     <= '0' ;
             else
               pollint_out       <= TO_UNSIGNED (poll_fast_g,
                                                 pollint_out'length) ;
-              last_aop_updated  <= aop_updated_in ;
+              last_aop_updated  <= aop_updated ;
               process_busy      <= '1' ;
               cur_state         <= SCHED_STATE_AOP ;
             end if ;
@@ -313,7 +377,7 @@ begin
         when SCHED_STATE_POWERON    =>
           turnon_started      <= '0' ;
 
-          if (power_in = '1') then
+          if (power = '1') then
             init_out          <= '1' ;
             cur_state         <= SCHED_STATE_INIT ;
           end if ;
@@ -323,9 +387,9 @@ begin
         when SCHED_STATE_INIT       =>
           init_out            <= '0' ;
 
-          if (init_in = '1') then
+          if (init = '1') then
             startup_out       <= '1' ;
-            last_timemark     <= timemark_in ;
+            last_timemark     <= timemark ;
             pollint_out       <= TO_UNSIGNED (poll_interval_g,
                                               pollint_out'length) ;
             sched_req_out     <= '1' ;
@@ -335,7 +399,7 @@ begin
         when SCHED_STATE_TURNOFF    =>
           startup_out         <= '0' ;
 
-          if (sched_rcv_in = '1') then
+          if (sched_rcv = '1') then
             sched_type_out    <= '1' ;
             sched_id_out      <= TO_UNSIGNED (turnoff_id_g,
                                               sched_id_out'length) ;
@@ -360,13 +424,13 @@ begin
         when SCHED_STATE_POWEROFF   =>
           turnoff_started     <= '0' ;
 
-          if (power_in = '0') then
+          if (power = '0') then
             sched_req_out     <= '1' ;
             cur_state         <= SCHED_STATE_TURNON ;
           end if ;
 
         when SCHED_STATE_TURNON     =>
-          if (sched_rcv_in = '1') then
+          if (sched_rcv = '1') then
             sched_type_out    <= '1' ;
             sched_id_out      <= TO_UNSIGNED (turnon_id_g,
                                               sched_id_out'length) ;
@@ -389,15 +453,16 @@ begin
         --  Wait for AOP status to go low.
 
         when SCHED_STATE_AOP        =>
-          if (last_aop_updated /= aop_updated_in) then
-            last_aop_updated      <= aop_updated_in ;
+          if (last_aop_updated /= aop_updated) then
+            last_aop_updated      <= aop_updated ;
 
-            if (aop_running_in = '0') then
+            if (aop_running = '0') then
               pollint_out         <= (others => '0') ;
               power_out           <= '0' ;
 
               if (shutdown = '1') then
                 shutdown_started  <= '1' ;
+                shutdown_s        <= '0' ;
                 shutdown_out      <= '1' ;
                 cur_state         <= SCHED_STATE_WAIT ;
               else
@@ -409,13 +474,13 @@ begin
         --  Wait for the scheduling operation to complete.
 
         when SCHED_STATE_DELAY      =>
-          if (sched_start_in = '1') then
+          if (sched_start = '1') then
             sched_start_out   <= '0' ;
             cur_state         <= SCHED_STATE_DONE ;
           end if ;
 
         when SCHED_STATE_DONE       =>
-          if (sched_start_in = '0') then
+          if (sched_start = '0') then
             cur_state         <= next_state ;
           end if ;
 

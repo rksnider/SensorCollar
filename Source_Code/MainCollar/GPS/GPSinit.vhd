@@ -60,7 +60,6 @@ use WORK.gps_message_ctl_pkg.all ;  --  GPS message control definitions.
 --! @param      init_done_out     The initialization process has finished.
 --! @param      init_select_in    Number of the initialization sequence to
 --!                               use.
---! @param      gps_timepulse_in  Timepulse signal from the GPS.
 --! @param      sendreq_out       Request access to the message sender.
 --! @param      sendrcv_in        The message sender is allocated to this
 --!                               entity.
@@ -99,7 +98,6 @@ entity GPSinit is
     init_done_out     : out   std_logic_vector (msg_init_table_c'length-1
                                                 downto 0) ;
     init_select_in    : in    unsigned (msg_init_bits_c-1 downto 0) ;
-    gps_timepulse_in  : in    std_logic ;
     sendreq_out       : out   std_logic ;
     sendrcv_in        : in    std_logic ;
     memreq_out        : out   std_logic ;
@@ -129,7 +127,10 @@ architecture rtl of GPSinit is
 
   signal init_started       : std_logic := '0' ;
   signal start_init         : std_logic ;
-  signal timepulse_last     : std_logic ;
+  signal start_init_s       : std_logic ;
+  signal start_init_set     : std_logic ;
+  signal init_select        : unsigned (init_select_in'length-1 downto 0) ;
+  signal init_select_s      : unsigned (init_select_in'length-1 downto 0) ;
   signal init_bit           : unsigned (msg_init_table_c'length-1 downto 0) ;
   signal init_bit_last      : unsigned (msg_init_table_c'length-1 downto 0) ;
   signal init_done          : unsigned (msg_init_table_c'length-1 downto 0) ;
@@ -227,15 +228,12 @@ begin
   --  Catch the initialization signal.  The signal may be shorter than the
   --  clock period used for this entity.  An asynchronous SR flip flop will
   --  still be able to catch the signal.
-  --  The result will be set if the initialize start signal is set or the
-  --  timepulse signal has changed since the last initialization.
 
   init_sig : SR_FlipFlop
     Port Map (
       reset_in              => init_started,
-      set_in                => init_start_in or (gps_timepulse_in xor
-                                                 timepulse_last),
-      result_rd_out         => start_init
+      set_in                => init_start_in,
+      result_rd_out         => start_init_set
     ) ;
 
   --  Catch a part of the startup time to use as a timer.
@@ -257,13 +255,13 @@ begin
   --  Initialation bit for current initialization.
 
   init_bit          <= SHIFT_LEFT (TO_UNSIGNED (1, init_bit'length),
-                                   TO_INTEGER  (init_select_in)) ;
+                                   TO_INTEGER  (init_select)) ;
 
   init_done_out     <= std_logic_vector (init_done) ;
 
   --  Entity busy.
 
-  busy_out          <= start_init or process_busy ;
+  busy_out          <= start_init_set or process_busy ;
 
 
   --------------------------------------------------------------------------
@@ -273,6 +271,8 @@ begin
   init_messages:  process (reset, clk)
   begin
     if (reset = '1') then
+      init_select           <= (others => '0') ;
+      init_select_s         <= (others => '0') ;
       init_started          <= '0' ;
       init_done             <= (others => '0') ;
       init_bit_last         <= (others => '0') ;
@@ -285,7 +285,13 @@ begin
       process_busy          <= '1' ;
       cur_state             <= INIT_STATE_WAIT ;
 
+    elsif (falling_edge (clk)) then
+      init_select           <= init_select_s ;
+      start_init            <= start_init_s ;
+
     elsif (rising_edge (clk)) then
+      init_select_s         <= init_select_in ;
+      start_init_s          <= start_init_set ;
 
       --  Initialization states.
 
@@ -301,7 +307,7 @@ begin
             init_bit_last     <= init_bit ;
             mem_inaddress     <=
               CONST_UNSIGNED (msg_rom_base_c) +
-              TO_UNSIGNED (msg_init_table_c (TO_INTEGER (init_select_in)),
+              TO_UNSIGNED (msg_init_table_c (TO_INTEGER (init_select)),
                            mem_inaddress'length) ;
             sendreq_out       <= '1' ;
             cur_state         <= INIT_STATE_START ;
@@ -466,7 +472,6 @@ begin
         when INIT_STATE_MSG_DONE    =>
           if (sendready_in = '1') then
             if (last_message = '1') then
-              timepulse_last  <= gps_timepulse_in ;
               sendreq_out     <= '0' ;
               init_done       <= init_done or init_bit_last ;
               cur_state       <= INIT_STATE_WAIT ;
