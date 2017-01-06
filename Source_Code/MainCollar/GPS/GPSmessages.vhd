@@ -61,21 +61,39 @@ use WORK.msg_ubx_tim_tm2_pkg.all ;
 --!                                   GPS memory.
 --! @param      mem_databits_g        Number of data bits used for the GPS
 --!                                   memory.
+--! @param      sched_count_g         Number of scheduler bits.
+--! @param      turn_id_g             Scheduler ID to turn on GPS.
+--! @param      turnoff_id_g          Scheduler ID to turn off GPS.
 --! @param      reset                 Reset the entity to an initial state.
 --! @param      clk                   Clock used to move throuth states in
 --!                                   the entity and its components.
+--! @param      milli_clk             Millisecond clock.
+--! @param      milli8_clk            8 Millisecond clock useful for
+--!                                   calculating seconds.  (125 = 1 sec)
 --! @param      curtime_in            Time since reset in GPS time format.
 --! @param      curtime_latch_in      Latch curtime across clock domains.
 --! @param      curtime_valid_in      Latched curtime is valid when set.
 --! @param      curtime_vlatch_in     Latch curtime when valid not set.
+--! @param      gps_start_in          Start the GPS at system startup.
+--! @param      gps_start_out         The GPS has started at system startup.
+--! @param      gps_stop_in           Stop the GPS at system shutdown.
+--! @param      gps_stop_out          The GPS has stopped at system shutdown.
+--! @param      gps_power_in          The GPS is powerred up.
+--! @param      gps_power_out         Power up the GPS.
 --! @param      gps_enable_in         Run the GPS system.
---! @param      gps_init_start_in     Start initializing the GPS.
---! @param      gps_init_done_out     The GPS has been initialized.
---! @param      pollinterval_in       Number of seconds between message
---!                                   polls.
 --! @param      datavalid_out         The bank of memory with the newest
 --!                                   valid data if two banks are available,
 --!                                   otherwise set when data is valid.
+--! @param      pulsebank_out         The bank of memory with the newest
+--!                                   time pulse times in it.
+--! @param      sched_req_out         Request access to the scheduler.
+--! @param      sched_rcv_in          Access to the scheduler granted.
+--! @param      sched_events_in       Scheduled events that have occured.
+--! @param      sched_type_out        Scheduler request type.
+--! @param      sched_id_out          Scheduler request ID.
+--! @param      sched_delay_out       Schedluer delay in seconds.
+--! @param      sched_start_in        The scheduler request has started.
+--! @param      sched_start_out       Start a scheduler request.
 --! @param      gpsmem_clk_out        Clock used to drive the memory from
 --!                                   port A.
 --! @param      gpsmem_addr_out       Address to read from memory port A.
@@ -88,8 +106,6 @@ use WORK.msg_ubx_tim_tm2_pkg.all ;
 --! @param      timemarker_out        Signal sent to GPS to generate a time
 --!                                   mark.
 --! @param      gps_timepulse_in      Timepulse signal from GPS.
---! @param      aop_running_out       AssistNow Autonomous is currently
---!                                   running.
 --! @param      busy_out              The GPS components are actively
 --!                                   working.
 --
@@ -100,23 +116,45 @@ entity GPSmessages is
   Generic (
     clk_freq_g            : natural := 50e6 ;
     mem_addrbits_g        : natural := 9 ;
-    mem_databits_g        : natural := 8
+    mem_databits_g        : natural := 8 ;
+    sched_count_g         : natural := 8 ;
+    turnon_id_g           : natural := 0 ;
+    turnoff_id_g          : natural := 1
   ) ;
   Port (
     reset                 : in    std_logic ;
     clk                   : in    std_logic ;
+    milli_clk             : in    std_logic ;
+    milli8_clk            : in    std_logic ;
     curtime_in            : in    std_logic_vector (gps_time_bits_c-1
                                                     downto 0) ;
     curtime_latch_in      : in    std_logic ;
     curtime_valid_in      : in    std_logic ;
     curtime_vlatch_in     : in    std_logic ;
 
+    gps_start_in          : in    std_logic ;
+    gps_start_out         : out   std_logic ;
+    gps_stop_in           : in    std_logic ;
+    gps_stop_out          : out   std_logic ;
+    gps_power_in          : in    std_logic ;
+    gps_power_out         : out   std_logic ;
     gps_enable_in         : in    std_logic ;
-    gps_init_start_in     : in    std_logic ;
-    gps_init_done_out     : out   std_logic ;
-    pollinterval_in       : in    unsigned (13 downto 0) ;
+
     datavalid_out         : out   std_logic_vector (msg_ram_blocks_c-1
                                                     downto 0) ;
+    pulsebank_out         : out   std_logic ;
+
+    sched_req_out         : out   std_logic ;
+    sched_rcv_in          : in    std_logic ;
+    sched_events_in       : in    std_logic_vector (sched_count_g-1
+                                                    downto 0) ;
+    sched_type_out        : out   std_logic ;
+    sched_id_out          : out   unsigned (const_bits (sched_count_g-1)-1
+                                          downto 0) ;
+    sched_delay_out       : out
+            unsigned (const_bits (millisec_week_c / 1000 - 1)-1 downto 0) ;
+    sched_start_in        : in    std_logic ;
+    sched_start_out       : out   std_logic ;
 
     gpsmem_clk_out        : out   std_logic ;
     gpsmem_addr_out       : out   std_logic_vector (mem_addrbits_g-1
@@ -131,7 +169,6 @@ entity GPSmessages is
     gps_tx_out            : out   std_logic ;
     timemarker_out        : out   std_logic ;
     gps_timepulse_in      : in    std_logic ;
-    aop_running_out       : out   std_logic ;
     busy_out              : out   std_logic
   ) ;
 
@@ -298,6 +335,7 @@ architecture structural of GPSmessages is
     Port (
       reset           : in    std_logic ;
       clk             : in    std_logic ;
+      milli8_clk      : in    std_logic ;
       curtime_in      : in    std_logic_vector (gps_time_bits_c-1
                                                 downto 0) ;
       dlatch_in       : in    std_logic ;
@@ -342,6 +380,7 @@ architecture structural of GPSmessages is
       memaddr_out     : out   std_logic_vector (memaddr_bits_g-1 downto 0) ;
       memread_en_out  : out   std_logic ;
       running_out     : out   std_logic ;
+      updated_out     : out   std_logic ;
       busy_out        : out   std_logic
     ) ;
 
@@ -350,45 +389,55 @@ architecture structural of GPSmessages is
   --  Generate Time Marks periodically.
 
   component TimeMark is
-
-  Generic (
-    time_mark_interval_g  : natural := 5 * 60 * 1000 ;
-    time_mark_timeout_g   : natural := 20 * 1000 ;
-    time_mark_wait_g      : natural := 60 * 1000 ;
-    min_pos_accuracy_g    : natural := 100 * 100 ;
-    max_pos_age_g         : natural := 15 * 60 * 1000 ;
-    memaddr_bits_g        : natural := 8
-  ) ;
-  Port (
-    clk                   : in    std_logic ;
-    reset                 : in    std_logic ;
-    curtime_in            : in    std_logic_vector (gps_time_bits_c-1
-                                                    downto 0) ;
-    curtime_latch_in      : in    std_logic ;
-    curtime_valid_in      : in    std_logic ;
-    curtime_vlatch_in     : in    std_logic ;
-
-    initialized_in        : in    std_logic ;
-    posbank_in            : in    std_logic ;
-    tmbank_in             : in    std_logic ;
-    memreq_out            : out   std_logic ;
-    memrcv_in             : in    std_logic ;
-    memaddr_out           : out   std_logic_vector (memaddr_bits_g-1
-                                                    downto 0) ;
-    memdata_in            : in    std_logic_vector (7 downto 0) ;
-    memread_en_out        : out   std_logic ;
-    continuous_start_out  : out   std_logic ;
-    continuous_done_in    : in    std_logic ;
-    powersave_start_out   : out   std_logic ;
-    powersave_done_in     : in    std_logic ;
-    marker_out            : out   std_logic ;
-    marker_time_out       : out   std_logic_vector (gps_time_bits_c-1
-                                                    downto 0) ;
-    req_position_out      : out   std_logic ;
-    req_timemark_out      : out   std_logic ;
-    busy_out              : out   std_logic
+    Generic (
+      curtime_freq_g        : natural := 1e6 ;
+      time_mark_interval_g  : natural := 5 * 60 * 1000 ;
+      time_mark_timeout_g   : natural := 20 * 1000 ;
+      time_mark_wait_g      : natural := 60 * 1000 ;
+      mark_timeout_g        : natural := 10 * 1000 ;
+      mark_retries_g        : natural := 5 ;
+      min_pos_accuracy_g    : natural := 100 * 100 ;
+      max_pos_age_g         : natural := 15 * 60 * 1000 ;
+      memaddr_bits_g        : natural := 8
     ) ;
+    Port (
+      clk                   : in    std_logic ;
+      reset                 : in    std_logic ;
+      milli_clk             : in    std_logic ;
+      curtime_in            : in    std_logic_vector (gps_time_bits_c-1
+                                                      downto 0) ;
+      curtime_latch_in      : in    std_logic ;
+      curtime_valid_in      : in    std_logic ;
+      curtime_vlatch_in     : in    std_logic ;
 
+
+      initialized_in        : in    std_logic ;
+      posbank_in            : in    std_logic ;
+      tmbank_in             : in    std_logic ;
+      tempbank_in           : in    std_logic ;
+      pulsebank_out         : out   std_logic ;
+      msgnumber_in          : in    std_logic_vector (msg_count_bits_c-1
+                                                      downto 0) ;
+      memreq_out            : out   std_logic ;
+      memrcv_in             : in    std_logic ;
+      memaddr_out           : out   std_logic_vector (memaddr_bits_g-1
+                                                      downto 0) ;
+      memdata_in            : in    std_logic_vector (7 downto 0) ;
+      memdata_out           : out   std_logic_vector (7 downto 0) ;
+      memread_en_out        : out   std_logic ;
+      memwrite_en_out       : out   std_logic ;
+      continuous_start_out  : out   std_logic ;
+      continuous_done_in    : in    std_logic ;
+      powersave_start_out   : out   std_logic ;
+      powersave_done_in     : in    std_logic ;
+      pulse_in              : in    std_logic ;
+      marker_out            : out   std_logic ;
+      marker_time_out       : out   std_logic_vector (gps_time_bits_c-1
+                                                      downto 0) ;
+      req_position_out      : out   std_logic ;
+      req_timemark_out      : out   std_logic ;
+      busy_out              : out   std_logic
+    ) ;
   end component TimeMark ;
 
   --  Initialize the GPS on command.
@@ -408,7 +457,6 @@ architecture structural of GPSmessages is
       init_done_out     : out   std_logic_vector (msg_init_table_c'length-1
                                                   downto 0) ;
       init_select_in    : in    unsigned (msg_init_bits_c-1 downto 0) ;
-      gps_timepulse_in  : in    std_logic ;
       sendreq_out       : out   std_logic ;
       sendrcv_in        : in    std_logic ;
       memreq_out        : out   std_logic ;
@@ -427,6 +475,49 @@ architecture structural of GPSmessages is
       busy_out          : out   std_logic
     ) ;
   end component GPSinit ;
+
+  --  Startup and shutdown the GPS.
+
+  component GPSscheduler is
+    Generic (
+      sched_count_g     : natural := 8 ;
+      turnon_id_g       : natural := 0 ;
+      turnon_delay_g    : natural := 10 * 60 ;
+      turnoff_id_g      : natural := 1 ;
+      turnoff_delay_g   : natural := 4 * 60 ;
+      poll_interval_g   : natural := 15 ;
+      poll_fast_g       : natural := 3
+    ) ;
+    Port (
+      reset             : in    std_logic ;
+      clk               : in    std_logic ;
+      startup_in        : in    std_logic ;
+      startup_out       : out   std_logic ;
+      shutdown_in       : in    std_logic ;
+      shutdown_out      : out   std_logic ;
+      turnon_in         : in    std_logic ;
+      turnoff_in        : in    std_logic ;
+      power_in          : in    std_logic ;
+      power_out         : out   std_logic ;
+      init_in           : in    std_logic ;
+      init_out          : out   std_logic ;
+      timemark_in       : in    std_logic ;
+      pollint_out       : out   unsigned (13 downto 0) ;
+      aop_updated_in    : in    std_logic ;
+      aop_running_in    : in    std_logic ;
+      sched_req_out     : out   std_logic ;
+      sched_rcv_in      : in    std_logic ;
+      sched_type_out    : out   std_logic ;
+      sched_id_out      : out   unsigned (const_bits (sched_count_g-1)-1
+                                          downto 0) ;
+      sched_delay_out   : out
+            unsigned (const_bits (millisec_week_c / 1000 - 1)-1 downto 0) ;
+      sched_start_in    : in    std_logic ;
+      sched_start_out   : out   std_logic ;
+      busy_out          : out   std_logic
+    ) ;
+  end component GPSscheduler ;
+
 
   --  Memory requesters.
 
@@ -452,27 +543,18 @@ architecture structural of GPSmessages is
   signal memread_from         : std_logic_vector (mem_databits_g-1
                                                   downto 0) ;
 
-  signal meminput_tbl_start   : std_logic_2D (mem_user_cnt_c-1 downto 0,
+  signal pr_meminput_tbl      : std_logic_2D (mem_user_cnt_c-1 downto 0,
                                               mem_io_bits_c-1 downto 0) ;
-                                              
-  signal meminput_tbl_send    : std_logic_2D (mem_user_cnt_c-1 downto 0,
-                                              mem_io_bits_c-1 downto 0) ;   
-
-  signal meminput_tbl_poll    : std_logic_2D (mem_user_cnt_c-1 downto 0,
-                                              mem_io_bits_c-1 downto 0) ; 
-
-  signal meminput_tbl_aopstatus   : std_logic_2D (mem_user_cnt_c-1 downto 0,
-                                              mem_io_bits_c-1 downto 0) ; 
-
-  signal meminput_tbl_timemark    : std_logic_2D (mem_user_cnt_c-1 downto 0,
+  signal sd_meminput_tbl      : std_logic_2D (mem_user_cnt_c-1 downto 0,
                                               mem_io_bits_c-1 downto 0) ;
-
-
-  signal meminput_tbl_init    : std_logic_2D (mem_user_cnt_c-1 downto 0,
-                                              mem_io_bits_c-1 downto 0) ; 
-
-  signal meminput_tbl   : std_logic_2D (mem_user_cnt_c-1 downto 0,
-                                              mem_io_bits_c-1 downto 0) ;                                               
+  signal pl_meminput_tbl      : std_logic_2D (mem_user_cnt_c-1 downto 0,
+                                              mem_io_bits_c-1 downto 0) ;
+  signal ao_meminput_tbl      : std_logic_2D (mem_user_cnt_c-1 downto 0,
+                                              mem_io_bits_c-1 downto 0) ;
+  signal tm_meminput_tbl      : std_logic_2D (mem_user_cnt_c-1 downto 0,
+                                              mem_io_bits_c-1 downto 0) ;
+  signal in_meminput_tbl      : std_logic_2D (mem_user_cnt_c-1 downto 0,
+                                              mem_io_bits_c-1 downto 0) ;
 
   signal memselected          : std_logic_vector (mem_io_bits_c-1
                                                   downto 0) ;
@@ -531,7 +613,10 @@ architecture structural of GPSmessages is
 
   signal memaddr_timemark     : std_logic_vector (mem_addrbits_g-1
                                                   downto 0) ;
+  signal memwrite_to_timemark : std_logic_vector (mem_databits_g-1
+                                                  downto 0) ;
   signal memread_en_timemark  : std_logic ;
+  signal memwrite_en_timemark : std_logic ;
   signal memctl_timemark      : std_logic_vector (mem_io_bits_c-1
                                                   downto 0) ;
 
@@ -594,13 +679,9 @@ architecture structural of GPSmessages is
   signal sendreq              : std_logic_vector (sendcnt_c-1 downto 0) ;
   signal sendrcv              : std_logic_vector (sendcnt_c-1 downto 0) ;
 
-  signal sendinput_tbl_start    : std_logic_2D (sendcnt_c-1      downto 0,
+  signal pl_sendinput_tbl     : std_logic_2D (sendcnt_c-1      downto 0,
                                               send_io_bits_c-1 downto 0) ;
-                                              
-  signal sendinput_tbl_init        : std_logic_2D (sendcnt_c-1      downto 0,
-                                              send_io_bits_c-1 downto 0) ;
-                                              
-  signal sendinput_tbl        : std_logic_2D (sendcnt_c-1      downto 0,
+  signal in_sendinput_tbl     : std_logic_2D (sendcnt_c-1      downto 0,
                                               send_io_bits_c-1 downto 0) ;
 
   signal sendselected         : std_logic_vector (send_io_bits_c-1
@@ -637,7 +718,9 @@ architecture structural of GPSmessages is
 
   --  Information about messages to poll.
 
-  signal pollmessages         : std_logic_vector (msg_count_c-1 downto 0) ;
+  signal pollinterval         : unsigned (13 downto 0) ;
+  signal pollmessages         : std_logic_vector (msg_count_c-1 downto 0) :=
+                                    (others => '0') ;
   signal msgclass_poll        : std_logic_vector (send_classbits_c-1
                                                   downto 0) ;
   signal msgid_poll           : std_logic_vector (send_idbits_c-1
@@ -645,6 +728,11 @@ architecture structural of GPSmessages is
   signal sendout_poll         : std_logic ;
   signal sendctl_poll         : std_logic_vector (send_io_bits_c-1
                                                   downto 0) ;
+
+  --  Information about AOP messages.
+
+  signal aop_running          : std_logic ;
+  signal aop_updated          : std_logic ;
 
   --  Information about timemark messages.
 
@@ -693,6 +781,7 @@ architecture structural of GPSmessages is
   signal parser_busy          : std_logic ;
   signal aop_busy             : std_logic ;
   signal init_busy            : std_logic ;
+  signal gps_init_start       : std_logic ;
   signal gps_init_done        : std_logic ;
   signal continuous_init_done : std_logic ;
   signal powersave_init_done  : std_logic ;
@@ -714,7 +803,6 @@ begin
 
   datavalid_out               <= databank ;
 
-  gps_init_done_out           <= gps_init_done ;
   busy_out                    <= parse_clk_en ;
 
   --  Generated clocks used by the GPS components.
@@ -768,7 +856,7 @@ begin
       reset                   => reset,
       clk                     => memalloc_clk,
       requesters_in           => memrequesters,
-      resource_tbl_in         => meminput_tbl,
+      resource_tbl_in         => in_meminput_tbl,
       receivers_out           => memreceivers,
       resources_out           => memselected
     ) ;
@@ -842,8 +930,7 @@ begin
   memctl_parser               <= memwrite_en_parser & memread_en_parser &
                                  memwrite_to_parser & memaddr_parser ;
 
-  set2D_element (memreq_parser_c, memctl_parser, meminput_tbl_start,
-                         meminput_tbl_send) ;
+  set2D_element (memreq_parser_c, memctl_parser, zero2D, pr_meminput_tbl) ;
 
   --  GPS Message sender multiplexer allows multiple entities to share
   --  access to the message sender module.
@@ -857,7 +944,7 @@ begin
       reset                   => reset,
       clk                     => parse_clk,
       requesters_in           => sendreq,
-      resource_tbl_in         => sendinput_tbl,
+      resource_tbl_in         => in_sendinput_tbl,
       receivers_out           => sendrcv,
       resources_out           => sendselected
     ) ;
@@ -889,8 +976,8 @@ begin
   memctl_send                 <= memwrite_en_none_c & memread_en_send &
                                  memwrite_to_none_c & memaddr_send ;
 
-  set2D_element (memreq_send_c, memctl_send, meminput_tbl_send,
-                            meminput_tbl_poll) ;
+  set2D_element (memreq_send_c, memctl_send,
+                 pr_meminput_tbl, sd_meminput_tbl) ;
 
   --  Message poller.
 
@@ -901,11 +988,12 @@ begin
     Port Map (
       reset                   => reset or (not gps_init_done),
       clk                     => parse_clk,
+      milli8_clk              => milli8_clk,
       curtime_in              => curtime_in,
       dlatch_in               => curtime_latch_in,
       vlatch_in               => curtime_vlatch_in,
       valid_in                => curtime_valid_in,
-      pollinterval_in         => pollinterval_in,
+      pollinterval_in         => pollinterval,
       pollmessages_in         => pollmessages,
       sendready_in            => sendready,
       sendrcv_in              => sendrcv (send_poll_c),
@@ -924,8 +1012,8 @@ begin
   memctl_poll                 <= memwrite_en_none_c & memread_en_poll &
                                  memwrite_to_none_c & memaddr_poll ;
 
-  set2D_element (memreq_poll_c, memctl_poll, meminput_tbl_poll,
-                                meminput_tbl_aopstatus) ;
+  set2D_element (memreq_poll_c, memctl_poll,
+                 sd_meminput_tbl, pl_meminput_tbl) ;
 
   --  GPS message sender multiplexing entry.
 
@@ -933,7 +1021,7 @@ begin
                                  send_nomsgstart_c  & msgid_poll          &
                                  msgclass_poll ;
 
-  set2D_element (send_poll_c, sendctl_poll, sendinput_tbl_start,sendinput_tbl_init) ;
+  set2D_element (send_poll_c, sendctl_poll, zero2D, pl_sendinput_tbl) ;
 
   --  Handle AssistNow Autonomous status messages.
 
@@ -953,21 +1041,23 @@ begin
       memreq_out              => memrequesters (memreq_aopstat_c),
       memaddr_out             => memaddr_aopstat,
       memread_en_out          => memread_en_aopstat,
-      running_out             => aop_running_out,
+      running_out             => aop_running,
+      updated_out             => aop_updated,
       busy_out                => aop_busy
     ) ;
 
   memctl_aopstat              <= memwrite_en_none_c & memread_en_aopstat &
                                  memwrite_to_none_c & memaddr_aopstat ;
 
-  set2D_element (memreq_aopstat_c, memctl_aopstat, meminput_tbl_aopstatus,
-                        meminput_tbl_timemark) ;
+  set2D_element (memreq_aopstat_c, memctl_aopstat,
+                 pl_meminput_tbl, ao_meminput_tbl) ;
 
   --  Time mark generator.
 
   gps_timemark : TimeMark
 
     Generic Map (
+      curtime_freq_g          => clk_freq_g,
       time_mark_interval_g    => 2 * 60 * 1000,
       time_mark_timeout_g     => 40 * 1000,
       time_mark_wait_g        => 60 * 1000,
@@ -978,6 +1068,7 @@ begin
     Port Map (
       reset                   => reset,
       clk                     => parse_clk,
+      milli_clk               => milli_clk,
       curtime_in              => curtime_in,
       curtime_latch_in        => curtime_latch_in,
       curtime_valid_in        => curtime_valid_in,
@@ -985,15 +1076,21 @@ begin
       initialized_in          => gps_init_done,
       posbank_in              => databank (msg_ubx_nav_sol_ramblock_c),
       tmbank_in               => databank (msg_ubx_tim_tm2_ramblock_c),
+      tempbank_in             => tempbank,
+      pulsebank_out           => pulsebank_out,
+      msgnumber_in            => msg_number,
       memdata_in              => gpsmem_readfrom_in,
+      memdata_out             => memwrite_to_timemark,
       memrcv_in               => memreceivers  (memreq_timemark_c),
       memreq_out              => memrequesters (memreq_timemark_c),
       memaddr_out             => memaddr_timemark,
       memread_en_out          => memread_en_timemark,
+      memwrite_en_out         => memwrite_en_timemark,
       continuous_start_out    => continuous_init_start,
       continuous_done_in      => continuous_init_done,
       powersave_start_out     => powersave_init_start,
       powersave_done_in       => powersave_init_done,
+      pulse_in                => gps_timepulse_in,
       marker_out              => timemarker_out,
       marker_time_out         => tm_marker_time,
       req_position_out        => tm_req_position,
@@ -1001,16 +1098,16 @@ begin
       busy_out                => timemark_busy
     ) ;
 
-  memctl_timemark             <= memwrite_en_none_c &
-                                 memread_en_timemark &
-                                 memwrite_to_none_c & memaddr_timemark ;
+  memctl_timemark             <= memwrite_en_timemark &
+                                 memread_en_timemark  &
+                                 memwrite_to_timemark & memaddr_timemark ;
 
-  set2D_element (memreq_timemark_c, memctl_timemark, meminput_tbl_timemark,
-                                    meminput_tbl_init) ;
+  set2D_element (memreq_timemark_c, memctl_timemark,
+                 ao_meminput_tbl, tm_meminput_tbl) ;
 
   --  Select the initialization to do.
 
-  init_start                  <= gps_init_start_in          or
+  init_start                  <= gps_init_start             or
                                  continuous_init_start      or
                                  powersave_init_start ;
 
@@ -1019,7 +1116,7 @@ begin
   powersave_init_done         <= init_done_tbl (2) ;
 
   init_select                 <= TO_UNSIGNED (0, init_select'length)
-                                    when (gps_init_start_in = '1') else
+                                    when (gps_init_start = '1') else
                                  TO_UNSIGNED (1, init_select'length)
                                     when (continuous_init_start = '1') else
                                  TO_UNSIGNED (2, init_select'length)
@@ -1044,7 +1141,6 @@ begin
       init_start_in             => init_start,
       init_done_out             => init_done_tbl,
       init_select_in            => init_select,
-      gps_timepulse_in          => '0',
       sendreq_out               => sendreq (send_init_c),
       sendrcv_in                => sendrcv (send_init_c),
       memreq_out                => memrequesters (memreq_init_c),
@@ -1066,7 +1162,8 @@ begin
   memctl_init                   <= memwrite_en_init   & memread_en_init   &
                                    memwrite_to_init   & memaddr_init ;
 
-  set2D_element (memreq_init_c, memctl_init,meminput_tbl_init,meminput_tbl);
+  set2D_element (memreq_init_c, memctl_init,
+                 tm_meminput_tbl, in_meminput_tbl) ;
 
   --  GPS message sender multiplexing entry.
 
@@ -1074,7 +1171,46 @@ begin
                                  msgstart_init      & msgid_init          &
                                  msgclass_init ;
 
-  set2D_element (send_init_c, sendctl_init, sendinput_tbl_init, sendinput_tbl) ;
+  set2D_element (send_init_c, sendctl_init,
+                 pl_sendinput_tbl, in_sendinput_tbl) ;
+
+  --  GPS startup and shutdown.
+
+  gps_onoff : GPSscheduler
+    Generic Map (
+      sched_count_g     => sched_count_g,
+      turnon_id_g       => turnon_id_g,
+      turnon_delay_g    => 10 * 60,
+      turnoff_id_g      => turnoff_id_g,
+      turnoff_delay_g   => 4 * 60,
+      poll_interval_g   => 15,
+      poll_fast_g       => 3
+    )
+    Port Map (
+      reset             => reset,
+      clk               => milli_clk,
+      startup_in        => gps_start_in,
+      startup_out       => gps_start_out,
+      shutdown_in       => gps_stop_in,
+      shutdown_out      => gps_stop_out,
+      turnon_in         => sched_events_in (turnon_id_g),
+      turnoff_in        => sched_events_in (turnoff_id_g),
+      power_in          => gps_power_in,
+      power_out         => gps_power_out,
+      init_in           => gps_init_done,
+      init_out          => gps_init_start,
+      timemark_in       => databank (msg_ubx_tim_tm2_ramblock_c),
+      pollint_out       => pollinterval,
+      aop_updated_in    => aop_updated,
+      aop_running_in    => aop_running,
+      sched_req_out     => sched_req_out,
+      sched_rcv_in      => sched_rcv_in,
+      sched_type_out    => sched_type_out,
+      sched_id_out      => sched_id_out,
+      sched_delay_out   => sched_delay_out,
+      sched_start_in    => sched_start_in,
+      sched_start_out   => sched_start_out
+    ) ;
 
   --  Poll request combination signals.  Always poll for position and
   --  AssistNow status info.
