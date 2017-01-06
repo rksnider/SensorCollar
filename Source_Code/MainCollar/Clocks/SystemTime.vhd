@@ -83,6 +83,14 @@ USE WORK.MSG_UBX_TIM_TM2_PKG.ALL ;  --  Navagation Solution message.
 --! @param      dst_seconds_g       Number of seconds to add when DST
 --!                                 starts.  Zero value means no DST used.
 --! @param      reset               Reset the module.
+--! @param      clk                 Master clock driving the system.
+--! @param      milli_clk           Clock with one millisecond period
+--!                                 created from the high nanosecond bit of
+--!                                 the startup time.  It is not symetrical.
+--! @param      milli8_clk          Clock with 8 millisecond period created
+--!                                 from the 3 bit of the milliseconds of
+--!                                 the startup time.  125 of these is one
+--!                                 second.
 --! @param      startup_time_out    Running time in GPS time format since
 --!                                 the system started.  This value is
 --!                                 continuously updated and does not jump.
@@ -113,7 +121,11 @@ USE WORK.MSG_UBX_TIM_TM2_PKG.ALL ;  --  Navagation Solution message.
 --!                                 valid for use when next time is not yet
 --!                                 valid.
 --! @param      gpsmem_tmbank_in    Most recent valid Timemark bank in
---!                                 GPS memory.  Changes to it triggers
+--!                                 GPS memory.  Changes to it trigger an
+--!                                 update of the GPS Time and RTC Time
+--!                                 outputs.
+--! @param      gpsmem_tpbank_in    Most recent valid time pulse bank in
+--!                                 GPS memory.  Changes to it trigger an
 --!                                 update of the GPS Time and RTC Time
 --!                                 outputs.
 --! @param      gpsmem_req_out      Request for access to GPS mem.
@@ -149,6 +161,8 @@ entity SystemTime is
   Port (
     reset               : in    std_logic ;
     clk                 : in    std_logic ;
+    milli_clk           : out   std_logic ;
+    milli8_clk          : out   std_logic ;
     startup_time_out    : out   std_logic_vector (gps_time_bits_c-1
                                                   downto 0) ;
     startup_bytes_out   : out   std_logic_vector (gps_time_bytes_c*8-1
@@ -170,6 +184,7 @@ entity SystemTime is
     valid_latch_out     : out   std_logic ;
 
     gpsmem_tmbank_in    : in    std_logic ;
+    gpsmem_tpbank_in    : in    std_logic ;
     gpsmem_req_out      : out   std_logic ;
     gpsmem_rcv_in       : in    std_logic ;
     gpsmem_addr_out     : out   std_logic_vector (gpsmem_addrbits_g-1
@@ -188,6 +203,10 @@ end entity SystemTime ;
 
 architecture rtl of SystemTime is
 
+  --  Attributes added to signals.
+  
+  attribute keep      : boolean ;
+
   --  Times maintained by this module.
   --    The time since startup (Startup Time) in GPS Time Format.
   --    The GPS Time in GPS Time Format.
@@ -195,7 +214,12 @@ architecture rtl of SystemTime is
   --    Local Time.  Formatted RTC time converted to local time zone,
   --    daylight savings time, and leap seconds.
 
-  signal startup_time         : GPS_Time ;
+  signal startup_time         : GPS_Time :=
+  (
+    week_number               => (others => '0'),
+    week_millisecond          => (others => '0'),
+    millisecond_nanosecond    => (others => '0')
+  ) ;
   signal gps_timerec          : GPS_Time ;
   signal alarm_time           : unsigned (epoch70_secbits_c-1 downto 0) ;
   signal date_time            : std_logic_vector (dt_totalbits_c-1
@@ -220,6 +244,47 @@ architecture rtl of SystemTime is
       valid_latch_out       : out   std_logic
     ) ;
   end component CrossChipSend ;
+
+  --  Bit shifting.
+
+  component Shifter is
+    Generic (
+      bits_wide_g           : natural   := 32 ;
+      shift_bits_g          : natural   :=  8 ;
+      shift_right_g         : std_logic := '1'
+    ) ;
+    Port (
+      clk                   : in    std_logic ;
+      load_buffer_in        : in    std_logic_vector (bits_wide_g-1
+                                                      downto 0) ;
+      load_in               : in    std_logic ;
+      shift_enable_in       : in    std_logic ;
+      buffer_out            : out   std_logic_vector (bits_wide_g-1
+                                                      downto 0) ;
+      early_lastbits_out    : out   std_logic_vector (shift_bits_g-1
+                                                      downto 0) ;
+      lastbits_out          : out   std_logic_vector (shift_bits_g-1
+                                                      downto 0) ;
+      shift_inbits_in       : in    std_logic_vector (shift_bits_g-1
+                                                      downto 0)
+    ) ;
+  end component Shifter ;
+
+  --  Cross clock domain synchronization.
+
+  component ArraySynchronizer is
+    Generic (
+      data_bits_g             : natural := 8
+    ) ;
+    Port (
+      clk                     : in    std_logic ;
+      array_done_out          : out   std_logic ;
+      array_in                : in    std_logic_vector (data_bits_g-1
+                                                        downto 0) ;
+      array_out               : out   std_logic_vector (data_bits_g-1
+                                                        downto 0)
+    ) ;
+  end component ArraySynchronizer ;
 
   --  Map GPS times to standard logic vector of bits and one of bytes.
 
@@ -250,6 +315,8 @@ architecture rtl of SystemTime is
   --  Startup and GPS time connecting constants and signals.
   --------------------------------------------------------------------------
 
+  constant gps_timerec_load_delay_c : natural := 4 ;
+
   constant clk_in_nanosec_c         : natural :=
                   natural (round (1.0e9 / real (clk_freq_g))) ;
   constant clk_per_millisec_c       : natural :=
@@ -259,12 +326,7 @@ architecture rtl of SystemTime is
 
   signal startup_nanosec_cnt        :
                   unsigned (gps_time_nanobits_c-1 downto 0) ;
-  signal startup_millisec_cnt       :
-                  std_logic_vector (gps_time_millibits_c-1 downto 0) ;
-  signal startup_weekno_cnt         :
-                  std_logic_vector (gps_time_weekbits_c-1 downto 0) ;
   signal startup_carry_to_millisec  : std_logic ;
-  signal startup_carry_to_week      : std_logic ;
 
 
   constant gps_nanosec_limit_c      : natural := 1e6 ;
@@ -289,6 +351,8 @@ architecture rtl of SystemTime is
   signal gps_timerec_restart        : std_logic ;
 
   signal gps_seconds                : unsigned (epoch70_secbits_c-1
+                                                downto 0) ;
+  signal milli8_gps_seconds         : unsigned (epoch70_secbits_c-1
                                                 downto 0) ;
   signal rtc_seconds                : unsigned (epoch70_secbits_c-1
                                                 downto 0) :=
@@ -344,6 +408,8 @@ architecture rtl of SystemTime is
   ) ;
 
   signal result_time          : GPS_Time ;
+  
+  attribute keep of result_time   : signal is true ;
 
   signal rtc_loaded           : unsigned (gps_secbits_c-1 downto 0) :=
                 TO_UNSIGNED (compile_timestamp_c, gps_secbits_c) ;
@@ -400,12 +466,16 @@ architecture rtl of SystemTime is
 
   type gps_state_cnv_t is
   (
+    gps_st_byte_load_e,
     gps_st_wait_e,
     gps_st_tmload_e,
     gps_st_tmweek_e,
     gps_st_tmmilli_e,
     gps_st_tmnano_e,
     gps_st_tmmarked_e,
+    gps_st_tpload_e,
+    gps_st_tptarget_e,
+    gps_st_tpmarked_e,
     gps_st_rtcload_e,
     gps_st_rtcdiv_e,
     gps_st_rtcdiff_e,
@@ -423,16 +493,16 @@ architecture rtl of SystemTime is
 
   constant count_tbl_c              : integer_vector :=
   (
-    MUTTm2_wnF_size_c - 1,
-    MUTTm2_towMsF_size_c - 1,
-    MUTTm2_towSubMsF_size_c - 1,
-    gps_time_bytes_c - 1,
-    diffcalc_clocks_c - 1,
-    rtc_load_delay_c - 1,
-    rtc_secs'length - 1,
-    diffcalc_clocks_c - 1,
-    diff_delay_c - 1,
-    gps_time_millibits_c - 1,
+    MUTTm2_wnF_size_c,
+    MUTTm2_towMsF_size_c,
+    MUTTm2_towSubMsF_size_c,
+    gps_time_bytes_c,
+    diffcalc_clocks_c,
+    rtc_load_delay_c,
+    rtc_secs'length,
+    diffcalc_clocks_c,
+    diff_delay_c,
+    gps_time_millibits_c,
     clock_set_delay_c
   ) ;
 
@@ -490,19 +560,13 @@ architecture rtl of SystemTime is
 
   signal gpsmem_address             : unsigned (gpsmem_addr_out'length-1
                                                 downto 0) ;
-  signal tmbank_s                   : std_logic ;
   signal tmbank                     : std_logic ;
+  signal tmbank_s                   : std_logic ;
   signal tmbank_fwl                 : std_logic ;
+  signal tpbank                     : std_logic ;
+  signal tpbank_s                   : std_logic ;
+  signal tpbank_fwl                 : std_logic ;
   signal rtc_sec_load_fwl           : std_logic ;
-
-  signal tmweek                     :
-            std_logic_vector (MUTTm2_wnF_size_c*8-1 downto 0) ;
-  signal tmmilli                    :
-            std_logic_vector (MUTTm2_towMsF_size_c*8-1 downto 0) ;
-  signal tmnano                     :
-            std_logic_vector (MUTTm2_towSubMsF_size_c*8-1 downto 0) ;
-  signal tmmarked                   :
-            std_logic_vector (gps_time_bytes_c*8-1 downto 0) ;
 
   --------------------------------------------------------------------------
   --  Fast counter to handle nanoseconds.
@@ -559,14 +623,101 @@ architecture rtl of SystemTime is
     ) ;
   end component FormatSeconds ;
 
-  --  Eight millisecond clock taken from a low bit of the startup time's
-  --  millisecond field.
+  --  Clock generation.
 
-  constant milli_count_c    : natural := 125 ;
+  component GenClock is
+    Generic (
+      clk_freq_g              : natural   := 10e6 ;
+      out_clk_freq_g          : natural   := 1e6 ;
+      net_clk_g               : natural   := 0 ;
+      net_inv_g               : natural   := 0 ;
+      net_gated_g             : natural   := 0 ;
+      net_inv_gated_g         : natural   := 0
+    ) ;
+    Port (
+      reset                   : in    std_logic ;
+      clk                     : in    std_logic ;
+      clk_on_in               : in    std_logic ;
+      clk_off_in              : in    std_logic ;
+      clk_out                 : out   std_logic ;
+      clk_inv_out             : out   std_logic ;
+      gated_clk_out           : out   std_logic ;
+      gated_clk_inv_out       : out   std_logic
+    ) ;
+  end component GenClock ;
 
-  signal rtc_milli_cnt      : unsigned (const_bits (milli_count_c-1)-1
+  --  Clocks taken from various times.
+
+  constant milli_count_c    : natural := 1000 ;
+  constant milli8_count_c   : natural := 125 ;
+
+  signal rtc_milli8_cnt     : unsigned (const_bits (milli8_count_c-1)-1
                                         downto 0) ;
-  signal milli8_clk         : std_logic ;
+
+  signal milli8_clock       : std_logic ;
+
+  --------------------------------------------------------------------------
+  --  Scratch area used for loading bit vectors from memory.  Each signal
+  --  using it is defined via an alias.
+  --------------------------------------------------------------------------
+
+  signal shift_to               : std_logic ;
+  signal memdata_to             :
+              std_logic_vector (gpsmem_datafrom_in'length-1 downto 0) ;
+
+  constant in_length_tbl_c      : integer_vector :=
+  (
+    MUTTm2_wnF_size_c,
+    MUTTm2_towMsF_size_c,
+    MUTTm2_towSubMsF_size_c,
+    gps_time_bytes_c
+  ) ;
+
+  constant in_buffer_bytes_c    : natural :=
+      max_integer (in_length_tbl_c) ;
+
+  signal in_buffer              : std_logic_vector (in_buffer_bytes_c*8-1
+                                                    downto 0) ;
+
+  alias  tmmarked               :
+      std_logic_vector (gps_time_bits_c-1 downto 0) is
+      in_buffer        (in_buffer_bytes_c*8 - gps_time_bytes_c*8 +
+                        gps_time_bits_c-1
+                        downto
+                        in_buffer_bytes_c*8 - gps_time_bytes_c*8) ;
+
+  alias  tmweek                 :
+      std_logic_vector (MUTTm2_wnF_size_c*8-1 downto 0) is
+      in_buffer        (in_buffer_bytes_c*8-1
+                        downto
+                        in_buffer_bytes_c*8 - MUTTm2_wnF_size_c*8) ;
+
+  alias  tmmilli                :
+      std_logic_vector (MUTTm2_towMsF_size_c*8-1 downto 0) is
+      in_buffer        (in_buffer_bytes_c*8-1
+                        downto
+                        in_buffer_bytes_c*8 - MUTTm2_towMsF_size_c*8) ;
+
+  alias  tmnano                 :
+      std_logic_vector (MUTTm2_towSubMsF_size_c*8-1 downto 0) is
+      in_buffer        (in_buffer_bytes_c*8-1
+                        downto
+                        in_buffer_bytes_c*8 - MUTTm2_towSubMsF_size_c*8) ;
+
+  alias  tptarget               :
+      std_logic_vector (gps_time_bits_c-1 downto 0) is
+      in_buffer        (in_buffer_bytes_c*8 - gps_time_bytes_c*8 +
+                        gps_time_bits_c-1
+                        downto
+                        in_buffer_bytes_c*8 - gps_time_bytes_c*8) ;
+
+  alias  tpmarked               :
+      std_logic_vector (gps_time_bits_c-1 downto 0) is
+      in_buffer        (in_buffer_bytes_c*8 - gps_time_bytes_c*8 +
+                        gps_time_bits_c-1
+                        downto
+                        in_buffer_bytes_c*8 - gps_time_bytes_c*8) ;
+
 
 begin
 
@@ -584,6 +735,25 @@ begin
       data_latch_out        => time_latch_out,
       data_valid_out        => time_valid_out,
       valid_latch_out       => valid_latch_out
+    ) ;
+
+  --------------------------------------------------------------------------
+  --  Bit shifting from memory.
+  --------------------------------------------------------------------------
+
+  shift_into : component Shifter
+    Generic Map (
+      bits_wide_g           => in_buffer'length,
+      shift_bits_g          => memdata_to'length,
+      shift_right_g         => '1'
+    )
+    Port Map (
+      clk                   => clk,
+      load_buffer_in        => (others => '0'),
+      load_in               => '0',
+      shift_enable_in       => shift_to,
+      buffer_out            => in_buffer,
+      shift_inbits_in       => memdata_to
     ) ;
 
   --------------------------------------------------------------------------
@@ -609,36 +779,6 @@ begin
       preset_in           => (others => '0'),
       result_out          => startup_nanosec_cnt,
       carry_out           => startup_carry_to_millisec
-    ) ;
-
-  millisec_counter : lpm_counter
-    Generic Map (
-      LPM_DIRECTION       => "UP",
-      LPM_MODULUS         => gps_millisec_limit_c,
-      LPM_PORT_UPDOWN     => "PORT_UNUSED",
-      LPM_TYPE            => "LPM_COUNTER",
-      LPM_WIDTH           => gps_time_millibits_c
-    )
-    Port Map (
-      aclr                => reset,
-      cin                 => startup_carry_to_millisec,
-      clock               => clk,
-      cout                => startup_carry_to_week,
-      q                   => startup_millisec_cnt
-    ) ;
-
-  week_counter : lpm_counter
-    Generic Map (
-      LPM_DIRECTION       => "UP",
-      LPM_PORT_UPDOWN     => "PORT_UNUSED",
-      LPM_TYPE            => "LPM_COUNTER",
-      LPM_WIDTH           => gps_time_weekbits_c
-    )
-    Port Map (
-      aclr                => reset,
-      cin                 => startup_carry_to_week,
-      clock               => clk,
-      q                   => startup_weekno_cnt
     ) ;
 
   --------------------------------------------------------------------------
@@ -699,6 +839,39 @@ begin
       sload               => gps_timerec_restart,
       q                   => gps_weekno_cnt
     ) ;
+
+  --  Derive 1ms and 8ms counting clocks from the startup time.
+
+  milli_clock_gen : GenClock
+    Generic Map (
+      clk_freq_g              => milli_count_c,
+      out_clk_freq_g          => milli_count_c,
+      net_clk_g               => 1
+    )
+    Port Map (
+      reset                   => reset,
+      clk                     =>
+          startup_time.millisecond_nanosecond (gps_time_nanobits_c-1),
+      clk_on_in               => '1',
+      clk_off_in              => '0',
+      clk_out                 => milli_clk
+    ) ;
+
+  milli8_clock_gen : GenClock
+    Generic Map (
+      clk_freq_g              => milli8_count_c,
+      out_clk_freq_g          => milli8_count_c,
+      net_clk_g               => 1
+    )
+    Port Map (
+      reset                   => reset,
+      clk                     => startup_time.week_millisecond (2),
+      clk_on_in               => '1',
+      clk_off_in              => '0',
+      clk_out                 => milli8_clock
+    ) ;
+
+  milli8_clk                  <= milli8_clock ;
 
   --------------------------------------------------------------------------
   --  Convert the last received RTC seconds into the difference between
@@ -768,7 +941,8 @@ begin
 
   --------------------------------------------------------------------------
   --  Use the GPS difference values added to the Startup Time snapshot
-  --  to calculate initial value loaded into the GPS time.
+  --  to calculate initial value loaded into the GPS time.  The time it
+  --  it takes to load the data into the clock is added here.
   --  Carry and the amount left over after carry are calculated with a
   --  single subtraction whose value can be reused saving a subtraction.
   --    A sign bit is added to the target value to be checked for carry and
@@ -779,7 +953,8 @@ begin
   --------------------------------------------------------------------------
 
   diff_nanosec          <= unsigned (load_time.millisecond_nanosecond) +
-                           gps_nanodiff + diff_delay_c * clk_in_nanosec_c ;
+                           gps_nanodiff + diff_delay_c * clk_in_nanosec_c +
+                           gps_timerec_load_delay_c * clk_in_nanosec_c ;
 
   diff_nano_limit       <= signed (RESIZE (diff_nanosec,
                                            diff_nano_limit'length)) -
@@ -821,10 +996,6 @@ begin
                               unsigned (load_time.week_number) +
                               diff_milli_carry) ;
 
-  --  Derive 8ms second counting clock from the GPS time.
-
-  milli8_clk            <= startup_time.week_millisecond (2) ;
-
   --  Date/Time converter.
 
   next_second           <= rtc_seconds + 1 ;
@@ -847,17 +1018,19 @@ begin
       leap_seconds_in   => TO_UNSIGNED (26, 8),   -- as of July 2015
       epoch70_in        => next_second,
       datetime_out      => date_time,
-      to_datetime_clk   => milli8_clk,
+      to_datetime_clk   => milli8_clock,
       to_dt_start_in    => calc_datetime_start,
       datetime_in       => alarm_time_in,
       epoch70_out       => alarm_time,
-      from_datetime_clk => milli8_clk,
+      from_datetime_clk => milli8_clock,
       from_dt_start_in  => calc_datetime_start
     ) ;
 
   --------------------------------------------------------------------------
   --  Latch the clocks all on the same clock edge to insure they are always
-  --  consistant.
+  --  consistant.  Counters that are to be used as clocks cannot use
+  --  the LPM_Counter entity.  They must be directly derived from their
+  --  source clock.
   --------------------------------------------------------------------------
 
   latch_process : process (clk)
@@ -868,8 +1041,18 @@ begin
 
       startup_time.millisecond_nanosecond   <=
                                  std_logic_vector (startup_nanosec_cnt) ;
-      startup_time.week_millisecond         <= startup_millisec_cnt ;
-      startup_time.week_number              <= startup_weekno_cnt ;
+
+      if (startup_carry_to_millisec = '1') then
+        if (unsigned (startup_time.week_millisecond) =
+            gps_millisec_limit_c - 1) then
+          startup_time.week_millisecond     <= (others => '0') ;
+          startup_time.week_number          <=
+              std_logic_vector (unsigned (startup_time.week_number) + 1) ;
+        else
+          startup_time.week_millisecond     <=
+              std_logic_vector (unsigned (startup_time.week_millisecond) + 1) ;
+        end if ;
+      end if ;
 
       --  GPS Time.
 
@@ -894,28 +1077,38 @@ begin
   rtc_sec_out                 <= rtc_seconds ;
   rtc_sec_set_out             <= gps_seconds_load ;
 
+  gps_seconds_sync : ArraySynchronizer
+    Generic Map (
+      data_bits_g             => gps_seconds'length
+    )
+    Port Map(
+      clk                     => milli8_clock,
+      array_in                => std_logic_vector (gps_seconds),
+      unsigned (array_out)    => milli8_gps_seconds,
+      array_done_out          => gps_seconds_load
+    ) ;
 
-  upd_sec : process (rtc_seconds_load, gps_seconds, milli8_clk)
+  upd_sec : process (rtc_seconds_load, milli8_clock)
   begin
     if (rtc_seconds_load = '1') then
       rtc_seconds_set         <= '1' ;
-      rtc_milli_cnt           <= (others => '0') ;
+      rtc_milli8_cnt          <= (others => '0') ;
       calc_datetime_start     <= '0' ;
       alarm_time_out          <= (others => '0') ;
 
-    elsif (rising_edge (milli8_clk)) then
+    elsif (rising_edge (milli8_clock)) then
 
       if (rtc_seconds_set = '1') then
         rtc_seconds_set       <= '0' ;
-        rtc_seconds           <= gps_seconds ;
-        rtc_milli_cnt         <= (others => '0') ;
+        rtc_seconds           <= milli8_gps_seconds ;
+        rtc_milli8_cnt        <= (others => '0') ;
         calc_datetime_start   <= '1' ;
 
-      elsif (rtc_milli_cnt /= milli_count_c) then
-        rtc_milli_cnt         <= rtc_milli_cnt + 1 ;
+      elsif (rtc_milli8_cnt /= milli8_count_c) then
+        rtc_milli8_cnt        <= rtc_milli8_cnt + 1 ;
         calc_datetime_start   <= '0' ;
       else
-        rtc_milli_cnt         <= (others => '0') ;
+        rtc_milli8_cnt        <= (others => '0') ;
         rtc_seconds           <= rtc_seconds + 1 ;
 
         rtc_datetime_out      <= date_time ;
@@ -937,9 +1130,13 @@ begin
     variable difference     : signed   (div_remainder'length   downto 0) ;
   begin
     if (reset = '1') then
-      tmbank_s              <= '0' ;
       tmbank                <= '0' ;
+      tmbank_s              <= '0' ;
       tmbank_fwl            <= '0' ;
+      tpbank                <= '0' ;
+      tpbank_s              <= '0' ;
+      tpbank_fwl            <= '0' ;
+      shift_to              <= '0' ;
       rtc_sec_load_fwl      <= '0' ;
       gpsmem_req_out        <= '0' ;
       gpsmem_readen_out     <= '0' ;
@@ -947,30 +1144,54 @@ begin
       gps_timerec_load      <= '0' ;
       gps_seconds           <= TO_UNSIGNED (compile_timestamp_c,
                                             gps_seconds'length) ;
-      gps_seconds_load      <= '1' ;
       cur_state             <= gps_st_wait_e ;
 
-    elsif (rising_edge (clk)) then
+    --  Synchronize the time mark bank signal with this clock using the
+    --  standard double copy mechanism.
 
-      --  Synchronize the time mark bank signal with this clock using the
-      --  standard double copy mechanism.
-      
-      tmbank_s              <= gpsmem_tmbank_in ;
+    elsif (falling_edge (clk)) then
       tmbank                <= tmbank_s ;
+      tpbank                <= tpbank_s ;
+
+    elsif (rising_edge (clk)) then
+      tmbank_s              <= gpsmem_tmbank_in ;
+      tpbank_s              <= gpsmem_tpbank_in ;
+
+      shift_to              <= '0' ;
 
       case (cur_state) is
+
+          --  Subroutine like state to load a value from memory into a bit
+          --  vector.
+
+          when gps_st_byte_load_e     =>
+            shift_to            <= '1' ;
+            memdata_to          <= gpsmem_datafrom_in ;
+
+            if (count /= 1) then
+              count             <= count - 1 ;
+              gpsmem_address    <= gpsmem_address + 1 ;
+            else
+              gpsmem_readen_out <= '0' ;
+              cur_state         <= return_state ;
+            end if ;
 
         --  Wait until a new GPS time must be calculated because new
         --  timing information is available.
 
         when gps_st_wait_e            =>
-          gps_seconds_load        <= '0' ;
 
           if (tmbank_fwl /= tmbank) then
-            tmbank_fwl <= tmbank ;
+            tmbank_fwl            <= tmbank ;
 
             gpsmem_req_out        <= '1' ;
             cur_state             <= gps_st_tmload_e ;
+
+          elsif (tpbank_fwl /= tpbank) then
+            tpbank_fwl            <= tpbank ;
+
+            gpsmem_req_out        <= '1' ;
+            cur_state             <= gps_st_tpload_e ;
 
           elsif (rtc_sec_load_fwl /= rtc_sec_load_in) then
             rtc_sec_load_fwl      <= rtc_sec_load_in ;
@@ -992,119 +1213,135 @@ begin
                                MUTTm2_wnF_offset_c,
                                gpsmem_address'length) ;
             gpsmem_readen_out     <= '1' ;
-            count                 <= TO_UNSIGNED (MUTTm2_wnF_size_c - 1,
+            count                 <= TO_UNSIGNED (MUTTm2_wnF_size_c,
                                                   count'length) ;
-            cur_state             <= gps_st_tmweek_e ;
+            cur_state             <= gps_st_byte_load_e ;
+            return_state          <= gps_st_tmweek_e ;
           end if ;
 
         when gps_st_tmweek_e          =>
-          tmweek                  <= gpsmem_datafrom_in &
-                                     tmweek (tmweek'length-1 downto 8) ;
+          target_time.week_number <=
+                    tmweek (gps_time_weekbits_c-1 downto 0) ;
 
-          if (count /= 0) then
-            count                 <= count - 1 ;
-            gpsmem_address        <= gpsmem_address + 1 ;
-          else
-            gpsmem_address        <=
+          gpsmem_address          <=
                   TO_UNSIGNED (msg_ram_base_c +
                                msg_ubx_tim_tm2_ramaddr_c +
                                if_set (tmbank,
                                        msg_ubx_tim_tm2_ramused_c) +
                                MUTTm2_towMsF_offset_c,
                                gpsmem_address'length) ;
-            count                 <= TO_UNSIGNED (MUTTm2_towMsF_size_c - 1,
+          gpsmem_readen_out       <= '1' ;
+          count                   <= TO_UNSIGNED (MUTTm2_towMsF_size_c,
                                                   count'length) ;
-            cur_state             <= gps_st_tmmilli_e ;
-          end if ;
+          cur_state               <= gps_st_byte_load_e ;
+          return_state            <= gps_st_tmmilli_e ;
 
         when gps_st_tmmilli_e         =>
-          tmmilli                 <= gpsmem_datafrom_in &
-                                     tmmilli (tmmilli'length-1 downto 8) ;
+          target_time.week_millisecond          <=
+                    tmmilli (gps_time_millibits_c-1 downto 0) ;
 
-          if (count /= 0) then
-            count                 <= count - 1 ;
-            gpsmem_address        <= gpsmem_address + 1 ;
-          else
-            gpsmem_address        <=
+          gpsmem_address          <=
                   TO_UNSIGNED (msg_ram_base_c +
                                msg_ubx_tim_tm2_ramaddr_c +
                                if_set (tmbank,
                                        msg_ubx_tim_tm2_ramused_c) +
                                MUTTm2_towSubMsF_offset_c,
                                gpsmem_address'length) ;
-            count                 <= TO_UNSIGNED (MUTTm2_towSubMsF_size_c -
-                                                  1, count'length) ;
-            cur_state             <= gps_st_tmnano_e ;
-          end if ;
+          gpsmem_readen_out       <= '1' ;
+          count                   <= TO_UNSIGNED (MUTTm2_towSubMsF_size_c,
+                                                  count'length) ;
+          cur_state               <= gps_st_byte_load_e ;
+          return_state            <= gps_st_tmnano_e ;
 
         when gps_st_tmnano_e          =>
-          tmnano                  <= gpsmem_datafrom_in &
-                                     tmnano (tmnano'length-1 downto 8) ;
+          target_time.millisecond_nanosecond    <=
+                    tmnano (gps_time_nanobits_c-1 downto 0) ;
 
-          if (count /= 0) then
-            count                 <= count - 1 ;
-            gpsmem_address        <= gpsmem_address + 1 ;
-          else
-            gpsmem_address        <=
+          gpsmem_address          <=
                   TO_UNSIGNED (msg_ram_base_c +
                                msg_ram_marktime_addr_c +
                                if_set (tmbank,
                                        msg_ram_marktime_size_c),
                                gpsmem_address'length) ;
-            count                 <= TO_UNSIGNED (gps_time_bytes_c - 1,
+          gpsmem_readen_out       <= '1' ;
+          count                   <= TO_UNSIGNED (gps_time_bytes_c,
                                                   count'length) ;
-            cur_state             <= gps_st_tmmarked_e ;
-          end if ;
+          cur_state               <= gps_st_byte_load_e ;
+          return_state            <= gps_st_tmmarked_e ;
 
         when gps_st_tmmarked_e        =>
-          tmmarked                <= gpsmem_datafrom_in &
-                                     tmmarked (tmmarked'length-1 downto 8) ;
+          sample_time             <= TO_GPS_TIME (tmmarked) ;
 
-          if (count /= 0) then
-            count                 <= count - 1 ;
-            gpsmem_address        <= gpsmem_address + 1 ;
-          else
-            gpsmem_readen_out     <= '0' ;
-            gpsmem_req_out        <= '0' ;
-            cur_state             <= gps_st_gpsdiff_e ;
+          gpsmem_req_out          <= '0' ;
+          cur_state               <= gps_st_gpsdiff_e ;
+
+        --  Load the GPS time pulse time from GPS memory.
+
+        when gps_st_tpload_e          =>
+          if (gpsmem_rcv_in = '1') then
+            gpsmem_address        <=
+                  TO_UNSIGNED (msg_ram_base_c +
+                               msg_ram_pulsetime_addr_c +
+                               if_set (tpbank,
+                                        msg_ram_pulsetime_size_c),
+                               gpsmem_address'length) ;
+            gpsmem_readen_out     <= '1' ;
+            count                 <= TO_UNSIGNED (gps_time_bytes_c,
+                                                  count'length) ;
+            cur_state             <= gps_st_byte_load_e ;
+            return_state          <= gps_st_tpmarked_e ;
           end if ;
 
+        when gps_st_tpmarked_e        =>
+          sample_time             <= TO_GPS_TIME (tpmarked) ;
+
+          gpsmem_address          <=
+                  TO_UNSIGNED (msg_ram_base_c +
+                               msg_ram_pulsetime_addr_c +
+                               if_set (tpbank,
+                                        msg_ram_pulsetime_size_c) +
+                               gps_time_bytes_c,
+                               gpsmem_address'length) ;
+          gpsmem_readen_out       <= '1' ;
+          count                   <= TO_UNSIGNED (gps_time_bytes_c,
+                                                  count'length) ;
+          cur_state               <= gps_st_byte_load_e ;
+          return_state            <= gps_st_tptarget_e ;
+
+        when gps_st_tptarget_e        =>
+          target_time             <= TO_GPS_TIME (tptarget) ;
+
+          gpsmem_req_out          <= '0' ;
+          cur_state               <= gps_st_gpsdiff_e ;
+
         when gps_st_gpsdiff_e         =>
-          target_time.week_number               <=
-                    tmweek (gps_time_weekbits_c-1   downto 0) ;
-          target_time.week_millisecond          <=
-                    tmmilli (gps_time_millibits_c-1 downto 0) ;
-          target_time.millisecond_nanosecond    <=
-                    tmnano (gps_time_nanobits_c-1   downto 0) ;
-          sample_time                           <=
-                    TO_GPS_TIME (tmmarked (gps_time_bits_c-1 downto 0)) ;
-          count                                 <=
+          count                   <=
                     TO_UNSIGNED (diffcalc_clocks_c - 1, count'length) ;
-          cur_state                             <= gps_st_diff_wait_e ;
+          cur_state               <= gps_st_diff_wait_e ;
 
          -- Calculate the difference between RTC time and Startup Time.
 
         when gps_st_rtcload_e         =>
-          rtc_loaded                <= RESIZE (rtc_sec_in,
-                                               rtc_loaded'length) ;
-          count                     <= TO_UNSIGNED (rtc_load_delay_c - 1,
-                                                    count'length) ;
-          cur_state                 <= gps_st_rtcdiv_e ;
+          rtc_loaded              <= RESIZE (rtc_sec_in,
+                                             rtc_loaded'length) ;
+          count                   <= TO_UNSIGNED (rtc_load_delay_c - 1,
+                                                  count'length) ;
+          cur_state               <= gps_st_rtcdiv_e ;
 
         when gps_st_rtcdiv_e          =>
           if (count /= 0) then
-            count                   <= count - 1 ;
+            count                 <= count - 1 ;
           else
-            div_numerator           <= SHIFT_LEFT_LL (rtc_secs,
-                                                      div_numerator'length -
-                                                      rtc_secs'length) ;
-            div_denominator         <= TO_UNSIGNED (millisec_week_c,
-                                                    div_denominator'length) ;
-            count                   <= TO_UNSIGNED (rtc_secs'length - 1,
-                                                    count'length) ;
+            div_numerator         <= SHIFT_LEFT_LL (rtc_secs,
+                                                    div_numerator'length -
+                                                    rtc_secs'length) ;
+            div_denominator       <= TO_UNSIGNED (millisec_week_c,
+                                                  div_denominator'length) ;
+            count                 <= TO_UNSIGNED (rtc_secs'length - 1,
+                                                  count'length) ;
 
-            return_state            <= gps_st_rtcdiff_e ;
-            cur_state               <= gps_st_divide_e ;
+            return_state          <= gps_st_rtcdiff_e ;
+            cur_state             <= gps_st_divide_e ;
           end if ;
 
         when gps_st_rtcdiff_e         =>
@@ -1172,7 +1409,6 @@ begin
                         const_unsigned (week_seconds_c) +
                         const_unsigned (gps_epoch70_offset_c),
                         gps_seconds'length) ;
-          gps_seconds_load        <= '1' ;
           cur_state               <= gps_st_wait_e ;
 
         --  Bitwise divide.
